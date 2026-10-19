@@ -1,0 +1,170 @@
+{
+ "actions": [],
+ "autoname": "field:signature_name",
+ "creation": "2026-10-19 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "signature_name",
+  "company",
+  "active",
+  "column_break_meta",
+  "state",
+  "days_for_notification",
+  "section_break_credentials",
+  "p12_file",
+  "password",
+  "section_break_certificate_info",
+  "not_valid_before",
+  "expire_date",
+  "subject_common_name",
+  "subject_serial_number",
+  "issuer_common_name",
+  "cert_serial_number",
+  "cert_version"
+ ],
+ "fields": [
+  {
+   "fieldname": "signature_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Signature Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "default": "1",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Active"
+  },
+  {
+   "fieldname": "column_break_meta",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "unverified",
+   "fieldname": "state",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "State",
+   "options": "unverified\nvalid\nexpired",
+   "read_only": 1
+  },
+  {
+   "default": "30",
+   "fieldname": "days_for_notification",
+   "fieldtype": "Int",
+   "label": "Days for Notification"
+  },
+  {
+   "fieldname": "section_break_credentials",
+   "fieldtype": "Section Break",
+   "label": "PKCS#12 Signature Credentials"
+  },
+  {
+   "fieldname": "p12_file",
+   "fieldtype": "Attach",
+   "label": "PKCS#12 Signature File (.p12)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Password",
+   "label": "Signing Password",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_certificate_info",
+   "fieldtype": "Section Break",
+   "label": "Certificate Information"
+  },
+  {
+   "fieldname": "not_valid_before",
+   "fieldtype": "Date",
+   "label": "Issue Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "expire_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Expiration Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "subject_common_name",
+   "fieldtype": "Data",
+   "label": "Organization (Subject)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "subject_serial_number",
+   "fieldtype": "Data",
+   "label": "Serial Number (Subject)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "issuer_common_name",
+   "fieldtype": "Data",
+   "label": "Organization (Issuer)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cert_serial_number",
+   "fieldtype": "Data",
+   "label": "Certificate Serial Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cert_version",
+   "fieldtype": "Data",
+   "label": "Certificate Version",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-19 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Ecuador Localization",
+ "name": "SRI Signature",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

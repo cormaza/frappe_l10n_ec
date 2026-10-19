@@ -1,0 +1,31 @@
+exclude: "node_modules|.git"
+default_stages: [pre-commit]
+fail_fast: false
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        files: "l10n_ec.*"
+        exclude: ".*json$|.*txt$|.*csv|.*md|.*wsdl"
+      - id: check-merge-conflict
+      - id: check-ast
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.6
+    hooks:
+      - id: ruff
+        name: "Run ruff import sorter and linter"
+        args: ["--fix"]
+      - id: ruff-format
+        name: "Run ruff python formatter"
+
+  - repo: https://github.com/frappe/semgrep-rules
+    rev:ebd31f3b2ef2a2b60dd2d58eb13fa1ee01371a79
+    hooks:
+      - id: frappe-semgrep-rules
+        name: "Run Frappe Semgrep Rules (OCA pylint-odoo equivalent)"

@@ -1,0 +1,77 @@
+[project]
+name = "l10n_ec"
+authors = [
+    { name = "Ecuador Localization Contributors", email = "developers@example.com" }
+]
+description = "Ecuadorian Localization and SRI Electronic Invoicing (XAdES-BES) for Frappe / ERPNext v16"
+requires-python = ">=3.14"
+readme = "README.md"
+dynamic = ["version"]
+license = { text = "MIT" }
+dependencies = [
+    "cryptography>=42.0.0",
+    "pyopenssl>=24.1.0",
+    "lxml>=5.0.0",
+    "xmlsig>=0.1.9",
+    "xades==0.2.4",
+    "zeep>=4.2.1",
+    "pytz",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.9.0",
+]
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.bench.frappe-dependencies]
+frappe = ">=16.0.0,<17.0.0"
+erpnext = ">=16.0.0,<17.0.0"
+
+[tool.pytest.ini_options]
+testpaths = ["l10n_ec/tests"]
+python_files = ["test_*.py"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py314"
+exclude = [
+    "**/doctype/*/boilerplate/*.py",
+]
+
+[tool.ruff.lint]
+select = [
+    "F",
+    "E",
+    "W",
+    "I",
+    "UP",
+    "B",
+    "RUF",
+]
+ignore = [
+    "B017", # assertRaises(Exception) - should be more specific
+    "B018", # useless expression, not assigned to anything
+    "B023", # function doesn't bind loop variable - will have last iteration's value
+    "B904", # raise inside except without from
+    "E101", # indentation contains mixed spaces and tabs
+    "E402", # module level import not at top of file
+    "E501", # line too long
+    "E741", # ambiguous variable name
+    "F401", # "unused" imports
+    "F403", # can't detect undefined names from * import
+    "F405", # can't detect undefined names from * import
+    "F722", # syntax error in forward type annotation
+    "W191", # indentation contains tabs
+]
+typing-modules = ["frappe.types.DF"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "tab"
+docstring-code-format = true
