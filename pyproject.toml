@@ -34,13 +34,14 @@ frappe = ">=16.0.0,<17.0.0"
 erpnext = ">=16.0.0,<17.0.0"
 
 [tool.pytest.ini_options]
-testpaths = ["l10n_ec/tests"]
+testpaths = ["l10n_ec"]
 python_files = ["test_*.py"]
 
 [tool.ruff]
 line-length = 110
 target-version = "py314"
 exclude = [
+    ".agents/**",
     "**/doctype/*/boilerplate/*.py",
 ]
 
