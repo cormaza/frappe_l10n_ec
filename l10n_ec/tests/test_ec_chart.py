@@ -137,3 +137,6 @@ class TestEcuadorChart(UnitTestCase):
 			self.assertEqual(
 				leaves[path]["account_type"], "Tax", f"{number} must be Tax for Item Tax Templates"
 			)
+		trade = dict(_walk(self.tree))
+		self.assertEqual(trade[self.numbers["101020503"]]["account_type"], "Receivable")
+		self.assertEqual(trade[self.numbers["2010301"]]["account_type"], "Payable")

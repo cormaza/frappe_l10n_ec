@@ -16,6 +16,9 @@ except ImportError:  # pragma: no cover
 
 CHART_PATH = Path(__file__).parent / "chart_of_accounts" / "ec_niif_chart_template.json"
 
+RECEIVABLE_ACCOUNT_NUMBER = "101020503"
+PAYABLE_ACCOUNT_NUMBER = "2010301"
+
 try:
 	from l10n_ec.ecuador_localization.tax_templates import setup_ecuadorian_taxes
 except ImportError:  # pragma: no cover
@@ -53,6 +56,18 @@ def install_ecuadorian_chart(company: str) -> None:
 	if frappe.db.count("Account", {"company": company}):
 		return
 	create_charts(company, custom_chart=get_ec_chart_tree())
+	_set_company_default_accounts(company)
+
+
+def _set_company_default_accounts(company: str) -> None:
+	"""Point Company control accounts at the NIIF trade control leaves."""
+	for number, fieldname in (
+		(RECEIVABLE_ACCOUNT_NUMBER, "default_receivable_account"),
+		(PAYABLE_ACCOUNT_NUMBER, "default_payable_account"),
+	):
+		account = frappe.db.get_value("Account", {"company": company, "account_number": number}, "name")
+		if account:
+			frappe.db.set_value("Company", company, fieldname, account)
 
 
 def setup_company_chart(doc, method=None) -> None:
@@ -75,11 +90,13 @@ def reinstall_ecuadorian_chart(company: str) -> None:
 		raise RuntimeError("frappe is required to reinstall the chart of accounts.")
 	if frappe.db.count("GL Entry", {"company": company}):
 		frappe.throw(frappe._("Cannot reinstall the chart: the company already has ledger entries."))
-	for name in frappe.get_all("Account", filters={"company": company}, pluck="name"):
-		frappe.delete_doc("Account", name, ignore_permissions=True)
 	for df in frappe.get_meta("Company").fields:
 		if df.fieldtype == "Link" and df.options == "Account":
 			frappe.db.set_value("Company", company, df.fieldname, None)
+	for title in frappe.get_all("Item Tax Template", filters={"company": company}, pluck="name"):
+		frappe.delete_doc("Item Tax Template", title, ignore_permissions=True)
+	for name in frappe.get_all("Account", filters={"company": company}, pluck="name", order_by="lft desc"):
+		frappe.delete_doc("Account", name, ignore_permissions=True)
 	install_ecuadorian_chart(company)
 	if setup_ecuadorian_taxes is not None:
 		setup_ecuadorian_taxes(company)

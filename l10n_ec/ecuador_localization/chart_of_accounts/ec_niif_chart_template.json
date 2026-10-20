@@ -38,6 +38,10 @@
       },
       "DE ACTIVIDADES ORDINARIAS QUE NO GENEREN INTERESES": {
        "account_number": "101020502"
+      },
+      "CUENTAS POR COBRAR COMERCIALES": {
+       "account_number": "101020503",
+       "account_type": "Receivable"
       }
      },
      "DOCUMENTOS Y CUENTAS POR COBRAR CLIENTES RELACIONADOS": {
@@ -308,7 +312,8 @@
     "CUENTAS Y DOCUMENTOS POR PAGAR": {
      "account_number": "20103",
      "LOCALES": {
-      "account_number": "2010301"
+      "account_number": "2010301",
+      "account_type": "Payable"
      },
      "DEL EXTERIOR": {
       "account_number": "2010302"
