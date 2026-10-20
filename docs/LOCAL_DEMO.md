@@ -20,6 +20,7 @@ dev/demo.sh seed    # re-run the seed only
 dev/demo.sh status  # containers + sites overview
 dev/demo.sh down    # stop containers (volumes keep the data)
 dev/demo.sh assets  # recompile frontend bundles (un styled pages = missing build; if bench build only refreshes translations, run `yarn run build --apps frappe --run-build-command` inside apps/frappe)
+dev/demo.sh sync    # copy working tree into bench (py/json/xsd; locale .po/.pot flow the other way)
 ```
 
 `reset` is idempotent: it always drops `demo` first, so re-running it

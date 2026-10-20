@@ -287,7 +287,7 @@
 			<xsd:pattern value="[1][0-9]"/>
 			<xsd:pattern value="[2][0-1]"/>
 		</xsd:restriction>
-	</xsd:simpleType>	
+	</xsd:simpleType>
 	<xsd:simpleType name="total">
 		<xsd:restriction base="xsd:decimal">
 			<xsd:totalDigits value="14"/>
@@ -301,7 +301,7 @@
 			<xsd:fractionDigits value="2"/>
 			<xsd:minInclusive value="0"/>
 		</xsd:restriction>
-	</xsd:simpleType>	
+	</xsd:simpleType>
 	<xsd:simpleType name="unidadTiempo">
 		<xsd:restriction base="xsd:string">
 			<xsd:minLength value="1"/>
@@ -383,7 +383,7 @@
 			<xsd:element name="estab" type="establecimiento"/>
 			<xsd:element name="ptoEmi" type="puntoEmision"/>
 			<xsd:element name="secuencial" type="secuencial"> </xsd:element>
-			<xsd:element name="dirMatriz" type="dirMatriz"/>			
+			<xsd:element name="dirMatriz" type="dirMatriz"/>
 			<xsd:element name="agenteRetencion" minOccurs="0"	type="agenteRetencion"/>
 			<xsd:element name="contribuyenteRimpe" minOccurs="0"	type="contribuyenteRimpe"/>
 		</xsd:sequence>
@@ -406,8 +406,8 @@
 			<xsd:documentation>Contiene la informacion de las compensaciones</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="codigo" minOccurs="1" type="codigoPorcentajeCompensacion"/>			
-			<xsd:element name="tarifa" minOccurs="1" type="tarifa"/>			
+			<xsd:element name="codigo" minOccurs="1" type="codigoPorcentajeCompensacion"/>
+			<xsd:element name="tarifa" minOccurs="1" type="tarifa"/>
 			<xsd:element name="valor" minOccurs="1" type="valor"/>
 		</xsd:sequence>
 	</xsd:complexType>
@@ -416,8 +416,8 @@
 			<xsd:documentation>Contiene la informacion de los pagos</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="formaPago" minOccurs="1" type="formaPago"/>			
-			<xsd:element name="total" minOccurs="1" type="total"/>			
+			<xsd:element name="formaPago" minOccurs="1" type="formaPago"/>
+			<xsd:element name="total" minOccurs="1" type="total"/>
 			<xsd:element name="plazo" minOccurs="0" type="plazo"/>
 			<xsd:element name="unidadTiempo" minOccurs="0" type="unidadTiempo"/>
 		</xsd:sequence>

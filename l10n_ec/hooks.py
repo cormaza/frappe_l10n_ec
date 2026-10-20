@@ -24,6 +24,9 @@ doc_events = {
 	"Supplier": {
 		"validate": "l10n_ec.ecuador_localization.party_hooks.validate_sri_identification",
 	},
+	"Sales Invoice": {
+		"before_save": "l10n_ec.ecuador_localization.invoice_hooks.validate_sri_invoice",
+	},
 	"Company": {
 		"after_insert": "l10n_ec.ecuador_localization.chart_setup.setup_company_chart",
 	},

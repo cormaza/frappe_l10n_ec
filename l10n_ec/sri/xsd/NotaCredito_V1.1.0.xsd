@@ -244,8 +244,8 @@
 			<xsd:documentation>Contiene la informacion de las compensaciones</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element name="codigo" minOccurs="1" type="codigoPorcentajeCompensacion"/>			
-			<xsd:element name="tarifa" minOccurs="1" type="tarifa"/>			
+			<xsd:element name="codigo" minOccurs="1" type="codigoPorcentajeCompensacion"/>
+			<xsd:element name="tarifa" minOccurs="1" type="tarifa"/>
 			<xsd:element name="valor" minOccurs="1" type="valor"/>
 		</xsd:sequence>
 	</xsd:complexType>
@@ -264,7 +264,7 @@
 			<xsd:element name="estab" type="establecimiento"/>
 			<xsd:element name="ptoEmi" type="puntoEmision"/>
 			<xsd:element name="secuencial" type="secuencial"/>
-			<xsd:element name="dirMatriz" type="dirMatriz"/>			
+			<xsd:element name="dirMatriz" type="dirMatriz"/>
 			<xsd:element name="agenteRetencion" minOccurs="0"	type="agenteRetencion"/>
 			<xsd:element name="contribuyenteRimpe" minOccurs="0"	type="contribuyenteRimpe"/>
 		</xsd:sequence>
@@ -292,9 +292,9 @@
 							<xsd:element name="fechaEmisionDocSustento"	type="fechaEmisionDocSustento" minOccurs="1"/>
 							<xsd:element name="totalSinImpuestos" type="totalSinImpuestos"/>
 							<xsd:element ref="compensaciones" minOccurs="0" maxOccurs="1"/>
-							<xsd:element name="valorModificacion" minOccurs="1"	type="valorModificacion"/> 
+							<xsd:element name="valorModificacion" minOccurs="1"	type="valorModificacion"/>
 							<xsd:element name="moneda" minOccurs="0" type="moneda"/>
-							<xsd:element ref="totalConImpuestos"/>							
+							<xsd:element ref="totalConImpuestos"/>
 							<xsd:element name="motivo" type="motivo"/>
 						</xsd:sequence>
 					</xsd:complexType>

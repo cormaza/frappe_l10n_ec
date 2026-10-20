@@ -17,6 +17,7 @@ except ImportError:  # pragma: no cover
 
 
 ECUADOR_COUNTRY_CODE = "EC"
+FINAL_CONSUMER_THRESHOLD = 50.00
 
 
 def is_ecuadorian_contact(country_code: str | None) -> bool:
@@ -59,4 +60,26 @@ def validate_contact_tax_id(
 			_("Invalid tax identification '{}' for type '{}'.").format(
 				(tax_id or "").strip(), (identification_type_code or "").strip()
 			)
+		)
+
+
+def validate_final_consumer_amount(
+	identification_type_code: str | None,
+	tax_id: str | None,
+	total: float | None,
+	threshold: float = FINAL_CONSUMER_THRESHOLD,
+) -> None:
+	"""Reject over-threshold invoices to the generic final consumer.
+
+	Only the generic consumer identity (type `07` or the fixed ID) is
+	checked; identified buyers are unaffected. Multi-currency conversion
+	is out of scope: totals compare directly against the USD threshold.
+	"""
+	if not is_generic_final_consumer(identification_type_code, tax_id):
+		return
+	if (total or 0) > threshold:
+		raise ValueError(
+			_(
+				"Sales to Consumidor Final above {} are not allowed; register the buyer identification."
+			).format(threshold)
 		)

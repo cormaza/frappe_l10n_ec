@@ -1,6 +1,6 @@
 #!/bin/bash
 # Local demo control for l10n_ec development. See docs/LOCAL_DEMO.md.
-# Commands: up | reset | seed | serve | status | down | assets
+# Commands: up | reset | seed | serve | status | down | assets | sync
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -63,6 +63,7 @@ cmd_reset() {
 cmd_seed() {
 	need_bench
 	cd "$BENCH_DIR"
+	bench --site "$SITE" clear-cache >/dev/null
 	bench --site "$SITE" execute "frappe.get_attr('l10n_ec.ecuador_localization.demo_seed.seed_demo')()"
 }
 
@@ -77,6 +78,20 @@ cmd_assets() {
 	need_bench
 	cd "$BENCH_DIR"
 	bench build
+}
+
+cmd_sync() {
+	need_bench
+	if [ ! -d "$BENCH_DIR/apps/l10n_ec" ]; then
+		echo "error: l10n_ec is not installed in $BENCH_DIR" >&2
+		exit 1
+	fi
+	cd "$REPO_ROOT"
+	find l10n_ec -type f \( -name "*.py" -o -name "*.json" -o -name "*.xsd" \) -not -path "*/__pycache__/*" | while read -r f; do
+		mkdir -p "$BENCH_DIR/apps/l10n_ec/$(dirname "$f")"
+		cp "$f" "$BENCH_DIR/apps/l10n_ec/$f"
+	done
+	echo "synced working tree into bench (locale .po/.pot excluded: they flow bench -> repo)"
 }
 
 cmd_status() {
@@ -97,6 +112,7 @@ case "${1:-status}" in
 	seed) cmd_seed ;;
 	serve) cmd_serve ;;
 	assets) cmd_assets ;;
+	sync) cmd_sync ;;
 	status) cmd_status ;;
 	down) cmd_down ;;
 	*) echo "usage: dev/demo.sh {up|reset|seed|serve|status|down}" >&2; exit 1 ;;

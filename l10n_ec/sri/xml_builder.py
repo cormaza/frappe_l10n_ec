@@ -187,9 +187,7 @@ def format_6(number: float) -> str:
 
 def _info_tributaria(ctx: dict) -> str:
 	trade_name = (
-		f"<nombreComercial>{escape_xml(ctx['trade_name'])}</nombreComercial>"
-		if ctx.get("trade_name")
-		else ""
+		f"<nombreComercial>{escape_xml(ctx['trade_name'])}</nombreComercial>" if ctx.get("trade_name") else ""
 	)
 	return (
 		"<infoTributaria>"
@@ -264,9 +262,7 @@ def _line_taxes(taxes: list) -> str:
 
 def _factura_line(line: dict) -> str:
 	aux_code = (
-		f"<codigoAuxiliar>{escape_xml(line['aux_code'])}</codigoAuxiliar>"
-		if line.get("aux_code")
-		else ""
+		f"<codigoAuxiliar>{escape_xml(line['aux_code'])}</codigoAuxiliar>" if line.get("aux_code") else ""
 	)
 	return (
 		"<detalle>"
@@ -284,9 +280,7 @@ def _factura_line(line: dict) -> str:
 
 def _nota_credito_line(line: dict) -> str:
 	aux_code = (
-		f"<codigoAdicional>{escape_xml(line['aux_code'])}</codigoAdicional>"
-		if line.get("aux_code")
-		else ""
+		f"<codigoAdicional>{escape_xml(line['aux_code'])}</codigoAdicional>" if line.get("aux_code") else ""
 	)
 	return (
 		"<detalle>"
