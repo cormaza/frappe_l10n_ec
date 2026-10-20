@@ -70,7 +70,11 @@ ignore = [
     "F403", # can't detect undefined names from * import
     "F405", # can't detect undefined names from * import
     "F722", # syntax error in forward type annotation
-    "UP032", # f-string instead of format: Gettext messages keep static "{}".format() literals so bench pot extraction finds them
+    "UP032", # f-string instead of format: Gettext messages keep static "{}".format() literals so bench pot extraction finds them (mirrors frappe core)
+    "UP030", # implicit references for positional format fields (translations, mirrors frappe core)
+    "UP031", # format specifiers instead of percent format (mirrors frappe core)
+    "UP037", # quoted annotations (mirrors frappe core)
+    "UP040", # type aliases instead of type annotations (mirrors frappe core)
     "W191", # indentation contains tabs
 ]
 typing-modules = ["frappe.types.DF"]
