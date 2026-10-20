@@ -13,6 +13,7 @@ except ImportError:  # pragma: no cover
 	def _(message: str) -> str:
 		return message
 
+
 try:
 	import frappe
 except ImportError:  # pragma: no cover
@@ -71,15 +72,15 @@ def send_authorized_voucher_mail(voucher_name: str):
 		recipients=recipients,
 		subject=authorized_mail_subject(voucher.access_key),
 		message=_("Your electronic voucher was authorized by the SRI."),
-		attachments=build_attachments(xml_file_id)
-		+ [
-				{
-					"print_format_attachment": 1,
-					"doctype": voucher.reference_doctype,
-					"name": voucher.reference_name,
-					"print_format": "SRI RIDE",
-				}
-			],
+		attachments=[
+			*build_attachments(xml_file_id),
+			{
+				"print_format_attachment": 1,
+				"doctype": voucher.reference_doctype,
+				"name": voucher.reference_name,
+				"print_format": "SRI RIDE",
+			},
+		],
 		reference_doctype="SRI Electronic Voucher",
 		reference_name=voucher_name,
 	)

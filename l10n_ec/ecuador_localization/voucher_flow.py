@@ -318,6 +318,8 @@ def process_voucher(
 	poll_interval: int = 10,
 	reason: str | None = None,
 	reasons: list | None = None,
+	withholding_codes: dict | None = None,
+	sustento_code: str = "02",
 ) -> dict:
 	"""Run generate/sign/submit/poll for one voucher; safe to re-run anytime."""
 	if frappe is None:  # pragma: no cover
@@ -326,7 +328,13 @@ def process_voucher(
 	if doc.voucher_state not in ("Generated", "Signed", "Received"):
 		return {"ok": False, "skipped": f"process needs a live state, found {doc.voucher_state}"}
 	if doc.voucher_state == "Generated":
-		payload = _assemble_payload(doc, reason=reason, reasons=reasons)
+		payload = _assemble_payload(
+			doc,
+			reason=reason,
+			reasons=reasons,
+			withholding_codes=withholding_codes,
+			sustento_code=sustento_code,
+		)
 		generated = generate_voucher_xml_doc(doc, payload)
 		if not generated["ok"]:
 			return generated
@@ -389,6 +397,8 @@ def create_and_process(
 	emission_point: str | None = None,
 	reason: str | None = None,
 	reasons: list | None = None,
+	withholding_codes: dict | None = None,
+	sustento_code: str = "02",
 	run_now: bool = False,
 	key_material: tuple | None = None,
 	client_ws=None,
@@ -425,7 +435,13 @@ def create_and_process(
 	voucher.insert(ignore_permissions=True)
 	if run_now:
 		return process_voucher(
-			voucher.name, key_material=key_material, client_ws=client_ws, reason=reason, reasons=reasons
+			voucher.name,
+			key_material=key_material,
+			client_ws=client_ws,
+			reason=reason,
+			reasons=reasons,
+			withholding_codes=withholding_codes,
+			sustento_code=sustento_code,
 		)
 	enqueue_process_voucher(voucher.name)
 	return {"ok": True, "voucher": voucher.name, "queued": True}
@@ -564,7 +580,7 @@ def group_withholdings_by_sustento(withholdings: list, sustento_code: str = "02"
 	return blocks
 
 
-def _assemble_payload(doc, reason=None, reasons=None):
+def _assemble_payload(doc, reason=None, reasons=None, withholding_codes=None, sustento_code="02"):
 	"""Build the builder payload from live Company/invoice documents."""
 	company = frappe.get_doc("Company", doc.company)
 	if not getattr(company, "tax_id", None):
@@ -585,7 +601,9 @@ def _assemble_payload(doc, reason=None, reasons=None):
 		"accounting_required": bool(getattr(company, "accounting_required", False)),
 	}
 	sequence = {"sequential": sequential, "access_key": doc.access_key}
-	invoice = _invoice_dict(doc, reason=reason, reasons=reasons)
+	invoice = _invoice_dict(
+		doc, reason=reason, reasons=reasons, withholding_codes=withholding_codes, sustento_code=sustento_code
+	)
 	return build_voucher_payload(invoice, emitter, sequence)
 
 
@@ -627,7 +645,7 @@ def _invoice_line(row) -> dict:
 	}
 
 
-def _invoice_dict(doc, reason=None, reasons=None) -> dict:
+def _invoice_dict(doc, reason=None, reasons=None, withholding_codes=None, sustento_code="02") -> dict:
 	"""Map a live invoice document to the normalized payload dict."""
 	ref = frappe.get_doc(doc.reference_doctype, doc.reference_name)
 	base: dict = {
@@ -682,7 +700,95 @@ def _invoice_dict(doc, reason=None, reasons=None) -> dict:
 		if not reasons:
 			raise SriVoucherError("Debit notes need explicit reasons [{razon, valor}].")
 		base.update({"taxes": base.pop("tax_totals"), "total_value": ref.grand_total, "reasons": reasons})
+	if doc.sri_doc_code == "07":
+		if withholding_codes is None:
+			raise SriVoucherError(
+				"Withholding vouchers need explicit withholding_codes {category: (impuesto, codigo)}."
+			)
+		base.update(_withholding_subject_and_docs(doc, ref, withholding_codes, sustento_code))
 	return base
+
+
+def _withholding_subject_and_docs(doc, ref, withholding_codes: dict, sustento_code: str) -> dict:
+	"""Build the 07 subject block plus grouped sustento docs from native entries."""
+	mapped = [map_line_taxes(line) for line in base_lines(ref)]
+	doc_taxes = [
+		{
+			"tax_code": tax["code"],
+			"rate_code": tax["rate_code"],
+			"base": tax["base"],
+			"rate": tax["rate"],
+			"tax_value": tax["value"],
+		}
+		for line in mapped
+		for tax in line["taxes"]
+	]
+	purchase = {
+		"doc_code": "01",
+		"number": ref.bill_no,
+		"issue_date": ref.posting_date.strftime("%d/%m/%Y"),
+		"auth_number": "0000000000",
+		"subtotal": ref.total,
+		"total": ref.grand_total,
+		"doc_taxes": doc_taxes,
+		"payments": [{"method": "01", "amount": ref.grand_total}],
+	}
+	native = [
+		{
+			"category": row.tax_withholding_category,
+			"rate": row.tax_rate,
+			"taxable": row.taxable_amount,
+			"amount": row.withholding_amount,
+		}
+		for row in ref.tax_withholding_entries
+	]
+	inputs = sustento_entries(native, purchase, withholding_codes)
+	party = frappe.db.get_value(
+		"Supplier", ref.supplier, ["sri_identification_type", "tax_id", "supplier_name"], as_dict=True
+	)
+	return {
+		"subject_id_type": party.sri_identification_type,
+		"subject_name": party.supplier_name,
+		"subject_id": party.tax_id,
+		"fiscal_period": ref.posting_date.strftime("%m/%Y"),
+		"docs": group_withholdings_by_sustento(inputs, sustento_code=sustento_code),
+	}
+
+
+def base_lines(ref) -> list:
+	"""Normalized template-style lines for sustento doc taxes."""
+	lines = []
+	for row in ref.items:
+		taxes = []
+		if getattr(row, "item_tax_template", None):
+			rate = _template_rate(row.item_tax_template)
+			taxes.append(
+				{
+					"template": row.item_tax_template,
+					"rate": rate,
+					"base": row.amount,
+					"value": round(row.amount * rate / 100, 2),
+				}
+			)
+		lines.append(
+			{
+				"code": row.item_code,
+				"aux_code": "",
+				"description": row.description,
+				"qty": row.qty,
+				"unit_price": row.rate,
+				"discount": row.discount_amount or 0.0,
+				"subtotal": row.amount,
+				"taxes": taxes,
+			}
+		)
+	return lines
+
+
+def _template_rate(template_title: str) -> float:
+	"""Look up an Item Tax Template rate by title."""
+	template = frappe.get_doc("Item Tax Template", template_title)
+	return template.taxes[0].tax_rate if template.taxes else 0.0
 
 
 def _original_voucher(ref) -> dict:

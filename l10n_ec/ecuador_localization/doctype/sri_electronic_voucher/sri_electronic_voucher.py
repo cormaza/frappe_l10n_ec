@@ -41,6 +41,6 @@ class SRIElectronicVoucher(Document):
 		section_break_xml: DF.SectionBreak
 		signed_xml: DF.Attach | None
 		unsigned_xml: DF.Attach | None
-		sri_doc_code: DF.Literal["01", "03", "04", "05"]
+		sri_doc_code: DF.Literal["01", "03", "04", "05", "07"]
 		sri_number: DF.Data | None
 		voucher_state: DF.Literal["Generated", "Signed", "Received", "Authorized", "Returned", "Rejected"]

@@ -35,9 +35,7 @@ def sri_emisor(company_name: str) -> dict | None:
 	"""Emisor identity for print formats, or None when unavailable."""
 	if frappe is None:
 		return None
-	company = frappe.db.get_value(
-		"Company", company_name, ["company_name", "tax_id"], as_dict=True
-	)
+	company = frappe.db.get_value("Company", company_name, ["company_name", "tax_id"], as_dict=True)
 	if not company or not company.tax_id:
 		return None
 	return {"legal_name": company.company_name, "ruc": company.tax_id}
