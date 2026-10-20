@@ -122,10 +122,12 @@
       "account_number": "1010503"
      },
      "IVA PAGADO EN COMPRAS": {
-      "account_number": "1010504"
+      "account_number": "1010504",
+      "account_type": "Tax"
      },
      "RETENCIONES QUE LE HAN SIDO EFECTUADAS": {
-      "account_number": "1010505"
+      "account_number": "1010505",
+      "account_type": "Tax"
      }
     },
     "ACTIVOS NO CORRIENTES MANTENIDOS PARA LA VENTA Y OPERACIONES DISCONTINUADAS": {
@@ -354,19 +356,24 @@
       "account_number": "2010706"
      },
      "IVA COBRADO EN VENTAS": {
-      "account_number": "2010707"
+      "account_number": "2010707",
+      "account_type": "Tax"
      },
      "RETENCIÓN DE IVA POR PAGAR": {
-      "account_number": "2010708"
+      "account_number": "2010708",
+      "account_type": "Tax"
      },
      "RETENCIÓN DE IR POR PAGAR": {
-      "account_number": "2010709"
+      "account_number": "2010709",
+      "account_type": "Tax"
      },
      "ICE POR PAGAR": {
-      "account_number": "2010710"
+      "account_number": "2010710",
+      "account_type": "Tax"
      },
      "IRBPNR POR PAGAR": {
-      "account_number": "2010711"
+      "account_number": "2010711",
+      "account_type": "Tax"
      }
     },
     "CUENTAS POR PAGAR DIVERSAS – RELACIONADAS": {
@@ -607,7 +614,13 @@
    "OTRAS RENTAS": {
     "account_number": "4305"
    },
-   "root_type": "Income"
+   "root_type": "Income",
+   "(+) INGRESO POR IMPUESTO DIFERIDO": {
+    "account_number": "66"
+   },
+   "INGRESOS POR OPERACIONES DISCONTINUADAS": {
+    "account_number": "71"
+   }
   },
   "COSTO DE VENTAS Y PRODUCCIÓN": {
    "account_number": "51",
@@ -957,39 +970,25 @@
      "account_number": "520402"
     }
    },
-   "root_type": "Expense"
-  },
-  "15% PARTICIPACIÓN TRABAJADORES": {
-   "account_number": "61",
-   "root_type": "Expense"
-  },
-  "IMPUESTO A LA RENTA CAUSADO": {
-   "account_number": "63",
-   "root_type": "Expense"
-  },
-  "(-) GASTO POR IMPUESTO DIFERIDO": {
-   "account_number": "65",
-   "root_type": "Expense"
-  },
-  "(+) INGRESO POR IMPUESTO DIFERIDO": {
-   "account_number": "66",
-   "root_type": "Income"
-  },
-  "INGRESOS POR OPERACIONES DISCONTINUADAS": {
-   "account_number": "71",
-   "root_type": "Income"
-  },
-  "GASTOS POR OPERACIONES DISCONTINUADAS": {
-   "account_number": "72",
-   "root_type": "Expense"
-  },
-  "15% PARTICIPACIÓN TRABAJADORES (OPERACIONES DISCONTINUADAS)": {
-   "account_number": "74",
-   "root_type": "Expense"
-  },
-  "IMPUESTO A LA RENTA CAUSADO (OPERACIONES DISCONTINUADAS)": {
-   "account_number": "76",
-   "root_type": "Expense"
+   "root_type": "Expense",
+   "15% PARTICIPACIÓN TRABAJADORES": {
+    "account_number": "61"
+   },
+   "IMPUESTO A LA RENTA CAUSADO": {
+    "account_number": "63"
+   },
+   "(-) GASTO POR IMPUESTO DIFERIDO": {
+    "account_number": "65"
+   },
+   "GASTOS POR OPERACIONES DISCONTINUADAS": {
+    "account_number": "72"
+   },
+   "15% PARTICIPACIÓN TRABAJADORES (OPERACIONES DISCONTINUADAS)": {
+    "account_number": "74"
+   },
+   "IMPUESTO A LA RENTA CAUSADO (OPERACIONES DISCONTINUADAS)": {
+    "account_number": "76"
+   }
   }
  }
 }

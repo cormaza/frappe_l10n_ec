@@ -24,3 +24,4 @@ and per-company tax template routine.
 - L2: Analysis input at `odd/tasks/phase-04-chart-analysis.md`; official source `PLAN DE CUENTAS.pdf` (SCVS) measured at 336 account lines, presentation-oriented, missing operational leaves (banks detail, VAT in/out, withholding splits).
 - L3: Ring-2 checks (`migrate`, install on test company, template posting smoke test) pending: no bench in this environment; user tests on `version-16` directly.
 - L4: T1 committed as b1dd707 (chart JSON, 324 nodes); T2-T4 as a8040c6. Transpose reconciled 315/315 official nodes; genuine source duplications disambiguated (5201/5202, 61/74, 63/76).
+- L5: Demo run proved childless top-level lines cannot install (`The root account ... must be a group`); `61/63/65/72/74/76` nested under `52`, `66/71` under `43` (codes/names verbatim, 7 roots). Pinned by `test_roots_are_exactly_the_seven_postable_groups` and `test_orphan_result_lines_nest_under_result_groups`.

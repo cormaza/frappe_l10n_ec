@@ -94,7 +94,20 @@ class TestEcuadorChart(UnitTestCase):
 				"CON LA ADMINISTRACIÓN TRIBUTARIA",
 			),
 		)
-		self.assertEqual(self.numbers["61"], ("15% PARTICIPACIÓN TRABAJADORES",))
+		self.assertEqual(self.numbers["61"], ("GASTOS", "15% PARTICIPACIÓN TRABAJADORES"))
+
+	def test_roots_are_exactly_the_seven_postable_groups(self) -> None:
+		roots = {
+			child["account_number"]
+			for child in self.tree.values()
+			if isinstance(child, dict) and "account_number" in child
+		}
+		self.assertEqual(roots, {"1", "2", "3", "41", "43", "51", "52"})
+
+	def test_orphan_result_lines_nest_under_result_groups(self) -> None:
+		self.assertEqual(self.numbers["63"], ("GASTOS", "IMPUESTO A LA RENTA CAUSADO"))
+		self.assertEqual(self.numbers["66"], ("OTROS INGRESOS", "(+) INGRESO POR IMPUESTO DIFERIDO"))
+		self.assertEqual(self.numbers["71"], ("OTROS INGRESOS", "INGRESOS POR OPERACIONES DISCONTINUADAS"))
 
 	def test_computed_groups_are_excluded(self) -> None:
 		numbers = set(self.numbers)
@@ -109,15 +122,16 @@ class TestEcuadorChart(UnitTestCase):
 			self.assertIn(number, self.numbers, f"Missing operational leaf {number}")
 			self.assertEqual(self.numbers[number][: len(ancestors)], ancestors)
 		leaves = dict(_walk(self.tree))
-		self.assertEqual(
-			leaves[("ACTIVO", "ACTIVO CORRIENTE", "EFECTIVO Y EQUIVALENTES AL EFECTIVO", "CAJA")][
-				"account_type"
-			],
-			"Cash",
-		)
-		self.assertEqual(
-			leaves[("ACTIVO", "ACTIVO CORRIENTE", "EFECTIVO Y EQUIVALENTES AL EFECTIVO", "BANCOS")][
-				"account_type"
-			],
-			"Bank",
-		)
+		cash = ("ACTIVO", "ACTIVO CORRIENTE", "EFECTIVO Y EQUIVALENTES AL EFECTIVO")
+		self.assertEqual(leaves[(*cash, "CAJA")]["account_type"], "Cash")
+		self.assertEqual(leaves[(*cash, "BANCOS")]["account_type"], "Bank")
+		current = ("ACTIVO", "ACTIVO CORRIENTE", "ACTIVOS POR IMPUESTOS CORRIENTES")
+		payable = ("PASIVO", "PASIVO CORRIENTE", "OTRAS OBLIGACIONES CORRIENTES")
+		for number, path in {
+			"1010504": (*current, "IVA PAGADO EN COMPRAS"),
+			"2010707": (*payable, "IVA COBRADO EN VENTAS"),
+			"2010708": (*payable, "RETENCIÓN DE IVA POR PAGAR"),
+		}.items():
+			self.assertEqual(
+				leaves[path]["account_type"], "Tax", f"{number} must be Tax for Item Tax Templates"
+			)

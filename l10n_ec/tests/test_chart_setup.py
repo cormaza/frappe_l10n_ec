@@ -13,7 +13,7 @@ class TestChartSetup(UnitTestCase):
 
 	def test_tree_loads_with_all_roots(self) -> None:
 		tree = get_ec_chart_tree()
-		self.assertGreaterEqual(len(tree), 10)
+		self.assertEqual(len(tree), 7)
 
 	def test_find_account_path_resolves_operational_leaf(self) -> None:
 		tree = get_ec_chart_tree()

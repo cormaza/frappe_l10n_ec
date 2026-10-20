@@ -39,6 +39,12 @@ operational one. Gaps blocking daily postings and our tax templates:
   leaves we extend operationally (become groups, documented per account).
 - Computed/cash-flow/equity-change groups (`42, 60-91, 95-99`) are
   **excluded** from the ERPNext tree (filed statements, not postings).
+- Childless official top-level lines (`61, 63, 65, 66, 71, 72, 74, 76`)
+  nest under their result-stem group (`52` GASTOS / `43` OTROS INGRESOS):
+  ERPNext rejects childless roots (`The root account ... must be a group`)
+  and empty groups cannot receive postings, so the leaves keep their
+  official codes/names and gain a postable home. Final roots:
+  `1, 2, 3, 41, 43, 51, 52`.
 - Operational leaves (~30-40) appended under the correct official parent
   with consistent 7/9-digit numbering: bank/cash under `10101`, VAT
   in/out, withholding payable splits, ICE/IRBPNR, customer/supplier
