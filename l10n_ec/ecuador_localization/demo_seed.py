@@ -96,11 +96,8 @@ DEMO_GROUPS = [
 
 def group_key(group: dict) -> str:
 	"""Return the name key of a group doc dict."""
-	return (
-		group.get("customer_group_name")
-		or group.get("territory_name")
-		or group.get("supplier_group_name")
-	)
+	return group.get("customer_group_name") or group.get("territory_name") or group.get("supplier_group_name")
+
 
 DEMO_ADDRESS_TEMPLATE = {"doctype": "Address Template", "country": "Ecuador"}
 

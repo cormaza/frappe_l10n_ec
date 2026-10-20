@@ -36,9 +36,7 @@ class TestDemoSeed(UnitTestCase):
 
 	def test_negative_party_is_actually_invalid(self) -> None:
 		self.assertFalse(
-			validate_identification(
-				NEGATIVE_PARTY["sri_identification_type"], NEGATIVE_PARTY["tax_id"]
-			)
+			validate_identification(NEGATIVE_PARTY["sri_identification_type"], NEGATIVE_PARTY["tax_id"])
 		)
 
 	def test_party_names_resolve(self) -> None:
