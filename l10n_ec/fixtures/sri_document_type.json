@@ -1,0 +1,9 @@
+[
+ {"doctype": "SRI Document Type", "code": "01", "title": "Invoice"},
+ {"doctype": "SRI Document Type", "code": "03", "title": "Purchase Liquidation"},
+ {"doctype": "SRI Document Type", "code": "04", "title": "Credit Note"},
+ {"doctype": "SRI Document Type", "code": "05", "title": "Debit Note"},
+ {"doctype": "SRI Document Type", "code": "06", "title": "Delivery Note"},
+ {"doctype": "SRI Document Type", "code": "07", "title": "Withholding"},
+ {"doctype": "SRI Document Type", "code": "41", "title": "Reimbursement"}
+]

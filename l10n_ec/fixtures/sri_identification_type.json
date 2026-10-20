@@ -1,0 +1,7 @@
+[
+ {"doctype": "SRI Identification Type", "code": "04", "title": "RUC"},
+ {"doctype": "SRI Identification Type", "code": "05", "title": "Identity Card"},
+ {"doctype": "SRI Identification Type", "code": "06", "title": "Passport"},
+ {"doctype": "SRI Identification Type", "code": "07", "title": "Final Consumer"},
+ {"doctype": "SRI Identification Type", "code": "08", "title": "Foreign Identification"}
+]

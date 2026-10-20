@@ -1,0 +1,10 @@
+[
+ {"doctype": "SRI Payment Method", "code": "01", "title": "Without Financial System"},
+ {"doctype": "SRI Payment Method", "code": "15", "title": "Compensation"},
+ {"doctype": "SRI Payment Method", "code": "16", "title": "Debit Card"},
+ {"doctype": "SRI Payment Method", "code": "17", "title": "Electronic Money"},
+ {"doctype": "SRI Payment Method", "code": "18", "title": "Prepaid Card"},
+ {"doctype": "SRI Payment Method", "code": "19", "title": "Credit Card"},
+ {"doctype": "SRI Payment Method", "code": "20", "title": "Other with Financial System"},
+ {"doctype": "SRI Payment Method", "code": "21", "title": "Endorsement of Titles"}
+]
