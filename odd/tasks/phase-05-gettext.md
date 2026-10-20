@@ -10,7 +10,7 @@ everything that makes them succeed: wrapped Python strings, a curated
 
 - S1: Roadmap Phase 5 scope, quoted verbatim: "Ensure every user-facing Python string is wrapped in `frappe._(\"...\")` and every JS string in `__(\"...\")` (English source) for all DocTypes delivered in Phases 0–4.", "Generate `l10n_ec/locale/main.pot`, translate `l10n_ec/locale/es.po`, and compile to `.mo` via `bench generate-pot-file`, `bench update-po-files --locale es`, `bench compile-po-to-mo --locale es`."
 - S2: Roadmap Phase 5 exit criteria, quoted verbatim: "pot/po/mo pipeline runs clean inside bench; Spanish UI spot-check passes on the delivered DocTypes."
-- S3: Locked readings: no JS files exist in the repo, so there is nothing to wrap in `__()`; pure-domain modules (`l10n_ec/sri/`, `validation.py`) keep raw English literals (Ring-1 import constraint) and are covered via `.po` msgids; parametrized f-string messages are rewritten to static `{0}`-style literals with identical runtime text (suite pins the text); `frappe._()` wrapping happens only inside `if frappe:` branches; fixture titles are user data, not translated; catalog `code` options are identifiers, not translated; `*.mo` is a build artifact (gitignored), `.pot`/`.po` are committed.
+- S3: Locked readings: no JS files exist in the repo, so there is nothing to wrap in `__()`; user-facing literals use the `from frappe import _` pattern with an identity fallback (Ring-1 safe) so the bench pot scanner extracts them; custom-field labels stay raw English in `custom_fields.py` (stored in DB, translated at display) with extraction markers in `l10n_ec/locale/i18n_markers.py`; parametrized messages use static `{}` literals with identical runtime text (suite pins the text); core-owned role names (`Accounts Manager`, `System Manager`) are intentionally left untranslated; `*.mo` is a build artifact (gitignored), `.pot`/`.po` are committed.
 
 ## Tasks
 
@@ -21,5 +21,6 @@ everything that makes them succeed: wrapped Python strings, a curated
 ## Log
 
 - L1: "hagamos la fase 5"
-- L2: Bench steps and UI spot-check pending: no bench in this environment; user runs them on `version-16`.
+- L2: Bench steps done in local bench (`frappe-bench-v16`, MariaDB 11.8 + Redis in docker): `generate-pot-file`, `update-po-files --locale es`, `compile-po-to-mo --locale es` all clean; 65/65 integration tests green on `test_site`. Only the desk UI spot-check remains user-side.
 - L3: Ruff UP030 forbids `{0}` and UP032 forbids `.format()`; kept `{}` implicit style plus UP032/UP030/UP031/UP037/UP040 ignores mirroring frappe core's own config (each annotated `(translations)` upstream), so the config cannot drift from a future core integration.
+- L4: Ring 2 caught three real bugs: fixtures need explicit `name` (`import_doc` reads it), controller tests must use `frappe.get_doc` under real frappe, and error expectations must be dual-ring `(ValueError, frappe.ValidationError)`. Bench `update-po-files` prunes msgids its scanner cannot see (kept only via real `_()` calls or the markers file) and requires full `YYYY-MM-DD HH:MM` in `PO-Revision-Date`.
