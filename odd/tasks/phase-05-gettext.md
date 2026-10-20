@@ -22,4 +22,4 @@ everything that makes them succeed: wrapped Python strings, a curated
 
 - L1: "hagamos la fase 5"
 - L2: Bench steps and UI spot-check pending: no bench in this environment; user runs them on `version-16`.
-- L3: Ruff UP030 forbids `{0}` and UP032 forbids `.format()`; kept `{}` implicit style plus a one-line UP032 ignore with rationale (ecosystem Gettext convention).
+- L3: Ruff UP030 forbids `{0}` and UP032 forbids `.format()`; kept `{}` implicit style plus UP032/UP030/UP031/UP037/UP040 ignores mirroring frappe core's own config (each annotated `(translations)` upstream), so the config cannot drift from a future core integration.
