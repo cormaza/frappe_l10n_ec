@@ -34,6 +34,10 @@ class TestAppInstallability(UnitTestCase):
 
 	def test_package_metadata_and_hooks(self) -> None:
 		"""Verify Frappe v16 app hooks and package distribution metadata."""
+		self.assertTrue(
+			l10n_ec.__version__.startswith("16."),
+			f"Expected Frappe v16 major version '16.x.y', got '{l10n_ec.__version__}'",
+		)
 		self.assertEqual(importlib.metadata.version("l10n_ec"), l10n_ec.__version__)
 		self.assertEqual(hooks.app_name, "l10n_ec")
 		self.assertEqual(hooks.app_title, "Ecuador Localization")
