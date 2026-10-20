@@ -7,6 +7,12 @@ pure data and pinned by Ring-1 tests; only :func:`seed_demo` touches frappe.
 
 from datetime import date
 
+from l10n_ec.ecuador_localization.chart_setup import (
+	INVENTORY_ACCOUNT_NUMBER,
+	PAYABLE_ACCOUNT_NUMBER,
+	RECEIVABLE_ACCOUNT_NUMBER,
+)
+
 DEMO_COMPANY = {
 	"abbr": "DE",
 	"company_name": "Demo Ecuador",
@@ -101,7 +107,62 @@ def group_key(group: dict) -> str:
 	return group.get("customer_group_name") or group.get("territory_name") or group.get("supplier_group_name")
 
 
+def master_key(entry: dict) -> str:
+	"""Return the name key of a master-data doc dict."""
+	for field in ("uom_name", "item_group_name", "warehouse_name", "price_list_name"):
+		if field in entry:
+			return entry[field]
+	raise KeyError(f"No name key in {entry}")
+
+
 DEMO_ADDRESS_TEMPLATE = {"doctype": "Address Template", "country": "Ecuador"}
+
+DEMO_MASTERS = [
+	{"doctype": "UOM", "uom_name": "Nos"},
+	{"doctype": "Item Group", "item_group_name": "All Item Groups", "is_group": 1},
+	{
+		"doctype": "Item Group",
+		"item_group_name": "Demo Goods",
+		"is_group": 0,
+		"parent_item_group": "All Item Groups",
+	},
+	{"doctype": "Warehouse", "warehouse_name": "Demo Stores - DE", "company": "Demo Ecuador"},
+	{"doctype": "Price List", "price_list_name": "Standard Selling", "currency": "USD", "selling": 1},
+	{"doctype": "Price List", "price_list_name": "Standard Buying", "currency": "USD", "buying": 1},
+]
+
+DEMO_ITEM = {
+	"doctype": "Item",
+	"expense_account_number": "520128",
+	"income_account_number": "4101",
+	"is_stock_item": 1,
+	"item_code": "DEMO-WIDGET",
+	"item_group": "Demo Goods",
+	"item_name": "Demo Widget",
+	"stock_uom": "Nos",
+	"warehouse": "Demo Stores - DE",
+}
+
+DEMO_PURCHASE = {
+	"bill_date": "2026-10-21",
+	"bill_no": "DEMO-BILL-001",
+	"currency": "USD",
+	"items": [{"item_code": "DEMO-WIDGET", "qty": 10, "rate": 10.0, "warehouse": "Demo Stores - DE"}],
+	"supplier": "Demo Supplier RUC",
+	"update_stock": 1,
+}
+
+DEMO_SALES = {
+	"currency": "USD",
+	"items": [{"item_code": "DEMO-WIDGET", "qty": 5, "rate": 15.0, "warehouse": "Demo Stores - DE"}],
+	"party": "Demo Customer RUC",
+	"update_stock": 1,
+}
+
+DEMO_PAYMENTS = [
+	{"amount": 75.0, "against": "sales", "party": "Demo Customer RUC", "payment_type": "Receive"},
+	{"amount": 100.0, "against": "purchase", "party": "Demo Supplier RUC", "payment_type": "Pay"},
+]
 
 # Mirrors ERPNext setup-wizard presets: sites that skip the wizard lack these.
 PARTY_TYPES = [
@@ -157,6 +218,9 @@ def seed_demo() -> dict:
 		if not frappe.db.exists("Party Type", party_type["party_type"]):
 			frappe.get_doc(party_type).insert(ignore_permissions=True)
 
+	if frappe.db.get_single_value("Global Defaults", "default_currency") != "USD":
+		frappe.db.set_single_value("Global Defaults", "default_currency", "USD")
+
 	for group in DEMO_GROUPS:
 		if not frappe.db.exists(group["doctype"], group_key(group)):
 			frappe.get_doc(group).insert(ignore_permissions=True)
@@ -175,6 +239,132 @@ def seed_demo() -> dict:
 			address["links"] = [{"link_doctype": entry["party"]["doctype"], "link_name": name}]
 			frappe.get_doc({"doctype": "Address", **address}).insert(ignore_permissions=True)
 		report["parties"].append(name)
+
+	def account_name(number: str) -> str:
+		return frappe.db.get_value("Account", {"company": company, "account_number": number}, "name")
+
+	for entry in DEMO_MASTERS:
+		if not frappe.db.exists(entry["doctype"], master_key(entry)):
+			doc = dict(entry)
+			if doc["doctype"] == "Warehouse":
+				doc["account"] = account_name(INVENTORY_ACCOUNT_NUMBER)
+			frappe.get_doc(doc).insert(ignore_permissions=True)
+
+	warehouse = frappe.get_doc("Warehouse", "Demo Stores - DE")
+	if not warehouse.account:
+		warehouse.account = account_name(INVENTORY_ACCOUNT_NUMBER)
+		warehouse.save(ignore_permissions=True)
+
+	if not frappe.db.exists("Item", DEMO_ITEM["item_code"]):
+		item = dict(DEMO_ITEM)
+		item["item_defaults"] = [
+			{
+				"company": company,
+				"default_warehouse": item.pop("warehouse"),
+				"income_account": account_name(item.pop("income_account_number")),
+				"expense_account": account_name(item.pop("expense_account_number")),
+			}
+		]
+		frappe.get_doc(item).insert(ignore_permissions=True)
+
+	purchase_name = frappe.db.exists(
+		"Purchase Invoice",
+		{"supplier": DEMO_PURCHASE["supplier"], "bill_no": DEMO_PURCHASE["bill_no"], "docstatus": 1},
+	)
+	if not purchase_name:
+		purchase = frappe.get_doc(
+			{
+				"doctype": "Purchase Invoice",
+				"supplier": DEMO_PURCHASE["supplier"],
+				"company": company,
+				"currency": DEMO_PURCHASE["currency"],
+				"bill_no": DEMO_PURCHASE["bill_no"],
+				"bill_date": DEMO_PURCHASE["bill_date"],
+				"posting_date": DEMO_PURCHASE["bill_date"],
+				"update_stock": 1,
+				"items": DEMO_PURCHASE["items"],
+			}
+		)
+		purchase.insert(ignore_permissions=True)
+		purchase.submit()
+		purchase_name = purchase.name
+
+	sales_name = frappe.db.exists("Sales Invoice", {"customer": DEMO_SALES["party"], "docstatus": 1})
+	if not sales_name:
+		sales = frappe.get_doc(
+			{
+				"doctype": "Sales Invoice",
+				"customer": DEMO_SALES["party"],
+				"company": company,
+				"currency": DEMO_SALES["currency"],
+				"posting_date": DEMO_PURCHASE["bill_date"],
+				"update_stock": 1,
+				"items": DEMO_SALES["items"],
+			}
+		)
+		sales.insert(ignore_permissions=True)
+		sales.submit()
+		sales_name = sales.name
+
+	cash = account_name("1010101")
+	receivable = account_name(RECEIVABLE_ACCOUNT_NUMBER)
+	payable = account_name(PAYABLE_ACCOUNT_NUMBER)
+	payment_names = []
+	for spec in DEMO_PAYMENTS:
+		invoice_name = sales_name if spec["against"] == "sales" else purchase_name
+		invoice_doctype = "Sales Invoice" if spec["against"] == "sales" else "Purchase Invoice"
+		party_type = "Customer" if spec["payment_type"] == "Receive" else "Supplier"
+		paid_from = receivable if spec["payment_type"] == "Receive" else cash
+		paid_to = cash if spec["payment_type"] == "Receive" else payable
+		existing = frappe.db.exists(
+			"Payment Entry",
+			{"party": spec["party"], "payment_type": spec["payment_type"], "docstatus": 1},
+		)
+		if existing:
+			payment_names.append(existing)
+			continue
+		payment = frappe.get_doc(
+			{
+				"doctype": "Payment Entry",
+				"naming_series": "ACC-PAY-.YYYY.-",
+				"payment_type": spec["payment_type"],
+				"party_type": party_type,
+				"party": spec["party"],
+				"company": company,
+				"posting_date": DEMO_PURCHASE["bill_date"],
+				"paid_amount": spec["amount"],
+				"received_amount": spec["amount"],
+				"paid_from": paid_from,
+				"paid_to": paid_to,
+				"paid_from_account_currency": "USD",
+				"paid_to_account_currency": "USD",
+				"source_exchange_rate": 1,
+				"target_exchange_rate": 1,
+				"base_paid_amount": spec["amount"],
+				"base_received_amount": spec["amount"],
+				"references": [
+					{
+						"reference_doctype": invoice_doctype,
+						"reference_name": invoice_name,
+						"allocated_amount": spec["amount"],
+					}
+				],
+			}
+		)
+		payment.insert(ignore_permissions=True)
+		payment.submit()
+		payment_names.append(payment.name)
+
+	report["purchase_invoice"] = purchase_name
+	report["sales_invoice"] = sales_name
+	report["payments"] = payment_names
+	report["stock_on_hand"] = frappe.db.get_value(
+		"Bin", {"item_code": "DEMO-WIDGET", "warehouse": "Demo Stores - DE"}, "actual_qty"
+	)
+	report["outstanding"] = {
+		"purchase": frappe.db.get_value("Purchase Invoice", purchase_name, "outstanding_amount"),
+		"sales": frappe.db.get_value("Sales Invoice", sales_name, "outstanding_amount"),
+	}
 
 	negative_name = NEGATIVE_PARTY["customer_name"]
 	negative = frappe.get_doc(dict(NEGATIVE_PARTY)).insert(ignore_permissions=True)

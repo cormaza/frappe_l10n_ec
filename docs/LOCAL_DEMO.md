@@ -38,9 +38,18 @@ login lands straight on the desk (no setup wizard).
 - A negative case: a throwaway customer with an invalid RUC is saved and
   must be **blocked** by the Phase 3 hook (`negative_blocked: true` in the
   report), then removed again.
+- Operating master data skipped by the setup wizard: UOM `Nos`, `All Item
+  Groups` + `Demo Goods`, warehouse `Demo Stores - DE` (with its inventory
+  account), `Standard Selling`/`Standard Buying` price lists (USD), Party
+  Types, and global default currency USD.
+- Closing transactions (all submitted): purchase invoice for 10 widgets @
+  10 with stock update, sales invoice for 5 @ 15 with stock update, and
+  both payment entries. No taxes on lines yet (Phase 6).
 
-`seed` prints a report: company, parties, `negative_blocked`, account
-counts by root type, and the Item Tax Template titles for the company.
+`seed` prints a report: company, parties, `negative_blocked`, invoice and
+payment names, `stock_on_hand` (5.0 = 10 bought − 5 sold), `outstanding`
+(0.0 = cycles closed), account counts by root type, and the Item Tax
+Template titles for the company.
 
 ## Verification Checklist
 

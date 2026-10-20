@@ -5,11 +5,17 @@ from l10n_ec.ecuador_localization.demo_seed import (
 	DEMO_ADDRESS_TEMPLATE,
 	DEMO_COMPANY,
 	DEMO_GROUPS,
+	DEMO_ITEM,
+	DEMO_MASTERS,
 	DEMO_PARTIES,
+	DEMO_PAYMENTS,
+	DEMO_PURCHASE,
+	DEMO_SALES,
 	NEGATIVE_PARTY,
 	PARTY_TYPES,
 	fiscal_year_data,
 	group_key,
+	master_key,
 	party_name,
 )
 from l10n_ec.sri.identification import validate_identification
@@ -55,6 +61,29 @@ class TestDemoSeed(UnitTestCase):
 		names = [party_name(entry) for entry in DEMO_PARTIES]
 		self.assertEqual(len(set(names)), len(names))
 		self.assertIn("Demo Customer RUC", names)
+
+	def test_masters_have_name_keys(self) -> None:
+		keys = [master_key(entry) for entry in DEMO_MASTERS]
+		self.assertEqual(len(set(keys)), len(keys))
+		self.assertIn("Nos", keys)
+		self.assertIn("Demo Stores - DE", keys)
+
+	def test_item_points_to_chart_accounts(self) -> None:
+		self.assertEqual(DEMO_ITEM["income_account_number"], "4101")
+		self.assertEqual(DEMO_ITEM["expense_account_number"], "520128")
+		self.assertEqual(DEMO_ITEM["warehouse"], "Demo Stores - DE")
+
+	def test_payment_amounts_match_invoice_totals(self) -> None:
+		purchase_total = sum(line["qty"] * line["rate"] for line in DEMO_PURCHASE["items"])
+		sales_total = sum(line["qty"] * line["rate"] for line in DEMO_SALES["items"])
+		by_side = {spec["against"]: spec["amount"] for spec in DEMO_PAYMENTS}
+		self.assertEqual(by_side, {"sales": sales_total, "purchase": purchase_total})
+		self.assertEqual((purchase_total, sales_total), (100.0, 75.0))
+
+	def test_demo_currency_is_usd(self) -> None:
+		self.assertEqual(DEMO_COMPANY["default_currency"], "USD")
+		self.assertEqual(DEMO_PURCHASE["currency"], "USD")
+		self.assertEqual(DEMO_SALES["currency"], "USD")
 
 	def test_party_types_mirror_wizard_presets(self) -> None:
 		by_type = {row["party_type"]: row["account_type"] for row in PARTY_TYPES}
