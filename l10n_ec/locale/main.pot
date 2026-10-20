@@ -1,0 +1,176 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: l10n_ec 16.0.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid ""
+msgstr ""
+
+msgid "Signature Name"
+msgstr ""
+
+msgid "Company"
+msgstr ""
+
+msgid "Active"
+msgstr ""
+
+msgid "State"
+msgstr ""
+
+msgid "Days for Notification"
+msgstr ""
+
+msgid "PKCS#12 Signature Credentials"
+msgstr ""
+
+msgid "PKCS#12 Signature File (.p12)"
+msgstr ""
+
+msgid "Signing Password"
+msgstr ""
+
+msgid "Certificate Information"
+msgstr ""
+
+msgid "Issue Date"
+msgstr ""
+
+msgid "Expiration Date"
+msgstr ""
+
+msgid "Organization (Subject)"
+msgstr ""
+
+msgid "Serial Number (Subject)"
+msgstr ""
+
+msgid "Organization (Issuer)"
+msgstr ""
+
+msgid "Certificate Serial Number"
+msgstr ""
+
+msgid "Certificate Version"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Establishment Code"
+msgstr ""
+
+msgid "Emission Point Code"
+msgstr ""
+
+msgid "Sequences by Document Type"
+msgstr ""
+
+msgid "Document Type"
+msgstr ""
+
+msgid "Current Sequence"
+msgstr ""
+
+msgid "unverified"
+msgstr ""
+
+msgid "valid"
+msgstr ""
+
+msgid "expired"
+msgstr ""
+
+msgid "SRI Environment"
+msgstr ""
+
+msgid "SRI Signature"
+msgstr ""
+
+msgid "Special Taxpayer Resolution"
+msgstr ""
+
+msgid "Withholding Agent Resolution"
+msgstr ""
+
+msgid "RIMPE Regime"
+msgstr ""
+
+msgid "Accounting Required"
+msgstr ""
+
+msgid "SRI Identification Type"
+msgstr ""
+
+msgid "Related Party"
+msgstr ""
+
+msgid "Test"
+msgstr ""
+
+msgid "Production"
+msgstr ""
+
+msgid "Popular Business"
+msgstr ""
+
+msgid "Entrepreneur"
+msgstr ""
+
+msgid "Signing password is required to decode the PKCS#12 file."
+msgstr ""
+
+msgid "Error opening the signature, possibly the signature key has been entered incorrectly or the file is not supported: {}"
+msgstr ""
+
+msgid "The PKCS#12 bundle does not contain a private key and certificate."
+msgstr ""
+
+msgid "The electronic signature expired on {} and the document cannot be signed. Upload a valid signature file in SRI Signature."
+msgstr ""
+
+msgid "No PKCS#12 signature content attached to SRI Signature document."
+msgstr ""
+
+msgid "Invalid Ecuadorian document number '{}'. Expected format '001-001-000000001'."
+msgstr ""
+
+msgid "Access key payload must be exactly 48 numeric digits before check digit."
+msgstr ""
+
+msgid "Complete document number must be 15 digits (got '{}')."
+msgstr ""
+
+msgid "Company RUC must be 13 numeric digits (got '{}')."
+msgstr ""
+
+msgid "SRI environment must be '1' (test) or '2' (production), got '{}'."
+msgstr ""
+
+msgid "Document SRI code must be 2 digits (got '{}')."
+msgstr ""
+
+msgid "Numeric code must be 8 digits (got '{}')."
+msgstr ""
+
+msgid "Unknown SRI service type: {}"
+msgstr ""
+
+msgid "Invalid tax identification '{}' for type '{}'."
+msgstr ""
+
+msgid "SRI emission code '{}' must be exactly 3 numeric digits."
+msgstr ""
+
+msgid "SRI sequence {} must be between 0 and {}."
+msgstr ""
+
+msgid "Cannot reinstall the chart: the company already has ledger entries."
+msgstr ""
+
+msgid "Missing account {} for tax template '{}'."
+msgstr ""

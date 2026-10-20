@@ -1,0 +1,178 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: l10n_ec 16.0.0\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: Ecuador Localization Contributors\n"
+"Last-Translator: Ecuador Localization Contributors\n"
+"PO-Revision-Date: 2026-10-20\n"
+
+msgid "Signature Name"
+msgstr "Nombre de la firma"
+
+msgid "Company"
+msgstr "Compañía"
+
+msgid "Active"
+msgstr "Activo"
+
+msgid "State"
+msgstr "Estado"
+
+msgid "Days for Notification"
+msgstr "Días para notificación"
+
+msgid "PKCS#12 Signature Credentials"
+msgstr "Credenciales de firma PKCS#12"
+
+msgid "PKCS#12 Signature File (.p12)"
+msgstr "Archivo de firma PKCS#12 (.p12)"
+
+msgid "Signing Password"
+msgstr "Contraseña de firma"
+
+msgid "Certificate Information"
+msgstr "Información del certificado"
+
+msgid "Issue Date"
+msgstr "Fecha de emisión"
+
+msgid "Expiration Date"
+msgstr "Fecha de vencimiento"
+
+msgid "Organization (Subject)"
+msgstr "Organización (titular)"
+
+msgid "Serial Number (Subject)"
+msgstr "Número de serie (titular)"
+
+msgid "Organization (Issuer)"
+msgstr "Organización (emisor)"
+
+msgid "Certificate Serial Number"
+msgstr "Número de serie del certificado"
+
+msgid "Certificate Version"
+msgstr "Versión del certificado"
+
+msgid "Code"
+msgstr "Código"
+
+msgid "Title"
+msgstr "Título"
+
+msgid "Establishment Code"
+msgstr "Código de establecimiento"
+
+msgid "Emission Point Code"
+msgstr "Código de punto de emisión"
+
+msgid "Sequences by Document Type"
+msgstr "Secuencias por tipo de comprobante"
+
+msgid "Document Type"
+msgstr "Tipo de comprobante"
+
+msgid "Current Sequence"
+msgstr "Secuencia actual"
+
+msgid "unverified"
+msgstr "Sin verificar"
+
+msgid "valid"
+msgstr "Válido"
+
+msgid "expired"
+msgstr "Vencido"
+
+msgid "SRI Environment"
+msgstr "Ambiente SRI"
+
+msgid "SRI Signature"
+msgstr "Firma SRI"
+
+msgid "Special Taxpayer Resolution"
+msgstr "Resolución de contribuyente especial"
+
+msgid "Withholding Agent Resolution"
+msgstr "Resolución de agente de retención"
+
+msgid "RIMPE Regime"
+msgstr "Régimen RIMPE"
+
+msgid "Accounting Required"
+msgstr "Obligado a llevar contabilidad"
+
+msgid "SRI Identification Type"
+msgstr "Tipo de identificación SRI"
+
+msgid "Related Party"
+msgstr "Parte relacionada"
+
+msgid "Test"
+msgstr "Pruebas"
+
+msgid "Production"
+msgstr "Producción"
+
+msgid "Popular Business"
+msgstr "Negocio popular"
+
+msgid "Entrepreneur"
+msgstr "Emprendedor"
+
+msgid "Signing password is required to decode the PKCS#12 file."
+msgstr "Se requiere la contraseña para descifrar el archivo PKCS#12."
+
+msgid "Error opening the signature, possibly the signature key has been entered incorrectly or the file is not supported: {}"
+msgstr "Error al abrir la firma, es posible que la clave se haya ingresado incorrectamente o que el archivo no sea compatible: {}"
+
+msgid "The PKCS#12 bundle does not contain a private key and certificate."
+msgstr "El paquete PKCS#12 no contiene clave privada ni certificado."
+
+msgid "The electronic signature expired on {} and the document cannot be signed. Upload a valid signature file in SRI Signature."
+msgstr "La firma electrónica venció el {} y no se puede firmar el comprobante. Cargue un archivo de firma válido en Firma SRI."
+
+msgid "No PKCS#12 signature content attached to SRI Signature document."
+msgstr "No hay contenido de firma PKCS#12 adjunto al documento de Firma SRI."
+
+msgid "Invalid Ecuadorian document number '{}'. Expected format '001-001-000000001'."
+msgstr "Número de comprobante ecuatoriano inválido '{}'. Formato esperado '001-001-000000001'."
+
+msgid "Access key payload must be exactly 48 numeric digits before check digit."
+msgstr "La clave de acceso debe tener exactamente 48 dígitos numéricos antes del dígito verificador."
+
+msgid "Complete document number must be 15 digits (got '{}')."
+msgstr "El número de comprobante completo debe tener 15 dígitos (se recibió '{}')."
+
+msgid "Company RUC must be 13 numeric digits (got '{}')."
+msgstr "El RUC de la compañía debe tener 13 dígitos numéricos (se recibió '{}')."
+
+msgid "SRI environment must be '1' (test) or '2' (production), got '{}'."
+msgstr "El ambiente SRI debe ser '1' (pruebas) o '2' (producción), se recibió '{}'."
+
+msgid "Document SRI code must be 2 digits (got '{}')."
+msgstr "El código SRI del comprobante debe tener 2 dígitos (se recibió '{}')."
+
+msgid "Numeric code must be 8 digits (got '{}')."
+msgstr "El código numérico debe tener 8 dígitos (se recibió '{}')."
+
+msgid "Unknown SRI service type: {}"
+msgstr "Tipo de servicio SRI desconocido: {}"
+
+msgid "Invalid tax identification '{}' for type '{}'."
+msgstr "Identificación tributaria inválida '{}' para el tipo '{}'."
+
+msgid "SRI emission code '{}' must be exactly 3 numeric digits."
+msgstr "El código de emisión SRI '{}' debe tener exactamente 3 dígitos numéricos."
+
+msgid "SRI sequence {} must be between 0 and {}."
+msgstr "La secuencia SRI {} debe estar entre 0 y {}."
+
+msgid "Cannot reinstall the chart: the company already has ledger entries."
+msgstr "No se puede reinstalar el plan contable: la compañía ya tiene movimientos contables."
+
+msgid "Missing account {} for tax template '{}'."
+msgstr "Falta la cuenta {} para la plantilla de impuestos '{}'."
