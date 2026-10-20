@@ -4,56 +4,67 @@ DocTypes are the core data model in Frappe. Each DocType becomes a database tabl
 
 ## Creating a DocType
 
-Write the JSON definition file and let `bench migrate` create the folder structure. Do NOT `mkdir` DocType directories.
+File paths depend on workspace mode:
+- **Standalone App Repository Mode**: `<app>/<module>/doctype/<doctype_name>/` (e.g. `l10n_ec/ecuador_localization/doctype/sri_signature/`)
+- **Full `frappe-bench` Mode**: `apps/<app>/<app>/<module>/doctype/<doctype_name>/`
 
-File path: `apps/<app>/<app>/<module>/doctype/<doctype_name>/<doctype_name>.json`
+Each DocType directory contains:
+- `<doctype_name>.json` — DocType schema definition (`field_order` must list every `fieldname` in `fields` in exact order, and `module` must match an entry in `<app>/modules.txt`)
+- `<doctype_name>.py` — Python controller class inheriting from `frappe.model.document.Document` (named in PascalCase, e.g. `SRISignature` for `"name": "SRI Signature"`)
+- `test_<doctype_name>.py` — `UnitTestCase` / `IntegrationTestCase` test suite
+- `__init__.py` — package marker
 
-Minimal example:
+Minimal `<doctype_name>.json` example:
 ```json
 {
-    "name": "Expense",
-    "module": "Expense Tracker",
-    "doctype": "DocType",
-    "engine": "InnoDB",
-    "fields": [
-        {
-            "fieldname": "title",
-            "fieldtype": "Data",
-            "label": "Title",
-            "reqd": 1
-        },
-        {
-            "fieldname": "amount",
-            "fieldtype": "Currency",
-            "label": "Amount",
-            "reqd": 1
-        },
-        {
-            "fieldname": "status",
-            "fieldtype": "Select",
-            "label": "Status",
-            "options": "Draft\nApproved\nRejected",
-            "default": "Draft"
-        }
-    ],
-    "autoname": "format:EXP-{####}",
-    "naming_rule": "Expression",
-    "is_submittable": 0,
-    "permissions": [
-        {
-            "role": "System Manager",
-            "read": 1,
-            "write": 1,
-            "create": 1,
-            "delete": 1
-        }
-    ]
+ "actions": [],
+ "autoname": "format:EXP-{####}",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "amount",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "reqd": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nApproved\nRejected"
+  }
+ ],
+ "is_submittable": 0,
+ "links": [],
+ "module": "Ecuador Localization",
+ "name": "Expense",
+ "naming_rule": "Expression",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
 }
-```
-
-Also create an empty `__init__.py` alongside the JSON:
-```
-apps/<app>/<app>/<module>/doctype/<doctype_name>/__init__.py
 ```
 
 ## Common field types
@@ -71,6 +82,7 @@ apps/<app>/<app>/<module>/doctype/<doctype_name>/__init__.py
 | Table | Child table (one-to-many) |
 | Check | Boolean (0/1) |
 | Attach | File attachment |
+| Password | Encrypted secret / password |
 
 ## Naming patterns
 
@@ -97,24 +109,29 @@ For one-to-many relationships (e.g. Expense Items inside an Expense):
 
 A child DocType needs no permissions. It inherits them from the parent.
 
-## After creating/modifying DocTypes
+## Validating DocTypes
 
-Always run:
-```bash
-bench --site <site> migrate
-```
+- **In Standalone App Repository Mode (Ring 1)**:
+  ```bash
+  .venv/bin/pytest -v -W error
+  ```
+  `TestAppInstallability::test_doctypes_schema_and_controllers` validates every `doctype/*/*.json` schema, `field_order` consistency, `modules.txt` membership, and controller class import.
+- **In Full `frappe-bench` Mode (Ring 2)**:
+  ```bash
+  bench --site <site> migrate
+  ```
 
 ## Other useful JSON keys
 
 ```json
 {
-    "sort_field": "modified",       // default sort column for list view
-    "sort_order": "DESC",           // ASC or DESC
-    "track_changes": 1,             // enable version history / timeline
-    "is_submittable": 1             // enables Submit → Cancel → Amend workflow
+    "sort_field": "modified",
+    "sort_order": "DESC",
+    "track_changes": 1,
+    "is_submittable": 1
 }
 ```
 
 Submittable DocTypes get a `docstatus` field automatically: `0` = Draft, `1` = Submitted, `2` = Cancelled. Users cannot edit submitted documents — they must cancel and amend.
 
-Do NOT add `creation`, `modified`, `owner`, `modified_by`, or `docstatus` as fields — Frappe creates these automatically.
+Do NOT add `creation`, `modified`, `owner`, `modified_by`, or `docstatus` as fields in `fields` — Frappe manages these columns automatically.

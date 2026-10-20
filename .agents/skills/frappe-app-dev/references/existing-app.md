@@ -1,71 +1,46 @@
 # Existing App Workflow
 
-Use this flow when the user wants to extend, modify, or fix an app that already exists.
+Use this flow when extending, modifying, or fixing an existing Frappe app.
 
-## Step 1: Find and confirm bench root
+## Step 1: Detect workspace mode (Standalone App Repo vs Full Bench)
 
-The bench root is typically the parent of the workspace directory, or the workspace itself. Look for `apps/`, `sites/`, and `Procfile`.
+Check whether the workspace is a standalone app repository (like `l10n_ec`) or a full `frappe-bench` directory:
 
-```bash
-ls apps/ sites/ Procfile
-```
-
-If the workspace is inside the app (e.g. user opened `apps/myapp/`), go up:
-```bash
-ls ../../apps/ ../../sites/ ../../Procfile
-```
-
-## Step 2: Locate the app
-
-```bash
-ls apps/
-```
-
-Find the app directory. Read its module structure:
-```bash
-ls apps/<app-name>/<app-name>/
-```
-
-Each subdirectory under the module is a Frappe module (contains DocTypes, etc.):
-```bash
-ls apps/<app-name>/<app-name>/<module-name>/
-```
+- **Standalone App Repository (`pyproject.toml` and `<app-name>/hooks.py` at workspace root, no `sites/` directory)**:
+  - App package root is `<app-name>/` (e.g. `l10n_ec/`).
+  - Pure domain modules live in `<app-name>/sri/` (`l10n_ec/sri/`).
+  - Frappe modules and DocTypes live in `<app-name>/<module-name>/doctype/<doctype>/` (e.g. `l10n_ec/ecuador_localization/doctype/sri_signature/`).
+- **Full `frappe-bench` Root (`apps/`, `sites/`, and `Procfile` exist)**:
+  - App package root is `apps/<app-name>/<app-name>/`.
+  - Frappe modules and DocTypes live in `apps/<app-name>/<app-name>/<module-name>/doctype/<doctype>/`.
 
 Do NOT create a second app. Do NOT run `bench new-app`.
 
-## Step 3: Confirm site and app installation
+## Step 2: Read existing app structure
 
-See [site-management.md](./site-management.md) for finding the right site for this app.
+Key files to inspect first:
+- `pyproject.toml` — dependencies, Ruff configuration, and `[tool.bench.frappe-dependencies]`
+- `<app-name>/hooks.py` (or `apps/<app-name>/<app-name>/hooks.py`) — app metadata and registered hooks
+- `<app-name>/modules.txt` — declared Frappe modules
+- `<app-name>/<module-name>/` — existing DocTypes and controllers
 
-Verify the app is installed:
+## Step 3: Build / modify features
+
+Read the app's existing code to understand patterns before making changes. Load only the relevant feature references from the main `SKILL.md` table.
+
+## Step 4: Verify changes
+
+### In Standalone App Repository Mode (Ring 1 Fast Loop)
+
 ```bash
-bench --site <site> list-apps
+.venv/bin/ruff check .
+.venv/bin/ruff format --check .
+.venv/bin/pytest -v -W error
 ```
 
-If not installed:
-```bash
-bench --site <site> install-app <app-name>
-```
-
-## Step 4: Enable developer mode
-
-```bash
-bench set-config -g developer_mode 1
-```
-
-## Step 5: Build / modify features
-
-Read the app's existing code to understand patterns before making changes. Load only the relevant feature references from the main SKILL.md table.
-
-Key files to read first:
-- `apps/<app>/setup.cfg` or `pyproject.toml` — app metadata
-- `apps/<app>/<app>/hooks.py` — existing hooks
-- `apps/<app>/<app>/<module>/` — existing DocTypes and modules
-
-## Step 6: Migrate and verify
+### In Full `frappe-bench` Mode / Containerized Ring 2
 
 ```bash
 bench --site <site> migrate
+bench --site <site> run-tests --app <app-name>
 ```
-
-Same rules as new app — see [new-app.md](./new-app.md#step-7-migrate-and-verify) for migrate rules.

@@ -14,27 +14,37 @@ description: >-
 
 # Frappe Full-Stack App Builder
 
-## Global Rules
+## Global Rules (Workspace Mode Detection)
 
-- Use bare `bench`. Not `./env/bin/bench`. Not a full path.
-- Do not run `which bench`, `bench --version`, `bench --help`, or check frappe version. No discovery commands.
-- Do not delegate bench detection to a subagent. Run `ls apps/ sites/ Procfile` yourself.
-- Do not create DocType folders with `mkdir`. Frappe creates them via `bench migrate`.
-- Run `bench start` in a background process only.
-- Before running `bench start`, check if it's already running in an existing terminal. Do not start a second instance.
-- Always pass `--site <site>` explicitly to bench commands. Never run bare `bench migrate`.
+Determine which repository mode the workspace is in before running commands:
+
+1. **Standalone App Repository Mode (Default in this repo: `pyproject.toml` and `<app_name>/hooks.py` are at the workspace root, and `sites/` does not exist)**:
+   - All app file paths are relative to the repository root: `<app_name>/<module>/doctype/<doctype>/` (e.g., `l10n_ec/ecuador_localization/doctype/sri_signature/`), **not** `apps/<app_name>/<app_name>/...`.
+   - You **may** create and edit DocType directories (`<app_name>/<module>/doctype/<doctype>/<doctype>.json`, `<doctype>.py`, `test_<doctype>.py`, `__init__.py`) directly.
+   - Validate DocType schemas, `field_order`, controller imports, and unit tests immediately via the Ring 1 fast local loop:
+     ```bash
+     .venv/bin/ruff check .
+     .venv/bin/ruff format --check .
+     .venv/bin/pytest -v -W error
+     ```
+   - Do **not** run bare `bench` commands directly on the host when `sites/` does not exist. Use `act workflow_dispatch -W .github/workflows/ci.yml -j fast-tdd-unit` for local CI verification, and run `bench` commands inside **Frappe-Manager (`fm`)**, **`frappe_docker`**, or the `frappe-v16-integration` CI job.
+
+2. **Full `frappe-bench` Mode (When `apps/`, `sites/`, and `Procfile` exist in the workspace or parent directory)**:
+   - Paths are under `apps/<app_name>/<app_name>/<module>/...`.
+   - Use bare `bench` (not `./env/bin/bench`), and always pass `--site <site>` explicitly (`bench --site <site> migrate`, `bench --site <site> run-tests --app <app_name>`).
+   - Run `bench start` in a background process only after checking it is not already running.
 
 ## Flow Selection
 
 Determine which flow applies, then read ONLY the relevant file:
 
+### Working on an existing app
+
+Read [existing-app.md](./references/existing-app.md) — covers standalone app repository mode vs full bench mode, module layout, and verification.
+
 ### Creating a brand new app
 
 Read [new-app.md](./references/new-app.md) — covers bench setup, app scaffolding, site creation, and installation.
-
-### Working on an existing app
-
-Read [existing-app.md](./references/existing-app.md) — covers finding the bench, locating the app, confirming site, and extending features.
 
 ## Feature References
 
@@ -53,5 +63,5 @@ Load ONLY the references needed for the current task:
 | Hooks            | `hooks.py` patterns                          | [hooks.md](./references/hooks.md)                       |
 | Permissions      | Roles, DocType permissions, `has_permission` | [permissions.md](./references/permissions.md)           |
 | Testing          | Writing & running tests                      | [testing.md](./references/testing.md)                   |
-| Frontend & UI    | Desk UI, Vue SPA, portal pages           | [frontend.md](./references/frontend.md) (router → 3 sub-files) |
+| Frontend & UI    | Desk UI, Vue SPA, portal pages               | [frontend.md](./references/frontend.md) (router → 3 sub-files) |
 | Bench CLI        | All bench commands reference                 | [bench-operations.md](./references/bench-operations.md) |

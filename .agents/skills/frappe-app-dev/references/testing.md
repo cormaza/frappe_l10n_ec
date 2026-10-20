@@ -2,93 +2,95 @@
 
 ## File location
 
-Tests live alongside the code they test:
-```
-apps/<app>/<app>/<module>/doctype/<doctype>/test_<doctype>.py
+Tests live alongside the DocType they test or in the app's `tests/` package:
+
+- **Standalone App Repository Mode**:
+  - DocType tests: `<app>/<module>/doctype/<doctype>/test_<doctype>.py`
+  - App/domain tests: `<app>/tests/test_<feature>.py`
+- **Full `frappe-bench` Mode**:
+  - DocType tests: `apps/<app>/<app>/<module>/doctype/<doctype>/test_<doctype>.py`
+  - App/domain tests: `apps/<app>/<app>/tests/test_<feature>.py`
+
+## Mandatory Frappe v16 Test Runner Rule (`UnitTestCase` / `IntegrationTestCase`)
+
+Frappe's `bench run-tests` uses `unittest.TestLoader().loadTestsFromModule(module)`, which **only** discovers methods on `unittest.TestCase` (`UnitTestCase` / `IntegrationTestCase`) subclasses and **silently ignores** bare top-level `def test_...()` functions.
+
+- Every test in any `test_*.py` module **must** be a method inside a `UnitTestCase` or `IntegrationTestCase` class.
+- Never write bare top-level `def test_...()` functions.
+- To allow tests to run both in standalone `pytest` (Ring 1, without a live DB) and in `bench run-tests` (Ring 2), import `UnitTestCase` / `IntegrationTestCase` with a `unittest.TestCase` fallback:
+
+```python
+import unittest
+
+try:
+	from frappe.tests import IntegrationTestCase, UnitTestCase
+except ImportError:  # pragma: no cover
+	UnitTestCase = unittest.TestCase  # type: ignore[misc,assignment]
+	IntegrationTestCase = unittest.TestCase  # type: ignore[misc,assignment]
 ```
 
-For feature-wise tests, place in the tests directory:
-```
-apps/<app>/<app>/tests/test_<feature>.py
+## Unit tests (no database — Ring 1 & Ring 2)
+
+For pure domain logic, cryptographic signing, XML generation, or in-memory controller validation:
+
+```python
+class TestExpenseUtils(UnitTestCase):
+	def test_calculate_tax(self) -> None:
+		self.assertEqual(calculate_tax(100, 0.1), 10)
 ```
 
-## Writing tests
+`UnitTestCase` runs in sub-second time with no DB setup/teardown.
+
+## Integration tests (database-backed — Ring 2)
 
 ```python
 import frappe
 from frappe.tests import IntegrationTestCase
 
+
 class TestExpense(IntegrationTestCase):
-    def test_expense_creation(self):
-        doc = frappe.get_doc(doctype="Expense", title="Test", amount=100)
-        doc.insert()
-        self.assertEqual(doc.amount, 100)
+	def test_expense_creation(self) -> None:
+		doc = frappe.get_doc(doctype="Expense", title="Test", amount=100)
+		doc.insert()
+		self.assertEqual(doc.amount, 100)
 
-    def test_validation(self):
-        doc = frappe.get_doc(doctype="Expense", title="Test", amount=-1)
-        self.assertRaises(frappe.ValidationError, doc.insert)
-```
-
-Key patterns:
-- Inherit from `frappe.tests.IntegrationTestCase` (not `unittest.TestCase`)
-- Tests run inside a transaction that rolls back — no manual cleanup needed
-
-## Unit tests (no database)
-
-For pure logic that doesn't need Frappe context or database:
-
-```python
-from frappe.tests import UnitTestCase
-
-class TestExpenseUtils(UnitTestCase):
-    def test_calculate_tax(self):
-        self.assertEqual(calculate_tax(100, 0.1), 10)
-```
-
-`UnitTestCase` is faster — no DB setup/teardown. Use for utility functions, calculations, parsing logic.
-
-## Test fixtures
-
-For test data that multiple tests need, create `test_records` or use `setUp`:
-
-```python
-class TestExpense(IntegrationTestCase):
-    def setUp(self):
-        self.category = frappe.get_doc(doctype="Expense Category", category_name="Travel").insert()
-```
-
-## Test site
-
-Run tests on a **separate site** from the one the user is actively working on. Tests create, modify, and delete data — running them on the development site will pollute it.
-
-Convention: if the dev site is `expense.localhost`, create `expense-test.localhost` for tests:
-```bash
-bench new-site expense-test.localhost --admin-password admin
-bench --site expense-test.localhost install-app <app-name>
-```
-
-Always run tests against the test site:
-```bash
-bench --site expense-test.localhost run-tests --app <app-name>
+	def test_validation(self) -> None:
+		doc = frappe.get_doc(doctype="Expense", title="Test", amount=-1)
+		self.assertRaises(frappe.ValidationError, doc.insert)
 ```
 
 ## Running tests
 
+### Ring 1: Fast Local TDD Loop (Standalone App Repo, No DB required)
+
+```bash
+# Run all UnitTestCase suites across <app>/tests and <app>/<module>/doctype/*/test_*.py
+.venv/bin/pytest -v --cov=l10n_ec/sri --cov-report=term-missing -W error
+
+# Run full GitHub Actions fast-tdd-unit job locally in Docker via act
+act workflow_dispatch -W .github/workflows/ci.yml -j fast-tdd-unit
+```
+
+### Ring 2: Full `frappe-bench` / Containerized Integration
+
+Always run `bench run-tests` on a dedicated test site (`test_site`), never on an active development site:
+
 ```bash
 # All tests for an app
-bench --site <site> run-tests --app <app-name>
+bench --site test_site run-tests --app <app-name>
 
 # Specific DocType
-bench --site <site> run-tests --doctype "Expense"
+bench --site test_site run-tests --doctype "SRI Signature"
 
-# Specific test file
-bench --site <site> run-tests --module <app>.<module>.doctype.<doctype>.test_<doctype>
+# Specific test module
+bench --site test_site run-tests --module <app>.<module>.doctype.<doctype>.test_<doctype>
 
 # Specific test method
-bench --site <site> run-tests --module <app>.<module>.doctype.<doctype>.test_<doctype> --test test_expense_creation
+bench --site test_site run-tests --module <app>.<module>.doctype.<doctype>.test_<doctype> --test test_validate_and_sign_controller
 ```
 
 ## Common pitfalls
 
-- If tests fail with "DocType not found", run `bench --site <site> migrate` first.
+- Writing bare `def test_foo():` functions: `pytest` runs them, but `bench run-tests` silently skips them. Always wrap test methods inside a `UnitTestCase` or `IntegrationTestCase` class.
+- If integration tests fail with "DocType not found", run `bench --site <site> migrate` first.
 - Test files must be named `test_*.py` to be discovered.
