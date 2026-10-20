@@ -49,3 +49,14 @@ class TestSRICustomFields(UnitTestCase):
 		for doctype in ("Customer", "Supplier"):
 			link = next(f for f in CUSTOM_FIELDS[doctype] if f["fieldname"] == "sri_identification_type")
 			self.assertEqual(link["options"], "SRI Identification Type")
+
+	def test_company_fields_hide_outside_ecuador(self) -> None:
+		for field in CUSTOM_FIELDS["Company"]:
+			self.assertEqual(
+				field.get("depends_on"),
+				"eval:doc.country=='Ecuador'",
+				f"Missing gate on {field['fieldname']}",
+			)
+		for doctype in ("Customer", "Supplier"):
+			for field in CUSTOM_FIELDS[doctype]:
+				self.assertNotIn("depends_on", field)

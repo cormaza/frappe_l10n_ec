@@ -10,6 +10,7 @@ except ImportError:  # pragma: no cover
 CUSTOM_FIELDS = {
 	"Company": [
 		{
+			"depends_on": "eval:doc.country=='Ecuador'",
 			"default": "Test",
 			"fieldname": "sri_environment",
 			"fieldtype": "Select",
@@ -18,6 +19,7 @@ CUSTOM_FIELDS = {
 			"options": "Test\nProduction",
 		},
 		{
+			"depends_on": "eval:doc.country=='Ecuador'",
 			"fieldname": "sri_signature",
 			"fieldtype": "Link",
 			"insert_after": "sri_environment",
@@ -25,18 +27,21 @@ CUSTOM_FIELDS = {
 			"options": "SRI Signature",
 		},
 		{
+			"depends_on": "eval:doc.country=='Ecuador'",
 			"fieldname": "special_taxpayer_resolution",
 			"fieldtype": "Data",
 			"insert_after": "sri_signature",
 			"label": "Special Taxpayer Resolution",
 		},
 		{
+			"depends_on": "eval:doc.country=='Ecuador'",
 			"fieldname": "withholding_agent_resolution",
 			"fieldtype": "Data",
 			"insert_after": "special_taxpayer_resolution",
 			"label": "Withholding Agent Resolution",
 		},
 		{
+			"depends_on": "eval:doc.country=='Ecuador'",
 			"fieldname": "rimpe_regime",
 			"fieldtype": "Select",
 			"insert_after": "withholding_agent_resolution",
@@ -44,6 +49,7 @@ CUSTOM_FIELDS = {
 			"options": "\nPopular Business\nEntrepreneur",
 		},
 		{
+			"depends_on": "eval:doc.country=='Ecuador'",
 			"default": "0",
 			"fieldname": "accounting_required",
 			"fieldtype": "Check",

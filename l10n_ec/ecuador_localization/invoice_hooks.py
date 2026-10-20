@@ -5,12 +5,24 @@ try:
 except ImportError:  # pragma: no cover
 	frappe = None  # type: ignore[assignment]
 
-from l10n_ec.ecuador_localization.validation import validate_final_consumer_amount
+from l10n_ec.ecuador_localization.validation import is_ecuadorian_contact, validate_final_consumer_amount
+
+
+def _company_country_code(company: str | None) -> str | None:
+	"""Resolve a Company country name to its ISO code, if determinable."""
+	if frappe is None or not company:
+		return None
+	country = frappe.db.get_value("Company", company, "country")
+	if not country:
+		return None
+	return frappe.db.get_value("Country", country, "code")
 
 
 def validate_sri_invoice(doc, method=None) -> None:
 	"""Enforce the Consumidor Final amount threshold on the invoice buyer."""
 	if frappe is None:
+		return
+	if not is_ecuadorian_contact(_company_country_code(doc.get("company"))):
 		return
 	customer = doc.get("customer")
 	if not customer:

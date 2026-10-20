@@ -133,3 +133,24 @@ Therefore, `l10n_ec` for Frappe v16 combines **both** the base accounting/catalo
 - **Planned Scope**:
   - **Anexo Transaccional Simplificado (`ATS`)**: Generates monthly `AT{mmaaaa}.xml` and `.zip` archive covering purchases (`compras`), sales (`ventas`), exports (`exportaciones`), and annulled vouchers (`anulados`), validated offline against `ats.xsd`.
   - **SRI Form 104 (VAT Declaration)** & **SRI Form 103 (Income Tax Withholding Declaration)**: Frappe Script Reports aggregating tax bases and withholdings by official SRI casillero codes.
+
+---
+
+## Multi-Company Coexistence (Transverse Scope)
+
+`l10n_ec` shares every site with other companies and potentially other
+localizations. It MUST NOT alter non-Ecuadorian flows. Rules:
+
+1. **Namespace everything**: `sri_`-prefixed custom fields, `SRI *` DocTypes,
+   per-company charts, templates, and accounts. Global catalogs are read-only
+   reference data. Locale strings use SRI-specific msgids.
+2. **Gate every hook by resolved country, never by assumption**:
+   - Party validation keys on the primary Address Country (ISO code).
+   - Invoice rules key on the emitting Company's Country.
+   - Chart install requires an Ecuadorian company with zero accounts.
+3. **Contacts are company-global** (ERPNext has no company field on
+   Customer/Supplier): never hide contact fields per company and never
+   require them; validation skips silently when out of scope.
+4. **Company form scoping**: SRI custom fields carry
+   `depends_on: eval:doc.country=='Ecuador'` so they only render for
+   Ecuadorian companies.
