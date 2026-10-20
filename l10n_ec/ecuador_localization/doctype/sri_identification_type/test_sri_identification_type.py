@@ -1,0 +1,28 @@
+import json
+import unittest
+from pathlib import Path
+
+from l10n_ec.ecuador_localization.doctype.sri_identification_type.sri_identification_type import (
+	SRIIdentificationType,
+)
+
+try:
+	from frappe.tests import UnitTestCase
+except ImportError:  # pragma: no cover
+	UnitTestCase = unittest.TestCase  # type: ignore[misc,assignment]
+
+
+class TestSRIIdentificationType(UnitTestCase):
+	"""Unit tests for the SRI Identification Type catalog DocType."""
+
+	def test_codes_match_sri_specification(self) -> None:
+		schema = json.loads(
+			(Path(__file__).parent / "sri_identification_type.json").read_text(encoding="utf-8")
+		)
+		code_field = next(f for f in schema["fields"] if f["fieldname"] == "code")
+		self.assertEqual(set(code_field["options"].split("\n")), {"04", "05", "06", "07", "08"})
+
+	def test_controller_holds_code_and_title(self) -> None:
+		doc = SRIIdentificationType(code="04", title="RUC")
+		self.assertEqual(doc.code, "04")
+		self.assertEqual(doc.title, "RUC")

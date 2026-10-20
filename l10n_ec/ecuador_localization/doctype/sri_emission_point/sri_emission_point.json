@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "autoname": "format:{establishment_code}-{emission_point_code}",
+ "creation": "2026-10-20 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "establishment_code",
+  "emission_point_code",
+  "company",
+  "column_break_setup",
+  "sequences"
+ ],
+ "fields": [
+  {
+   "fieldname": "establishment_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Establishment Code",
+   "reqd": 1
+  },
+  {
+   "fieldname": "emission_point_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Emission Point Code",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "column_break_setup",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sequences",
+   "fieldtype": "Table",
+   "label": "Sequences by Document Type",
+   "options": "SRI Emission Sequence"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-20 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Ecuador Localization",
+ "name": "SRI Emission Point",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
