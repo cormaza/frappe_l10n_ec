@@ -25,6 +25,7 @@ Unlike a multi-app `frappe-bench` workspace (`apps/`, `sites/`, `env/`), this re
 - **Ring 2 (Full Frappe v16 + MariaDB 11.8 Bench Integration)**:
   - Note that `.agents/skills/frappe-app-dev/` supports both Standalone App Repository Mode and Full `frappe-bench` Mode.
   - Use **Frappe-Manager (`fm`)**, **`frappe_docker`**, or the `frappe-v16-integration` job in `.github/workflows/ci.yml` when executing full database-backed `bench` commands (`bench --site test_site migrate`, `bench --site test_site run-tests --app l10n_ec`).
+  - For interactive development against a seeded demo site, use `dev/demo.sh` (see `docs/LOCAL_DEMO.md`): `up`, `reset` (idempotent drop/create/seed of site `demo`), `seed`, `serve`, `status`, `down`.
   - Local no-sudo bench (`~/frappe-bench-v16`, site `test_site`): MariaDB 11.8 and Redis run in Docker (bench v16 expects Redis on `11001`/`13001`, not the classic `11000`/`12000`/`13000` — always confirm against `sites/common_site_config.json`); a `redis-server --version` shim in `~/.local/bin` satisfies `bench init` config generation (the real servers are the containers); `yarn` comes from user-owned mise node (`npm install -g yarn`, no sudo); no `/etc/hosts` entry is needed for CLI-only `run-tests`.
 
 ---

@@ -1,0 +1,41 @@
+name: l10n-ec-demo
+
+# Local demo infrastructure for l10n_ec development.
+# Ports must match the bench v16 defaults in sites/common_site_config.json
+# (redis_queue 11001, redis_cache/socketio 13001). See docs/LOCAL_DEMO.md.
+services:
+  mariadb:
+    image: mariadb:11.8
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - demo-mariadb-data:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${DB_ROOT_PASSWORD:-root}"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+
+  redis-queue:
+    image: redis:7-alpine
+    ports:
+      - "11001:6379"
+    volumes:
+      - demo-redis-queue:/data
+
+  redis-cache:
+    image: redis:7-alpine
+    ports:
+      - "13001:6379"
+    volumes:
+      - demo-redis-cache:/data
+
+volumes:
+  demo-mariadb-data:
+  demo-redis-queue:
+  demo-redis-cache:
