@@ -43,15 +43,9 @@ class TestSRICustomFields(UnitTestCase):
 				if field["fieldtype"] == "Select":
 					self.assertIn("options", field, f"Select without options on {doctype}")
 				if field["fieldtype"] == "Link":
-					self.assertTrue(
-						field.get("options"), f"Link without target DocType on {doctype}"
-					)
+					self.assertTrue(field.get("options"), f"Link without target DocType on {doctype}")
 
 	def test_identification_link_points_to_catalog(self) -> None:
 		for doctype in ("Customer", "Supplier"):
-			link = next(
-				f
-				for f in CUSTOM_FIELDS[doctype]
-				if f["fieldname"] == "sri_identification_type"
-			)
+			link = next(f for f in CUSTOM_FIELDS[doctype] if f["fieldname"] == "sri_identification_type")
 			self.assertEqual(link["options"], "SRI Identification Type")

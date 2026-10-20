@@ -14,12 +14,13 @@ and per-company tax template routine.
 ## Tasks
 
 - T1 (S1): Transcribe official chart to JSON (mechanical transpose, reviewed) + operational leaves + Ring-1 structure tests. Route: inline. Commit: b1dd707
-- T2 (S2): Chart loader (`chart_setup.py`, auto-install-if-empty + whitelisted reinstall) + hooks wiring. Route: inline. Commit: -
-- T3 (S1): Tax template catalog + per-company creator routine + Ring-1 tests. Route: inline. Commit: -
-- T4 (S2): Verify (`pytest -W error`, `pre-commit`), commit and push to `version-16`. Route: inline. Commit: -
+- T2 (S2): Chart loader (`chart_setup.py`, auto-install-if-empty + whitelisted reinstall) + hooks wiring. Route: inline. Commit: a8040c6
+- T3 (S1): Tax template catalog + per-company creator routine + Ring-1 tests. Route: inline. Commit: a8040c6
+- T4 (S2): Verify (`pytest -W error`, `pre-commit`), commit and push to `version-16`. Route: inline. Commit: a8040c6
 
 ## Log
 
 - L1: "adelante fase 4"
 - L2: Analysis input at `odd/tasks/phase-04-chart-analysis.md`; official source `PLAN DE CUENTAS.pdf` (SCVS) measured at 336 account lines, presentation-oriented, missing operational leaves (banks detail, VAT in/out, withholding splits).
 - L3: Ring-2 checks (`migrate`, install on test company, template posting smoke test) pending: no bench in this environment; user tests on `version-16` directly.
+- L4: T1 committed as b1dd707 (chart JSON, 324 nodes); T2-T4 as a8040c6. Transpose reconciled 315/315 official nodes; genuine source duplications disambiguated (5201/5202, 61/74, 63/76).
