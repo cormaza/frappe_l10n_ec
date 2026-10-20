@@ -13,6 +13,14 @@ from lxml import etree
 from xades import XAdESContext, template
 from xades.policy import ImpliedPolicy
 
+try:
+	from frappe import _
+except ImportError:  # pragma: no cover
+
+	def _(message: str) -> str:
+		return message
+
+
 ECUADOR_TZ = ZoneInfo("America/Guayaquil")
 
 
@@ -48,7 +56,7 @@ def decode_certificate(
 	`digital_signature=True`.
 	"""
 	if not password:
-		raise SriSignatureError("Signing password is required to decode the PKCS#12 file.")
+		raise SriSignatureError(_("Signing password is required to decode the PKCS#12 file."))
 
 	password_bytes = password.encode("utf-8") if isinstance(password, str) else password
 	try:
@@ -57,12 +65,13 @@ def decode_certificate(
 		)
 	except Exception as ex:
 		raise SriSignatureError(
-			"Error opening the signature, possibly the signature key has been entered "
-			"incorrectly or the file is not supported: {}".format(ex)
+			_(
+				"Error opening the signature, possibly the signature key has been entered incorrectly or the file is not supported: {}"
+			).format(ex)
 		) from None
 
 	if private_key is None or certificate is None:
-		raise SriSignatureError("The PKCS#12 bundle does not contain a private key and certificate.")
+		raise SriSignatureError(_("The PKCS#12 bundle does not contain a private key and certificate."))
 
 	is_digital_signature = True
 	try:
@@ -165,8 +174,9 @@ def sign_xml_xades_bes(
 	reference_today = today or datetime.now(tz).date()
 	if expire_date < reference_today:
 		raise SriSignatureExpiredError(
-			"The electronic signature expired on {} and the document cannot be signed. "
-			"Upload a valid signature file in SRI Signature.".format(expire_date)
+			_(
+				"The electronic signature expired on {} and the document cannot be signed. Upload a valid signature file in SRI Signature."
+			).format(expire_date)
 		)
 
 	xml_bytes = xml_data.encode("utf-8") if isinstance(xml_data, str) else xml_data

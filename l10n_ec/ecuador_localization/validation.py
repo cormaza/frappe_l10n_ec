@@ -8,6 +8,14 @@ module stays free of `frappe` imports and testable in Ring 1.
 
 from l10n_ec.sri.identification import validate_identification
 
+try:
+	from frappe import _
+except ImportError:  # pragma: no cover
+
+	def _(message: str) -> str:
+		return message
+
+
 ECUADOR_COUNTRY_CODE = "EC"
 
 
@@ -30,7 +38,7 @@ def validate_contact_tax_id(
 		return
 	if not validate_identification(identification_type_code or "", tax_id or ""):
 		raise ValueError(
-			"Invalid tax identification '{}' for type '{}'.".format(
+			_("Invalid tax identification '{}' for type '{}'.").format(
 				(tax_id or "").strip(), (identification_type_code or "").strip()
 			)
 		)

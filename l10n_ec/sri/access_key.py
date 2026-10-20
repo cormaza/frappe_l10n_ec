@@ -3,6 +3,13 @@ import unicodedata
 from datetime import date
 from random import randint
 
+try:
+	from frappe import _
+except ImportError:  # pragma: no cover
+
+	def _(message: str) -> str:
+		return message
+
 
 def clean_sri_string(str_to_clean: str) -> str:
 	"""Strip accents and characters outside SRI's allowed XML character set.
@@ -22,7 +29,7 @@ def split_document_number(document_number: str) -> tuple[str, str, str]:
 	parts = document_number.split("-")
 	if len(parts) != 3:
 		raise ValueError(
-			"Invalid Ecuadorian document number '{}'. Expected format '001-001-000000001'.".format(
+			_("Invalid Ecuadorian document number '{}'. Expected format '001-001-000000001'.").format(
 				document_number
 			)
 		)
@@ -41,7 +48,7 @@ def compute_mod11_check_digit(access_key_48: str) -> int:
 	According to SRI Electronic Invoicing Technical Sheet (Table 1).
 	"""
 	if len(access_key_48) != 48 or not access_key_48.isdigit():
-		raise ValueError("Access key payload must be exactly 48 numeric digits before check digit.")
+		raise ValueError(_("Access key payload must be exactly 48 numeric digits before check digit."))
 
 	mult = 1
 	current_sum = 0
@@ -85,16 +92,16 @@ def generate_access_key(
 
 	if len(complete_document_number) != 15 or not complete_document_number.isdigit():
 		raise ValueError(
-			"Complete document number must be 15 digits (got '{}').".format(complete_document_number)
+			_("Complete document number must be 15 digits (got '{}').").format(complete_document_number)
 		)
 	if len(ruc) != 13 or not ruc.isdigit():
-		raise ValueError("Company RUC must be 13 numeric digits (got '{}').".format(ruc))
+		raise ValueError(_("Company RUC must be 13 numeric digits (got '{}').").format(ruc))
 	if environment not in ("1", "2"):
 		raise ValueError(
-			"SRI environment must be '1' (test) or '2' (production), got '{}'.".format(environment)
+			_("SRI environment must be '1' (test) or '2' (production), got '{}'.").format(environment)
 		)
 	if len(document_code_sri) != 2 or not document_code_sri.isdigit():
-		raise ValueError("Document SRI code must be 2 digits (got '{}').".format(document_code_sri))
+		raise ValueError(_("Document SRI code must be 2 digits (got '{}').").format(document_code_sri))
 
 	now_date = date_document.strftime("%d%m%Y")
 	if numeric_code is None:
@@ -103,7 +110,7 @@ def generate_access_key(
 		numeric_code_str = str(numeric_code).rjust(8, "0")
 
 	if len(numeric_code_str) != 8 or not numeric_code_str.isdigit():
-		raise ValueError("Numeric code must be 8 digits (got '{}').".format(numeric_code_str))
+		raise ValueError(_("Numeric code must be 8 digits (got '{}').").format(numeric_code_str))
 
 	access_key_48 = (
 		now_date

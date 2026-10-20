@@ -5,8 +5,12 @@ from typing import TYPE_CHECKING
 
 try:
 	import frappe
+	from frappe import _
 	from frappe.model.document import Document
 except ImportError:  # pragma: no cover
+
+	def _(message: str) -> str:
+		return message
 
 	class Document:  # type: ignore[no-redef]
 		"""Fallback base class when imported outside a Frappe Bench environment."""
@@ -23,7 +27,7 @@ MAX_SEQUENCE = 999999999
 
 def _reject(message: str) -> None:
 	if frappe:
-		frappe.throw(frappe._(message))
+		frappe.throw(message)
 	raise ValueError(message)
 
 
@@ -51,10 +55,10 @@ class SRIEmissionPoint(Document):
 		for fieldname in ("establishment_code", "emission_point_code"):
 			value = (getattr(self, fieldname, None) or "").strip()
 			if not ESTABLISHMENT_PATTERN.match(value):
-				_reject("SRI emission code '{}' must be exactly 3 numeric digits.".format(value))
+				_reject(_("SRI emission code '{}' must be exactly 3 numeric digits.").format(value))
 		for row in getattr(self, "sequences", None) or []:
 			if not getattr(row, "document_type", None):
-				_reject("Every SRI emission sequence row requires a document type.")
+				_reject(_("Every SRI emission sequence row requires a document type."))
 			sequence = getattr(row, "current_sequence", 0) or 0
 			if not 0 <= sequence <= MAX_SEQUENCE:
-				_reject("SRI sequence {} must be between 0 and {}.".format(sequence, MAX_SEQUENCE))
+				_reject(_("SRI sequence {} must be between 0 and {}.").format(sequence, MAX_SEQUENCE))

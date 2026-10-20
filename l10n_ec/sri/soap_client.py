@@ -7,6 +7,14 @@ from zeep import Client
 from zeep.helpers import serialize_object
 from zeep.transports import Transport
 
+try:
+	from frappe import _
+except ImportError:  # pragma: no cover
+
+	def _(message: str) -> str:
+		return message
+
+
 TEST_URL = {
 	"reception": "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl",
 	"authorization": "https://celcer.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl",
@@ -45,7 +53,7 @@ class SriSoapClient:
 
 	def get_wsdl_url(self, service_type: str) -> str:
 		if service_type not in ("reception", "authorization"):
-			raise ValueError("Unknown SRI service type: {}".format(service_type))
+			raise ValueError(_("Unknown SRI service type: {}").format(service_type))
 		if self.use_local_wsdl:
 			return LOCAL_WSDL[service_type]
 		urls = PRODUCTION_URL if self.environment in ("production", "2") else TEST_URL

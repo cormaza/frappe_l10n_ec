@@ -1,178 +1,344 @@
+# Translations template for l10n_ec.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the l10n_ec project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: l10n_ec 16.0.0\n"
-"Language: es\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Language-Team: Ecuador Localization Contributors\n"
+"Report-Msgid-Bugs-To: developers@example.com\n"
+"POT-Creation-Date: 2026-10-20 11:03-0719\n"
+"PO-Revision-Date: 2026-10-20 11:05+0000\n"
 "Last-Translator: Ecuador Localization Contributors\n"
-"PO-Revision-Date: 2026-10-20\n"
+"Language-Team: Ecuador Localization Contributors\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
 
-msgid "Signature Name"
-msgstr "Nombre de la firma"
-
-msgid "Company"
-msgstr "Compañía"
-
-msgid "Active"
-msgstr "Activo"
-
-msgid "State"
-msgstr "Estado"
-
-msgid "Days for Notification"
-msgstr "Días para notificación"
-
-msgid "PKCS#12 Signature Credentials"
-msgstr "Credenciales de firma PKCS#12"
-
-msgid "PKCS#12 Signature File (.p12)"
-msgstr "Archivo de firma PKCS#12 (.p12)"
-
-msgid "Signing Password"
-msgstr "Contraseña de firma"
-
-msgid "Certificate Information"
-msgstr "Información del certificado"
-
-msgid "Issue Date"
-msgstr "Fecha de emisión"
-
-msgid "Expiration Date"
-msgstr "Fecha de vencimiento"
-
-msgid "Organization (Subject)"
-msgstr "Organización (titular)"
-
-msgid "Serial Number (Subject)"
-msgstr "Número de serie (titular)"
-
-msgid "Organization (Issuer)"
-msgstr "Organización (emisor)"
-
-msgid "Certificate Serial Number"
-msgstr "Número de serie del certificado"
-
-msgid "Certificate Version"
-msgstr "Versión del certificado"
-
-msgid "Code"
-msgstr "Código"
-
-msgid "Title"
-msgstr "Título"
-
-msgid "Establishment Code"
-msgstr "Código de establecimiento"
-
-msgid "Emission Point Code"
-msgstr "Código de punto de emisión"
-
-msgid "Sequences by Document Type"
-msgstr "Secuencias por tipo de comprobante"
-
-msgid "Document Type"
-msgstr "Tipo de comprobante"
-
-msgid "Current Sequence"
-msgstr "Secuencia actual"
-
-msgid "unverified"
-msgstr "Sin verificar"
-
-msgid "valid"
-msgstr "Válido"
-
-msgid "expired"
-msgstr "Vencido"
-
-msgid "SRI Environment"
-msgstr "Ambiente SRI"
-
-msgid "SRI Signature"
-msgstr "Firma SRI"
-
-msgid "Special Taxpayer Resolution"
-msgstr "Resolución de contribuyente especial"
-
-msgid "Withholding Agent Resolution"
-msgstr "Resolución de agente de retención"
-
-msgid "RIMPE Regime"
-msgstr "Régimen RIMPE"
-
-msgid "Accounting Required"
-msgstr "Obligado a llevar contabilidad"
-
-msgid "SRI Identification Type"
-msgstr "Tipo de identificación SRI"
-
-msgid "Related Party"
-msgstr "Parte relacionada"
-
-msgid "Test"
-msgstr "Pruebas"
-
-msgid "Production"
-msgstr "Producción"
-
-msgid "Popular Business"
-msgstr "Negocio popular"
-
-msgid "Entrepreneur"
-msgstr "Emprendedor"
-
-msgid "Signing password is required to decode the PKCS#12 file."
-msgstr "Se requiere la contraseña para descifrar el archivo PKCS#12."
-
-msgid "Error opening the signature, possibly the signature key has been entered incorrectly or the file is not supported: {}"
-msgstr "Error al abrir la firma, es posible que la clave se haya ingresado incorrectamente o que el archivo no sea compatible: {}"
-
-msgid "The PKCS#12 bundle does not contain a private key and certificate."
-msgstr "El paquete PKCS#12 no contiene clave privada ni certificado."
-
-msgid "The electronic signature expired on {} and the document cannot be signed. Upload a valid signature file in SRI Signature."
-msgstr "La firma electrónica venció el {} y no se puede firmar el comprobante. Cargue un archivo de firma válido en Firma SRI."
-
-msgid "No PKCS#12 signature content attached to SRI Signature document."
-msgstr "No hay contenido de firma PKCS#12 adjunto al documento de Firma SRI."
-
-msgid "Invalid Ecuadorian document number '{}'. Expected format '001-001-000000001'."
-msgstr "Número de comprobante ecuatoriano inválido '{}'. Formato esperado '001-001-000000001'."
-
+# Translations template for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#: l10n_ec/sri/access_key.py:51
+#, fuzzy
 msgid "Access key payload must be exactly 48 numeric digits before check digit."
 msgstr "La clave de acceso debe tener exactamente 48 dígitos numéricos antes del dígito verificador."
 
-msgid "Complete document number must be 15 digits (got '{}')."
-msgstr "El número de comprobante completo debe tener 15 dígitos (se recibió '{}')."
+#: l10n_ec/locale/i18n_markers.py:25
+msgid "Accounting Required"
+msgstr "Obligado a llevar contabilidad"
 
-msgid "Company RUC must be 13 numeric digits (got '{}')."
-msgstr "El RUC de la compañía debe tener 13 dígitos numéricos (se recibió '{}')."
+#. Name of a role
+#: l10n_ec/ecuador_localization/doctype/sri_document_type/sri_document_type.json
+#: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
+#: l10n_ec/ecuador_localization/doctype/sri_identification_type/sri_identification_type.json
+#: l10n_ec/ecuador_localization/doctype/sri_payment_method/sri_payment_method.json
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+#: l10n_ec/ecuador_localization/doctype/sri_tax_support/sri_tax_support.json
+msgid "Accounts Manager"
+msgstr ""
 
-msgid "SRI environment must be '1' (test) or '2' (production), got '{}'."
-msgstr "El ambiente SRI debe ser '1' (pruebas) o '2' (producción), se recibió '{}'."
+#. Label of the active (Check) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Active"
+msgstr "Activo"
 
-msgid "Document SRI code must be 2 digits (got '{}')."
-msgstr "El código SRI del comprobante debe tener 2 dígitos (se recibió '{}')."
-
-msgid "Numeric code must be 8 digits (got '{}')."
-msgstr "El código numérico debe tener 8 dígitos (se recibió '{}')."
-
-msgid "Unknown SRI service type: {}"
-msgstr "Tipo de servicio SRI desconocido: {}"
-
-msgid "Invalid tax identification '{}' for type '{}'."
-msgstr "Identificación tributaria inválida '{}' para el tipo '{}'."
-
-msgid "SRI emission code '{}' must be exactly 3 numeric digits."
-msgstr "El código de emisión SRI '{}' debe tener exactamente 3 dígitos numéricos."
-
-msgid "SRI sequence {} must be between 0 and {}."
-msgstr "La secuencia SRI {} debe estar entre 0 y {}."
-
+#: l10n_ec/ecuador_localization/chart_setup.py:77
 msgid "Cannot reinstall the chart: the company already has ledger entries."
 msgstr "No se puede reinstalar el plan contable: la compañía ya tiene movimientos contables."
 
+#. Label of the section_break_certificate_info (Section Break) field in DocType
+#. 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Certificate Information"
+msgstr "Información del certificado"
+
+#. Label of the cert_serial_number (Data) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Certificate Serial Number"
+msgstr "Número de serie del certificado"
+
+#. Label of the cert_version (Data) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Certificate Version"
+msgstr "Versión del certificado"
+
+#. Label of the code (Select) field in DocType 'SRI Document Type'
+#. Label of the code (Select) field in DocType 'SRI Identification Type'
+#. Label of the code (Select) field in DocType 'SRI Payment Method'
+#. Label of the code (Select) field in DocType 'SRI Tax Support'
+#: l10n_ec/ecuador_localization/doctype/sri_document_type/sri_document_type.json
+#: l10n_ec/ecuador_localization/doctype/sri_identification_type/sri_identification_type.json
+#: l10n_ec/ecuador_localization/doctype/sri_payment_method/sri_payment_method.json
+#: l10n_ec/ecuador_localization/doctype/sri_tax_support/sri_tax_support.json
+msgid "Code"
+msgstr "Código"
+
+#. Label of the company (Link) field in DocType 'SRI Emission Point'
+#. Label of the company (Link) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Company"
+msgstr "Compañía"
+
+#: l10n_ec/sri/access_key.py:98
+msgid "Company RUC must be 13 numeric digits (got '{}')."
+msgstr "El RUC de la compañía debe tener 13 dígitos numéricos (se recibió '{}')."
+
+#: l10n_ec/sri/access_key.py:95
+msgid "Complete document number must be 15 digits (got '{}')."
+msgstr "El número de comprobante completo debe tener 15 dígitos (se recibió '{}')."
+
+#. Label of the current_sequence (Int) field in DocType 'SRI Emission Sequence'
+#: l10n_ec/ecuador_localization/doctype/sri_emission_sequence/sri_emission_sequence.json
+msgid "Current Sequence"
+msgstr "Secuencia actual"
+
+#. Label of the days_for_notification (Int) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Days for Notification"
+msgstr "Días para notificación"
+
+#: l10n_ec/sri/access_key.py:104
+msgid "Document SRI code must be 2 digits (got '{}')."
+msgstr "El código SRI del comprobante debe tener 2 dígitos (se recibió '{}')."
+
+#. Label of the document_type (Link) field in DocType 'SRI Emission Sequence'
+#: l10n_ec/ecuador_localization/doctype/sri_emission_sequence/sri_emission_sequence.json
+msgid "Document Type"
+msgstr "Tipo de comprobante"
+
+#. Label of the emission_point_code (Data) field in DocType 'SRI Emission
+#. Point'
+#: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
+msgid "Emission Point Code"
+msgstr "Código de punto de emisión"
+
+#: l10n_ec/locale/i18n_markers.py:24
+msgid "Entrepreneur"
+msgstr "Emprendedor"
+
+#: l10n_ec/sri/signer.py:68
+msgid "Error opening the signature, possibly the signature key has been entered incorrectly or the file is not supported: {}"
+msgstr "Error al abrir la firma, es posible que la clave se haya ingresado incorrectamente o que el archivo no sea compatible: {}"
+
+#. Label of the establishment_code (Data) field in DocType 'SRI Emission Point'
+#: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
+msgid "Establishment Code"
+msgstr "Código de establecimiento"
+
+#: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.py:61
+msgid "Every SRI emission sequence row requires a document type."
+msgstr "Cada fila de secuencia de emisión SRI requiere un tipo de comprobante."
+
+#. Label of the expire_date (Date) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Expiration Date"
+msgstr "Fecha de vencimiento"
+
+#: l10n_ec/sri/access_key.py:32
+msgid "Invalid Ecuadorian document number '{}'. Expected format '001-001-000000001'."
+msgstr "Número de comprobante ecuatoriano inválido '{}'. Formato esperado '001-001-000000001'."
+
+#: l10n_ec/ecuador_localization/validation.py:41
+msgid "Invalid tax identification '{}' for type '{}'."
+msgstr "Identificación tributaria inválida '{}' para el tipo '{}'."
+
+#. Label of the not_valid_before (Date) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Issue Date"
+msgstr "Fecha de emisión"
+
+#: l10n_ec/ecuador_localization/tax_templates.py:51
 msgid "Missing account {} for tax template '{}'."
 msgstr "Falta la cuenta {} para la plantilla de impuestos '{}'."
+
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.py:83
+msgid "No PKCS#12 signature content attached to SRI Signature document."
+msgstr "No hay contenido de firma PKCS#12 adjunto al documento de Firma SRI."
+
+#: l10n_ec/sri/access_key.py:113
+msgid "Numeric code must be 8 digits (got '{}')."
+msgstr "El código numérico debe tener 8 dígitos (se recibió '{}')."
+
+#. Label of the issuer_common_name (Data) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Organization (Issuer)"
+msgstr "Organización (emisor)"
+
+#. Label of the subject_common_name (Data) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Organization (Subject)"
+msgstr "Organización (titular)"
+
+#. Label of the section_break_credentials (Section Break) field in DocType 'SRI
+#. Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "PKCS#12 Signature Credentials"
+msgstr "Credenciales de firma PKCS#12"
+
+#. Label of the p12_file (Attach) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "PKCS#12 Signature File (.p12)"
+msgstr "Archivo de firma PKCS#12 (.p12)"
+
+#: l10n_ec/locale/i18n_markers.py:23
+msgid "Popular Business"
+msgstr "Negocio popular"
+
+#: l10n_ec/locale/i18n_markers.py:18
+msgid "Production"
+msgstr "Producción"
+
+#: l10n_ec/locale/i18n_markers.py:22
+msgid "RIMPE Regime"
+msgstr "Régimen RIMPE"
+
+#: l10n_ec/locale/i18n_markers.py:27
+msgid "Related Party"
+msgstr "Parte relacionada"
+
+#. Name of a DocType
+#: l10n_ec/ecuador_localization/doctype/sri_document_type/sri_document_type.json
+msgid "SRI Document Type"
+msgstr "Tipo de documento SRI"
+
+#. Name of a DocType
+#: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
+msgid "SRI Emission Point"
+msgstr "Punto de emisión SRI"
+
+#. Name of a DocType
+#: l10n_ec/ecuador_localization/doctype/sri_emission_sequence/sri_emission_sequence.json
+msgid "SRI Emission Sequence"
+msgstr "Secuencia de emisión SRI"
+
+#: l10n_ec/locale/i18n_markers.py:16
+msgid "SRI Environment"
+msgstr "Ambiente SRI"
+
+#. Name of a DocType
+#: l10n_ec/ecuador_localization/doctype/sri_identification_type/sri_identification_type.json
+#: l10n_ec/locale/i18n_markers.py:26
+msgid "SRI Identification Type"
+msgstr "Tipo de identificación SRI"
+
+#. Name of a DocType
+#: l10n_ec/ecuador_localization/doctype/sri_payment_method/sri_payment_method.json
+msgid "SRI Payment Method"
+msgstr "Forma de pago SRI"
+
+#. Name of a DocType
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+#: l10n_ec/locale/i18n_markers.py:19
+msgid "SRI Signature"
+msgstr "Firma SRI"
+
+#. Name of a DocType
+#: l10n_ec/ecuador_localization/doctype/sri_tax_support/sri_tax_support.json
+msgid "SRI Tax Support"
+msgstr "Sustento tributario SRI"
+
+#: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.py:58
+msgid "SRI emission code '{}' must be exactly 3 numeric digits."
+msgstr "El código de emisión SRI '{}' debe tener exactamente 3 dígitos numéricos."
+
+#: l10n_ec/sri/access_key.py:101
+msgid "SRI environment must be '1' (test) or '2' (production), got '{}'."
+msgstr "El ambiente SRI debe ser '1' (pruebas) o '2' (producción), se recibió '{}'."
+
+#: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.py:64
+msgid "SRI sequence {} must be between 0 and {}."
+msgstr "La secuencia SRI {} debe estar entre 0 y {}."
+
+#. Label of the sequences (Table) field in DocType 'SRI Emission Point'
+#: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
+msgid "Sequences by Document Type"
+msgstr "Secuencias por tipo de comprobante"
+
+#. Label of the subject_serial_number (Data) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Serial Number (Subject)"
+msgstr "Número de serie (titular)"
+
+#. Label of the signature_name (Data) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Signature Name"
+msgstr "Nombre de la firma"
+
+#. Label of the password (Password) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "Signing Password"
+msgstr "Contraseña de firma"
+
+#: l10n_ec/sri/signer.py:59
+msgid "Signing password is required to decode the PKCS#12 file."
+msgstr "Se requiere la contraseña para descifrar el archivo PKCS#12."
+
+#: l10n_ec/locale/i18n_markers.py:20
+msgid "Special Taxpayer Resolution"
+msgstr "Resolución de contribuyente especial"
+
+#. Label of the state (Select) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "State"
+msgstr "Estado"
+
+#. Name of a role
+#: l10n_ec/ecuador_localization/doctype/sri_document_type/sri_document_type.json
+#: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
+#: l10n_ec/ecuador_localization/doctype/sri_emission_sequence/sri_emission_sequence.json
+#: l10n_ec/ecuador_localization/doctype/sri_identification_type/sri_identification_type.json
+#: l10n_ec/ecuador_localization/doctype/sri_payment_method/sri_payment_method.json
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+#: l10n_ec/ecuador_localization/doctype/sri_tax_support/sri_tax_support.json
+msgid "System Manager"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:17
+msgid "Test"
+msgstr "Pruebas"
+
+#: l10n_ec/sri/signer.py:74
+msgid "The PKCS#12 bundle does not contain a private key and certificate."
+msgstr "El paquete PKCS#12 no contiene clave privada ni certificado."
+
+#: l10n_ec/sri/signer.py:177
+msgid "The electronic signature expired on {} and the document cannot be signed. Upload a valid signature file in SRI Signature."
+msgstr "La firma electrónica venció el {} y no se puede firmar el comprobante. Cargue un archivo de firma válido en Firma SRI."
+
+#. Label of the title (Data) field in DocType 'SRI Document Type'
+#. Label of the title (Data) field in DocType 'SRI Identification Type'
+#. Label of the title (Data) field in DocType 'SRI Payment Method'
+#. Label of the title (Data) field in DocType 'SRI Tax Support'
+#: l10n_ec/ecuador_localization/doctype/sri_document_type/sri_document_type.json
+#: l10n_ec/ecuador_localization/doctype/sri_identification_type/sri_identification_type.json
+#: l10n_ec/ecuador_localization/doctype/sri_payment_method/sri_payment_method.json
+#: l10n_ec/ecuador_localization/doctype/sri_tax_support/sri_tax_support.json
+msgid "Title"
+msgstr "Título"
+
+#: l10n_ec/sri/soap_client.py:56
+msgid "Unknown SRI service type: {}"
+msgstr "Tipo de servicio SRI desconocido: {}"
+
+#: l10n_ec/locale/i18n_markers.py:21
+msgid "Withholding Agent Resolution"
+msgstr "Resolución de agente de retención"
+
+#. Option for the 'State' (Select) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "expired"
+msgstr "Vencido"
+
+#. Option for the 'State' (Select) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "unverified"
+msgstr "Sin verificar"
+
+#. Option for the 'State' (Select) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+msgid "valid"
+msgstr "Válido"
+

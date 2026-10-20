@@ -12,8 +12,12 @@ from l10n_ec.sri.signer import (
 
 try:
 	import frappe
+	from frappe import _
 	from frappe.model.document import Document
 except ImportError:  # pragma: no cover
+
+	def _(message: str) -> str:
+		return message
 
 	class Document:  # type: ignore[no-redef]
 		"""Fallback base class when imported outside a Frappe Bench environment."""
@@ -76,7 +80,7 @@ class SRISignature(Document):
 			content = file_doc.get_content()
 			return content.encode("utf-8") if isinstance(content, str) else content
 
-		raise SriSignatureError("No PKCS#12 signature content attached to SRI Signature document.")
+		raise SriSignatureError(_("No PKCS#12 signature content attached to SRI Signature document."))
 
 	def action_validate_and_load(self, today: date | None = None) -> bool:
 		"""Decode PKCS#12 signature, populate certificate metadata fields, and update state."""
@@ -88,7 +92,7 @@ class SRISignature(Document):
 			)
 		except SriSignatureError as exc:
 			if frappe:
-				frappe.throw(frappe._(str(exc)))
+				frappe.throw(str(exc))
 			raise
 
 		self.not_valid_before = metadata.issue_date
@@ -112,7 +116,7 @@ class SRISignature(Document):
 			)
 		except SriSignatureError as exc:
 			if frappe:
-				frappe.throw(frappe._(str(exc)))
+				frappe.throw(str(exc))
 			raise
 
 	def days_to_expire(self, today: date | None = None) -> int:

@@ -38,5 +38,5 @@ def validate_sri_identification(doc, method=None) -> None:
 		)
 	except ValueError as exc:
 		if frappe:
-			frappe.throw(frappe._(str(exc)))
+			frappe.throw(str(exc))
 		raise
