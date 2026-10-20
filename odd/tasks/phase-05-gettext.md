@@ -15,8 +15,8 @@ everything that makes them succeed: wrapped Python strings, a curated
 ## Tasks
 
 - T1 (S1): Rewrite parametrized messages to static `{}` literals + `frappe._()` at boundaries. Route: inline. Commit: e5029ca
-- T2 (S1): Write `locale/main.pot` + `locale/es.po`, validate/compile with `msgfmt`. Route: inline. Commit: -
-- T3 (S2): Verify (`pytest -W error`, `pre-commit`, `msgfmt --check`), commit and push to `version-16`. Route: inline. Commit: -
+- T2 (S1): Write `locale/main.pot` + `locale/es.po`, validate/compile with `msgfmt`. Route: inline. Commit: 28fb603
+- T3 (S2): Verify (`pytest -W error`, `pre-commit`, `msgfmt --check`), commit and push to `version-16`. Route: inline. Commit: 28fb603
 
 ## Log
 
