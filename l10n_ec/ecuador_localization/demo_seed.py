@@ -103,6 +103,14 @@ def group_key(group: dict) -> str:
 
 DEMO_ADDRESS_TEMPLATE = {"doctype": "Address Template", "country": "Ecuador"}
 
+# Mirrors ERPNext setup-wizard presets: sites that skip the wizard lack these.
+PARTY_TYPES = [
+	{"doctype": "Party Type", "party_type": "Customer", "account_type": "Receivable"},
+	{"doctype": "Party Type", "party_type": "Supplier", "account_type": "Payable"},
+	{"doctype": "Party Type", "party_type": "Employee", "account_type": "Payable"},
+	{"doctype": "Party Type", "party_type": "Shareholder", "account_type": "Payable"},
+]
+
 NEGATIVE_PARTY = {
 	"customer_group": "Demo Commercial",
 	"customer_name": "Demo Invalid Tax ID",
@@ -144,6 +152,10 @@ def seed_demo() -> dict:
 	fiscal_year = fiscal_year_data()
 	if not frappe.db.exists("Fiscal Year", fiscal_year["year"]):
 		frappe.get_doc(fiscal_year).insert(ignore_permissions=True)
+
+	for party_type in PARTY_TYPES:
+		if not frappe.db.exists("Party Type", party_type["party_type"]):
+			frappe.get_doc(party_type).insert(ignore_permissions=True)
 
 	for group in DEMO_GROUPS:
 		if not frappe.db.exists(group["doctype"], group_key(group)):

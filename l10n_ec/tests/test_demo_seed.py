@@ -7,6 +7,7 @@ from l10n_ec.ecuador_localization.demo_seed import (
 	DEMO_GROUPS,
 	DEMO_PARTIES,
 	NEGATIVE_PARTY,
+	PARTY_TYPES,
 	fiscal_year_data,
 	group_key,
 	party_name,
@@ -54,6 +55,18 @@ class TestDemoSeed(UnitTestCase):
 		names = [party_name(entry) for entry in DEMO_PARTIES]
 		self.assertEqual(len(set(names)), len(names))
 		self.assertIn("Demo Customer RUC", names)
+
+	def test_party_types_mirror_wizard_presets(self) -> None:
+		by_type = {row["party_type"]: row["account_type"] for row in PARTY_TYPES}
+		self.assertEqual(
+			by_type,
+			{
+				"Customer": "Receivable",
+				"Supplier": "Payable",
+				"Employee": "Payable",
+				"Shareholder": "Payable",
+			},
+		)
 
 	def test_party_groups_are_seeded_leaves(self) -> None:
 		by_key = {group_key(group): group for group in DEMO_GROUPS}
