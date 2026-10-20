@@ -1,6 +1,6 @@
 #!/bin/bash
 # Local demo control for l10n_ec development. See docs/LOCAL_DEMO.md.
-# Commands: up | reset | seed | serve | status | down
+# Commands: up | reset | seed | serve | status | down | assets
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -71,6 +71,12 @@ cmd_serve() {
 	bench serve --port 8000
 }
 
+cmd_assets() {
+	need_bench
+	cd "$BENCH_DIR"
+	bench build
+}
+
 cmd_status() {
 	need_bench
 	docker ps --format '{{.Names}} {{.Status}} {{.Ports}}' | grep -E "l10nec|demo" || echo "no demo containers running"
@@ -88,6 +94,7 @@ case "${1:-status}" in
 	reset) cmd_reset ;;
 	seed) cmd_seed ;;
 	serve) cmd_serve ;;
+	assets) cmd_assets ;;
 	status) cmd_status ;;
 	down) cmd_down ;;
 	*) echo "usage: dev/demo.sh {up|reset|seed|serve|status|down}" >&2; exit 1 ;;

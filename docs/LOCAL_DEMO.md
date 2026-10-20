@@ -19,6 +19,7 @@ dev/demo.sh serve   # serve desk on http://127.0.0.1:8000 (see hosts note)
 dev/demo.sh seed    # re-run the seed only
 dev/demo.sh status  # containers + sites overview
 dev/demo.sh down    # stop containers (volumes keep the data)
+dev/demo.sh assets  # recompile frontend bundles (un styled pages = missing build; if bench build only refreshes translations, run `yarn run build --apps frappe --run-build-command` inside apps/frappe)
 ```
 
 `reset` is idempotent: it always drops `demo` first, so re-running it
