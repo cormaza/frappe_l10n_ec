@@ -1,6 +1,6 @@
 # Agent Instructions (`l10n_ec` — Frappe v16 Ecuadorian Localization)
 
-This repository is a standalone **Frappe Framework v16 / ERPNext v16** application (`l10n_ec`) targeting **Python 3.14**, providing Ecuadorian localization and SRI Offline Electronic Invoicing (`Comprobantes Electrónicos Offline`, XAdES-BES).
+This repository is a standalone **Frappe Framework v16 / ERPNext v16** application (`l10n_ec`, version `16.0.0`, branch `version-16`) targeting **Python 3.14**, providing Ecuadorian localization and SRI Offline Electronic Invoicing (`Comprobantes Electrónicos Offline`, XAdES-BES).
 
 ---
 
@@ -10,10 +10,9 @@ Unlike a multi-app `frappe-bench` workspace (`apps/`, `sites/`, `env/`), this re
 
 - **Ring 1 (Fast Local TDD & Static Analysis — Default Local Loop, `< 2s`)**:
   - Uses `.venv` (Python 3.14 managed via `uv`).
-  - Run linter and formatter:
+  - Run `pre-commit` hooks (Ruff import sorter, Ruff linter, Ruff formatter, JSON/TOML/YAML/AST checks):
     ```bash
-    .venv/bin/ruff check .
-    .venv/bin/ruff format --check .
+    .venv/bin/pre-commit run --all-files --show-diff-on-failure
     ```
   - Run unit and cryptographic XAdES-BES signing test suite:
     ```bash
@@ -24,8 +23,8 @@ Unlike a multi-app `frappe-bench` workspace (`apps/`, `sites/`, `env/`), this re
     act workflow_dispatch -W .github/workflows/ci.yml -j fast-tdd-unit
     ```
 - **Ring 2 (Full Frappe v16 + MariaDB 11.8 Bench Integration)**:
-  - Note that `.agents/skills/frappe-app-dev/` assumes commands like `bench --site <site> migrate` or `bench --site <site> run-tests` are executed from a `frappe-bench` directory where `l10n_ec` is installed under `apps/l10n_ec`.
-  - Use **Frappe-Manager (`fm`)**, **`frappe_docker`**, or the `frappe-v16-integration` job in `.github/workflows/ci.yml` when executing full database-backed `bench` commands.
+  - Note that `.agents/skills/frappe-app-dev/` supports both Standalone App Repository Mode and Full `frappe-bench` Mode.
+  - Use **Frappe-Manager (`fm`)**, **`frappe_docker`**, or the `frappe-v16-integration` job in `.github/workflows/ci.yml` when executing full database-backed `bench` commands (`bench --site test_site migrate`, `bench --site test_site run-tests --app l10n_ec`).
 
 ---
 
@@ -37,7 +36,7 @@ Unlike a multi-app `frappe-bench` workspace (`apps/`, `sites/`, `env/`), this re
    - **NEVER** call `ctx.load_pkcs12()` on `xmlsig` / `xades` contexts (`pyOpenSSL >= 24` removed `OpenSSL.crypto.PKCS12`). Always assign `ctx.x509`, `ctx.public_key`, and `ctx.private_key` directly as implemented in `l10n_ec/sri/signer.py`.
 
 2. **Frappe v16 Module & DocType Layer (`l10n_ec/ecuador_localization/`)**:
-   - Contains Frappe v16 DocType JSON definitions, controllers (`Document` subclasses with `TYPE_CHECKING` `DF` annotations), and co-located `test_<doctype>.py` modules.
+   - Contains Frappe v16 DocType JSON definitions, controllers (`Document` subclasses with `TYPE_CHECKING` `DF` annotations), programmatic custom field definitions (`create_custom_fields`), and co-located `test_<doctype>.py` modules.
    - Controllers delegate cryptographic and SRI protocol operations to `l10n_ec/sri/`.
 
 3. **Frappe v16 Test Runner Discovery Rule (Mandatory)**:
@@ -45,16 +44,37 @@ Unlike a multi-app `frappe-bench` workspace (`apps/`, `sites/`, `env/`), this re
    - Every test in any `test_*.py` file **MUST** be a method inside a `UnitTestCase` or `IntegrationTestCase` class (`from frappe.tests import IntegrationTestCase, UnitTestCase`, with `unittest.TestCase` fallback for standalone `pytest`).
    - `TestAppInstallability::test_frappe_test_runner_discovery_compliance` in `l10n_ec/tests/test_app_installability.py` enforces this invariant automatically.
 
-4. **Language Domain Contract**:
-   - All code, identifiers, comments, docstrings, DocType JSON labels, commit messages, and documentation files must be written in clean professional English (except official Ecuadorian SRI XML tag names and XAdES/WSDL constants mandated by the SRI technical specification).
+---
+
+## 3. Language Domain & Frappe v16 Gettext Translation (`i18n`) Contract
+
+Following official Frappe v16 internationalization (`frappe/gettext/translate.py`) and regional localization apps (such as `resilient-tech/india-compliance` and `alyf-de/erpnext_germany`):
+
+1. **100% English Source Code & Metadata**:
+   - All Python/JS identifiers, module names, class names, comments, docstrings, commit messages, and markdown documentation **MUST** be in clean professional English.
+   - All Frappe DocType names (`SRI Signature`, `SRI Payment Method`, `SRI Tax Support`, `SRI Emission Point`), `fieldname`s, `label`s, `description`s, Select `options`, Workspace titles, and Report labels **MUST** be defined in English in `.json` and `.py` files.
+   - All user-facing strings in Python must be wrapped in `frappe._("...")` (in English), and all user-facing strings in JavaScript must be wrapped in `__("...")` (in English).
+
+2. **Official SRI Protocol Exception**:
+   - Only literal XML element/attribute names (`infoTributaria`, `claveAcceso`, `codDoc`, `razonSocialComprador`), XAdES object descriptions (`contenido comprobante`), and SOAP/WSDL/XSD identifiers (`RecepcionComprobantesOffline`, `validarComprobante`, `RECIBIDA`, `DEVUELTA`, `AUTORIZADO`) mandated by the Ecuadorian SRI technical specification remain in Spanish.
+
+3. **Frappe v16 Gettext `locale/` Workflow (`es.po`)**:
+   - Do **not** use legacy `translations/*.csv` files.
+   - Spanish (`es`) UI translations for Ecuadorian users live in `l10n_ec/locale/main.pot` and `l10n_ec/locale/es.po` (the exact Frappe v16 counterpart to OCA's `i18n/es.po`).
+   - Extract, update, and compile translations using Frappe's Gettext CLI inside a bench environment:
+     ```bash
+     bench generate-pot-file --app l10n_ec
+     bench update-po-files --app l10n_ec --locale es
+     bench compile-po-to-mo --app l10n_ec --locale es
+     ```
 
 ---
 
-## 3. Workspace Skills (`.agents/skills/`)
+## 4. Workspace Skills (`.agents/skills/`)
 
 The following skills from [`frappe/skills`](https://github.com/frappe/skills) are installed in `.agents/skills/` for automatic and on-demand invocation:
 
-- [`.agents/skills/frappe-app-dev/SKILL.md`](.agents/skills/frappe-app-dev/SKILL.md): Reference patterns for Frappe v16 DocTypes, controllers, hooks, permissions, background jobs, and testing.
+- [`.agents/skills/frappe-app-dev/SKILL.md`](.agents/skills/frappe-app-dev/SKILL.md): Reference patterns for Frappe v16 DocTypes, controllers, hooks, permissions, background jobs, and testing (aligned for both Standalone App Repository Mode and Full `frappe-bench` Mode).
 - [`.agents/skills/frappe-code-review/SKILL.md`](.agents/skills/frappe-code-review/SKILL.md): Structured checklist for reviewing Frappe pull requests and controller/database changes.
 - [`.agents/skills/deep-app-audit/SKILL.md`](.agents/skills/deep-app-audit/SKILL.md): Comprehensive security (`S01`–`S42`) and correctness/customization (`A`/`B`/`C`/`D`) audit rules for Frappe applications.
 - [`.agents/skills/code-style/SKILL.md`](.agents/skills/code-style/SKILL.md): Python/JS formatting, naming, early returns, and readability standards across the Frappe ecosystem.
