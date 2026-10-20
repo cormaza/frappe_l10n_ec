@@ -32,29 +32,57 @@ Therefore, `l10n_ec` for Frappe v16 combines **both** the base accounting/catalo
 
 ---
 
-### Phase 1: Base Localization, Tax ID Validation & SRI Master Catalogs
-- **Source Equivalence**: `odoo/addons/l10n_ec` + [`OCA/l10n-ecuador` PR #101 (`l10n_ec_base`)](https://github.com/OCA/l10n-ecuador/pull/101).
+### Phase 1: Taxpayer Identification Validation (Pure Python)
+- **Source Equivalence**: `stdnum.ec` checks in `odoo/addons/l10n_ec` + identification subset of [`OCA/l10n-ecuador` PR #101 (`l10n_ec_base`)](https://github.com/OCA/l10n-ecuador/pull/101).
 - **Planned Scope**:
-  1. **Taxpayer Identification Validation (`l10n_ec/sri/identification.py`)**:
-     - Add `python-stdnum>=1.20` dependency (`stdnum.ec.ruc`, `stdnum.ec.ci`).
-     - Validate Ecuadorian `RUC` (`04`), `Cédula` (`05`), `Pasaporte` (`06`), `Consumidor Final` (`07` — `9999999999999` with configurable USD 50.00 threshold check), and `Identificación del Exterior` (`08`).
-  2. **SRI Master Catalog DocTypes & Seed Data**:
-     - `SRI Identification Type` (`04`–`08`)
-     - `SRI Document Type` (`01` Invoice, `03` Purchase Liquidation, `04` Credit Note, `05` Debit Note, `06` Delivery Note, `07` Withholding, `41` Reimbursement)
-     - `SRI Payment Method` (`01` Without Financial System, `15` Compensation, `16` Debit Card, `17` Electronic Money, `18` Prepaid Card, `19` Credit Card, `20` Other with Financial System, `21` Endorsement of Titles)
-     - `SRI Tax Support` (`Sustento Tributario` codes `01`–`15` for purchases and ATS)
-     - `SRI Emission Point` (`Establecimiento` 3-digit + `Punto de Emisión` 3-digit + per-document-type 9-digit sequences)
-  3. **ERPNext Custom Fields (`create_custom_fields` on `after_install` / `after_migrate`)**:
-     - `Company`: `sri_environment` (`Test` / `Production`), `sri_signature` (`Link: SRI Signature`), `special_taxpayer_resolution`, `withholding_agent_resolution`, `rimpe_regime`, `accounting_required`.
-     - `Customer` & `Supplier`: `sri_identification_type`, `sri_related_party` (`Parte Relacionada`).
-  4. **Ecuador NIIF Chart of Accounts & Tax Templates**:
-     - Verified NIIF Chart of Accounts (`Superintendencia de Compañías`) and tax templates (VAT 15%, VAT 5% construction, VAT 0%, VAT Exempt, No Object of VAT, ICE, IRBPNR, Income & VAT Withholding rates).
-  5. **Spanish Gettext Catalog (`l10n_ec/locale/es.po`)**:
-     - Full Spanish translations for all English DocType labels, fields, and validation messages.
+  1. Add `python-stdnum>=1.20` dependency and implement `l10n_ec/sri/identification.py` with format/validity checks for `RUC` (`04`, via `stdnum.ec.ruc`), `Cédula` (`05`, via `stdnum.ec.ci`), `Pasaporte` (`06`), `Consumidor Final` (`07` — literal `9999999999999` format only), and `Identificación del Exterior` (`08`).
+  2. Ring 1 `UnitTestCase` coverage for valid, invalid, and boundary inputs per identification type.
+- **Exit Criteria**: `identification.py` has zero top-level `frappe` imports; Ring 1 suite green. The `Consumidor Final` USD 50.00 amount threshold is explicitly out of scope here — it is a billing business rule, see Phase 6.
 
 ---
 
-### Phase 2: Electronic Invoicing EDI (Sales Invoices, Credit/Debit Notes & Purchase Liquidations)
+### Phase 2: SRI Master Catalog DocTypes & Seed Data
+- **Source Equivalence**: catalog subset of `odoo/addons/l10n_ec` + [`OCA/l10n-ecuador` PR #101 (`l10n_ec_base`)](https://github.com/OCA/l10n-ecuador/pull/101).
+- **Planned Scope**:
+  1. `SRI Identification Type` (`04`–`08`)
+  2. `SRI Document Type` (`01` Invoice, `03` Purchase Liquidation, `04` Credit Note, `05` Debit Note, `06` Delivery Note, `07` Withholding, `41` Reimbursement)
+  3. `SRI Payment Method` (`01` Without Financial System, `15` Compensation, `16` Debit Card, `17` Electronic Money, `18` Prepaid Card, `19` Credit Card, `20` Other with Financial System, `21` Endorsement of Titles)
+  4. `SRI Tax Support` (`Sustento Tributario` codes `01`–`15` for purchases and ATS)
+  5. `SRI Emission Point` (`Establecimiento` 3-digit + `Punto de Emisión` 3-digit + per-document-type 9-digit sequences)
+  6. Seed data via fixtures matching official SRI codes.
+- **Exit Criteria**: all five DocTypes install cleanly on a test site; stored codes match the SRI specification exactly; controllers delegate format checks to `l10n_ec/sri/identification.py` (Phase 1).
+
+---
+
+### Phase 3: ERPNext Custom Fields & Install Wiring
+- **Source Equivalence**: field customizations in `odoo/addons/l10n_ec` + [`OCA/l10n-ecuador` PR #101](https://github.com/OCA/l10n-ecuador/pull/101).
+- **Planned Scope**:
+  1. Wire `after_install` / `after_migrate` in `hooks.py` to idempotent `create_custom_fields`:
+     - `Company`: `sri_environment` (`Test` / `Production`), `sri_signature` (`Link: SRI Signature`), `special_taxpayer_resolution`, `withholding_agent_resolution`, `rimpe_regime`, `accounting_required`.
+     - `Customer` & `Supplier`: `sri_identification_type`, `sri_related_party` (`Parte Relacionada`).
+- **Exit Criteria**: fresh install and re-migrate both apply fields without duplicates or errors; uninstall path removes the customizations.
+
+---
+
+### Phase 4: Ecuador NIIF Chart of Accounts & Tax Templates
+- **Source Equivalence**: chart and tax definitions in `odoo/addons/l10n_ec` (replacing the unverified ERPNext `ec_ec_chart_template.json` skeleton).
+- **Planned Scope**:
+  1. Verified NIIF Chart of Accounts (`Superintendencia de Compañías`) with correct `root_type` assignments and NIIF account numbers.
+  2. Tax templates: VAT 15%, VAT 5% (construction), VAT 0%, VAT Exempt, No Object of VAT, ICE, IRBPNR, Income & VAT Withholding rates.
+- **Exit Criteria**: chart installs on a new Ecuadorian company; trial balance roots balance; every template posts to its intended account in a smoke test.
+
+---
+
+### Phase 5: Spanish Gettext Catalog (`es`)
+- **Source Equivalence**: Frappe v16 Gettext workflow (`frappe/gettext/translate.py`); no Odoo/OCA counterpart.
+- **Planned Scope**:
+  1. Ensure every user-facing Python string is wrapped in `frappe._("...")` and every JS string in `__("...")` (English source) for all DocTypes delivered in Phases 0–4.
+  2. Generate `l10n_ec/locale/main.pot`, translate `l10n_ec/locale/es.po`, and compile to `.mo` via `bench generate-pot-file`, `bench update-po-files --locale es`, `bench compile-po-to-mo --locale es`.
+- **Exit Criteria**: pot/po/mo pipeline runs clean inside bench; Spanish UI spot-check passes on the delivered DocTypes.
+
+---
+
+### Phase 6: Electronic Invoicing EDI (Sales Invoices, Credit/Debit Notes & Purchase Liquidations)
 - **Source Equivalence**: [`OCA/l10n-ecuador` PR #102 (`l10n_ec_account_edi`)](https://github.com/OCA/l10n-ecuador/pull/102) + [`PR #103 (`l10n_ec_credit_note`)](https://github.com/OCA/l10n-ecuador/pull/103).
 - **Planned Scope**:
   1. **XSD Schema Validator & XML Builders (`l10n_ec/sri/xml_builder.py` & `l10n_ec/sri/xsd/`)**:
@@ -65,10 +93,12 @@ Therefore, `l10n_ec` for Frappe v16 combines **both** the base accounting/catalo
      - Enqueues asynchronous submission and authorization polling via `frappe.enqueue(..., enqueue_after_commit=True)`.
   3. **RIDE Print Format & Automated Customer Email**:
      - Jinja/Typst/WeasyPrint RIDE (`Representación Impresa de Comprobante Electrónico`) with barcode of the 49-digit `claveAcceso` and attached authorized `.xml` + `.pdf`.
+  4. **Invoicing Business Rules**:
+     - Enforce the `Consumidor Final` (`07`) USD 50.00 amount threshold at invoice validation time (format validation alone lives in Phase 1).
 
 ---
 
-### Phase 3: Electronic Withholdings (`Comprobante de Retención` v2.0.0)
+### Phase 7: Electronic Withholdings (`Comprobante de Retención` v2.0.0)
 - **Source Equivalence**: [`OCA/l10n-ecuador` PR #104 (`l10n_ec_withhold`)](https://github.com/OCA/l10n-ecuador/pull/104).
 - **Planned Scope**:
   - `SRI Withholding` DocType (or extension on `Purchase Invoice` / `Payment Entry`) generating `ComprobanteRetencion_V2.0.0.xsd` (`codDoc=07`).
@@ -77,7 +107,7 @@ Therefore, `l10n_ec` for Frappe v16 combines **both** the base accounting/catalo
 
 ---
 
-### Phase 4: Electronic Delivery Note (`Guía de Remisión` v1.1.0)
+### Phase 8: Electronic Delivery Note (`Guía de Remisión` v1.1.0)
 - **Source Equivalence**: [`OCA/l10n-ecuador` PR #107 (`l10n_ec_delivery_note`)](https://github.com/OCA/l10n-ecuador/pull/107).
 - **Planned Scope**:
   - Custom fields and EDI integration on ERPNext `Delivery Note` (`Guía de Remisión`, `codDoc=06`, `GuiaRemision_V1.1.0.xsd`).
@@ -85,7 +115,7 @@ Therefore, `l10n_ec` for Frappe v16 combines **both** the base accounting/catalo
 
 ---
 
-### Phase 5: Fiscal & Tax Compliance Reports (`ATS`, `Form 104`, `Form 103`)
+### Phase 9: Fiscal & Tax Compliance Reports (`ATS`, `Form 104`, `Form 103`)
 - **Source Equivalence**: [`OCA/l10n-ecuador` PR #105 (`l10n_ec_ats`)](https://github.com/OCA/l10n-ecuador/pull/105), [`PR #108 (`l10n_ec_104`)](https://github.com/OCA/l10n-ecuador/pull/108), [`PR #109 (`l10n_ec_103`)](https://github.com/OCA/l10n-ecuador/pull/109).
 - **Planned Scope**:
   - **Anexo Transaccional Simplificado (`ATS`)**: Generates monthly `AT{mmaaaa}.xml` and `.zip` archive covering purchases (`compras`), sales (`ventas`), exports (`exportaciones`), and annulled vouchers (`anulados`), validated offline against `ats.xsd`.
