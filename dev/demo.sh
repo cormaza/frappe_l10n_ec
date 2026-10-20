@@ -1,6 +1,6 @@
 #!/bin/bash
 # Local demo control for l10n_ec development. See docs/LOCAL_DEMO.md.
-# Commands: up | reset | seed | serve | status | down | assets | sync
+# Commands: up | reset | seed | serve | status | down | assets | sync | worker
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -41,6 +41,7 @@ cmd_up() {
 
 cmd_reset() {
 	need_bench
+	cmd_sync
 	cmd_up
 	cd "$BENCH_DIR"
 	if [ -d "sites/$SITE" ]; then
@@ -56,6 +57,7 @@ cmd_reset() {
 	bench --site "$SITE" list-apps | grep -q "^l10n_ec$" || bench --site "$SITE" install-app l10n_ec
 	bench --site "$SITE" migrate
 	bench --site "$SITE" set-config allow_tests true
+	bench --site "$SITE" execute "frappe.db.set_single_value('System Settings', 'time_zone', 'America/Guayaquil')"
 	bench --site "$SITE" execute "[frappe.db.set_value('Installed Application', {'app_name': a}, 'is_setup_complete', 1) for a in ('frappe', 'erpnext', 'l10n_ec')]"
 	cmd_seed
 }
@@ -94,8 +96,14 @@ cmd_sync() {
 	echo "synced working tree into bench (locale .po/.pot excluded: they flow bench -> repo)"
 }
 
-cmd_status() {
+cmd_worker() {
 	need_bench
+	cd "$BENCH_DIR"
+	echo "Starting RQ worker (all queues). Without it, enqueued jobs pile up and new submits fail with QueueOverloaded."
+	bench worker --quiet
+}
+
+cmd_status() {	need_bench
 	docker ps --format '{{.Names}} {{.Status}} {{.Ports}}' | grep -E "l10nec|demo" || echo "no demo containers running"
 	cd "$BENCH_DIR"
 	bench --site "$SITE" list-apps 2>/dev/null || echo "site $SITE does not exist yet (run: dev/demo.sh reset)"
@@ -113,7 +121,8 @@ case "${1:-status}" in
 	serve) cmd_serve ;;
 	assets) cmd_assets ;;
 	sync) cmd_sync ;;
+	worker) cmd_worker ;;
 	status) cmd_status ;;
 	down) cmd_down ;;
-	*) echo "usage: dev/demo.sh {up|reset|seed|serve|status|down}" >&2; exit 1 ;;
+	*) echo "usage: dev/demo.sh {up|reset|seed|serve|status|down|assets|sync|worker}" >&2; exit 1 ;;
 esac
