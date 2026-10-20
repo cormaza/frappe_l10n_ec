@@ -16,6 +16,7 @@ SCHEMAS = {
 	"nota_credito": ("NotaCredito_V1.1.0.xsd", "1.1.0", "notaCredito"),
 	"nota_debito": ("NotaDebito_V1.0.0.xsd", "1.0.0", "notaDebito"),
 	"liquidacion_compra": ("LiquidacionCompra_V1.1.0.xsd", "1.1.0", "liquidacionCompra"),
+	"retencion": ("ComprobanteRetencion_V2.0.0.xsd", "2.0.0", "comprobanteRetencion"),
 }
 
 
@@ -114,6 +115,75 @@ def build_nota_debito_xml(ctx: dict, data: dict) -> str:
 		"</infoNotaDebito>"
 		f"<motivos>{reasons}</motivos>"
 		"</notaDebito>"
+	)
+
+
+def build_retencion_xml(ctx: dict, data: dict) -> str:
+	"""Build an unsigned `comprobanteRetencion` (codDoc 07) XML string."""
+	docs = "".join(_sustento_doc(item) for item in data["docs"])
+	return (
+		'<?xml version="1.0" encoding="UTF-8"?>\n'
+		f'<comprobanteRetencion id="comprobante" version="{SCHEMAS["retencion"][1]}">'
+		f"{_info_tributaria(ctx)}"
+		"<infoCompRetencion>"
+		f"<fechaEmision>{data['issue_date']}</fechaEmision>"
+		f"{_branch_address_tag(ctx)}"
+		f"{_special_taxpayer_tag(ctx)}"
+		f"{_accounting_required_tag(ctx)}"
+		f"<tipoIdentificacionSujetoRetenido>{data['subject_id_type']}</tipoIdentificacionSujetoRetenido>"
+		f"<parteRel>{data.get('related_party', 'NO')}</parteRel>"
+		f"<razonSocialSujetoRetenido>{escape_xml(data['subject_name'])}</razonSocialSujetoRetenido>"
+		f"<identificacionSujetoRetenido>{escape_xml(data['subject_id'])}</identificacionSujetoRetenido>"
+		f"<periodoFiscal>{data['fiscal_period']}</periodoFiscal>"
+		"</infoCompRetencion>"
+		f"<docsSustento>{docs}</docsSustento>"
+		"</comprobanteRetencion>"
+	)
+
+
+def _sustento_doc(doc: dict) -> str:
+	"""Build one `docSustento` block (sustento + taxes + withholdings + payments)."""
+	doc_taxes = "".join(
+		"<impuestoDocSustento>"
+		f"<codImpuestoDocSustento>{tax['tax_code']}</codImpuestoDocSustento>"
+		f"<codigoPorcentaje>{tax['rate_code']}</codigoPorcentaje>"
+		f"<baseImponible>{format_2(tax['base'])}</baseImponible>"
+		f"<tarifa>{format_2(tax['rate'])}</tarifa>"
+		f"<valorImpuesto>{format_2(tax['tax_value'])}</valorImpuesto>"
+		"</impuestoDocSustento>"
+		for tax in doc.get("doc_taxes", [])
+	)
+	withholdings = "".join(
+		"<retencion>"
+		f"<codigo>{item['code']}</codigo>"
+		f"<codigoRetencion>{item['withholding_code']}</codigoRetencion>"
+		f"<baseImponible>{format_2(item['base'])}</baseImponible>"
+		f"<porcentajeRetener>{format_2(item['rate'])}</porcentajeRetener>"
+		f"<valorRetenido>{format_2(item['value'])}</valorRetenido>"
+		"</retencion>"
+		for item in doc.get("withholdings", [])
+	)
+	payments = "".join(_payment(item) for item in doc.get("payments", []))
+	accounting_date = (
+		f"<fechaRegistroContable>{escape_xml(doc['accounting_date'])}</fechaRegistroContable>"
+		if doc.get("accounting_date")
+		else ""
+	)
+	return (
+		"<docSustento>"
+		f"<codSustento>{doc['sustento_code']}</codSustento>"
+		f"<codDocSustento>{doc['doc_code']}</codDocSustento>"
+		f"<numDocSustento>{escape_xml(doc['doc_number'].replace('-', ''))}</numDocSustento>"
+		f"<fechaEmisionDocSustento>{escape_xml(doc['issue_date'])}</fechaEmisionDocSustento>"
+		f"{accounting_date}"
+		f"<numAutDocSustento>{escape_xml(doc['auth_number'])}</numAutDocSustento>"
+		f"<pagoLocExt>{doc.get('local_payment', '01')}</pagoLocExt>"
+		f"<totalSinImpuestos>{format_2(doc['subtotal'])}</totalSinImpuestos>"
+		f"<importeTotal>{format_2(doc['total'])}</importeTotal>"
+		f"<impuestosDocSustento>{doc_taxes}</impuestosDocSustento>"
+		f"<retenciones>{withholdings}</retenciones>"
+		f"<pagos>{payments}</pagos>"
+		"</docSustento>"
 	)
 
 

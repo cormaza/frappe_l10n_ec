@@ -34,6 +34,7 @@ BUILDERS = {
 	"03": "build_liquidacion_compra_xml",
 	"04": "build_nota_credito_xml",
 	"05": "build_nota_debito_xml",
+	"07": "build_retencion_xml",
 }
 
 DOC_SCHEMAS = {
@@ -41,6 +42,7 @@ DOC_SCHEMAS = {
 	"03": "liquidacion_compra",
 	"04": "nota_credito",
 	"05": "nota_debito",
+	"07": "retencion",
 }
 
 ENVIRONMENTS = {"Test": "test", "Production": "production"}
@@ -112,7 +114,7 @@ def build_voucher_payload(invoice: dict, emitter: dict, sequence: dict) -> dict:
 	}
 	lines = [map_line_taxes(line) for line in invoice.get("lines", [])]
 	totals = map_tax_totals(invoice.get("tax_totals", []))
-	data: dict = {"issue_date": invoice["issue_date"], "subtotal": invoice["subtotal"]}
+	data: dict = {"issue_date": invoice.get("issue_date", ""), "subtotal": invoice.get("subtotal", 0.0)}
 	if cod_doc == "01":
 		data.update(
 			{
@@ -169,6 +171,17 @@ def build_voucher_payload(invoice: dict, emitter: dict, sequence: dict) -> dict:
 				"taxes": _map_taxes(invoice["taxes"]),
 				"total_value": invoice["total_value"],
 				"reasons": invoice.get("reasons", []),
+			}
+		)
+	elif cod_doc == "07":
+		data.update(
+			{
+				"subject_id_type": invoice["subject_id_type"],
+				"related_party": invoice.get("related_party", "NO"),
+				"subject_name": invoice["subject_name"],
+				"subject_id": invoice["subject_id"],
+				"fiscal_period": invoice["fiscal_period"],
+				"docs": invoice["docs"],
 			}
 		)
 	else:
@@ -483,6 +496,72 @@ def aggregate_raw_totals(lines: list) -> list:
 			entry["base"] = round(entry["base"] + tax["base"], 2)
 			entry["value"] = round(entry["value"] + tax["value"], 2)
 	return list(grouped.values())
+
+
+def sustento_entries(native_rows: list, purchase: dict, code_map: dict) -> list:
+	"""Adapt native withholding rows to grouping inputs with explicit SRI codes.
+
+	`native_rows` carry `category`, `rate`, `taxable`, `amount` (mirroring
+	Tax Withholding Entry fields); `code_map` resolves category names to
+	`(impuesto, codigoRetencion)` with no guessing inside.
+	"""
+	adapted = []
+	for row in native_rows:
+		if row["category"] not in code_map:
+			raise SriVoucherError(f"Withholding category '{row['category']}' has no SRI code mapping.")
+		impuesto, codigo = code_map[row["category"]]
+		adapted.append(
+			{
+				"purchase": purchase,
+				"tax_type": "IR" if impuesto == "1" else "IVA",
+				"withholding_code": codigo,
+				"rate": row["rate"],
+				"base": row["taxable"],
+				"value": row["amount"],
+			}
+		)
+	return adapted
+
+
+def group_withholdings_by_sustento(withholdings: list, sustento_code: str = "02") -> list:
+	"""Group native withholding lines into SRI `docSustento` blocks.
+
+	Each input carries `purchase` (doc identity + code-shaped `doc_taxes` +
+	`payments`), `tax_type` (`IR`/`IVA`), `withholding_code` (SRI percentage
+	code), and `rate`/`base`/`value`. Purchases group by document; taxes map
+	`IR`→`1`, anything else→`2`.
+	"""
+	groups: dict = {}
+	for item in withholdings:
+		purchase = item["purchase"]
+		key = (purchase["doc_code"], purchase["number"])
+		group = groups.setdefault(key, {"purchase": purchase, "retenciones": []})
+		group["retenciones"].append(
+			{
+				"code": "1" if item["tax_type"] == "IR" else "2",
+				"withholding_code": item["withholding_code"],
+				"base": item["base"],
+				"rate": item["rate"],
+				"value": item["value"],
+			}
+		)
+	blocks = []
+	for purchase, group in ((g["purchase"], g) for g in groups.values()):
+		blocks.append(
+			{
+				"sustento_code": sustento_code,
+				"doc_code": purchase["doc_code"],
+				"doc_number": purchase["number"],
+				"issue_date": purchase["issue_date"],
+				"auth_number": purchase["auth_number"],
+				"subtotal": purchase["subtotal"],
+				"total": purchase["total"],
+				"doc_taxes": purchase["doc_taxes"],
+				"withholdings": group["retenciones"],
+				"payments": purchase.get("payments", []),
+			}
+		)
+	return blocks
 
 
 def _assemble_payload(doc, reason=None, reasons=None):

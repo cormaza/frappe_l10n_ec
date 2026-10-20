@@ -17,11 +17,13 @@ from l10n_ec.ecuador_localization.voucher_flow import (
 	apply_transition,
 	build_voucher_payload,
 	generate_voucher_xml_doc,
+	group_withholdings_by_sustento,
 	map_line_taxes,
 	map_tax_totals,
 	poll_voucher_doc,
 	sign_voucher_doc,
 	submit_voucher_doc,
+	sustento_entries,
 )
 from l10n_ec.sri.soap_client import SriSoapClient
 from l10n_ec.sri.voucher_states import SriVoucherError
@@ -195,7 +197,56 @@ class TestVoucherFlowMapping(UnitTestCase):
 
 	def test_build_unsupported_code_raises(self) -> None:
 		with self.assertRaises(SriVoucherError):
-			build_voucher_payload(dict(INVOICE, cod_doc="07"), EMITTER, SEQUENCE)
+			build_voucher_payload(dict(INVOICE, cod_doc="99"), EMITTER, SEQUENCE)
+
+	def test_build_retencion_payload_validates_end_to_end(self) -> None:
+		from l10n_ec.sri.xml_builder import build_retencion_xml, validate_against_xsd
+
+		payload = build_voucher_payload(
+			{
+				"cod_doc": "07",
+				"issue_date": "21/10/2026",
+				"subject_id_type": "04",
+				"subject_name": "EMPRESA EJEMPLO SA",
+				"subject_id": "1790016919001",
+				"fiscal_period": "10/2026",
+				"docs": [
+					{
+						"sustento_code": "01",
+						"doc_code": "01",
+						"doc_number": "001-001-000000001",
+						"issue_date": "20/10/2026",
+						"auth_number": "1234567890",
+						"subtotal": 100.00,
+						"total": 115.00,
+						"doc_taxes": [
+							{
+								"tax_code": "2",
+								"rate_code": "4",
+								"base": 100.00,
+								"rate": 15.0,
+								"tax_value": 15.00,
+							}
+						],
+						"withholdings": [
+							{
+								"code": "1",
+								"withholding_code": "303",
+								"base": 100.00,
+								"rate": 1.0,
+								"value": 1.00,
+							}
+						],
+						"payments": [{"method": "01", "amount": 115.00}],
+					}
+				],
+			},
+			EMITTER,
+			SEQUENCE,
+		)
+		self.assertEqual(payload["builder"], "build_retencion_xml")
+		xml = build_retencion_xml(payload["ctx"], payload["data"])
+		self.assertTrue(validate_against_xsd(xml, payload["schema"]))
 
 
 class TestVoucherFlowPipeline(UnitTestCase):
@@ -287,6 +338,74 @@ class TestVoucherFlowPipeline(UnitTestCase):
 		self.assertEqual(len(totals), 1)
 		self.assertEqual(totals[0]["base"], 150.00)
 		self.assertEqual(totals[0]["value"], 22.50)
+
+	def test_group_withholdings_by_sustento(self) -> None:
+		purchase_a = {
+			"doc_code": "01",
+			"number": "001-001-000000001",
+			"issue_date": "20/10/2026",
+			"auth_number": "1234567890",
+			"subtotal": 100.00,
+			"total": 115.00,
+			"doc_taxes": [
+				{"tax_code": "2", "rate_code": "4", "base": 100.00, "rate": 15.0, "tax_value": 15.00}
+			],
+			"payments": [{"method": "01", "amount": 115.00}],
+		}
+		purchase_b = dict(purchase_a, number="001-001-000000002")
+		blocks = group_withholdings_by_sustento(
+			[
+				{
+					"purchase": purchase_a,
+					"tax_type": "IR",
+					"withholding_code": "303",
+					"rate": 1.0,
+					"base": 100.00,
+					"value": 1.00,
+				},
+				{
+					"purchase": purchase_a,
+					"tax_type": "IVA",
+					"withholding_code": "9",
+					"rate": 30.0,
+					"base": 15.00,
+					"value": 4.50,
+				},
+				{
+					"purchase": purchase_b,
+					"tax_type": "IR",
+					"withholding_code": "303",
+					"rate": 1.0,
+					"base": 50.00,
+					"value": 0.50,
+				},
+			],
+			sustento_code="01",
+		)
+		self.assertEqual(len(blocks), 2)
+		first = blocks[0]
+		self.assertEqual(first["sustento_code"], "01")
+		self.assertEqual(first["doc_number"], "001-001-000000001")
+		codes = [(r["code"], r["withholding_code"]) for r in first["withholdings"]]
+		self.assertEqual(codes, [("1", "303"), ("2", "9")])
+		self.assertEqual(blocks[1]["doc_number"], "001-001-000000002")
+
+	def test_sustento_entries_resolve_codes_explicitly(self) -> None:
+		purchase = {"doc_code": "01", "number": "001-001-000000001"}
+		entries = sustento_entries(
+			[{"category": "Ecuador IR 2%", "rate": 2.0, "taxable": 100.00, "amount": 2.00}],
+			purchase,
+			{"Ecuador IR 2%": ("1", "303")},
+		)
+		self.assertEqual(len(entries), 1)
+		self.assertEqual(entries[0]["tax_type"], "IR")
+		self.assertEqual(entries[0]["withholding_code"], "303")
+		with self.assertRaises(SriVoucherError):
+			sustento_entries(
+				[{"category": "Unknown", "rate": 1.0, "taxable": 1.0, "amount": 0.01}],
+				purchase,
+				{},
+			)
 
 	def test_apply_transition_guards_illegal_moves(self) -> None:
 		doc = _voucher(voucher_state="Authorized")
