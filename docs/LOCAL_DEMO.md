@@ -23,7 +23,8 @@ dev/demo.sh assets  # recompile frontend bundles (un styled pages = missing buil
 ```
 
 `reset` is idempotent: it always drops `demo` first, so re-running it
-restores the exact default database.
+restores the exact default database. It also marks site setup complete, so
+login lands straight on the desk (no setup wizard).
 
 ## What Gets Seeded
 

@@ -55,6 +55,7 @@ cmd_reset() {
 	bench --site "$SITE" list-apps | grep -q "^erpnext$" || bench --site "$SITE" install-app erpnext
 	bench --site "$SITE" list-apps | grep -q "^l10n_ec$" || bench --site "$SITE" install-app l10n_ec
 	bench --site "$SITE" migrate
+	bench --site "$SITE" execute "frappe.db.set_single_value('System Settings', 'setup_complete', 1)"
 	cmd_seed
 }
 
