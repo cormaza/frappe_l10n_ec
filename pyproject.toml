@@ -16,6 +16,8 @@ dependencies = [
     "xades==0.2.4",
     "zeep>=4.2.1",
     "python-stdnum>=1.20",
+    "pillow>=10.0.0",
+    "python-barcode>=0.15.0",
     "pytz",
 ]
 

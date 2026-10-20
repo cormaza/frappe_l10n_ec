@@ -1,0 +1,16 @@
+[
+ {
+  "custom_format": 1,
+  "disabled": 0,
+  "doctype": "Print Format",
+  "doc_type": "Sales Invoice",
+  "font_size": 14,
+  "html": "<div class=\"sri-ride\">\n<h2>RIDE — Representación Impresa de Comprobante Electrónico</h2>\n{% set emisor = sri_emisor(doc.company) %}\n<p><strong>Emisor:</strong> {{ emisor.legal_name if emisor else doc.company }} (RUC {{ emisor.ruc if emisor else \"\" }})</p>\n{% set voucher = sri_authorized_voucher(\"Sales Invoice\", doc.name) %}\n{% if voucher %}\n<p><strong>Clave de Acceso:</strong> {{ voucher.access_key }}</p>\n<p><img src=\"{{ sri_barcode(voucher.access_key) }}\" alt=\"Clave de acceso\" /></p>\n<p><strong>Autorización SRI:</strong> {{ voucher.authorization_number }} ({{ voucher.authorization_date }})</p>\n{% else %}\n<p><strong>COMPROBANTE EN TRÁMITE</strong> — pendiente de autorización del SRI.</p>\n{% endif %}\n<p><strong>Comprador:</strong> {{ doc.customer_name }} ({{ doc.tax_id }})</p>\n<table class=\"table table-bordered\">\n<thead><tr><th>Código</th><th>Descripción</th><th>Cantidad</th><th>Precio</th><th>Total</th></tr></thead>\n<tbody>\n{% for row in doc.items %}\n<tr><td>{{ row.item_code }}</td><td>{{ row.description }}</td><td>{{ row.qty }}</td><td>{{ row.rate }}</td><td>{{ row.amount }}</td></tr>\n{% endfor %}\n</tbody>\n</table>\n<p><strong>Total sin impuestos:</strong> {{ doc.total }} {{ doc.currency }}</p>\n<p><strong>Importe total:</strong> {{ doc.grand_total }} {{ doc.currency }}</p>\n</div>\n",
+  "module": "Ecuador Localization",
+  "name": "SRI RIDE",
+  "print_format_builder": 0,
+  "print_format_type": "Jinja",
+  "pdf_generator": "WeasyPrint",
+  "standard": "No"
+ }
+]
