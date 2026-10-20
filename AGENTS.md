@@ -51,6 +51,10 @@ Unlike a multi-app `frappe-bench` workspace (`apps/`, `sites/`, `env/`), this re
    - Controller and hook tests MUST follow the dual-ring contract: build documents via `frappe.get_doc({...})` when frappe is present (direct `MyDoc(field=...)` instantiation has no DocType context under real Frappe and fails with `DocType None not found`), expect `(ValueError, frappe.ValidationError)` for validation errors (Ring 1 raises `ValueError`, bench converts `frappe.throw`), and bind the name with an explicit `import frappe` (`from frappe.tests import X` does NOT bind it, so a module-level `frappe.ValidationError` reference raises `NameError` at discovery). See `.agents/skills/frappe-app-dev/references/testing.md`.
    - The Ruff ignore list in `pyproject.toml` mirrors frappe core upstream (`UP030`/`UP031`/`UP032`/`UP037`/`UP040`, each annotated `(translations)` in core). Do NOT remove entries to satisfy the linter; adjust code instead — these translation ignores exist upstream and keep future core integration clean.
 
+5. **Verify Against Core Sources Before Assuming (Mandatory)**:
+   - When implementation depends on framework behavior, read the installed core sources (`~/frappe-bench-v16/apps/frappe`, `~/frappe-bench-v16/apps/erpnext`, pinned to the target branches) instead of assuming from docs or memory. See `.agents/skills/frappe-app-dev/references/existing-app.md`.
+   - Past assumptions that cost cycles: setup completion is `Installed Application.is_setup_complete` per app (not `System Settings`); the chart picker reads only ERPNext's own template folders (external apps install via `create_charts(custom_chart=...)`); bench v16 Redis ports come from `sites/common_site_config.json` (`11001`/`13001`), not the classic `11000`/`12000`/`13000`.
+
 ---
 
 ## 3. Language Domain & Frappe v16 Gettext Translation (`i18n`) Contract

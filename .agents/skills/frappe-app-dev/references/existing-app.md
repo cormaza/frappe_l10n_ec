@@ -28,6 +28,13 @@ Key files to inspect first:
 
 Read the app's existing code to understand patterns before making changes. Load only the relevant feature references from the main `SKILL.md` table.
 
+When the work depends on framework behavior (hook firing order, redirects,
+picker contents, ports, validation order), verify it in the installed core
+sources instead of assuming from docs or memory: `~/frappe-bench-v16/apps/frappe`
+and `~/frappe-bench-v16/apps/erpnext` are full git clones pinned to the
+target branches. Docs lag and memory is version-fuzzy; the installed tree
+is ground truth.
+
 ## Step 4: Verify changes
 
 ### In Standalone App Repository Mode (Ring 1 Fast Loop)
