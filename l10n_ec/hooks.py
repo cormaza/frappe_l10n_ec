@@ -24,4 +24,7 @@ doc_events = {
 	"Supplier": {
 		"validate": "l10n_ec.ecuador_localization.party_hooks.validate_sri_identification",
 	},
+	"Company": {
+		"after_insert": "l10n_ec.ecuador_localization.chart_setup.setup_company_chart",
+	},
 }
