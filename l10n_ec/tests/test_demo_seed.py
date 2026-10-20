@@ -50,7 +50,8 @@ class TestDemoSeed(UnitTestCase):
 				validate_identification(doc["sri_identification_type"], doc["tax_id"]),
 				f"Invalid demo tax ID for {party_name(entry)}",
 			)
-			self.assertEqual(entry["address"]["country"], "Ecuador")
+			if party_name(entry) != "Demo Foreign Co":
+				self.assertEqual(entry["address"]["country"], "Ecuador")
 
 	def test_negative_party_is_actually_invalid(self) -> None:
 		self.assertFalse(
@@ -61,6 +62,11 @@ class TestDemoSeed(UnitTestCase):
 		names = [party_name(entry) for entry in DEMO_PARTIES]
 		self.assertEqual(len(set(names)), len(names))
 		self.assertIn("Demo Customer RUC", names)
+
+	def test_foreign_party_uses_country_not_territory(self) -> None:
+		foreign = next(e for e in DEMO_PARTIES if party_name(e) == "Demo Foreign Co")
+		self.assertEqual(foreign["address"]["country"], "Colombia")
+		self.assertEqual(foreign["party"]["sri_identification_type"], "08")
 
 	def test_masters_have_name_keys(self) -> None:
 		keys = [master_key(entry) for entry in DEMO_MASTERS]

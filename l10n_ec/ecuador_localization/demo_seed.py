@@ -75,6 +75,24 @@ DEMO_PARTIES = [
 			"tax_id": "1710034065001",
 		},
 	},
+	{
+		"address": {
+			"address_line1": "Calle 100 12-34",
+			"address_title": "Demo Foreign Co",
+			"address_type": "Billing",
+			"city": "Bogota",
+			"country": "Colombia",
+		},
+		"party": {
+			"customer_group": "Demo Commercial",
+			"customer_name": "Demo Foreign Co",
+			"customer_type": "Company",
+			"doctype": "Customer",
+			"sri_identification_type": "08",
+			"tax_id": "ABC-123-EXTERIOR",
+			"territory": "Ecuador",
+		},
+	},
 ]
 
 DEMO_GROUPS = [

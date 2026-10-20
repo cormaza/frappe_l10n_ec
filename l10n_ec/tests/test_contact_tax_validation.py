@@ -2,6 +2,8 @@ import unittest
 
 from l10n_ec.ecuador_localization.validation import (
 	is_ecuadorian_contact,
+	is_foreign_contact,
+	is_generic_final_consumer,
 	validate_contact_tax_id,
 )
 
@@ -37,3 +39,17 @@ class TestContactTaxValidation(UnitTestCase):
 		validate_contact_tax_id("CO", "04", "not-a-ruc")
 		validate_contact_tax_id("", "04", "not-a-ruc")
 		validate_contact_tax_id(None, "04", "not-a-ruc")
+
+	def test_foreign_contact_needs_a_resolved_non_ec_code(self) -> None:
+		self.assertTrue(is_foreign_contact("CO"))
+		self.assertTrue(is_foreign_contact("us"))
+		self.assertFalse(is_foreign_contact("EC"))
+		self.assertFalse(is_foreign_contact(""))
+		self.assertFalse(is_foreign_contact(None))
+
+	def test_generic_final_consumer_covers_type_and_id(self) -> None:
+		self.assertTrue(is_generic_final_consumer("07", "9999999999999"))
+		self.assertTrue(is_generic_final_consumer("07", "anything"))
+		self.assertTrue(is_generic_final_consumer("04", "9999999999999"))
+		self.assertFalse(is_generic_final_consumer("04", "1790016919001"))
+		self.assertFalse(is_generic_final_consumer(None, None))

@@ -5,7 +5,10 @@ try:
 except ImportError:  # pragma: no cover
 	frappe = None  # type: ignore[assignment]
 
-from l10n_ec.ecuador_localization.validation import validate_contact_tax_id
+from l10n_ec.ecuador_localization.validation import (
+	is_generic_final_consumer,
+	validate_contact_tax_id,
+)
 
 
 def _resolve_country_code(doc) -> str | None:
@@ -25,6 +28,19 @@ def _resolve_country_code(doc) -> str | None:
 	return frappe.db.get_value("Country", country, "code")
 
 
+def _reject_duplicate_final_consumer(doc) -> None:
+	"""There is exactly one generic final consumer across Customers/Suppliers."""
+	for doctype in ("Customer", "Supplier"):
+		duplicate = frappe.db.exists(
+			doctype,
+			{"name": ("!=", doc.get("name")), "sri_identification_type": "07"},
+		) or frappe.db.exists(
+			doctype, {"name": ("!=", doc.get("name")), "tax_id": (doc.get("tax_id") or "").strip()}
+		)
+		if duplicate:
+			frappe.throw(f"{doctype} '{duplicate}' is already the generic final consumer.")
+
+
 def validate_sri_identification(doc, method=None) -> None:
 	"""Validate the party tax ID for Ecuadorian contacts; skip when not applicable."""
 	identification_type = doc.get("sri_identification_type")
@@ -40,3 +56,5 @@ def validate_sri_identification(doc, method=None) -> None:
 		if frappe:
 			frappe.throw(str(exc))
 		raise
+	if frappe is not None and is_generic_final_consumer(identification_type, doc.get("tax_id")):
+		_reject_duplicate_final_consumer(doc)
