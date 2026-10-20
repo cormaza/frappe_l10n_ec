@@ -1,7 +1,32 @@
 [
- {"doctype": "SRI Identification Type", "code": "04", "title": "RUC"},
- {"doctype": "SRI Identification Type", "code": "05", "title": "Identity Card"},
- {"doctype": "SRI Identification Type", "code": "06", "title": "Passport"},
- {"doctype": "SRI Identification Type", "code": "07", "title": "Final Consumer"},
- {"doctype": "SRI Identification Type", "code": "08", "title": "Foreign Identification"}
+ {
+  "doctype": "SRI Identification Type",
+  "code": "04",
+  "title": "RUC",
+  "name": "04"
+ },
+ {
+  "doctype": "SRI Identification Type",
+  "code": "05",
+  "title": "Identity Card",
+  "name": "05"
+ },
+ {
+  "doctype": "SRI Identification Type",
+  "code": "06",
+  "title": "Passport",
+  "name": "06"
+ },
+ {
+  "doctype": "SRI Identification Type",
+  "code": "07",
+  "title": "Final Consumer",
+  "name": "07"
+ },
+ {
+  "doctype": "SRI Identification Type",
+  "code": "08",
+  "title": "Foreign Identification",
+  "name": "08"
+ }
 ]

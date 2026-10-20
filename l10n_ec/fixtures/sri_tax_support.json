@@ -1,17 +1,92 @@
 [
- {"doctype": "SRI Tax Support", "code": "01", "title": "VAT Tax Credit"},
- {"doctype": "SRI Tax Support", "code": "02", "title": "Income Tax Cost or Expense"},
- {"doctype": "SRI Tax Support", "code": "03", "title": "Fixed Asset - VAT Tax Credit"},
- {"doctype": "SRI Tax Support", "code": "04", "title": "Fixed Asset - Income Tax Cost or Expense"},
- {"doctype": "SRI Tax Support", "code": "05", "title": "Travel Expense Settlement"},
- {"doctype": "SRI Tax Support", "code": "06", "title": "Inventory - VAT Tax Credit"},
- {"doctype": "SRI Tax Support", "code": "07", "title": "Inventory - Income Tax Cost or Expense"},
- {"doctype": "SRI Tax Support", "code": "08", "title": "Expense Reimbursement (Intermediary)"},
- {"doctype": "SRI Tax Support", "code": "09", "title": "Claim Reimbursement"},
- {"doctype": "SRI Tax Support", "code": "10", "title": "Dividend, Benefit or Profit Distribution"},
- {"doctype": "SRI Tax Support", "code": "11", "title": "Debit Agreements (Financial Institutions)"},
- {"doctype": "SRI Tax Support", "code": "12", "title": "Presumptive Taxes and Withholdings"},
- {"doctype": "SRI Tax Support", "code": "13", "title": "Amounts Recognized by Public Sector Entities"},
- {"doctype": "SRI Tax Support", "code": "14", "title": "Amounts Billed by Partners to Transport Operators"},
- {"doctype": "SRI Tax Support", "code": "15", "title": "Digital Service Payments"}
+ {
+  "doctype": "SRI Tax Support",
+  "code": "01",
+  "title": "VAT Tax Credit",
+  "name": "01"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "02",
+  "title": "Income Tax Cost or Expense",
+  "name": "02"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "03",
+  "title": "Fixed Asset - VAT Tax Credit",
+  "name": "03"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "04",
+  "title": "Fixed Asset - Income Tax Cost or Expense",
+  "name": "04"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "05",
+  "title": "Travel Expense Settlement",
+  "name": "05"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "06",
+  "title": "Inventory - VAT Tax Credit",
+  "name": "06"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "07",
+  "title": "Inventory - Income Tax Cost or Expense",
+  "name": "07"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "08",
+  "title": "Expense Reimbursement (Intermediary)",
+  "name": "08"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "09",
+  "title": "Claim Reimbursement",
+  "name": "09"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "10",
+  "title": "Dividend, Benefit or Profit Distribution",
+  "name": "10"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "11",
+  "title": "Debit Agreements (Financial Institutions)",
+  "name": "11"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "12",
+  "title": "Presumptive Taxes and Withholdings",
+  "name": "12"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "13",
+  "title": "Amounts Recognized by Public Sector Entities",
+  "name": "13"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "14",
+  "title": "Amounts Billed by Partners to Transport Operators",
+  "name": "14"
+ },
+ {
+  "doctype": "SRI Tax Support",
+  "code": "15",
+  "title": "Digital Service Payments",
+  "name": "15"
+ }
 ]

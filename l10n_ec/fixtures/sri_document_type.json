@@ -1,9 +1,44 @@
 [
- {"doctype": "SRI Document Type", "code": "01", "title": "Invoice"},
- {"doctype": "SRI Document Type", "code": "03", "title": "Purchase Liquidation"},
- {"doctype": "SRI Document Type", "code": "04", "title": "Credit Note"},
- {"doctype": "SRI Document Type", "code": "05", "title": "Debit Note"},
- {"doctype": "SRI Document Type", "code": "06", "title": "Delivery Note"},
- {"doctype": "SRI Document Type", "code": "07", "title": "Withholding"},
- {"doctype": "SRI Document Type", "code": "41", "title": "Reimbursement"}
+ {
+  "doctype": "SRI Document Type",
+  "code": "01",
+  "title": "Invoice",
+  "name": "01"
+ },
+ {
+  "doctype": "SRI Document Type",
+  "code": "03",
+  "title": "Purchase Liquidation",
+  "name": "03"
+ },
+ {
+  "doctype": "SRI Document Type",
+  "code": "04",
+  "title": "Credit Note",
+  "name": "04"
+ },
+ {
+  "doctype": "SRI Document Type",
+  "code": "05",
+  "title": "Debit Note",
+  "name": "05"
+ },
+ {
+  "doctype": "SRI Document Type",
+  "code": "06",
+  "title": "Delivery Note",
+  "name": "06"
+ },
+ {
+  "doctype": "SRI Document Type",
+  "code": "07",
+  "title": "Withholding",
+  "name": "07"
+ },
+ {
+  "doctype": "SRI Document Type",
+  "code": "41",
+  "title": "Reimbursement",
+  "name": "41"
+ }
 ]
