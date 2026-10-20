@@ -42,7 +42,7 @@ class TestSRIElectronicVoucher(UnitTestCase):
 			{"Generated", "Signed", "Received", "Authorized", "Returned", "Rejected"},
 		)
 		code_field = next(f for f in schema["fields"] if f["fieldname"] == "sri_doc_code")
-		self.assertEqual(set(code_field["options"].split("\n")), {"01", "03", "04", "05", "07"})
+		self.assertEqual(set(code_field["options"].split("\n")), {"01", "03", "04", "05", "06", "07"})
 
 	def test_controller_holds_key_and_state(self) -> None:
 		doc = _make_doc()

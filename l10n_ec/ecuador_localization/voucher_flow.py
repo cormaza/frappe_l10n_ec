@@ -34,6 +34,7 @@ BUILDERS = {
 	"03": "build_liquidacion_compra_xml",
 	"04": "build_nota_credito_xml",
 	"05": "build_nota_debito_xml",
+	"06": "build_guia_xml",
 	"07": "build_retencion_xml",
 }
 
@@ -42,6 +43,7 @@ DOC_SCHEMAS = {
 	"03": "liquidacion_compra",
 	"04": "nota_credito",
 	"05": "nota_debito",
+	"06": "guia",
 	"07": "retencion",
 }
 
@@ -171,6 +173,19 @@ def build_voucher_payload(invoice: dict, emitter: dict, sequence: dict) -> dict:
 				"taxes": _map_taxes(invoice["taxes"]),
 				"total_value": invoice["total_value"],
 				"reasons": invoice.get("reasons", []),
+			}
+		)
+	elif cod_doc == "06":
+		data.update(
+			{
+				"origin_address": invoice["origin_address"],
+				"carrier_name": invoice["carrier_name"],
+				"carrier_id_type": invoice["carrier_id_type"],
+				"carrier_id": invoice["carrier_id"],
+				"transport_start": invoice["transport_start"],
+				"transport_end": invoice["transport_end"],
+				"plate": invoice["plate"],
+				"recipients": invoice["recipients"],
 			}
 		)
 	elif cod_doc == "07":
@@ -320,6 +335,7 @@ def process_voucher(
 	reasons: list | None = None,
 	withholding_codes: dict | None = None,
 	sustento_code: str = "02",
+	guia_data: dict | None = None,
 ) -> dict:
 	"""Run generate/sign/submit/poll for one voucher; safe to re-run anytime."""
 	if frappe is None:  # pragma: no cover
@@ -334,6 +350,7 @@ def process_voucher(
 			reasons=reasons,
 			withholding_codes=withholding_codes,
 			sustento_code=sustento_code,
+			guia_data=guia_data,
 		)
 		generated = generate_voucher_xml_doc(doc, payload)
 		if not generated["ok"]:
@@ -399,6 +416,7 @@ def create_and_process(
 	reasons: list | None = None,
 	withholding_codes: dict | None = None,
 	sustento_code: str = "02",
+	guia_data: dict | None = None,
 	run_now: bool = False,
 	key_material: tuple | None = None,
 	client_ws=None,
@@ -442,6 +460,7 @@ def create_and_process(
 			reasons=reasons,
 			withholding_codes=withholding_codes,
 			sustento_code=sustento_code,
+			guia_data=guia_data,
 		)
 	enqueue_process_voucher(voucher.name)
 	return {"ok": True, "voucher": voucher.name, "queued": True}
@@ -451,6 +470,8 @@ def _derive_cod_doc(reference_doctype: str, reference_name: str) -> str:
 	"""Derive the SRI document code from the referenced invoice."""
 	if reference_doctype == "Purchase Invoice":
 		return "03"
+	if reference_doctype == "Delivery Note":
+		return "06"
 	ref = frappe.get_doc(reference_doctype, reference_name)
 	if getattr(ref, "is_debit_note", None):
 		return "05"
@@ -580,7 +601,9 @@ def group_withholdings_by_sustento(withholdings: list, sustento_code: str = "02"
 	return blocks
 
 
-def _assemble_payload(doc, reason=None, reasons=None, withholding_codes=None, sustento_code="02"):
+def _assemble_payload(
+	doc, reason=None, reasons=None, withholding_codes=None, sustento_code="02", guia_data=None
+):
 	"""Build the builder payload from live Company/invoice documents."""
 	company = frappe.get_doc("Company", doc.company)
 	if not getattr(company, "tax_id", None):
@@ -602,7 +625,12 @@ def _assemble_payload(doc, reason=None, reasons=None, withholding_codes=None, su
 	}
 	sequence = {"sequential": sequential, "access_key": doc.access_key}
 	invoice = _invoice_dict(
-		doc, reason=reason, reasons=reasons, withholding_codes=withholding_codes, sustento_code=sustento_code
+		doc,
+		reason=reason,
+		reasons=reasons,
+		withholding_codes=withholding_codes,
+		sustento_code=sustento_code,
+		guia_data=guia_data,
 	)
 	return build_voucher_payload(invoice, emitter, sequence)
 
@@ -645,7 +673,9 @@ def _invoice_line(row) -> dict:
 	}
 
 
-def _invoice_dict(doc, reason=None, reasons=None, withholding_codes=None, sustento_code="02") -> dict:
+def _invoice_dict(
+	doc, reason=None, reasons=None, withholding_codes=None, sustento_code="02", guia_data=None
+) -> dict:
 	"""Map a live invoice document to the normalized payload dict."""
 	ref = frappe.get_doc(doc.reference_doctype, doc.reference_name)
 	base: dict = {
@@ -658,6 +688,11 @@ def _invoice_dict(doc, reason=None, reasons=None, withholding_codes=None, susten
 		"payments": [{"method": "01", "amount": ref.grand_total}],
 		"lines": [_invoice_line(row) for row in ref.items],
 	}
+	if doc.sri_doc_code == "06":
+		if guia_data is None:
+			raise SriVoucherError("Delivery notes need explicit guia_data {carrier, transport, docs}.")
+		base.update(_guia_recipient_and_carrier(doc, ref, guia_data))
+		return base
 	if doc.sri_doc_code in ("01", "04", "05"):
 		party = frappe.db.get_value(
 			"Customer", ref.customer, ["sri_identification_type", "tax_id", "customer_name"], as_dict=True
@@ -752,6 +787,69 @@ def _withholding_subject_and_docs(doc, ref, withholding_codes: dict, sustento_co
 		"subject_id": party.tax_id,
 		"fiscal_period": ref.posting_date.strftime("%m/%Y"),
 		"docs": group_withholdings_by_sustento(inputs, sustento_code=sustento_code),
+	}
+
+
+def _guia_recipient_and_carrier(doc, ref, guia_data: dict) -> dict:
+	"""Build the 06 carrier block plus single recipient from a Delivery Note."""
+	required = {
+		"carrier_name",
+		"carrier_id_type",
+		"carrier_id",
+		"origin_address",
+		"transport_start",
+		"transport_end",
+		"plate",
+		"transfer_reason",
+	}
+	missing = sorted(required - set(guia_data))
+	if missing:
+		raise SriVoucherError(f"guia_data is missing keys: {', '.join(missing)}.")
+	docs = guia_data.get("docs", [])
+	if len(docs) != 1:
+		raise SriVoucherError("Delivery notes need exactly one sustento doc in guia_data['docs'].")
+	party = frappe.db.get_value(
+		"Customer", ref.customer, ["sri_identification_type", "tax_id", "customer_name"], as_dict=True
+	)
+	if not ref.shipping_address_name:
+		raise SriVoucherError(f"Delivery Note '{ref.name}' needs a shipping address for the guia recipient.")
+	address = frappe.get_doc("Address", ref.shipping_address_name)
+	recipient_address = address.address_line1
+	if getattr(address, "city", None):
+		recipient_address += f", {address.city}"
+	sustento = docs[0]
+	sustento_auth = sustento.get("auth_number", "")
+	sustento_date = sustento.get("doc_issue_date", "")
+	return {
+		"origin_address": guia_data["origin_address"],
+		"carrier_name": guia_data["carrier_name"],
+		"carrier_id_type": guia_data["carrier_id_type"],
+		"carrier_id": guia_data["carrier_id"],
+		"transport_start": guia_data["transport_start"],
+		"transport_end": guia_data["transport_end"],
+		"plate": guia_data["plate"],
+		"recipients": [
+			{
+				"recipient_id": party.tax_id,
+				"recipient_name": party.customer_name,
+				"recipient_address": recipient_address,
+				"transfer_reason": guia_data["transfer_reason"],
+				"route": guia_data.get("route", ""),
+				"doc_code": sustento["doc_code"],
+				"doc_number": sustento["doc_number"],
+				"auth_number": sustento_auth,
+				"doc_issue_date": sustento_date,
+				"lines": [
+					{
+						"code": row.item_code,
+						"aux_code": "",
+						"description": row.description,
+						"qty": row.qty,
+					}
+					for row in ref.items
+				],
+			}
+		],
 	}
 
 

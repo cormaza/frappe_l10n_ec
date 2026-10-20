@@ -248,6 +248,49 @@ class TestVoucherFlowMapping(UnitTestCase):
 		xml = build_retencion_xml(payload["ctx"], payload["data"])
 		self.assertTrue(validate_against_xsd(xml, payload["schema"]))
 
+	def test_build_guia_payload_validates_end_to_end(self) -> None:
+		from l10n_ec.sri.xml_builder import build_guia_xml, validate_against_xsd
+
+		payload = build_voucher_payload(
+			{
+				"cod_doc": "06",
+				"issue_date": "21/10/2026",
+				"origin_address": "Av. Amazonas y Naciones Unidas",
+				"carrier_name": "TRANSPORTES EJEMPLO SA",
+				"carrier_id_type": "04",
+				"carrier_id": "1790016919001",
+				"transport_start": "21/10/2026",
+				"transport_end": "22/10/2026",
+				"plate": "ABC1234",
+				"recipients": [
+					{
+						"recipient_id": "1710034065",
+						"recipient_name": "COMPRADOR EJEMPLO",
+						"recipient_address": "Av. 6 de Diciembre",
+						"transfer_reason": "Venta",
+						"route": "Quito-Guayaquil",
+						"doc_code": "01",
+						"doc_number": "001-001-000012345",
+						"auth_number": "1234567890",
+						"doc_issue_date": "20/10/2026",
+						"lines": [
+							{
+								"code": "DEMO-WIDGET",
+								"aux_code": "WIDGET-AUX",
+								"description": "Demo widget",
+								"qty": 2.0,
+							}
+						],
+					}
+				],
+			},
+			EMITTER,
+			SEQUENCE,
+		)
+		self.assertEqual(payload["builder"], "build_guia_xml")
+		xml = build_guia_xml(payload["ctx"], payload["data"])
+		self.assertTrue(validate_against_xsd(xml, payload["schema"]))
+
 
 class TestVoucherFlowPipeline(UnitTestCase):
 	"""Mocked end-to-end voucher pipeline (zeep factories, generic p12, no network)."""

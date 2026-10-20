@@ -52,7 +52,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "SRI Document Code",
-   "options": "01\n03\n04\n05\n07",
+   "options": "01\n03\n04\n05\n06\n07",
    "reqd": 1
   },
   {
@@ -71,7 +71,7 @@
    "fieldname": "reference_doctype",
    "fieldtype": "Select",
    "label": "Reference DocType",
-   "options": "Sales Invoice\nPurchase Invoice",
+   "options": "Sales Invoice\nPurchase Invoice\nDelivery Note",
    "reqd": 1
   },
   {

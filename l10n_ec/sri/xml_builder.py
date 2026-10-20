@@ -17,6 +17,7 @@ SCHEMAS = {
 	"nota_debito": ("NotaDebito_V1.0.0.xsd", "1.0.0", "notaDebito"),
 	"liquidacion_compra": ("LiquidacionCompra_V1.1.0.xsd", "1.1.0", "liquidacionCompra"),
 	"retencion": ("ComprobanteRetencion_V2.0.0.xsd", "2.0.0", "comprobanteRetencion"),
+	"guia": ("GuiaRemision_V1.1.0.xsd", "1.1.0", "guiaRemision"),
 }
 
 
@@ -219,6 +220,78 @@ def build_liquidacion_compra_xml(ctx: dict, data: dict) -> str:
 		"</infoLiquidacionCompra>"
 		f"<detalles>{lines}</detalles>"
 		"</liquidacionCompra>"
+	)
+
+
+def build_guia_xml(ctx: dict, data: dict) -> str:
+	"""Build an unsigned `guiaRemision` (codDoc 06) XML string."""
+	recipients = "".join(_guia_recipient(item) for item in data["recipients"])
+	return (
+		'<?xml version="1.0" encoding="UTF-8"?>\n'
+		f'<guiaRemision id="comprobante" version="{SCHEMAS["guia"][1]}">'
+		f"{_info_tributaria(ctx)}"
+		"<infoGuiaRemision>"
+		f"{_branch_address_tag(ctx)}"
+		f"<dirPartida>{escape_xml(data['origin_address'])}</dirPartida>"
+		f"<razonSocialTransportista>{escape_xml(data['carrier_name'])}</razonSocialTransportista>"
+		f"<tipoIdentificacionTransportista>{data['carrier_id_type']}</tipoIdentificacionTransportista>"
+		f"<rucTransportista>{escape_xml(data['carrier_id'])}</rucTransportista>"
+		f"{_accounting_required_tag(ctx)}"
+		f"{_special_taxpayer_tag(ctx)}"
+		f"<fechaIniTransporte>{data['transport_start']}</fechaIniTransporte>"
+		f"<fechaFinTransporte>{data['transport_end']}</fechaFinTransporte>"
+		f"<placa>{escape_xml(data['plate'])}</placa>"
+		"</infoGuiaRemision>"
+		f"<destinatarios>{recipients}</destinatarios>"
+		"</guiaRemision>"
+	)
+
+
+def _guia_recipient(item: dict) -> str:
+	"""Build one `destinatario` block with its support document and lines."""
+	route = f"<ruta>{escape_xml(item['route'])}</ruta>" if item.get("route") else ""
+	auth = (
+		f"<numAutDocSustento>{escape_xml(item['auth_number'])}</numAutDocSustento>"
+		if item.get("auth_number")
+		else ""
+	)
+	sustento_date = (
+		f"<fechaEmisionDocSustento>{item['doc_issue_date']}</fechaEmisionDocSustento>"
+		if item.get("doc_issue_date")
+		else ""
+	)
+	sustento = (
+		f"<codDocSustento>{item['doc_code']}</codDocSustento>"
+		f"<numDocSustento>{escape_xml(item['doc_number'])}</numDocSustento>"
+		f"{auth}"
+		f"{sustento_date}"
+		if item.get("doc_code") and item.get("doc_number")
+		else ""
+	)
+	lines = "".join(_guia_line(line) for line in item["lines"])
+	return (
+		"<destinatario>"
+		f"<identificacionDestinatario>{escape_xml(item['recipient_id'])}</identificacionDestinatario>"
+		f"<razonSocialDestinatario>{escape_xml(item['recipient_name'])}</razonSocialDestinatario>"
+		f"<dirDestinatario>{escape_xml(item['recipient_address'])}</dirDestinatario>"
+		f"<motivoTraslado>{escape_xml(item['transfer_reason'])}</motivoTraslado>"
+		f"{route}"
+		f"{sustento}"
+		f"<detalles>{lines}</detalles>"
+		"</destinatario>"
+	)
+
+
+def _guia_line(line: dict) -> str:
+	"""Build one recipient `detalle` (quantity-only, no taxes)."""
+	aux = f"<codigoAdicional>{escape_xml(line['aux_code'])}</codigoAdicional>" if line.get("aux_code") else ""
+	return (
+		"<detalle>"
+		f"<codigoInterno>{escape_xml(line['code'])}</codigoInterno>"
+		f"{aux}"
+		f"<descripcion>{escape_xml(line['description'])}</descripcion>"
+		f"<cantidad>{format_6(line['qty'])}</cantidad>"
+		"</detalle>"
 	)
 
 
