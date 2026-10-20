@@ -18,6 +18,10 @@ CHART_PATH = Path(__file__).parent / "chart_of_accounts" / "ec_niif_chart_templa
 
 RECEIVABLE_ACCOUNT_NUMBER = "101020503"
 PAYABLE_ACCOUNT_NUMBER = "2010301"
+INCOME_ACCOUNT_NUMBER = "4101"
+EXPENSE_ACCOUNT_NUMBER = "520128"
+INVENTORY_ACCOUNT_NUMBER = "1010306"
+STOCK_RNB_ACCOUNT_NUMBER = "2010303"
 
 try:
 	from l10n_ec.ecuador_localization.tax_templates import setup_ecuadorian_taxes
@@ -64,6 +68,10 @@ def _set_company_default_accounts(company: str) -> None:
 	for number, fieldname in (
 		(RECEIVABLE_ACCOUNT_NUMBER, "default_receivable_account"),
 		(PAYABLE_ACCOUNT_NUMBER, "default_payable_account"),
+		(INCOME_ACCOUNT_NUMBER, "default_income_account"),
+		(EXPENSE_ACCOUNT_NUMBER, "default_expense_account"),
+		(INVENTORY_ACCOUNT_NUMBER, "default_inventory_account"),
+		(STOCK_RNB_ACCOUNT_NUMBER, "stock_received_but_not_billed"),
 	):
 		account = frappe.db.get_value("Account", {"company": company, "account_number": number}, "name")
 		if account:

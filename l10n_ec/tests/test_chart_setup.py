@@ -1,8 +1,12 @@
 import unittest
 
 from l10n_ec.ecuador_localization.chart_setup import (
+	EXPENSE_ACCOUNT_NUMBER,
+	INCOME_ACCOUNT_NUMBER,
+	INVENTORY_ACCOUNT_NUMBER,
 	PAYABLE_ACCOUNT_NUMBER,
 	RECEIVABLE_ACCOUNT_NUMBER,
+	STOCK_RNB_ACCOUNT_NUMBER,
 	find_account_path,
 	get_ec_chart_tree,
 )
@@ -33,6 +37,10 @@ class TestChartSetup(UnitTestCase):
 	def test_trade_control_accounts(self) -> None:
 		self.assertEqual(RECEIVABLE_ACCOUNT_NUMBER, "101020503")
 		self.assertEqual(PAYABLE_ACCOUNT_NUMBER, "2010301")
+		self.assertEqual(INCOME_ACCOUNT_NUMBER, "4101")
+		self.assertEqual(EXPENSE_ACCOUNT_NUMBER, "520128")
+		self.assertEqual(INVENTORY_ACCOUNT_NUMBER, "1010306")
+		self.assertEqual(STOCK_RNB_ACCOUNT_NUMBER, "2010303")
 		tree = get_ec_chart_tree()
 		for number in (RECEIVABLE_ACCOUNT_NUMBER, PAYABLE_ACCOUNT_NUMBER):
 			self.assertIsNotNone(find_account_path(tree, number))

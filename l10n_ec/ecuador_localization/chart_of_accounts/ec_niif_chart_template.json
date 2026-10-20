@@ -317,6 +317,9 @@
      },
      "DEL EXTERIOR": {
       "account_number": "2010302"
+     },
+     "MERCADERÍA RECIBIDA NO FACTURADA": {
+      "account_number": "2010303"
      }
     },
     "OBLIGACIONES CON INSTITUCIONES FINANCIERAS": {
