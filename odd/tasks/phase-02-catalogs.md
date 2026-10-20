@@ -14,9 +14,9 @@ Phase 3 hook contract as a pure Ring-1-testable helper.
 ## Tasks
 
 - T1 (S1): Five catalog DocTypes + `SRI Emission Sequence` child (JSON, controllers, `__init__.py`, co-located tests). Route: inline. Commit: cba622b
-- T2 (S1): Seed fixtures for the four closed catalogs + `hooks.fixtures` wiring. Route: inline. Commit: -
-- T3 (S3): Hook-contract helper (`is_ecuadorian_contact`, `validate_contact_tax_id`) in `ecuador_localization/validation.py`, test-first, Ring 1. Route: inline. Commit: -
-- T4 (S2): Verify (`pytest -W error`, `pre-commit`), commit and push to `version-16`. Route: inline. Commit: -
+- T2 (S1): Seed fixtures for the four closed catalogs + `hooks.fixtures` wiring. Route: inline. Commit: 1313fe0
+- T3 (S3): Hook-contract helper (`is_ecuadorian_contact`, `validate_contact_tax_id`) in `ecuador_localization/validation.py`, test-first, Ring 1. Route: inline. Commit: 1313fe0
+- T4 (S2): Verify (`pytest -W error`, `pre-commit`), commit and push to `version-16`. Route: inline. Commit: 1313fe0
 
 ## Log
 
