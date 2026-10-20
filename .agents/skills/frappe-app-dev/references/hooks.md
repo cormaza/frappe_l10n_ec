@@ -110,6 +110,17 @@ fixtures = [
 
 Export: `bench --site <site> export-fixtures --app <app-name>`
 
+Every fixture record MUST include an explicit `"name"` key: bench's
+`import_doc` reads `doc["name"]` before insert and fails with
+`KeyError: 'name'` otherwise — even for DocTypes using
+`autoname: field:<field>`. Hand-written fixtures look like this:
+
+```json
+[
+ {"doctype": "My DocType", "name": "01", "code": "01", "title": "Invoice"}
+]
+```
+
 ## Website routes
 
 ```python

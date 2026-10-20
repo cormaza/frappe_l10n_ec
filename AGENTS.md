@@ -25,6 +25,7 @@ Unlike a multi-app `frappe-bench` workspace (`apps/`, `sites/`, `env/`), this re
 - **Ring 2 (Full Frappe v16 + MariaDB 11.8 Bench Integration)**:
   - Note that `.agents/skills/frappe-app-dev/` supports both Standalone App Repository Mode and Full `frappe-bench` Mode.
   - Use **Frappe-Manager (`fm`)**, **`frappe_docker`**, or the `frappe-v16-integration` job in `.github/workflows/ci.yml` when executing full database-backed `bench` commands (`bench --site test_site migrate`, `bench --site test_site run-tests --app l10n_ec`).
+  - Local no-sudo bench (`~/frappe-bench-v16`, site `test_site`): MariaDB 11.8 and Redis run in Docker (bench v16 expects Redis on `11001`/`13001`, not the classic `11000`/`12000`/`13000` — always confirm against `sites/common_site_config.json`); a `redis-server --version` shim in `~/.local/bin` satisfies `bench init` config generation (the real servers are the containers); `yarn` comes from user-owned mise node (`npm install -g yarn`, no sudo); no `/etc/hosts` entry is needed for CLI-only `run-tests`.
 
 ---
 
@@ -43,6 +44,11 @@ Unlike a multi-app `frappe-bench` workspace (`apps/`, `sites/`, `env/`), this re
    - Frappe's `bench run-tests` uses `unittest.TestLoader().loadTestsFromModule(module)`, which **only** discovers methods on `unittest.TestCase` (`UnitTestCase` / `IntegrationTestCase`) subclasses and **silently ignores** bare top-level `def test_...()` functions.
    - Every test in any `test_*.py` file **MUST** be a method inside a `UnitTestCase` or `IntegrationTestCase` class (`from frappe.tests import IntegrationTestCase, UnitTestCase`, with `unittest.TestCase` fallback for standalone `pytest`).
    - `TestAppInstallability::test_frappe_test_runner_discovery_compliance` in `l10n_ec/tests/test_app_installability.py` enforces this invariant automatically.
+
+4. **Ring 2 Hard Lessons (Mandatory)**:
+   - Fixture records in `l10n_ec/fixtures/*.json` MUST include an explicit `"name"` key: bench's `import_doc` reads `doc["name"]` before insert (`KeyError: 'name'` otherwise), even for DocTypes with `autoname: field:<field>`.
+   - Controller and hook tests MUST follow the dual-ring contract: build documents via `frappe.get_doc({...})` when frappe is present (direct `MyDoc(field=...)` instantiation has no DocType context under real Frappe and fails with `DocType None not found`), expect `(ValueError, frappe.ValidationError)` for validation errors (Ring 1 raises `ValueError`, bench converts `frappe.throw`), and bind the name with an explicit `import frappe` (`from frappe.tests import X` does NOT bind it, so a module-level `frappe.ValidationError` reference raises `NameError` at discovery). See `.agents/skills/frappe-app-dev/references/testing.md`.
+   - The Ruff ignore list in `pyproject.toml` mirrors frappe core upstream (`UP030`/`UP031`/`UP032`/`UP037`/`UP040`, each annotated `(translations)` in core). Do NOT remove entries to satisfy the linter; adjust code instead — these translation ignores exist upstream and keep future core integration clean.
 
 ---
 
@@ -67,6 +73,11 @@ Following official Frappe v16 internationalization (`frappe/gettext/translate.py
      bench update-po-files --app l10n_ec --locale es
      bench compile-po-to-mo --app l10n_ec --locale es
      ```
+   - User-facing literals in pure Python modules (no top-level `import frappe` allowed) use `from frappe import _` with an identity fallback (`def _(message: str) -> str: return message`), which keeps Ring 1 green while giving the bench pot scanner real `_()` call literals to extract.
+   - `create_custom_fields` labels and Select options stay raw English (they are stored in the database and translated at display time); their translations are collected via extraction markers in `l10n_ec/locale/i18n_markers.py`, which MUST never be imported at runtime.
+   - `bench update-po-files` PRUNES msgids its scanner cannot see: every shipped msgid needs a real `_()` call or a marker entry. After the bench cycle, adopt the regenerated `main.pot`/`es.po` (headers, `#:` refs) as canonical.
+   - `PO-Revision-Date` MUST use the full `YYYY-MM-DD HH:MM` format; a bare date breaks `bench build --app` translation compilation.
+   - Core-owned strings (e.g. the `Accounts Manager` / `System Manager` roles) stay untranslated in our catalog; core ships their translations.
 
 ---
 

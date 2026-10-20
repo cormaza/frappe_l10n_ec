@@ -94,3 +94,37 @@ bench --site test_site run-tests --module <app>.<module>.doctype.<doctype>.test_
 - Writing bare `def test_foo():` functions: `pytest` runs them, but `bench run-tests` silently skips them. Always wrap test methods inside a `UnitTestCase` or `IntegrationTestCase` class.
 - If integration tests fail with "DocType not found", run `bench --site <site> migrate` first.
 - Test files must be named `test_*.py` to be discovered.
+
+## Dual-ring controller tests (in-memory, no database)
+
+Controllers and hooks exercised in both standalone `pytest` (no Frappe)
+and `bench run-tests` (real Frappe) must not instantiate `Document`
+subclasses directly: `MyDoc(field=...)` has no DocType context under real
+Frappe and fails with `DocType None not found`. Build through a helper:
+
+```python
+try:
+	import frappe
+	from frappe.tests import UnitTestCase
+
+	EXPECTED_ERROR = (ValueError, frappe.ValidationError)
+except ImportError:  # pragma: no cover
+	frappe = None
+	UnitTestCase = unittest.TestCase
+	EXPECTED_ERROR = ValueError
+
+
+def _make_doc(**kwargs):
+	if frappe is not None:
+		return frappe.get_doc({"doctype": "My DocType", **kwargs})
+	return MyDoc(**kwargs)
+```
+
+Rules:
+
+- `import frappe` must appear explicitly: `from frappe.tests import X`
+does NOT bind the name `frappe`, so a module-level `frappe.ValidationError`
+reference raises `NameError` during bench discovery.
+- Error expectations use the `EXPECTED_ERROR` tuple: standalone code raises
+`ValueError`, while bench converts `frappe.throw` into
+`frappe.ValidationError`.
