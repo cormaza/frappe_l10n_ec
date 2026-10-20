@@ -14,12 +14,13 @@ wiring, and `validate` hooks gating on the Country ISO code.
 ## Tasks
 
 - T1 (S3, S4): Refine `validation.py` + Ring-1 tests to ISO-code gating. Route: inline. Commit: 03a8702
-- T2 (S1): `custom_fields.py` (field defs, create, delete) + Ring-1 structure tests. Route: inline. Commit: -
-- T3 (S1, S2): `hooks.py` wiring (`after_install`, `after_migrate`, `before_uninstall`, `doc_events` for Customer/Supplier). Route: inline. Commit: -
-- T4 (S3, S4): `party_hooks.validate_sri_identification` (resolve Country code via default address, delegate, `frappe.throw`). Route: inline. Commit: -
-- T5 (S2): Verify (`pytest -W error`, `pre-commit`), commit and push to `version-16`. Route: inline. Commit: -
+- T2 (S1): `custom_fields.py` (field defs, create, delete) + Ring-1 structure tests. Route: inline. Commit: 726bff2
+- T3 (S1, S2): `hooks.py` wiring (`after_install`, `after_migrate`, `before_uninstall`, `doc_events` for Customer/Supplier). Route: inline. Commit: 726bff2
+- T4 (S3, S4): `party_hooks.validate_sri_identification` (resolve Country code via default address, delegate, `frappe.throw`). Route: inline. Commit: 726bff2
+- T5 (S2): Verify (`pytest -W error`, `pre-commit`), commit and push to `version-16`. Route: inline. Commit: 726bff2
 
 ## Log
 
 - L1: "adelante toma la fase 3, teniendo encuenta lo del codigo ISO"
 - L2: Ring-2 checks (`migrate`, fixture import, hook firing on a test site) pending: no bench in this environment; user tests on `version-16` directly.
+- L3: T1 committed as 03a8702; T2-T4 committed as 726bff2 (11 files). Pre-commit reformatted four Phase 2 test files (whitespace only); they rode along in 726bff2.
