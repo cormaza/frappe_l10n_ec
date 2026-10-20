@@ -7,9 +7,17 @@ from l10n_ec.ecuador_localization.doctype.sri_payment_method.sri_payment_method 
 )
 
 try:
+	import frappe
 	from frappe.tests import UnitTestCase
 except ImportError:  # pragma: no cover
+	frappe = None  # type: ignore[assignment]
 	UnitTestCase = unittest.TestCase  # type: ignore[misc,assignment]
+
+
+def _make_doc(**kwargs):
+	if frappe is not None:
+		return frappe.get_doc({"doctype": "SRI Payment Method", **kwargs})
+	return SRIPaymentMethod(**kwargs)
 
 
 class TestSRIPaymentMethod(UnitTestCase):
@@ -24,6 +32,6 @@ class TestSRIPaymentMethod(UnitTestCase):
 		)
 
 	def test_controller_holds_code_and_title(self) -> None:
-		doc = SRIPaymentMethod(code="19", title="Credit Card")
+		doc = _make_doc(code="19", title="Credit Card")
 		self.assertEqual(doc.code, "19")
 		self.assertEqual(doc.title, "Credit Card")

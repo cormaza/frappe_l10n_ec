@@ -7,9 +7,17 @@ from l10n_ec.ecuador_localization.doctype.sri_identification_type.sri_identifica
 )
 
 try:
+	import frappe
 	from frappe.tests import UnitTestCase
 except ImportError:  # pragma: no cover
+	frappe = None  # type: ignore[assignment]
 	UnitTestCase = unittest.TestCase  # type: ignore[misc,assignment]
+
+
+def _make_doc(**kwargs):
+	if frappe is not None:
+		return frappe.get_doc({"doctype": "SRI Identification Type", **kwargs})
+	return SRIIdentificationType(**kwargs)
 
 
 class TestSRIIdentificationType(UnitTestCase):
@@ -23,6 +31,6 @@ class TestSRIIdentificationType(UnitTestCase):
 		self.assertEqual(set(code_field["options"].split("\n")), {"04", "05", "06", "07", "08"})
 
 	def test_controller_holds_code_and_title(self) -> None:
-		doc = SRIIdentificationType(code="04", title="RUC")
+		doc = _make_doc(code="04", title="RUC")
 		self.assertEqual(doc.code, "04")
 		self.assertEqual(doc.title, "RUC")

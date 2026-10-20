@@ -7,9 +7,17 @@ from l10n_ec.ecuador_localization.doctype.sri_tax_support.sri_tax_support import
 )
 
 try:
+	import frappe
 	from frappe.tests import UnitTestCase
 except ImportError:  # pragma: no cover
+	frappe = None  # type: ignore[assignment]
 	UnitTestCase = unittest.TestCase  # type: ignore[misc,assignment]
+
+
+def _make_doc(**kwargs):
+	if frappe is not None:
+		return frappe.get_doc({"doctype": "SRI Tax Support", **kwargs})
+	return SRITaxSupport(**kwargs)
 
 
 class TestSRITaxSupport(UnitTestCase):
@@ -24,6 +32,6 @@ class TestSRITaxSupport(UnitTestCase):
 		)
 
 	def test_controller_holds_code_and_title(self) -> None:
-		doc = SRITaxSupport(code="01", title="VAT Tax Credit")
+		doc = _make_doc(code="01", title="VAT Tax Credit")
 		self.assertEqual(doc.code, "01")
 		self.assertEqual(doc.title, "VAT Tax Credit")

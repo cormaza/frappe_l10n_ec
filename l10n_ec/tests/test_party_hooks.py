@@ -4,9 +4,14 @@ from unittest.mock import patch
 from l10n_ec.ecuador_localization import party_hooks
 
 try:
+	import frappe
 	from frappe.tests import UnitTestCase
+
+	EXPECTED_ERROR = (ValueError, frappe.ValidationError)
 except ImportError:  # pragma: no cover
+	frappe = None  # type: ignore[assignment]
 	UnitTestCase = unittest.TestCase  # type: ignore[misc,assignment]
+	EXPECTED_ERROR = ValueError
 
 
 class _StubDoc:
@@ -35,7 +40,7 @@ class TestPartyHooks(UnitTestCase):
 	def test_invalid_ecuadorian_tax_id_raises(self) -> None:
 		doc = _StubDoc(sri_identification_type="04", tax_id="1790016819001")
 		with patch.object(party_hooks, "_resolve_country_code", return_value="EC"):
-			with self.assertRaises(ValueError):
+			with self.assertRaises(EXPECTED_ERROR):
 				party_hooks.validate_sri_identification(doc)
 
 	def test_valid_ecuadorian_tax_id_passes(self) -> None:

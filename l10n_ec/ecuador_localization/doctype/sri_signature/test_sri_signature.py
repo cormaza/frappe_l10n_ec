@@ -6,10 +6,18 @@ from l10n_ec.sri.signer import SriSignatureExpiredError
 from l10n_ec.tests.test_helpers import generate_test_p12
 
 try:
+	import frappe
 	from frappe.tests import IntegrationTestCase, UnitTestCase
 except ImportError:  # pragma: no cover
+	frappe = None  # type: ignore[assignment]
 	UnitTestCase = unittest.TestCase  # type: ignore[misc,assignment]
 	IntegrationTestCase = unittest.TestCase  # type: ignore[misc,assignment]
+
+
+def _make_doc(**kwargs):
+	if frappe is not None:
+		return frappe.get_doc({"doctype": "SRI Signature", **kwargs})
+	return SRISignature(**kwargs)
 
 
 class TestSRISignatureUnit(UnitTestCase):
@@ -17,7 +25,7 @@ class TestSRISignatureUnit(UnitTestCase):
 
 	def test_validate_and_sign_controller(self) -> None:
 		p12_bytes = generate_test_p12(password=b"123456", expired=False)
-		doc = SRISignature(
+		doc = _make_doc(
 			signature_name="Test Controller Key",
 			p12_file="base64:" + base64.b64encode(p12_bytes).decode("ascii"),
 			password="123456",
@@ -38,7 +46,7 @@ class TestSRISignatureUnit(UnitTestCase):
 
 	def test_expired_signature_controller_blocks_signing(self) -> None:
 		p12_bytes = generate_test_p12(password=b"123456", expired=True)
-		doc = SRISignature(
+		doc = _make_doc(
 			signature_name="Expired Controller Key",
 			p12_file="base64:" + base64.b64encode(p12_bytes).decode("ascii"),
 			password="123456",
