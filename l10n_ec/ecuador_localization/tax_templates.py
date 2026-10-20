@@ -34,14 +34,21 @@ WITHHOLDING_RATES = {
 }
 
 
+def template_title(base_title: str, company_abbr: str) -> str:
+	"""Expected stored title: ERPNext appends `" - {abbr}"` itself at insert."""
+	return f"{base_title} - {company_abbr}"
+
+
 def setup_ecuadorian_taxes(company: str) -> None:
 	"""Create the template catalog for a company; reruns skip existing titles."""
 	if frappe is None:  # pragma: no cover
 		raise RuntimeError("frappe is required to create tax templates.")
 	abbr = frappe.db.get_value("Company", company, "abbr") or company
 	for spec in TAX_TEMPLATES:
-		title = f"{spec['title']} - {abbr}"
-		if frappe.db.exists("Item Tax Template", {"title": title, "company": company}):
+		title = template_title(spec["title"], abbr)
+		if frappe.db.exists(
+			"Item Tax Template", {"title": ["in", [spec["title"], title]], "company": company}
+		):
 			continue
 		account = frappe.db.get_value(
 			"Account", {"company": company, "account_number": spec["account_number"]}, "name"
@@ -55,7 +62,7 @@ def setup_ecuadorian_taxes(company: str) -> None:
 		frappe.get_doc(
 			{
 				"doctype": "Item Tax Template",
-				"title": title,
+				"title": spec["title"],
 				"company": company,
 				"taxes": [{"tax_type": account, "tax_rate": spec["rate"]}],
 			}

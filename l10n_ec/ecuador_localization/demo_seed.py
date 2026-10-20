@@ -176,6 +176,7 @@ DEMO_ITEM = {
 	"item_code": "DEMO-WIDGET",
 	"item_group": "Demo Goods",
 	"item_name": "Demo Widget",
+	"description": "Demo widget for electronic invoicing tests",
 	"stock_uom": "Nos",
 	"warehouse": "Demo Stores - DE",
 }
@@ -184,21 +185,37 @@ DEMO_PURCHASE = {
 	"bill_date": "2026-10-21",
 	"bill_no": "DEMO-BILL-001",
 	"currency": "USD",
-	"items": [{"item_code": "DEMO-WIDGET", "qty": 10, "rate": 10.0, "warehouse": "Demo Stores - DE"}],
+	"items": [
+		{
+			"item_code": "DEMO-WIDGET",
+			"qty": 10,
+			"rate": 10.0,
+			"warehouse": "Demo Stores - DE",
+			"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
+		}
+	],
 	"supplier": "Demo Supplier RUC",
 	"update_stock": 1,
 }
 
 DEMO_SALES = {
 	"currency": "USD",
-	"items": [{"item_code": "DEMO-WIDGET", "qty": 5, "rate": 15.0, "warehouse": "Demo Stores - DE"}],
+	"items": [
+		{
+			"item_code": "DEMO-WIDGET",
+			"qty": 5,
+			"rate": 15.0,
+			"warehouse": "Demo Stores - DE",
+			"item_tax_template": "Ecuador VAT 15% - Sales - DE",
+		}
+	],
 	"party": "Demo Customer RUC",
 	"update_stock": 1,
 }
 
 DEMO_PAYMENTS = [
-	{"amount": 75.0, "against": "sales", "party": "Demo Customer RUC", "payment_type": "Receive"},
-	{"amount": 100.0, "against": "purchase", "party": "Demo Supplier RUC", "payment_type": "Pay"},
+	{"amount": 86.25, "against": "sales", "party": "Demo Customer RUC", "payment_type": "Receive"},
+	{"amount": 115.0, "against": "purchase", "party": "Demo Supplier RUC", "payment_type": "Pay"},
 ]
 
 # Mirrors ERPNext setup-wizard presets: sites that skip the wizard lack these.

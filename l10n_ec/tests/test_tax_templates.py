@@ -1,7 +1,7 @@
 import unittest
 
 from l10n_ec.ecuador_localization.chart_setup import find_account_path, get_ec_chart_tree
-from l10n_ec.ecuador_localization.tax_templates import TAX_TEMPLATES, WITHHOLDING_RATES
+from l10n_ec.ecuador_localization.tax_templates import TAX_TEMPLATES, WITHHOLDING_RATES, template_title
 
 try:
 	from frappe.tests import UnitTestCase
@@ -34,6 +34,11 @@ class TestEcuadorTaxTemplates(UnitTestCase):
 		for side in ("Sales", "Purchases"):
 			for rate in (15.0, 5.0, 0.0):
 				self.assertIn(f"Ecuador VAT {rate:g}% - {side}", by_title)
+
+	def test_template_title_expects_erpnext_suffix(self) -> None:
+		# ERPNext appends " - {abbr}" to the stored name itself; passing a
+		# pre-suffixed title would double it and break Link references.
+		self.assertEqual(template_title("Ecuador VAT 15% - Sales", "DE"), "Ecuador VAT 15% - Sales - DE")
 
 	def test_withholding_rate_sets(self) -> None:
 		self.assertEqual(

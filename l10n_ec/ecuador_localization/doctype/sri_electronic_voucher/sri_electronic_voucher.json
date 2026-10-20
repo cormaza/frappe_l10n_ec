@@ -1,0 +1,162 @@
+{
+ "actions": [],
+ "autoname": "field:access_key",
+ "creation": "2026-10-21 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "access_key",
+  "sri_number",
+  "voucher_state",
+  "sri_doc_code",
+  "company",
+  "column_break_reference",
+  "reference_doctype",
+  "reference_name",
+  "section_break_xml",
+  "unsigned_xml",
+  "signed_xml",
+  "column_break_authorization",
+  "authorization_number",
+  "authorization_date",
+  "section_break_messages",
+  "last_message"
+ ],
+ "fields": [
+  {
+   "fieldname": "access_key",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Access Key",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "sri_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "SRI Number",
+   "read_only": 1
+  },
+  {
+   "default": "Generated",
+   "fieldname": "voucher_state",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "State",
+   "options": "Generated\nSigned\nReceived\nAuthorized\nReturned\nRejected",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sri_doc_code",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "SRI Document Code",
+   "options": "01\n03\n04\n05",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_reference",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Select",
+   "label": "Reference DocType",
+   "options": "Sales Invoice\nPurchase Invoice",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference",
+   "options": "reference_doctype",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_xml",
+   "fieldtype": "Section Break",
+   "label": "Signed XML"
+  },
+  {
+   "fieldname": "unsigned_xml",
+   "fieldtype": "Attach",
+   "label": "Unsigned XML"
+  },
+  {
+   "fieldname": "signed_xml",
+   "fieldtype": "Attach",
+   "label": "Signed XML"
+  },
+  {
+   "fieldname": "column_break_authorization",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "authorization_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Authorization Number"
+  },
+  {
+   "fieldname": "authorization_date",
+   "fieldtype": "Datetime",
+   "label": "Authorization Date"
+  },
+  {
+   "fieldname": "section_break_messages",
+   "fieldtype": "Section Break",
+   "label": "Messages"
+  },
+  {
+   "fieldname": "last_message",
+   "fieldtype": "Small Text",
+   "label": "Last Message"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-21 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Ecuador Localization",
+ "name": "SRI Electronic Voucher",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

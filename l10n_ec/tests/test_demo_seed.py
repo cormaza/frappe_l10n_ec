@@ -95,13 +95,22 @@ class TestDemoSeed(UnitTestCase):
 		self.assertEqual(DEMO_ITEM["income_account_number"], "4101")
 		self.assertEqual(DEMO_ITEM["expense_account_number"], "520128")
 		self.assertEqual(DEMO_ITEM["warehouse"], "Demo Stores - DE")
+		self.assertTrue(DEMO_ITEM["description"])
 
 	def test_payment_amounts_match_invoice_totals(self) -> None:
-		purchase_total = sum(line["qty"] * line["rate"] for line in DEMO_PURCHASE["items"])
-		sales_total = sum(line["qty"] * line["rate"] for line in DEMO_SALES["items"])
+		def with_vat(lines) -> float:
+			return round(sum(line["qty"] * line["rate"] for line in lines) * 1.15, 2)
+
+		purchase_total = with_vat(DEMO_PURCHASE["items"])
+		sales_total = with_vat(DEMO_SALES["items"])
 		by_side = {spec["against"]: spec["amount"] for spec in DEMO_PAYMENTS}
 		self.assertEqual(by_side, {"sales": sales_total, "purchase": purchase_total})
-		self.assertEqual((purchase_total, sales_total), (100.0, 75.0))
+		self.assertEqual((purchase_total, sales_total), (115.0, 86.25))
+
+	def test_demo_lines_carry_vat_templates(self) -> None:
+		for items in (DEMO_PURCHASE["items"], DEMO_SALES["items"]):
+			for line in items:
+				self.assertIn("Ecuador VAT 15%", line["item_tax_template"])
 
 	def test_demo_currency_is_usd(self) -> None:
 		self.assertEqual(DEMO_COMPANY["default_currency"], "USD")
