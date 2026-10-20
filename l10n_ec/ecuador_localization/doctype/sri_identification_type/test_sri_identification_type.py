@@ -34,3 +34,10 @@ class TestSRIIdentificationType(UnitTestCase):
 		doc = _make_doc(code="04", title="RUC")
 		self.assertEqual(doc.code, "04")
 		self.assertEqual(doc.title, "RUC")
+
+	def test_link_shows_title_with_code(self) -> None:
+		schema = json.loads(
+			(Path(__file__).parent / "sri_identification_type.json").read_text(encoding="utf-8")
+		)
+		self.assertEqual(schema.get("title_field"), "title")
+		self.assertEqual(schema.get("show_title_field_in_link"), 1)

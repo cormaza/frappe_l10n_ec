@@ -35,3 +35,8 @@ class TestSRIPaymentMethod(UnitTestCase):
 		doc = _make_doc(code="19", title="Credit Card")
 		self.assertEqual(doc.code, "19")
 		self.assertEqual(doc.title, "Credit Card")
+
+	def test_link_shows_title_with_code(self) -> None:
+		schema = json.loads((Path(__file__).parent / "sri_payment_method.json").read_text(encoding="utf-8"))
+		self.assertEqual(schema.get("title_field"), "title")
+		self.assertEqual(schema.get("show_title_field_in_link"), 1)

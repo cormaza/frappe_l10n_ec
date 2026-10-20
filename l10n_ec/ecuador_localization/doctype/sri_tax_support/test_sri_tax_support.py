@@ -35,3 +35,8 @@ class TestSRITaxSupport(UnitTestCase):
 		doc = _make_doc(code="01", title="VAT Tax Credit")
 		self.assertEqual(doc.code, "01")
 		self.assertEqual(doc.title, "VAT Tax Credit")
+
+	def test_link_shows_title_with_code(self) -> None:
+		schema = json.loads((Path(__file__).parent / "sri_tax_support.json").read_text(encoding="utf-8"))
+		self.assertEqual(schema.get("title_field"), "title")
+		self.assertEqual(schema.get("show_title_field_in_link"), 1)

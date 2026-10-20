@@ -33,6 +33,8 @@
  "module": "Ecuador Localization",
  "name": "SRI Tax Support",
  "naming_rule": "By fieldname",
+ "show_title_field_in_link": 1,
+ "title_field": "title",
  "owner": "Administrator",
  "permissions": [
   {
