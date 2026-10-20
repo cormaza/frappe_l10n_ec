@@ -12,9 +12,10 @@ Implements roadmap Phase 7 on `version-16` with direct commits (no PR).
 
 - T1 (S1): Retención XSD + XML builder + Ring-1 tests. Route: inline. Commit: 0b7dcc8
 - T2 (S1): Native-entry→SRI mapping (sustento grouping) + tests. Route: inline. Commit: 0b7dcc8
-- T3 (S1): Voucher `07` integration + EC category seeds + live proof. Route: inline. Commit: -
+- T3 (S1): Voucher `07` integration + EC category seeds + live proof. Route: inline. Commit: 5b249ee
 - T4 (S2): Verify, commit and push to `version-16`. Route: inline. Commit: -
 
 ## Log
 
 - L1: "dale, vamos con fase 7"
+- L2: Live proof (demo site, SRI pruebas, self-signed): voucher 07 created with allocated sequence, XSD-valid XML, real XAdES sign, RECIBIDA, then Rejected with FIRMA INVALIDA (untrusted chain) — full path proven; Authorized needs an SRI-issued cert. Never sync code with multi-file `cp` into a directory (stray test copies break bench discovery); always `dev/demo.sh sync`.
