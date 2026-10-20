@@ -1,4 +1,5 @@
 import unittest
+from datetime import date
 
 from l10n_ec.ecuador_localization.demo_seed import (
 	DEMO_ADDRESS_TEMPLATE,
@@ -6,6 +7,7 @@ from l10n_ec.ecuador_localization.demo_seed import (
 	DEMO_GROUPS,
 	DEMO_PARTIES,
 	NEGATIVE_PARTY,
+	fiscal_year_data,
 	group_key,
 	party_name,
 )
@@ -24,6 +26,15 @@ class TestDemoSeed(UnitTestCase):
 		self.assertEqual(DEMO_COMPANY["country"], "Ecuador")
 		self.assertEqual(DEMO_COMPANY["default_currency"], "USD")
 		self.assertEqual(DEMO_ADDRESS_TEMPLATE["country"], "Ecuador")
+		self.assertEqual(
+			fiscal_year_data(date(2026, 10, 21)),
+			{
+				"doctype": "Fiscal Year",
+				"year": "2026",
+				"year_start_date": "2026-01-01",
+				"year_end_date": "2026-12-31",
+			},
+		)
 
 	def test_demo_parties_carry_valid_tax_ids(self) -> None:
 		for entry in DEMO_PARTIES:

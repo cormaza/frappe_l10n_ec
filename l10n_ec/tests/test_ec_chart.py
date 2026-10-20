@@ -2,13 +2,15 @@ import json
 import unittest
 from pathlib import Path
 
+import l10n_ec
+
 try:
 	from frappe.tests import UnitTestCase
 except ImportError:  # pragma: no cover
 	UnitTestCase = unittest.TestCase  # type: ignore[misc,assignment]
 
 CHART_PATH = (
-	Path(__file__).resolve().parent.parent
+	Path(l10n_ec.__file__).resolve().parent
 	/ "ecuador_localization"
 	/ "chart_of_accounts"
 	/ "ec_niif_chart_template.json"

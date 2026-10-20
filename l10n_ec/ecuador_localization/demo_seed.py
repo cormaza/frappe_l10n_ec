@@ -5,6 +5,8 @@ l10n_ec.ecuador_localization.demo_seed.seed_demo`. All builders below are
 pure data and pinned by Ring-1 tests; only :func:`seed_demo` touches frappe.
 """
 
+from datetime import date
+
 DEMO_COMPANY = {
 	"abbr": "DE",
 	"company_name": "Demo Ecuador",
@@ -112,6 +114,17 @@ NEGATIVE_PARTY = {
 }
 
 
+def fiscal_year_data(today: date | None = None) -> dict:
+	"""Build the current-year Fiscal Year doc dict (calendar year)."""
+	year = str((today or date.today()).year)
+	return {
+		"doctype": "Fiscal Year",
+		"year": year,
+		"year_start_date": f"{year}-01-01",
+		"year_end_date": f"{year}-12-31",
+	}
+
+
 def party_name(entry: dict) -> str:
 	"""Return the primary name field of a party doc dict."""
 	doc = entry["party"] if "party" in entry else entry
@@ -127,6 +140,10 @@ def seed_demo() -> dict:
 
 	if not frappe.db.exists("Address Template", {"country": "Ecuador"}):
 		frappe.get_doc(DEMO_ADDRESS_TEMPLATE).insert(ignore_permissions=True)
+
+	fiscal_year = fiscal_year_data()
+	if not frappe.db.exists("Fiscal Year", fiscal_year["year"]):
+		frappe.get_doc(fiscal_year).insert(ignore_permissions=True)
 
 	for group in DEMO_GROUPS:
 		if not frappe.db.exists(group["doctype"], group_key(group)):
