@@ -1,11 +1,15 @@
+import base64
 import unittest
 from datetime import date
 
 from l10n_ec.ecuador_localization.demo_seed import (
 	DEMO_ADDRESS_TEMPLATE,
 	DEMO_COMPANY,
+	DEMO_COMPANY_ADDRESS,
 	DEMO_GROUPS,
 	DEMO_ITEM,
+	DEMO_LOGO_FILENAME,
+	DEMO_LOGO_PNG,
 	DEMO_MASTERS,
 	DEMO_PARTIES,
 	DEMO_PAYMENTS,
@@ -33,6 +37,9 @@ class TestDemoSeed(UnitTestCase):
 		self.assertEqual(DEMO_COMPANY["country"], "Ecuador")
 		self.assertEqual(DEMO_COMPANY["default_currency"], "USD")
 		self.assertEqual(DEMO_ADDRESS_TEMPLATE["country"], "Ecuador")
+		self.assertTrue(DEMO_COMPANY["website"])
+		self.assertTrue(DEMO_COMPANY["phone_no"])
+		self.assertTrue(DEMO_COMPANY["email"])
 		self.assertEqual(
 			fiscal_year_data(date(2026, 10, 21)),
 			{
@@ -42,6 +49,16 @@ class TestDemoSeed(UnitTestCase):
 				"year_end_date": "2026-12-31",
 			},
 		)
+
+	def test_company_address_covers_print_dialog(self) -> None:
+		for field in ("address_title", "address_line1", "city", "country"):
+			self.assertTrue(DEMO_COMPANY_ADDRESS[field], f"Missing {field}")
+		self.assertEqual(DEMO_COMPANY_ADDRESS["country"], "Ecuador")
+		self.assertTrue(DEMO_COMPANY_ADDRESS["is_your_company_address"])
+
+	def test_demo_logo_is_a_png(self) -> None:
+		self.assertTrue(DEMO_LOGO_FILENAME.endswith(".png"))
+		self.assertTrue(base64.b64decode(DEMO_LOGO_PNG).startswith(b"\x89PNG"))
 
 	def test_demo_parties_carry_valid_tax_ids(self) -> None:
 		for entry in DEMO_PARTIES:

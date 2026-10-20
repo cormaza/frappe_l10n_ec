@@ -31,7 +31,9 @@ login lands straight on the desk (no setup wizard).
 `l10n_ec/ecuador_localization/demo_seed.py` creates (skipping what exists):
 
 - Company **Demo Ecuador** (Ecuador, USD) — its creation fires the chart
-  auto-install hook, so this also proves Phase 4 end to end.
+  auto-install hook, so this also proves Phase 4 end to end. Contact data
+  (website, phone, email, logo) and a primary company address are filled
+  so print formats never open the company-details dialog.
 - Customers **Demo Customer RUC** (`04` valid RUC), **Demo Final
   Consumer** (`07`), Supplier **Demo Supplier RUC** (`04`), each with a
   primary Billing address in Ecuador.

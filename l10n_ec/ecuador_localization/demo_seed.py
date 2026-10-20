@@ -18,8 +18,27 @@ DEMO_COMPANY = {
 	"company_name": "Demo Ecuador",
 	"country": "Ecuador",
 	"default_currency": "USD",
+	"email": "info@demo-ecuador.ec",
+	"phone_no": "+593 2 123 4567",
 	"tax_id": "1760013210001",
+	"website": "https://demo-ecuador.ec",
 }
+
+DEMO_COMPANY_ADDRESS = {
+	"address_line1": "Av. Amazonas N34-451",
+	"address_title": "Demo Ecuador",
+	"address_type": "Billing",
+	"city": "Quito",
+	"country": "Ecuador",
+	"is_primary_address": 1,
+	"is_your_company_address": 1,
+}
+
+# 1x1 transparent PNG placeholder so print formats never ask for a logo.
+DEMO_LOGO_FILENAME = "demo-logo.png"
+DEMO_LOGO_PNG = (
+	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+)
 
 DEMO_PARTIES = [
 	{
@@ -246,7 +265,33 @@ def seed_demo() -> dict:
 	company = DEMO_COMPANY["company_name"]
 	if not frappe.db.exists("Company", company):
 		frappe.get_doc({"doctype": "Company", **DEMO_COMPANY}).insert(ignore_permissions=True)
+	for field in ("website", "phone_no", "email"):
+		if not frappe.db.get_value("Company", company, field):
+			frappe.db.set_value("Company", company, field, DEMO_COMPANY[field])
+	if not frappe.db.exists("File", {"file_name": DEMO_LOGO_FILENAME}):
+		import base64
+
+		frappe.get_doc(
+			{
+				"doctype": "File",
+				"file_name": DEMO_LOGO_FILENAME,
+				"content": base64.b64decode(DEMO_LOGO_PNG),
+				"is_private": 0,
+			}
+		).insert(ignore_permissions=True)
+	logo_url = frappe.db.get_value("File", {"file_name": DEMO_LOGO_FILENAME}, "file_url")
+	if logo_url and not frappe.db.get_value("Company", company, "company_logo"):
+		frappe.db.set_value("Company", company, "company_logo", logo_url)
 	report["company"] = company
+
+	company_address = get_default_address("Company", company)
+	if not company_address:
+		address = dict(DEMO_COMPANY_ADDRESS)
+		address["links"] = [{"link_doctype": "Company", "link_name": company}]
+		company_address = (
+			frappe.get_doc({"doctype": "Address", **address}).insert(ignore_permissions=True).name
+		)
+	report["company_address"] = company_address
 
 	for entry in DEMO_PARTIES:
 		name = party_name(entry)
@@ -295,6 +340,7 @@ def seed_demo() -> dict:
 				"doctype": "Purchase Invoice",
 				"supplier": DEMO_PURCHASE["supplier"],
 				"company": company,
+				"billing_address": company_address,
 				"currency": DEMO_PURCHASE["currency"],
 				"bill_no": DEMO_PURCHASE["bill_no"],
 				"bill_date": DEMO_PURCHASE["bill_date"],
@@ -314,6 +360,7 @@ def seed_demo() -> dict:
 				"doctype": "Sales Invoice",
 				"customer": DEMO_SALES["party"],
 				"company": company,
+				"company_address": company_address,
 				"currency": DEMO_SALES["currency"],
 				"posting_date": DEMO_PURCHASE["bill_date"],
 				"update_stock": 1,
