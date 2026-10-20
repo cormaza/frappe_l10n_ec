@@ -7,6 +7,14 @@ pure data and pinned by Ring-1 tests; only :func:`seed_demo` touches frappe.
 
 from datetime import date
 
+DEMO_TODAY = date.today().isoformat()
+# Site timezone for Ecuador. NOTE: demo.sh reset sets this in its own step
+# before seed runs (each bench call is a fresh process reading the new value).
+# Evaluating DEMO_TODAY here works because the import happens in that same
+# post-timezone process. A manual first seed on a fresh site may still use
+# the default timezone; just run seed again.
+DEMO_TIMEZONE = "America/Guayaquil"
+
 from l10n_ec.ecuador_localization.chart_setup import (
 	INVENTORY_ACCOUNT_NUMBER,
 	PAYABLE_ACCOUNT_NUMBER,
@@ -54,6 +62,7 @@ DEMO_PARTIES = [
 			"customer_name": "Demo Customer RUC",
 			"customer_type": "Company",
 			"doctype": "Customer",
+			"email_id": "compras@demo-ecuador.ec",
 			"sri_identification_type": "04",
 			"tax_id": "1790016919001",
 			"territory": "Ecuador",
@@ -182,7 +191,7 @@ DEMO_ITEM = {
 }
 
 DEMO_PURCHASE = {
-	"bill_date": "2026-10-21",
+	"bill_date": DEMO_TODAY,
 	"bill_no": "DEMO-BILL-001",
 	"currency": "USD",
 	"items": [
@@ -260,6 +269,9 @@ def seed_demo() -> dict:
 	from frappe.contacts.doctype.address.address import get_default_address
 
 	report: dict = {"company": None, "parties": [], "negative_blocked": False}
+
+	if frappe.db.get_single_value("System Settings", "time_zone") != DEMO_TIMEZONE:
+		frappe.db.set_single_value("System Settings", "time_zone", DEMO_TIMEZONE)
 
 	if not frappe.db.exists("Address Template", {"country": "Ecuador"}):
 		frappe.get_doc(DEMO_ADDRESS_TEMPLATE).insert(ignore_permissions=True)

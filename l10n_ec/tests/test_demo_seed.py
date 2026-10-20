@@ -15,6 +15,8 @@ from l10n_ec.ecuador_localization.demo_seed import (
 	DEMO_PAYMENTS,
 	DEMO_PURCHASE,
 	DEMO_SALES,
+	DEMO_TIMEZONE,
+	DEMO_TODAY,
 	NEGATIVE_PARTY,
 	PARTY_TYPES,
 	fiscal_year_data,
@@ -35,6 +37,8 @@ class TestDemoSeed(UnitTestCase):
 
 	def test_demo_company_is_ecuadorian(self) -> None:
 		self.assertEqual(DEMO_COMPANY["country"], "Ecuador")
+		self.assertRegex(DEMO_TODAY, r"^\d{4}-\d{2}-\d{2}$")
+		self.assertEqual(DEMO_TIMEZONE, "America/Guayaquil")
 		self.assertEqual(DEMO_COMPANY["default_currency"], "USD")
 		self.assertEqual(DEMO_ADDRESS_TEMPLATE["country"], "Ecuador")
 		self.assertTrue(DEMO_COMPANY["website"])
@@ -79,6 +83,10 @@ class TestDemoSeed(UnitTestCase):
 		names = [party_name(entry) for entry in DEMO_PARTIES]
 		self.assertEqual(len(set(names)), len(names))
 		self.assertIn("Demo Customer RUC", names)
+
+	def test_demo_customer_has_email(self) -> None:
+		ruc = next(e for e in DEMO_PARTIES if party_name(e) == "Demo Customer RUC")
+		self.assertIn("@", ruc["party"].get("email_id", ""))
 
 	def test_foreign_party_uses_country_not_territory(self) -> None:
 		foreign = next(e for e in DEMO_PARTIES if party_name(e) == "Demo Foreign Co")

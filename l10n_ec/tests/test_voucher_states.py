@@ -19,7 +19,11 @@ class TestVoucherStates(UnitTestCase):
 
 	def test_happy_path_to_authorized(self) -> None:
 		state = "Generated"
-		for event, expected in (("sign", "Signed"), ("receive_ok", "Received"), ("authorize_ok", "Authorized")):
+		for event, expected in (
+			("sign", "Signed"),
+			("receive_ok", "Received"),
+			("authorize_ok", "Authorized"),
+		):
 			state = next_state(state, event)
 			self.assertEqual(state, expected)
 		self.assertTrue(is_terminal(state))
@@ -35,10 +39,16 @@ class TestVoucherStates(UnitTestCase):
 		self.assertTrue(is_terminal(state))
 
 	def test_illegal_transitions_raise(self) -> None:
-		for current, event in (("Generated", "receive_ok"), ("Signed", "authorize_ok"), ("Authorized", "sign")):
+		for current, event in (
+			("Generated", "receive_ok"),
+			("Signed", "authorize_ok"),
+			("Authorized", "sign"),
+		):
 			with self.assertRaises(SriVoucherError):
 				next_state(current, event)
 
 	def test_state_inventory(self) -> None:
-		self.assertEqual(set(STATES), {"Generated", "Signed", "Received", "Authorized", "Returned", "Rejected"})
+		self.assertEqual(
+			set(STATES), {"Generated", "Signed", "Received", "Authorized", "Returned", "Rejected"}
+		)
 		self.assertEqual(set(TERMINAL_STATES), {"Authorized", "Rejected"})
