@@ -84,17 +84,30 @@ Therefore, `l10n_ec` for Frappe v16 combines **both** the base accounting/catalo
 
 ### Phase 6: Electronic Invoicing EDI (Sales Invoices, Credit/Debit Notes & Purchase Liquidations)
 - **Source Equivalence**: [`OCA/l10n-ecuador` PR #102 (`l10n_ec_account_edi`)](https://github.com/OCA/l10n-ecuador/pull/102) + [`PR #103 (`l10n_ec_credit_note`)](https://github.com/OCA/l10n-ecuador/pull/103).
+- **Delivery**: four sequential sub-phases (6A→6B→6C; 6D independent, any order).
+
+#### Phase 6A: XSD Schemas & XML Builders (Pure Python, Ring 1)
 - **Planned Scope**:
-  1. **XSD Schema Validator & XML Builders (`l10n_ec/sri/xml_builder.py` & `l10n_ec/sri/xsd/`)**:
-     - Bundle official SRI XSD schemas (`factura_V2.1.0.xsd`, `NotaCredito_V1.1.0.xsd`, `NotaDebito_V1.0.0.xsd`, `LiquidacionCompra_V1.1.0.xsd`).
-     - Pure Python XML generation and `lxml.etree.XMLSchema` validation testable in Ring 1 (`< 1s`).
-  2. **`SRI Electronic Voucher` DocType & Background Worker**:
-     - Tracks state machine (`Generated` → `Signed` → `Received` → `Authorized` / `Returned` / `Rejected`) for ERPNext `Sales Invoice` (regular, return/credit note, debit note) and `Purchase Invoice` (when `SRI Document Type == 03` Purchase Liquidation).
-     - Enqueues asynchronous submission and authorization polling via `frappe.enqueue(..., enqueue_after_commit=True)`.
-  3. **RIDE Print Format & Automated Customer Email**:
-     - Jinja/Typst/WeasyPrint RIDE (`Representación Impresa de Comprobante Electrónico`) with barcode of the 49-digit `claveAcceso` and attached authorized `.xml` + `.pdf`.
-  4. **Invoicing Business Rules**:
-     - Enforce the `Consumidor Final` (`07`) USD 50.00 amount threshold at invoice validation time (format validation alone lives in Phase 1).
+  1. Bundle official SRI XSD schemas (`factura_V1.1.0.xsd`, `NotaCredito_V1.1.0.xsd`, `NotaDebito_V1.0.0.xsd`, `LiquidacionCompra_V1.1.0.xsd`) under `l10n_ec/sri/xsd/`.
+  2. Pure Python XML generation (`l10n_ec/sri/xml_builder.py`) with `lxml.etree.XMLSchema` validation, testable in Ring 1 (`< 1s`).
+- **Exit Criteria**: one example XML per voucher type validates against its official XSD; suite green with zero `frappe` imports.
+
+#### Phase 6B: SRI Electronic Voucher DocType & Background Worker (Ring 2)
+- **Planned Scope**:
+  1. `SRI Electronic Voucher` DocType tracking the state machine (`Generated` → `Signed` → `Received` → `Authorized` / `Returned` / `Rejected`) for ERPNext `Sales Invoice` (regular, return/credit note, debit note) and `Purchase Invoice` (when `SRI Document Type == 03` Purchase Liquidation).
+  2. Asynchronous submission and authorization polling via `frappe.enqueue(..., enqueue_after_commit=True)`.
+- **Exit Criteria**: one voucher reaches `Authorized` against the SRI test environment from the demo site; re-runs and double submits are idempotent.
+
+#### Phase 6C: RIDE Print Format & Automated Customer Email (Ring 2)
+- **Planned Scope**:
+  1. RIDE (`Representación Impresa de Comprobante Electrónico`) with barcode of the 49-digit `claveAcceso`.
+  2. Automated customer email with authorized `.xml` + `.pdf` attached.
+- **Exit Criteria**: generated PDF carries a scannable barcode and the authorized XML; email delivers both attachments.
+
+#### Phase 6D: Consumidor Final Threshold (Pure Python, Ring 1, Independent)
+- **Planned Scope**:
+  1. Enforce the `Consumidor Final` (`07`) USD 50.00 amount threshold at invoice validation time (format validation alone lives in Phase 1).
+- **Exit Criteria**: over-threshold final-consumer invoices are rejected with a clear message; at- and under-threshold pass.
 
 ---
 
