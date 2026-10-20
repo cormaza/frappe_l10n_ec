@@ -23,7 +23,7 @@ MAX_SEQUENCE = 999999999
 
 def _reject(message: str) -> None:
 	if frappe:
-		frappe.throw(message)
+		frappe.throw(frappe._(message))
 	raise ValueError(message)
 
 
@@ -51,10 +51,10 @@ class SRIEmissionPoint(Document):
 		for fieldname in ("establishment_code", "emission_point_code"):
 			value = (getattr(self, fieldname, None) or "").strip()
 			if not ESTABLISHMENT_PATTERN.match(value):
-				_reject(f"SRI emission code '{value}' must be exactly 3 numeric digits.")
+				_reject("SRI emission code '{}' must be exactly 3 numeric digits.".format(value))
 		for row in getattr(self, "sequences", None) or []:
 			if not getattr(row, "document_type", None):
 				_reject("Every SRI emission sequence row requires a document type.")
 			sequence = getattr(row, "current_sequence", 0) or 0
 			if not 0 <= sequence <= MAX_SEQUENCE:
-				_reject(f"SRI sequence {sequence} must be between 0 and {MAX_SEQUENCE}.")
+				_reject("SRI sequence {} must be between 0 and {}.".format(sequence, MAX_SEQUENCE))

@@ -87,7 +87,12 @@ class TestEcuadorChart(UnitTestCase):
 		)
 		self.assertEqual(
 			self.numbers["2010701"],
-			("PASIVO", "PASIVO CORRIENTE", "OTRAS OBLIGACIONES CORRIENTES", "CON LA ADMINISTRACIÓN TRIBUTARIA"),
+			(
+				"PASIVO",
+				"PASIVO CORRIENTE",
+				"OTRAS OBLIGACIONES CORRIENTES",
+				"CON LA ADMINISTRACIÓN TRIBUTARIA",
+			),
 		)
 		self.assertEqual(self.numbers["61"], ("15% PARTICIPACIÓN TRABAJADORES",))
 
@@ -104,7 +109,15 @@ class TestEcuadorChart(UnitTestCase):
 			self.assertIn(number, self.numbers, f"Missing operational leaf {number}")
 			self.assertEqual(self.numbers[number][: len(ancestors)], ancestors)
 		leaves = dict(_walk(self.tree))
-		self.assertEqual(leaves[("ACTIVO", "ACTIVO CORRIENTE", "EFECTIVO Y EQUIVALENTES AL EFECTIVO", "CAJA")]["account_type"], "Cash")
 		self.assertEqual(
-			leaves[("ACTIVO", "ACTIVO CORRIENTE", "EFECTIVO Y EQUIVALENTES AL EFECTIVO", "BANCOS")]["account_type"], "Bank"
+			leaves[("ACTIVO", "ACTIVO CORRIENTE", "EFECTIVO Y EQUIVALENTES AL EFECTIVO", "CAJA")][
+				"account_type"
+			],
+			"Cash",
+		)
+		self.assertEqual(
+			leaves[("ACTIVO", "ACTIVO CORRIENTE", "EFECTIVO Y EQUIVALENTES AL EFECTIVO", "BANCOS")][
+				"account_type"
+			],
+			"Bank",
 		)

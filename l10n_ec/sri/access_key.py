@@ -22,7 +22,9 @@ def split_document_number(document_number: str) -> tuple[str, str, str]:
 	parts = document_number.split("-")
 	if len(parts) != 3:
 		raise ValueError(
-			f"Invalid Ecuadorian document number '{document_number}'. Expected format '001-001-000000001'."
+			"Invalid Ecuadorian document number '{}'. Expected format '001-001-000000001'.".format(
+				document_number
+			)
 		)
 	entity_number, printer_point, sequence_number = parts
 	return (
@@ -82,13 +84,17 @@ def generate_access_key(
 		complete_document_number = f"{estab}{pto_emi}{seq}"
 
 	if len(complete_document_number) != 15 or not complete_document_number.isdigit():
-		raise ValueError(f"Complete document number must be 15 digits (got '{complete_document_number}').")
+		raise ValueError(
+			"Complete document number must be 15 digits (got '{}').".format(complete_document_number)
+		)
 	if len(ruc) != 13 or not ruc.isdigit():
-		raise ValueError(f"Company RUC must be 13 numeric digits (got '{ruc}').")
+		raise ValueError("Company RUC must be 13 numeric digits (got '{}').".format(ruc))
 	if environment not in ("1", "2"):
-		raise ValueError(f"SRI environment must be '1' (test) or '2' (production), got '{environment}'.")
+		raise ValueError(
+			"SRI environment must be '1' (test) or '2' (production), got '{}'.".format(environment)
+		)
 	if len(document_code_sri) != 2 or not document_code_sri.isdigit():
-		raise ValueError(f"Document SRI code must be 2 digits (got '{document_code_sri}').")
+		raise ValueError("Document SRI code must be 2 digits (got '{}').".format(document_code_sri))
 
 	now_date = date_document.strftime("%d%m%Y")
 	if numeric_code is None:
@@ -97,7 +103,7 @@ def generate_access_key(
 		numeric_code_str = str(numeric_code).rjust(8, "0")
 
 	if len(numeric_code_str) != 8 or not numeric_code_str.isdigit():
-		raise ValueError(f"Numeric code must be 8 digits (got '{numeric_code_str}').")
+		raise ValueError("Numeric code must be 8 digits (got '{}').".format(numeric_code_str))
 
 	access_key_48 = (
 		now_date

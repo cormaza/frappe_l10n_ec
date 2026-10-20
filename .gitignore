@@ -53,6 +53,9 @@ coverage.xml
 *.key
 .env
 
+# Compiled Gettext catalogs (build artifact, regenerate with bench compile-po-to-mo)
+*.mo
+
 # IDE and OS artifacts
 .vscode/
 .idea/

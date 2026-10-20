@@ -48,7 +48,9 @@ def setup_ecuadorian_taxes(company: str) -> None:
 		)
 		if not account:
 			frappe.throw(
-				f"Missing account {spec['account_number']} for tax template '{spec['title']}'."
+				frappe._("Missing account {} for tax template '{}'.").format(
+					spec["account_number"], spec["title"]
+				)
 			)
 		frappe.get_doc(
 			{

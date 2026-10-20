@@ -74,7 +74,7 @@ def reinstall_ecuadorian_chart(company: str) -> None:
 	if frappe is None:  # pragma: no cover
 		raise RuntimeError("frappe is required to reinstall the chart of accounts.")
 	if frappe.db.count("GL Entry", {"company": company}):
-		frappe.throw("Cannot reinstall the chart: the company already has ledger entries.")
+		frappe.throw(frappe._("Cannot reinstall the chart: the company already has ledger entries."))
 	for name in frappe.get_all("Account", filters={"company": company}, pluck="name"):
 		frappe.delete_doc("Account", name, ignore_permissions=True)
 	for df in frappe.get_meta("Company").fields:

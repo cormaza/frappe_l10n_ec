@@ -70,6 +70,7 @@ ignore = [
     "F403", # can't detect undefined names from * import
     "F405", # can't detect undefined names from * import
     "F722", # syntax error in forward type annotation
+    "UP032", # f-string instead of format: Gettext messages keep static "{}".format() literals so bench pot extraction finds them
     "W191", # indentation contains tabs
 ]
 typing-modules = ["frappe.types.DF"]

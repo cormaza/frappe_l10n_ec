@@ -57,8 +57,8 @@ def decode_certificate(
 		)
 	except Exception as ex:
 		raise SriSignatureError(
-			f"Error opening the signature, possibly the signature key has been entered "
-			f"incorrectly or the file is not supported: {ex}"
+			"Error opening the signature, possibly the signature key has been entered "
+			"incorrectly or the file is not supported: {}".format(ex)
 		) from None
 
 	if private_key is None or certificate is None:
@@ -165,8 +165,8 @@ def sign_xml_xades_bes(
 	reference_today = today or datetime.now(tz).date()
 	if expire_date < reference_today:
 		raise SriSignatureExpiredError(
-			f"The electronic signature expired on {expire_date} and the document cannot be signed. "
-			"Upload a valid signature file in SRI Signature."
+			"The electronic signature expired on {} and the document cannot be signed. "
+			"Upload a valid signature file in SRI Signature.".format(expire_date)
 		)
 
 	xml_bytes = xml_data.encode("utf-8") if isinstance(xml_data, str) else xml_data

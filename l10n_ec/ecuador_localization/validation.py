@@ -30,6 +30,7 @@ def validate_contact_tax_id(
 		return
 	if not validate_identification(identification_type_code or "", tax_id or ""):
 		raise ValueError(
-			f"Invalid tax identification '{(tax_id or '').strip()}'"
-			f" for type '{(identification_type_code or '').strip()}'."
+			"Invalid tax identification '{}' for type '{}'.".format(
+				(tax_id or "").strip(), (identification_type_code or "").strip()
+			)
 		)

@@ -88,7 +88,7 @@ class SRISignature(Document):
 			)
 		except SriSignatureError as exc:
 			if frappe:
-				frappe.throw(str(exc))
+				frappe.throw(frappe._(str(exc)))
 			raise
 
 		self.not_valid_before = metadata.issue_date
@@ -112,7 +112,7 @@ class SRISignature(Document):
 			)
 		except SriSignatureError as exc:
 			if frappe:
-				frappe.throw(str(exc))
+				frappe.throw(frappe._(str(exc)))
 			raise
 
 	def days_to_expire(self, today: date | None = None) -> int:

@@ -45,7 +45,7 @@ class SriSoapClient:
 
 	def get_wsdl_url(self, service_type: str) -> str:
 		if service_type not in ("reception", "authorization"):
-			raise ValueError(f"Unknown SRI service type: {service_type}")
+			raise ValueError("Unknown SRI service type: {}".format(service_type))
 		if self.use_local_wsdl:
 			return LOCAL_WSDL[service_type]
 		urls = PRODUCTION_URL if self.environment in ("production", "2") else TEST_URL
