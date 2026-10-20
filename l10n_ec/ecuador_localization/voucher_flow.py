@@ -193,14 +193,10 @@ def generate_voucher_xml_doc(doc, payload: dict) -> dict:
 	xml_builder.validate_against_xsd(doc.unsigned_xml, payload["schema"])
 	try:
 		etree.fromstring(
-			doc.unsigned_xml.encode("utf-8")
-			if isinstance(doc.unsigned_xml, str)
-			else doc.unsigned_xml
+			doc.unsigned_xml.encode("utf-8") if isinstance(doc.unsigned_xml, str) else doc.unsigned_xml
 		)
 	except Exception as exc:
-		raise xml_builder.SriXmlError(
-			f"Generated XML is malformed: {exc}. Head: {doc.unsigned_xml[:200]!r}"
-		)
+		raise xml_builder.SriXmlError(f"Generated XML is malformed: {exc}. Head: {doc.unsigned_xml[:200]!r}")
 	return {"ok": True, "state": doc.voucher_state}
 
 
@@ -337,13 +333,28 @@ def process_voucher(
 		polled = poll_voucher_doc(doc, client_ws=client_ws, environment=environment, max_attempts=1)
 		save_voucher(doc)
 		if polled["ok"]:
+			_notify_authorized(doc)
 			return polled
 		max_polls -= 1
 		if doc.voucher_state == "Received" and max_polls > 0:
 			time.sleep(poll_interval)
 	if doc.voucher_state == "Received":
-		return poll_voucher_doc(doc, client_ws=client_ws, environment=environment, max_attempts=1)
+		final = poll_voucher_doc(doc, client_ws=client_ws, environment=environment, max_attempts=1)
+		if final["ok"]:
+			_notify_authorized(doc)
+		return final
 	return {"ok": doc.voucher_state == "Authorized", "state": doc.voucher_state}
+
+
+def _notify_authorized(doc) -> None:
+	"""Queue the customer email; mail failures never undo the authorization."""
+	try:
+		from l10n_ec.ecuador_localization.voucher_mail import send_authorized_voucher_mail
+
+		send_authorized_voucher_mail(doc.name)
+	except Exception as exc:
+		doc.last_message = f"{doc.last_message or ''} | mail skipped: {exc}".strip(" |")
+		save_voucher(doc)
 
 
 def enqueue_process_voucher(voucher_name: str) -> None:
@@ -432,9 +443,7 @@ def _resolve_emission_point(company: str, cod_doc: str, emission_point: str | No
 				emission = candidate
 				break
 	if emission is None:
-		raise SriVoucherError(
-			f"No SRI Emission Point for company '{company}' and document '{cod_doc}'."
-		)
+		raise SriVoucherError(f"No SRI Emission Point for company '{company}' and document '{cod_doc}'.")
 	for row in emission.sequences:
 		if row.document_type == cod_doc:
 			row.current_sequence = (row.current_sequence or 0) + 1
@@ -593,9 +602,7 @@ def _invoice_dict(doc, reason=None, reasons=None) -> dict:
 	if doc.sri_doc_code == "05":
 		if not reasons:
 			raise SriVoucherError("Debit notes need explicit reasons [{razon, valor}].")
-		base.update(
-			{"taxes": base.pop("tax_totals"), "total_value": ref.grand_total, "reasons": reasons}
-		)
+		base.update({"taxes": base.pop("tax_totals"), "total_value": ref.grand_total, "reasons": reasons})
 	return base
 
 

@@ -264,9 +264,7 @@ class TestVoucherFlowPipeline(UnitTestCase):
 
 		rejected = self._signed_doc()
 		submit_voucher_doc(rejected, client_ws=_reception_service("RECIBIDA"))
-		result = poll_voucher_doc(
-			rejected, client_ws=_authorization_service("NO AUTORIZADO"), max_attempts=2
-		)
+		result = poll_voucher_doc(rejected, client_ws=_authorization_service("NO AUTORIZADO"), max_attempts=2)
 		self.assertFalse(result["ok"])
 		self.assertEqual(rejected.voucher_state, "Rejected")
 
