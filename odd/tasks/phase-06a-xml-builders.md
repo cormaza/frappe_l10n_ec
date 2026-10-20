@@ -12,7 +12,7 @@ Implements roadmap Phase 6A on `version-16` with direct commits (no PR).
 
 - T1 (S1): Source the four official XSDs and bundle under `l10n_ec/sri/xsd/`. Route: inline. Commit: f0ecdc3
 - T2 (S1): `xml_builder.py` + Ring-1 tests (one valid example per voucher type). Route: inline. Commit: 113a7dc
-- T3 (S2): Verify (`pytest -W error`, `pre-commit`), commit and push to `version-16`. Route: inline. Commit: -
+- T3 (S2): Verify (`pytest -W error`, `pre-commit`), commit and push to `version-16`. Route: inline. Commit: 7056ae4
 
 ## Log
 
