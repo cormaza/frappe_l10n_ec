@@ -1,0 +1,995 @@
+{
+ "name": "Ecuador NIIF Chart of Accounts",
+ "country_code": "ec",
+ "tree": {
+  "ACTIVO": {
+   "account_number": "1",
+   "ACTIVO CORRIENTE": {
+    "account_number": "101",
+    "EFECTIVO Y EQUIVALENTES AL EFECTIVO": {
+     "account_number": "10101",
+     "CAJA": {
+      "account_number": "1010101",
+      "account_type": "Cash"
+     },
+     "BANCOS": {
+      "account_number": "1010102",
+      "account_type": "Bank"
+     }
+    },
+    "ACTIVOS FINANCIEROS": {
+     "account_number": "10102",
+     "ACTIVOS FINANCIEROS A VALOR RAZONABLE CON CAMBIOS EN RESULTADOS": {
+      "account_number": "1010201"
+     },
+     "ACTIVOS FINANCIEROS DISPONIBLES PARA LA VENTA": {
+      "account_number": "1010202"
+     },
+     "ACTIVOS FINANCIEROS MANTENIDOS HASTA EL VENCIMIENTO": {
+      "account_number": "1010203"
+     },
+     "(-) PROVISION POR DETERIORO": {
+      "account_number": "1010204"
+     },
+     "DOCUMENTOS Y CUENTAS POR COBRAR CLIENTES NO RELACIONADOS": {
+      "account_number": "1010205",
+      "DE ACTIVIDADES ORDINARIAS QUE GENEREN INTERESES": {
+       "account_number": "101020501"
+      },
+      "DE ACTIVIDADES ORDINARIAS QUE NO GENEREN INTERESES": {
+       "account_number": "101020502"
+      }
+     },
+     "DOCUMENTOS Y CUENTAS POR COBRAR CLIENTES RELACIONADOS": {
+      "account_number": "1010206"
+     },
+     "OTRAS CUENTAS POR COBRAR RELACIONADAS": {
+      "account_number": "1010207"
+     },
+     "OTRAS CUENTAS POR COBRAR": {
+      "account_number": "1010208"
+     },
+     "(-) PROVISIÓN CUENTAS INCOBRABLES Y DETERIORO": {
+      "account_number": "1010209"
+     }
+    },
+    "INVENTARIOS": {
+     "account_number": "10103",
+     "INVENTARIOS DE MATERIA PRIMA": {
+      "account_number": "1010301"
+     },
+     "INVENTARIOS DE PRODUCTOS EN PROCESO": {
+      "account_number": "1010302"
+     },
+     "INVENTARIOS DE SUMINISTROS O MATERIALES A SER CONSUMIDOS EN EL PROCESO DE PRODUCCIÓN": {
+      "account_number": "1010303"
+     },
+     "INVENTARIOS DE SUMINISTROS O MATERIALES A SER CONSUMIDOS EN LA PRESTACIÓN DE SERVICIO": {
+      "account_number": "1010304"
+     },
+     "INVENTARIOS DE PRODUCTOS TERMINADOS Y MERCADERIA EN ALMACÉN - PRODUCIDO POR LA COMPAÑÍA": {
+      "account_number": "1010305"
+     },
+     "INVENTARIOS DE PRODUCTOS TERMINADOS Y MERCADERIA EN ALMACÉN - COMPRADO DE TERCEROS": {
+      "account_number": "1010306"
+     },
+     "MERCADERÍAS EN TRÁNSITO": {
+      "account_number": "1010307"
+     },
+     "OBRAS EN CONSTRUCCION": {
+      "account_number": "1010308"
+     },
+     "OBRAS TERMINADAS": {
+      "account_number": "1010309"
+     },
+     "MATERIALES O BIENES PARA LA CONSTRUCCIÓN": {
+      "account_number": "1010310"
+     },
+     "INVENTARIOS REPUESTOS, HERRAMIENTAS Y ACCESORIOS": {
+      "account_number": "1010311"
+     },
+     "OTROS INVENTARIOS": {
+      "account_number": "1010312"
+     },
+     "(-) PROVISIÓN POR VALOR NETO DE REALIZACIÓN Y OTRAS PÉRDIDAS EN EL INVENTARIO": {
+      "account_number": "1010313"
+     }
+    },
+    "SERVICIOS Y OTROS PAGOS ANTICIPADOS": {
+     "account_number": "10104",
+     "SEGUROS PAGADOS POR ANTICIPADO": {
+      "account_number": "1010401"
+     },
+     "ARRIENDOS PAGADOS POR ANTICIPADO": {
+      "account_number": "1010402"
+     },
+     "ANTICIPOS A PROVEEDORES": {
+      "account_number": "1010403"
+     },
+     "OTROS ANTICIPOS ENTREGADOS": {
+      "account_number": "1010404"
+     }
+    },
+    "ACTIVOS POR IMPUESTOS CORRIENTES": {
+     "account_number": "10105",
+     "CRÉDITO TRIBUTARIO A FAVOR DE LA EMPRESA (IVA)": {
+      "account_number": "1010501"
+     },
+     "CRÉDITO TRIBUTARIO A FAVOR DE LA EMPRESA ( I. R.)": {
+      "account_number": "1010502"
+     },
+     "ANTICIPO DE IMPUESTO A LA RENTA": {
+      "account_number": "1010503"
+     },
+     "IVA PAGADO EN COMPRAS": {
+      "account_number": "1010504"
+     },
+     "RETENCIONES QUE LE HAN SIDO EFECTUADAS": {
+      "account_number": "1010505"
+     }
+    },
+    "ACTIVOS NO CORRIENTES MANTENIDOS PARA LA VENTA Y OPERACIONES DISCONTINUADAS": {
+     "account_number": "10106"
+    },
+    "CONSTRUCCIONES EN PROCESO (NIC 11 Y SECC.23 PYMES)": {
+     "account_number": "10107"
+    },
+    "OTROS ACTIVOS CORRIENTES": {
+     "account_number": "10108"
+    }
+   },
+   "ACTIVO NO CORRIENTE": {
+    "account_number": "102",
+    "PROPIEDADES, PLANTA Y EQUIPO": {
+     "account_number": "10201",
+     "TERRENOS": {
+      "account_number": "1020101"
+     },
+     "EDIFICIOS": {
+      "account_number": "1020102"
+     },
+     "CONTRUCCIONES EN CURSO": {
+      "account_number": "1020103"
+     },
+     "INSTALACIONES": {
+      "account_number": "1020104"
+     },
+     "MUEBLES Y ENSERES": {
+      "account_number": "1020105"
+     },
+     "MAQUINARIA Y EQUIPO": {
+      "account_number": "1020106"
+     },
+     "NAVES, AERONAVES, BARCAZAS Y SIMILARES": {
+      "account_number": "1020107"
+     },
+     "EQUIPO DE COMPUTACIÓN": {
+      "account_number": "1020108"
+     },
+     "VEHÍCULOS, EQUIPOS DE TRANSPORTE Y EQUIPO CAMINERO MÓVIL": {
+      "account_number": "1020109"
+     },
+     "OTROS PROPIEDADES, PLANTA Y EQUIPO": {
+      "account_number": "1020110"
+     },
+     "REPUESTOS Y HERRAMIENTAS": {
+      "account_number": "1020111"
+     },
+     "(-) DEPRECIACIÓN ACUMULADA PROPIEDADES, PLANTA Y EQUIPO": {
+      "account_number": "1020112"
+     },
+     "(-) DETERIORO ACUMULADO DE PROPIEDADES, PLANTA Y EQUIPO": {
+      "account_number": "1020113"
+     },
+     "ACTIVOS DE EXPLORACIÓN Y EXPLOTACIÓN": {
+      "account_number": "1020114",
+      "ACTIVOS DE EXPLORACIÓN Y EXPLOTACIÓN": {
+       "account_number": "102011401"
+      },
+      "(-) AMORTIZACIÓN ACUMULADA DE ACTIVOS DE EXLORACIÓN Y EXPLOTACIÓN": {
+       "account_number": "102011402"
+      },
+      "(-) DETERIORO ACUMULADO DE ACTIVOS DE EXPLORACIÓN Y EXPLOTACIÓN": {
+       "account_number": "102011403"
+      }
+     }
+    },
+    "PROPIEDADES DE INVERSIÓN": {
+     "account_number": "10202",
+     "TERRENOS": {
+      "account_number": "1020201"
+     },
+     "EDIFICIOS": {
+      "account_number": "1020202"
+     },
+     "(-) DEPRECIACION ACUMULADA DE PROPIEDADES DE INVERSIÓN": {
+      "account_number": "1020203"
+     },
+     "(-) DETERIORO ACUMULADO DE PROPIEDADES DE INVERSIÓN": {
+      "account_number": "1020204"
+     }
+    },
+    "ACTIVOS BIOLOGICOS": {
+     "account_number": "10203",
+     "ANIMALES VIVOS EN CRECIMIENTO": {
+      "account_number": "1020301"
+     },
+     "ANIMALES VIVOS EN PRODUCCIÓN": {
+      "account_number": "1020302"
+     },
+     "PLANTAS EN CRECIMIENTO": {
+      "account_number": "1020303"
+     },
+     "PLANTAS EN PRODUCCIÓN": {
+      "account_number": "1020304"
+     },
+     "(-) DEPRECIACIÓN ACUMULADA DE ACTIVOS BIOLÓGICOS": {
+      "account_number": "1020305"
+     },
+     "(-) DETERIORO ACUMULADO DE ACTIVOS BIOLÓGICOS": {
+      "account_number": "1020306"
+     }
+    },
+    "ACTIVO INTANGIBLE": {
+     "account_number": "10204",
+     "PLUSVALÍAS": {
+      "account_number": "1020401"
+     },
+     "MARCAS, PATENTES, DERECHOS DE LLAVE, CUOTAS PATRIMONIALES Y OTROS SIMILARES": {
+      "account_number": "1020402"
+     },
+     "ACTIVOS DE EXPLORACION Y EXPLOTACION": {
+      "account_number": "1020403"
+     },
+     "(-) AMORTIZACIÓN ACUMULADA DE ACTIVO INTANGIBLE": {
+      "account_number": "1020404"
+     },
+     "(-) DETERIORO ACUMULADO DE ACTIVO INTANGIBLE": {
+      "account_number": "1020405"
+     },
+     "OTROS INTANGIBLES": {
+      "account_number": "1020406"
+     }
+    },
+    "ACTIVOS POR IMPUESTOS DIFERIDOS": {
+     "account_number": "10205"
+    },
+    "ACTIVOS FINANCIEROS NO CORRIENTES": {
+     "account_number": "10206",
+     "ACTIVOS FINANCIEROS MANTENIDOS HASTA EL VENCIMIENTO": {
+      "account_number": "1020601"
+     },
+     "(-) PROVISIÓN POR DETERIORO DE ACTIVOS FINANCIEROS MANTENIDOS HASTA EL VENCIMIENTO": {
+      "account_number": "1020602"
+     },
+     "DOCUMENTOS Y CUENTAS POR COBRAR": {
+      "account_number": "1020603"
+     },
+     "(-) PROVISIÓN CUENTAS INCOBRABLES DE ACTIVOS FINANCIEROS NO CORRIENTES": {
+      "account_number": "1020604"
+     }
+    },
+    "OTROS ACTIVOS NO CORRIENTES": {
+     "account_number": "10207",
+     "INVERSIONES SUBSIDIARIAS": {
+      "account_number": "1020701"
+     },
+     "INVERSIONES ASOCIADAS": {
+      "account_number": "1020702"
+     },
+     "INVERSIONES NEGOCIOS CONJUNTOS": {
+      "account_number": "1020703"
+     },
+     "OTRAS INVERSIONES": {
+      "account_number": "1020704"
+     },
+     "(-) PROVISIÓN VALUACIÓN DE INVERSIONES": {
+      "account_number": "1020705"
+     },
+     "OTROS ACTIVOS NO CORRIENTES": {
+      "account_number": "1020706"
+     }
+    }
+   },
+   "root_type": "Asset"
+  },
+  "PASIVO": {
+   "account_number": "2",
+   "PASIVO CORRIENTE": {
+    "account_number": "201",
+    "PASIVOS FINANCIEROS A VALOR RAZONABLE CON CAMBIOS EN RESULTADO": {
+     "account_number": "20101"
+    },
+    "PASIVOS POR CONTRATOS DE ARRENDAMIENTO FINANCIEROS": {
+     "account_number": "20102"
+    },
+    "CUENTAS Y DOCUMENTOS POR PAGAR": {
+     "account_number": "20103",
+     "LOCALES": {
+      "account_number": "2010301"
+     },
+     "DEL EXTERIOR": {
+      "account_number": "2010302"
+     }
+    },
+    "OBLIGACIONES CON INSTITUCIONES FINANCIERAS": {
+     "account_number": "20104",
+     "LOCALES": {
+      "account_number": "2010401"
+     },
+     "DEL EXTERIOR": {
+      "account_number": "2010402"
+     }
+    },
+    "PROVISIONES": {
+     "account_number": "20105",
+     "LOCALES": {
+      "account_number": "2010501"
+     },
+     "DEL EXTERIOR": {
+      "account_number": "2010502"
+     }
+    },
+    "PORCIÓN CORRIENTE DE OBLIGACIONES EMITIDAS": {
+     "account_number": "20106"
+    },
+    "OTRAS OBLIGACIONES CORRIENTES": {
+     "account_number": "20107",
+     "CON LA ADMINISTRACIÓN TRIBUTARIA": {
+      "account_number": "2010701"
+     },
+     "IMPUESTO A LA RENTA POR PAGAR DEL EJERCICIO": {
+      "account_number": "2010702"
+     },
+     "CON EL IESS": {
+      "account_number": "2010703"
+     },
+     "POR BENEFICIOS DE LEY A EMPLEADOS": {
+      "account_number": "2010704"
+     },
+     "PARTICIPACIÓN TRABAJADORES POR PAGAR DEL EJERCICIO": {
+      "account_number": "2010705"
+     },
+     "DIVIDENDOS POR PAGAR": {
+      "account_number": "2010706"
+     },
+     "IVA COBRADO EN VENTAS": {
+      "account_number": "2010707"
+     },
+     "RETENCIÓN DE IVA POR PAGAR": {
+      "account_number": "2010708"
+     },
+     "RETENCIÓN DE IR POR PAGAR": {
+      "account_number": "2010709"
+     },
+     "ICE POR PAGAR": {
+      "account_number": "2010710"
+     },
+     "IRBPNR POR PAGAR": {
+      "account_number": "2010711"
+     }
+    },
+    "CUENTAS POR PAGAR DIVERSAS – RELACIONADAS": {
+     "account_number": "20108"
+    },
+    "OTROS PASIVOS FINANCIEROS": {
+     "account_number": "20109"
+    },
+    "ANTICIPOS DE CLIENTES": {
+     "account_number": "20110"
+    },
+    "PASIVOS DIRECTAMENTE ASOCIADOS CON LOS ACTIVOS NO CORRIENTES Y OPERACIONES DISCONTINUADAS": {
+     "account_number": "20111"
+    },
+    "PORCIÓN CORRIENTE DE PROVISIONES POR BENEFICIOS A EMPLEADOS": {
+     "account_number": "20112",
+     "JUBILACIÓN PATRONAL": {
+      "account_number": "2011201"
+     },
+     "OTROS BENEFICIOS A LARGO PLAZO PARA LOS EMPLEADOS": {
+      "account_number": "2011202"
+     }
+    },
+    "OTROS PASIVOS CORRIENTES": {
+     "account_number": "20113"
+    }
+   },
+   "PASIVO NO CORRIENTE": {
+    "account_number": "202",
+    "PASIVOS POR CONTRATOS DE ARRENDAMIENTO FINANCIERO": {
+     "account_number": "20201"
+    },
+    "CUENTAS Y DOCUMENTOS POR PAGAR": {
+     "account_number": "20202",
+     "LOCALES": {
+      "account_number": "2020201"
+     },
+     "DEL EXTERIOR": {
+      "account_number": "2020202"
+     }
+    },
+    "OBLIGACIONES CON INSTITUCIONES FINANCIERAS": {
+     "account_number": "20203",
+     "LOCALES": {
+      "account_number": "2020301"
+     },
+     "DEL EXTERIOR": {
+      "account_number": "2020302"
+     }
+    },
+    "CUENTAS POR PAGAR DIVERSAS / RELACIONADAS": {
+     "account_number": "20204",
+     "LOCALES": {
+      "account_number": "2020401"
+     },
+     "DEL EXTERIOR": {
+      "account_number": "2020402"
+     }
+    },
+    "OBLIGACIONES EMITIDAS": {
+     "account_number": "20205"
+    },
+    "ANTICIPOS DE CLIENTES": {
+     "account_number": "20206"
+    },
+    "PROVISIONES POR BENEFICIOS A EMPLEADOS": {
+     "account_number": "20207",
+     "JUBILACIÓN PATRONAL": {
+      "account_number": "2020701"
+     },
+     "OTROS BENEFICIOS NO CORRIENTES PARA LOS EMPLEADOS": {
+      "account_number": "2020702"
+     }
+    },
+    "OTRAS PROVISIONES": {
+     "account_number": "20208"
+    },
+    "PASIVO DIFERIDO": {
+     "account_number": "20209",
+     "INGRESOS DIFERIDOS": {
+      "account_number": "2020901"
+     },
+     "PASIVOS POR IMPUESTOS DIFERIDOS": {
+      "account_number": "2020902"
+     }
+    },
+    "OTROS PASIVOS NO CORRIENTES": {
+     "account_number": "20210"
+    }
+   },
+   "root_type": "Liability"
+  },
+  "PATRIMONIO NETO": {
+   "account_number": "3",
+   "PATRIMONIO ATRIBUIBLE A LOS PROPIETARIOS DE LA CONTROLADORA": {
+    "account_number": "30",
+    "CAPITAL": {
+     "account_number": "301",
+     "CAPITAL SUSCRITO o ASIGNADO": {
+      "account_number": "30101"
+     },
+     "(-) CAPITAL SUSCRITO NO PAGADO, ACCIONES EN TESORERÍA": {
+      "account_number": "30102"
+     }
+    },
+    "APORTES DE SOCIOS O ACCIONISTAS PARA FUTURA CAPITALIZACIÓN": {
+     "account_number": "302"
+    },
+    "PRIMA POR EMISION PRIMARIA DE ACCIONES": {
+     "account_number": "303"
+    },
+    "RESERVAS": {
+     "account_number": "304",
+     "RESERVA LEGAL": {
+      "account_number": "30401"
+     },
+     "RESERVAS FACULTATIVA Y ESTATUTARIA": {
+      "account_number": "30402"
+     }
+    },
+    "OTROS RESULTADOS INTEGRALES": {
+     "account_number": "305",
+     "SUPERAVIT DE ACTIVOS FINANCIEROS DISPONIBLES PARA LA VENTA": {
+      "account_number": "30501"
+     },
+     "SUPERAVIT POR REVALUACIÓN DE PROPIEDADES, PLANTA Y EQUIPO": {
+      "account_number": "30502"
+     },
+     "SUPERAVIT POR REVALUACION DE ACTIVOS INTANGIBLES": {
+      "account_number": "30503"
+     },
+     "OTROS SUPERAVIT POR REVALUACION": {
+      "account_number": "30504"
+     }
+    },
+    "RESULTADOS ACUMULADOS": {
+     "account_number": "306",
+     "GANACIAS ACUMULADAS": {
+      "account_number": "30601"
+     },
+     "(-) PÉRDIDAS ACUMULADAS": {
+      "account_number": "30602"
+     },
+     "RESULTADOS ACUMULADOS PROVENIENTES DE LA ADOPCIÓN POR PRIMERA VEZ DE LAS NIIF": {
+      "account_number": "30603"
+     },
+     "RESERVA DE CAPITAL": {
+      "account_number": "30604"
+     },
+     "RESERVA POR DONACIONES": {
+      "account_number": "30605"
+     },
+     "RESERVA POR VALUACIÓN": {
+      "account_number": "30606"
+     },
+     "SUPERÁVIT POR REVALUACIÓN DE INVERSIONES": {
+      "account_number": "30607"
+     }
+    },
+    "RESULTADOS DEL EJERCICIO": {
+     "account_number": "307",
+     "GANANCIA NETA DEL PERIODO": {
+      "account_number": "30701"
+     },
+     "(-) PÉRDIDA NETA DEL PERIODO": {
+      "account_number": "30702"
+     }
+    }
+   },
+   "PARTICIPACIÓN NO CONTROLADORA": {
+    "account_number": "31"
+   },
+   "root_type": "Equity"
+  },
+  "INGRESOS DE ACTIVIDADES ORDINARIAS": {
+   "account_number": "41",
+   "VENTA DE BIENES": {
+    "account_number": "4101"
+   },
+   "PRESTACIÓN DE SERVICIOS": {
+    "account_number": "4102"
+   },
+   "CONTRATOS DE CONSTRUCCIÓN": {
+    "account_number": "4103"
+   },
+   "SUBVENCIONES DEL GOBIERNO": {
+    "account_number": "4104"
+   },
+   "REGALÍAS": {
+    "account_number": "4105"
+   },
+   "INTERESES": {
+    "account_number": "4106",
+    "INTERESES GENERADOS POR VENTAS A CRÉDITO": {
+     "account_number": "410601"
+    },
+    "OTROS INTERESES GENERADOS": {
+     "account_number": "410602"
+    }
+   },
+   "DIVIDENDOS": {
+    "account_number": "4107"
+   },
+   "GANANCIA POR MEDICIÓN A VALOR RAZONABLE DE ACTIVOS BIOLÓGICOS": {
+    "account_number": "4108"
+   },
+   "OTROS INGRESOS DE ACTIVIDADES ORDINARIAS": {
+    "account_number": "4109"
+   },
+   "(-) DESCUENTO EN VENTAS": {
+    "account_number": "4110"
+   },
+   "(-) DEVOLUCIONES EN VENTAS": {
+    "account_number": "4111"
+   },
+   "(-) BONIFICACIÓN EN PRODUCTO": {
+    "account_number": "4112"
+   },
+   "(-) OTRAS REBAJAS COMERCIALES": {
+    "account_number": "4113"
+   },
+   "root_type": "Income"
+  },
+  "OTROS INGRESOS": {
+   "account_number": "43",
+   "DIVIDENDOS": {
+    "account_number": "4301"
+   },
+   "INTERESES FINANCIEROS": {
+    "account_number": "4302"
+   },
+   "GANANCIA EN INVERSIONES EN ASOCIADAS / SUBSIDIARIAS Y OTRAS": {
+    "account_number": "4303"
+   },
+   "VALUACIÓN DE INSTRUMENTOS FINANCIEROS A VALOR RAZONABLE CON CAMBIO EN RESULTADOS": {
+    "account_number": "4304"
+   },
+   "OTRAS RENTAS": {
+    "account_number": "4305"
+   },
+   "root_type": "Income"
+  },
+  "COSTO DE VENTAS Y PRODUCCIÓN": {
+   "account_number": "51",
+   "MATERIALES UTILIZADOS O PRODUCTOS VENDIDOS": {
+    "account_number": "5101",
+    "(+) INVENTARIO INICIAL DE BIENES NO PRODUCIDOS POR LA COMPAÑÍA": {
+     "account_number": "510101"
+    },
+    "(+) COMPRAS NETAS LOCALES DE BIENES NO PRODUCIDOS POR LA COMPAÑÍA": {
+     "account_number": "510102"
+    },
+    "(+) IMPORTACIONES DE BIENES NO PRODUCIDOS POR LA COMPAÑÍA": {
+     "account_number": "510103"
+    },
+    "(-) INVENTARIO FINAL DE BIENES NO PRODUCIDOS POR LA COMPAÑÍA": {
+     "account_number": "510104"
+    },
+    "(+) INVENTARIO INICIAL DE MATERIA PRIMA": {
+     "account_number": "510105"
+    },
+    "(+) COMPRAS NETAS LOCALES DE MATERIA PRIMA": {
+     "account_number": "510106"
+    },
+    "(+) IMPORTACIONES DE MATERIA PRIMA": {
+     "account_number": "510107"
+    },
+    "(-) INVENTARIO FINAL DE MATERIA PRIMA": {
+     "account_number": "510108"
+    },
+    "(+) INVENTARIO INICIAL DE PRODUCTOS EN PROCESO": {
+     "account_number": "510109"
+    },
+    "(-) INVENTARIO FINAL DE PRODUCTOS EN PROCESO": {
+     "account_number": "510110"
+    },
+    "(+) INVENTARIO INICIAL PRODUCTOS TERMINADOS": {
+     "account_number": "510111"
+    },
+    "(-) INVENTARIO FINAL DE PRODUCTOS TERMINADOS": {
+     "account_number": "510112"
+    }
+   },
+   "(+) MANO DE OBRA DIRECTA": {
+    "account_number": "5102",
+    "SUELDOS Y BENEFICIOS SOCIALES": {
+     "account_number": "510201"
+    },
+    "GASTO PLANES DE BENEFICIOS A EMPLEADOS": {
+     "account_number": "510202"
+    }
+   },
+   "(+) MANO DE OBRA INDIRECTA": {
+    "account_number": "5103",
+    "SUELDOS Y BENEFICIOS SOCIALES": {
+     "account_number": "510301"
+    },
+    "GASTO PLANES DE BENEFICIOS A EMPLEADOS": {
+     "account_number": "510302"
+    }
+   },
+   "(+) OTROS COSTOS INDIRECTOS DE FABRICACIÓN": {
+    "account_number": "5104",
+    "DEPRECIACIÓN PROPIEDADES, PLANTA Y EQUIPO": {
+     "account_number": "510401"
+    },
+    "DETERIORO O PÉRDIDAS DE ACTIVOS BIOLÓGICOS": {
+     "account_number": "510402"
+    },
+    "DETERIORO DE PROPIEDAD, PLANTA Y EQUIPO": {
+     "account_number": "510403"
+    },
+    "EFECTO VALOR NETO DE REALIZACIÓN DE INVENTARIOS": {
+     "account_number": "510404"
+    },
+    "GASTO POR GARANTÍAS EN VENTA DE PRODUCTOS O SERVICIOS": {
+     "account_number": "510405"
+    },
+    "MANTENIMIENTO Y REPARACIONES": {
+     "account_number": "510406"
+    },
+    "SUMINISTROS MATERIALES Y REPUESTOS": {
+     "account_number": "510407"
+    },
+    "OTROS COSTOS DE PRODUCCIÓN": {
+     "account_number": "510408"
+    }
+   },
+   "root_type": "Expense"
+  },
+  "GASTOS": {
+   "account_number": "52",
+   "GASTOS [5201]": {
+    "account_number": "5201",
+    "SUELDOS, SALARIOS Y DEMÁS REMUNERACIONES": {
+     "account_number": "520101"
+    },
+    "APORTES A LA SEGURIDAD SOCIAL (incluido fondo de reserva)": {
+     "account_number": "520102"
+    },
+    "BENEFICIOS SOCIALES E INDEMNIZACIONES": {
+     "account_number": "520103"
+    },
+    "GASTO PLANES DE BENEFICIOS A EMPLEADOS": {
+     "account_number": "520104"
+    },
+    "HONORARIOS, COMISIONES Y DIETAS A PERSONAS NATURALES": {
+     "account_number": "520105"
+    },
+    "REMUNERACIONES A OTROS TRABAJADORES AUTÓNOMOS": {
+     "account_number": "520106"
+    },
+    "HONORARIOS A EXTRANJEROS POR SERVICIOS OCASIONALES": {
+     "account_number": "520107"
+    },
+    "MANTENIMIENTO Y REPARACIONES": {
+     "account_number": "520108"
+    },
+    "ARRENDAMIENTO OPERATIVO": {
+     "account_number": "520109"
+    },
+    "COMISIONES": {
+     "account_number": "520110"
+    },
+    "PROMOCIÓN Y PUBLICIDAD": {
+     "account_number": "520111"
+    },
+    "COMBUSTIBLES": {
+     "account_number": "520112"
+    },
+    "LUBRICANTES": {
+     "account_number": "520113"
+    },
+    "SEGUROS Y REASEGUROS (primas y cesiones)": {
+     "account_number": "520114"
+    },
+    "TRANSPORTE": {
+     "account_number": "520115"
+    },
+    "GASTOS DE GESTIÓN (agasajos a accionistas, trabajadores y clientes)": {
+     "account_number": "520116"
+    },
+    "GASTOS DE VIAJE": {
+     "account_number": "520117"
+    },
+    "AGUA, ENERGÍA, LUZ Y TELECOMUNICACIONES": {
+     "account_number": "520118"
+    },
+    "NOTARIOS Y REGISTRADORES DE LA PROPIEDAD O MERCANTILES": {
+     "account_number": "520119"
+    },
+    "DEPRECIACIONES": {
+     "account_number": "520121",
+     "PROPIEDADES, PLANTA Y EQUIPO": {
+      "account_number": "52012101"
+     },
+     "PROPIEDADES DE INVERSIÓN": {
+      "account_number": "52012102"
+     }
+    },
+    "AMORTIZACIONES": {
+     "account_number": "520122",
+     "INTANGIBLES": {
+      "account_number": "52012201"
+     },
+     "OTROS ACTIVOS": {
+      "account_number": "52012202"
+     }
+    },
+    "GASTO DETERIORO": {
+     "account_number": "520123",
+     "PROPIEDADES, PLANTA Y EQUIPO": {
+      "account_number": "52012301"
+     },
+     "OTROS ACTIVOS": {
+      "account_number": "52012306"
+     }
+    },
+    "GASTOS POR CANTIDADES ANORMALES DE UTILIZACIÓN EN EL PROCESO DE PRODUCCIÓN": {
+     "account_number": "520124",
+     "MANO DE OBRA": {
+      "account_number": "52012401"
+     },
+     "MATERIALES": {
+      "account_number": "52012402"
+     },
+     "COSTOS DE PRODUCCIÓN": {
+      "account_number": "52012403"
+     }
+    },
+    "GASTO POR REESTRUCTURACIÓN": {
+     "account_number": "520125"
+    },
+    "VALOR NETO DE REALIZACIÓN DE INVENTARIOS": {
+     "account_number": "520126"
+    },
+    "OTROS GASTOS": {
+     "account_number": "520128"
+    }
+   },
+   "GASTOS [5202]": {
+    "account_number": "5202",
+    "SUELDOS, SALARIOS Y DEMÁS REMUNERACIONES": {
+     "account_number": "520201"
+    },
+    "APORTES A LA SEGURIDAD SOCIAL (incluido fondo de reserva)": {
+     "account_number": "520202"
+    },
+    "BENEFICIOS SOCIALES E INDEMNIZACIONES": {
+     "account_number": "520203"
+    },
+    "GASTO PLANES DE BENEFICIOS A EMPLEADOS": {
+     "account_number": "520204"
+    },
+    "HONORARIOS, COMISIONES Y DIETAS A PERSONAS NATURALES": {
+     "account_number": "520205"
+    },
+    "REMUNERACIONES A OTROS TRABAJADORES AUTÓNOMOS": {
+     "account_number": "520206"
+    },
+    "HONORARIOS A EXTRANJEROS POR SERVICIOS OCASIONALES": {
+     "account_number": "520207"
+    },
+    "MANTENIMIENTO Y REPARACIONES": {
+     "account_number": "520208"
+    },
+    "ARRENDAMIENTO OPERATIVO": {
+     "account_number": "520209"
+    },
+    "COMISIONES": {
+     "account_number": "520210"
+    },
+    "COMBUSTIBLES": {
+     "account_number": "520212"
+    },
+    "LUBRICANTES": {
+     "account_number": "520213"
+    },
+    "SEGUROS Y REASEGUROS (primas y cesiones)": {
+     "account_number": "520214"
+    },
+    "TRANSPORTE": {
+     "account_number": "520215"
+    },
+    "GASTOS DE GESTIÓN (agasajos a accionistas, trabajadores y clientes)": {
+     "account_number": "520216"
+    },
+    "GASTOS DE VIAJE": {
+     "account_number": "520217"
+    },
+    "AGUA, ENERGÍA, LUZ Y TELECOMUNICACIONES": {
+     "account_number": "520218"
+    },
+    "NOTARIOS Y REGISTRADORES DE LA PROPIEDAD O MERCANTILES": {
+     "account_number": "520219"
+    },
+    "IMPUESTOS, CONTRIBUCIONES Y OTROS": {
+     "account_number": "520220"
+    },
+    "DEPRECIACIONES": {
+     "account_number": "520221",
+     "PROPIEDADES, PLANTA Y EQUIPO": {
+      "account_number": "52022101"
+     },
+     "PROPIEDADES DE INVERSIÓN": {
+      "account_number": "52022102"
+     }
+    },
+    "AMORTIZACIONES": {
+     "account_number": "520222",
+     "INTANGIBLES": {
+      "account_number": "52022201"
+     },
+     "OTROS ACTIVOS": {
+      "account_number": "52022202"
+     }
+    },
+    "GASTO DETERIORO": {
+     "account_number": "520223",
+     "PROPIEDADES, PLANTA Y EQUIPO": {
+      "account_number": "52022301"
+     },
+     "INVENTARIOS": {
+      "account_number": "52022302"
+     },
+     "INSTRUMENTOS FINANCIEROS": {
+      "account_number": "52022303"
+     },
+     "INTANGIBLES": {
+      "account_number": "52022304"
+     },
+     "CUENTAS POR COBRAR": {
+      "account_number": "52022305"
+     },
+     "OTROS ACTIVOS": {
+      "account_number": "52022306"
+     }
+    },
+    "GASTOS POR CANTIDADES ANORMALES DE UTILIZACIÓN EN EL PROCESO DE PRODUCCIÓN": {
+     "account_number": "520224",
+     "MANO DE OBRA": {
+      "account_number": "52022401"
+     },
+     "MATERIALES": {
+      "account_number": "52022402"
+     },
+     "COSTOS DE PRODUCCIÓN": {
+      "account_number": "52022403"
+     }
+    },
+    "GASTO POR REESTRUCTURACIÓN": {
+     "account_number": "520225"
+    },
+    "VALOR NETO DE REALIZACIÓN DE INVENTARIOS": {
+     "account_number": "520226"
+    },
+    "GASTO IMPUESTO A LA RENTA (ACTIVOS Y PASIVOS DIFERIDOS)": {
+     "account_number": "520227"
+    },
+    "OTROS GASTOS": {
+     "account_number": "520228"
+    }
+   },
+   "GASTOS FINANCIEROS": {
+    "account_number": "5203",
+    "INTERESES": {
+     "account_number": "520301"
+    },
+    "COMISIONES": {
+     "account_number": "520302"
+    },
+    "GASTOS DE FINANCIAMIENTO DE ACTIVOS": {
+     "account_number": "520303"
+    },
+    "DIFERENCIA EN CAMBIO": {
+     "account_number": "520304"
+    },
+    "OTROS GASTOS FINANCIEROS": {
+     "account_number": "520305"
+    }
+   },
+   "OTROS GASTOS": {
+    "account_number": "5204",
+    "PERDIDA EN INVERSIONES EN ASOCIADAS / SUBSIDIARIAS Y OTRAS": {
+     "account_number": "520401"
+    },
+    "OTROS": {
+     "account_number": "520402"
+    }
+   },
+   "root_type": "Expense"
+  },
+  "15% PARTICIPACIÓN TRABAJADORES": {
+   "account_number": "61",
+   "root_type": "Expense"
+  },
+  "IMPUESTO A LA RENTA CAUSADO": {
+   "account_number": "63",
+   "root_type": "Expense"
+  },
+  "(-) GASTO POR IMPUESTO DIFERIDO": {
+   "account_number": "65",
+   "root_type": "Expense"
+  },
+  "(+) INGRESO POR IMPUESTO DIFERIDO": {
+   "account_number": "66",
+   "root_type": "Income"
+  },
+  "INGRESOS POR OPERACIONES DISCONTINUADAS": {
+   "account_number": "71",
+   "root_type": "Income"
+  },
+  "GASTOS POR OPERACIONES DISCONTINUADAS": {
+   "account_number": "72",
+   "root_type": "Expense"
+  },
+  "15% PARTICIPACIÓN TRABAJADORES (OPERACIONES DISCONTINUADAS)": {
+   "account_number": "74",
+   "root_type": "Expense"
+  },
+  "IMPUESTO A LA RENTA CAUSADO (OPERACIONES DISCONTINUADAS)": {
+   "account_number": "76",
+   "root_type": "Expense"
+  }
+ }
+}
