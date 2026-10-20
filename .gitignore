@@ -59,3 +59,8 @@ coverage.xml
 .DS_Store
 *.swp
 *~
+
+# Local agent / tooling environments (machine-local, never commit)
+.codegraph/
+.pi/
+.atl/
