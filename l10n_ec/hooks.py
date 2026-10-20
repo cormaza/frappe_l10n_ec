@@ -12,3 +12,16 @@ fixtures = [
 	"SRI Payment Method",
 	"SRI Tax Support",
 ]
+
+after_install = "l10n_ec.ecuador_localization.setup.after_install"
+after_migrate = "l10n_ec.ecuador_localization.setup.after_migrate"
+before_uninstall = "l10n_ec.ecuador_localization.setup.before_uninstall"
+
+doc_events = {
+	"Customer": {
+		"validate": "l10n_ec.ecuador_localization.party_hooks.validate_sri_identification",
+	},
+	"Supplier": {
+		"validate": "l10n_ec.ecuador_localization.party_hooks.validate_sri_identification",
+	},
+}

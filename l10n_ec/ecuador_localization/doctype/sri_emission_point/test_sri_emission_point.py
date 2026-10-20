@@ -48,6 +48,4 @@ class TestSRIEmissionPoint(UnitTestCase):
 				sequences=[SRIEmissionSequence(document_type="01", current_sequence=1000000000)]
 			).validate()
 		with self.assertRaises(ValueError):
-			_point(
-				sequences=[SRIEmissionSequence(document_type="01", current_sequence=-1)]
-			).validate()
+			_point(sequences=[SRIEmissionSequence(document_type="01", current_sequence=-1)]).validate()

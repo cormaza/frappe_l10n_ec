@@ -16,9 +16,7 @@ class TestSRIPaymentMethod(UnitTestCase):
 	"""Unit tests for the SRI Payment Method catalog DocType."""
 
 	def test_codes_match_sri_specification(self) -> None:
-		schema = json.loads(
-			(Path(__file__).parent / "sri_payment_method.json").read_text(encoding="utf-8")
-		)
+		schema = json.loads((Path(__file__).parent / "sri_payment_method.json").read_text(encoding="utf-8"))
 		code_field = next(f for f in schema["fields"] if f["fieldname"] == "code")
 		self.assertEqual(
 			set(code_field["options"].split("\n")),
