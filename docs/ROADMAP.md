@@ -130,9 +130,19 @@ Therefore, `l10n_ec` for Frappe v16 combines **both** the base accounting/catalo
 
 ### Phase 9: Fiscal & Tax Compliance Reports (`ATS`, `Form 104`, `Form 103`)
 - **Source Equivalence**: [`OCA/l10n-ecuador` PR #105 (`l10n_ec_ats`)](https://github.com/OCA/l10n-ecuador/pull/105), [`PR #108 (`l10n_ec_104`)](https://github.com/OCA/l10n-ecuador/pull/108), [`PR #109 (`l10n_ec_103`)](https://github.com/OCA/l10n-ecuador/pull/109).
-- **Planned Scope**:
-  - **Anexo Transaccional Simplificado (`ATS`)**: Generates monthly `AT{mmaaaa}.xml` and `.zip` archive covering purchases (`compras`), sales (`ventas`), exports (`exportaciones`), and annulled vouchers (`anulados`), validated offline against `ats.xsd`.
-  - **SRI Form 104 (VAT Declaration)** & **SRI Form 103 (Income Tax Withholding Declaration)**: Frappe Script Reports aggregating tax bases and withholdings by official SRI casillero codes.
+- **Split rationale**: filings aggregate the full fiscal catalog; emitting them on the current IVA-only subset would be wrong, not incomplete. `9.0` completes the catalog first; `9A`/`9B` consume it.
+
+#### Phase 9.0: Complete Fiscal Catalog (prerequisite)
+- Official IR/IVA withholding concepto table (`303`, `304`, `307`, …) plus Form 103 casillero mapping.
+- ICE/IRBPNR line-tax mapping (SRI codes `3`/`5`) with Item Tax Templates and ledger accounts (product-specific rates stay user-configured).
+- SRI Payment Method table (Tabla 20: `01`, `16` credit card, `20` transfer, …) bridged from ERPNext Mode of Payment (today everything emits as `01`).
+
+#### Phase 9A: `ATS` (Anexo Transaccional Simplificado)
+- Monthly `AT{mmaaaa}.xml` + `.zip` covering purchases (`compras`), sales (`ventas`), exports (`exportaciones`), and annulled vouchers (`anulados`), validated offline against `ats.xsd`, reading posted ledger/voucher data through the `9.0` catalog.
+
+#### Phase 9B: SRI Forms 104 & 103
+- **Form 104 (VAT Declaration)** & **Form 103 (Income Tax Withholding Declaration)**: Frappe Script Reports aggregating tax bases and withholdings by official SRI casillero codes, sourced from the `9.0` catalog.
+- **Out of scope**: automatic ICE computation per product, card processing (SRI payment code only, no gateway), and automatic SRI submission (ATS delivers as file+zip for the portal).
 
 ---
 
