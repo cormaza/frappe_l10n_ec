@@ -1,0 +1,20 @@
+{
+ "name": "SRI Form 103",
+ "doctype": "Report",
+ "is_standard": "Yes",
+ "module": "Ecuador Localization",
+ "ref_doctype": "Purchase Invoice",
+ "report_name": "SRI Form 103",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Auditor"
+  }
+ ]
+}

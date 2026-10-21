@@ -146,26 +146,9 @@ def _authorized_voucher(reference_doctype: str, reference_name: str) -> dict | N
 
 def _settlement_values(sales_invoice: str) -> dict | None:
 	"""Received-withholding values from the settlement JE, if posted."""
-	if frappe is None:  # pragma: no cover
-		return None
-	from l10n_ec.ecuador_localization.received_settlement import settlement_remark
+	from l10n_ec.ecuador_localization.received_settlement import settlement_values
 
-	je_name = frappe.db.get_value(
-		"Journal Entry",
-		{"user_remark": settlement_remark(sales_invoice), "docstatus": 1},
-		"name",
-	)
-	if not je_name:
-		return None
-	je = frappe.get_doc("Journal Entry", je_name)
-	values = {"iva_value": 0.0, "renta_value": 0.0}
-	for line in je.get("accounts") or []:
-		account = line.get("account") or ""
-		if "1010501" in account:
-			values["iva_value"] += float(line.get("debit_in_account_currency") or 0)
-		elif "1010502" in account:
-			values["renta_value"] += float(line.get("debit_in_account_currency") or 0)
-	return values
+	return settlement_values(sales_invoice)
 
 
 def _iso_to_sri(value) -> str:

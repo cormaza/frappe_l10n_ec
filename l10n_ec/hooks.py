@@ -15,6 +15,10 @@ fixtures = [
 		"dt": "Print Format",
 		"filters": [["name", "in", ["SRI RIDE", "SRI RIDE Delivery Note", "SRI RIDE Withholding"]]],
 	},
+	{
+		"dt": "Report",
+		"filters": [["name", "in", ["SRI Form 103", "SRI Form 104"]]],
+	},
 ]
 
 after_install = "l10n_ec.ecuador_localization.setup.after_install"

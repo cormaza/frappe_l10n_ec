@@ -90,6 +90,15 @@ class TestAppInstallability(UnitTestCase):
 				f"Controller {controller_module_name} missing class {expected_class_name}",
 			)
 
+	def test_fixture_records_carry_names(self) -> None:
+		for path in sorted((APP_ROOT / "fixtures").glob("*.json")):
+			rows = json.loads(path.read_text(encoding="utf-8"))
+			for row in rows if isinstance(rows, list) else [rows]:
+				self.assertIn("name", row, f"Fixture {path.name} record lacks 'name'")
+		for path in sorted((APP_ROOT / "ecuador_localization" / "report").glob("*/*.json")):
+			row = json.loads(path.read_text(encoding="utf-8"))
+			self.assertIn("name", row, f"Report {path.name} lacks 'name'")
+
 	def test_frappe_test_runner_discovery_compliance(self) -> None:
 		"""Ensure all test_*.py modules use UnitTestCase/IntegrationTestCase classes and no bare test_ functions."""
 		test_files = sorted(APP_ROOT.rglob("test_*.py"))

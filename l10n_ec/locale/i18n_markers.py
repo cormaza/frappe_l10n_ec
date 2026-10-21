@@ -390,3 +390,30 @@ ATS_BUILDER_STRINGS = [
 	_("ATS payload carries unknown section '{}'."),
 	_("ATS zip needs the built XML string."),
 ]
+
+FORM103_STRINGS = [
+	# User-facing Form 103 collector and report strings (l10n_ec/sri/form103.py,
+	# l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.py).
+	# Extraction markers only; this module is never imported at runtime.
+	# "Amount" stays out: core ships its translation.
+	_("Form 103 collection year '{}' is out of range."),
+	_("Form 103 collection month '{}' is out of range."),
+	_("SRI voucher '{}' has no withholding XML to collect."),
+	_("SRI voucher '{}' carries no usable authorization date or fiscal period."),
+	_(
+		"SRI withholding concepto '{}' is exterior scope and stays out of Form 103 residentes; the exterior section is recorded empty."
+	),
+	_("SRI withholding concepto '{}' has no Form 103 casilleros; cannot collect."),
+	_("Casillero"),
+]
+
+
+FORM104_STRINGS = [
+	_("Form 104 collection year '{}' is out of range."),
+	_("Form 104 collection month '{}' is out of range."),
+	_("Form 104 tax code '{}' is not a SRI impuesto."),
+	_("Form 104 VAT rate code '{}' is not a SRI rate."),
+	_("Form 104 settlement account '{}' is not a received-withholding asset."),
+	_("Form 104 IVA deduction rate '{}' has no retention box."),
+	_("Form 104 received reference needs a document number."),
+]
