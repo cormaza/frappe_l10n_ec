@@ -408,6 +408,15 @@ FORM103_STRINGS = [
 ]
 
 
+VOID_LIFECYCLE_STRINGS = [
+	# SRI-side void recording (l10n_ec/ecuador_localization/voucher_flow.py).
+	# Voiding is a manual portal/presencial tramite (no SRI void API): these
+	# strings record the outcome locally. Extraction markers only; this module
+	# is never imported at runtime.
+	_("Voucher '{}' must be Authorized to record a void, found '{}'."),
+	_("Void recorded on {}."),
+]
+
 FORM104_STRINGS = [
 	_("Form 104 collection year '{}' is out of range."),
 	_("Form 104 collection month '{}' is out of range."),

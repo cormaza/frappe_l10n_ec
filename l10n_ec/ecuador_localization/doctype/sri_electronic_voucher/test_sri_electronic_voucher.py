@@ -39,7 +39,7 @@ class TestSRIElectronicVoucher(UnitTestCase):
 		state_field = next(f for f in schema["fields"] if f["fieldname"] == "voucher_state")
 		self.assertEqual(
 			set(state_field["options"].split("\n")),
-			{"Generated", "Signed", "Received", "Authorized", "Returned", "Rejected"},
+			{"Generated", "Signed", "Received", "Authorized", "Returned", "Rejected", "Annulled"},
 		)
 		code_field = next(f for f in schema["fields"] if f["fieldname"] == "sri_doc_code")
 		self.assertEqual(set(code_field["options"].split("\n")), {"01", "03", "04", "05", "06", "07"})

@@ -590,3 +590,16 @@ class TestResolveInfoAdicional(UnitTestCase):
 			rows = voucher_flow.resolve_info_adicional(si)
 		by_name = {row["nombre"]: row["valor"] for row in rows}
 		self.assertEqual(by_name, {"Email": "order@example.com", "Web": "x.ec"})
+
+
+class TestPayloadCtxCarriesTaxpayerFlags(UnitTestCase):
+	def test_withholding_and_rimpe_flags_reach_ctx(self) -> None:
+		emitter = dict(EMITTER, withholding_agent=True, rimpe_regime=True)
+		payload = build_voucher_payload(INVOICE, emitter, SEQUENCE)
+		self.assertTrue(payload["ctx"]["withholding_agent"])
+		self.assertTrue(payload["ctx"]["rimpe_regime"])
+
+	def test_flags_default_absent(self) -> None:
+		payload = build_voucher_payload(INVOICE, EMITTER, SEQUENCE)
+		self.assertFalse(payload["ctx"]["withholding_agent"])
+		self.assertFalse(payload["ctx"]["rimpe_regime"])

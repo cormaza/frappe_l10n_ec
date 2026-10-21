@@ -187,3 +187,47 @@ class TestInfoAdicional(unittest.TestCase):
 		)
 		self.assertIn('<campoAdicional nombre="Email">buyer@example.com</campoAdicional>', xml)
 		self.assertTrue(validate_against_xsd(xml, "factura"))
+
+
+class TestTaxpayerStatusTags(unittest.TestCase):
+	def test_agent_and_rimpe_tags_emit_in_tributaria(self) -> None:
+		from l10n_ec.sri.xml_builder import _info_tributaria
+
+		xml = _info_tributaria(
+			{
+				"environment": "1",
+				"legal_name": "Test",
+				"ruc": "1790016919001",
+				"access_key": "1" * 49,
+				"doc_code": "01",
+				"establishment": "001",
+				"emission_point": "001",
+				"sequential": "000000001",
+				"head_office_address": "Quito",
+				"withholding_agent": True,
+				"rimpe_regime": True,
+			}
+		)
+		self.assertIn("<agenteRetencion>1</agenteRetencion>", xml)
+		self.assertIn("<contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>", xml)
+		self.assertLess(xml.index("<dirMatriz>"), xml.index("<agenteRetencion>"))
+		self.assertLess(xml.index("<agenteRetencion>"), xml.index("<contribuyenteRimpe>"))
+
+	def test_tags_absent_without_flags(self) -> None:
+		from l10n_ec.sri.xml_builder import _info_tributaria
+
+		xml = _info_tributaria(
+			{
+				"environment": "1",
+				"legal_name": "Test",
+				"ruc": "1790016919001",
+				"access_key": "1" * 49,
+				"doc_code": "01",
+				"establishment": "001",
+				"emission_point": "001",
+				"sequential": "000000001",
+				"head_office_address": "Quito",
+			}
+		)
+		self.assertNotIn("agenteRetencion", xml)
+		self.assertNotIn("contribuyenteRimpe", xml)

@@ -47,8 +47,19 @@ class TestVoucherStates(UnitTestCase):
 			with self.assertRaises(SriVoucherError):
 				next_state(current, event)
 
+	def test_authorized_voids_to_annulled_terminal(self) -> None:
+		state = next_state("Authorized", "void")
+		self.assertEqual(state, "Annulled")
+		self.assertTrue(is_terminal(state))
+
+	def test_void_rejected_from_every_other_state(self) -> None:
+		for current in ("Generated", "Signed", "Received", "Returned", "Rejected", "Annulled"):
+			with self.assertRaises(SriVoucherError):
+				next_state(current, "void")
+
 	def test_state_inventory(self) -> None:
 		self.assertEqual(
-			set(STATES), {"Generated", "Signed", "Received", "Authorized", "Returned", "Rejected"}
+			set(STATES),
+			{"Generated", "Signed", "Received", "Authorized", "Returned", "Rejected", "Annulled"},
 		)
-		self.assertEqual(set(TERMINAL_STATES), {"Authorized", "Rejected"})
+		self.assertEqual(set(TERMINAL_STATES), {"Authorized", "Rejected", "Annulled"})

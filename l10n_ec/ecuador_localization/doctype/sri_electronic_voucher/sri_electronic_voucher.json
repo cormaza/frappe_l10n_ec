@@ -19,6 +19,8 @@
   "column_break_authorization",
   "authorization_number",
   "authorization_date",
+  "void_date",
+  "void_reason",
   "section_break_messages",
   "last_message"
  ],
@@ -44,7 +46,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "State",
-   "options": "Generated\nSigned\nReceived\nAuthorized\nReturned\nRejected",
+   "options": "Generated\nSigned\nReceived\nAuthorized\nReturned\nRejected\nAnnulled",
    "reqd": 1
   },
   {
@@ -110,6 +112,16 @@
    "fieldname": "authorization_date",
    "fieldtype": "Datetime",
    "label": "Authorization Date"
+  },
+  {
+   "fieldname": "void_date",
+   "fieldtype": "Date",
+   "label": "Void Date"
+  },
+  {
+   "fieldname": "void_reason",
+   "fieldtype": "Small Text",
+   "label": "Void Reason"
   },
   {
    "fieldname": "section_break_messages",

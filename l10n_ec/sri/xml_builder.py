@@ -384,8 +384,22 @@ def _info_tributaria(ctx: dict) -> str:
 		f"<ptoEmi>{ctx['emission_point']}</ptoEmi>"
 		f"<secuencial>{ctx['sequential']}</secuencial>"
 		f"<dirMatriz>{escape_xml(ctx['head_office_address'])}</dirMatriz>"
+		f"{_agent_retencion_tag(ctx)}"
+		f"{_rimpe_tag(ctx)}"
 		"</infoTributaria>"
 	)
+
+
+def _agent_retencion_tag(ctx: dict) -> str:
+	"""`<agenteRetencion>1</...>` flag when the company is a withholding agent."""
+	return "<agenteRetencion>1</agenteRetencion>" if ctx.get("withholding_agent") else ""
+
+
+def _rimpe_tag(ctx: dict) -> str:
+	"""`<contribuyenteRimpe>` literal when the company has a RIMPE regime."""
+	if not ctx.get("rimpe_regime"):
+		return ""
+	return "<contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>"
 
 
 def _special_taxpayer_tag(ctx: dict) -> str:

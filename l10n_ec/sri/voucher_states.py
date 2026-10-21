@@ -1,10 +1,12 @@
 """SRI Electronic Voucher state machine (pure Python, no frappe).
 
 `Returned` (SRI sent the voucher back for correction) is reworkable via
-`regenerate`; `Rejected` (authorization denied) is terminal.
+`regenerate`; `Rejected` (authorization denied) is terminal. `Annulled`
+records a SRI-side void (manual portal/presencial tramite, no SRI void API)
+and is terminal: only `Authorized` vouchers void, via `void`.
 """
 
-STATES = ("Generated", "Signed", "Received", "Authorized", "Returned", "Rejected")
+STATES = ("Generated", "Signed", "Received", "Authorized", "Returned", "Rejected", "Annulled")
 
 try:
 	from frappe import _
@@ -14,7 +16,7 @@ except ImportError:  # pragma: no cover
 		return message
 
 
-TERMINAL_STATES = ("Authorized", "Rejected")
+TERMINAL_STATES = ("Authorized", "Rejected", "Annulled")
 
 TRANSITIONS = {
 	("Generated", "sign"): "Signed",
@@ -23,6 +25,7 @@ TRANSITIONS = {
 	("Received", "authorize_ok"): "Authorized",
 	("Received", "authorize_fail"): "Rejected",
 	("Returned", "regenerate"): "Generated",
+	("Authorized", "void"): "Annulled",
 }
 
 

@@ -7,7 +7,9 @@ helpers are pure (Ring-1 tested); only :func:`read_month` touches frappe.
 Fiscal-existence rule: only Authorized emissions feed ATS sections. Supplier
 invoices qualify by SRI number + stored supplier auth; our sales qualify by
 authorized 01 voucher; unauthorized/unemitted docs are skipped (they do not
-exist fiscally), never fabricated.
+exist fiscally), never fabricated. Authorized-then-voided (Annulled) vouchers
+feed the cancelled section with their SRI + authorization numbers: they
+fiscally existed, unlike never-authorized cancels which stay excluded.
 """
 
 import re
@@ -109,6 +111,47 @@ def sale_row(si: dict, customer: dict, voucher: dict | None, settlement: dict | 
 			"renta_value": settlement.get("renta_value", 0.0),
 		}
 	return row
+
+
+def annulled_row(voucher: dict) -> dict:
+	"""Shape one Annulled voucher for the ATS cancelled section.
+
+	Matches the `collect_cancelled` input shape: the SRI number plus the
+	authorization number prove the doc fiscally existed before its void.
+	"""
+	return {
+		"doc_code": voucher.get("sri_doc_code", ""),
+		"sri_number": voucher.get("sri_number", ""),
+		"auth_number": voucher.get("authorization_number", ""),
+	}
+
+
+def _annulled_vouchers(company: str, start: str, end: str) -> list:
+	"""Annulled vouchers authorized in the month, shaped for `collect_month`."""
+	if frappe is None:  # pragma: no cover
+		return []
+	names = frappe.get_all(
+		"SRI Electronic Voucher",
+		filters={
+			"company": company,
+			"voucher_state": "Annulled",
+			"authorization_date": ["between", [f"{start} 00:00:00", f"{end} 23:59:59"]],
+		},
+		pluck="name",
+	)
+	rows = []
+	for name in names:
+		voucher = frappe.get_doc("SRI Electronic Voucher", name)
+		rows.append(
+			annulled_row(
+				{
+					"sri_doc_code": voucher.get("sri_doc_code"),
+					"sri_number": voucher.get("sri_number"),
+					"authorization_number": voucher.get("authorization_number"),
+				}
+			)
+		)
+	return rows
 
 
 def _authorized_voucher(reference_doctype: str, reference_name: str) -> dict | None:
@@ -256,7 +299,7 @@ def read_month(company: str, year: int, month: int) -> dict:
 		"purchases": purchases,
 		"sales": sales,
 		"exports": [],
-		"cancelled": [],
+		"cancelled": _annulled_vouchers(company, start, end),
 	}
 
 

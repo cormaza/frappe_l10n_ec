@@ -123,6 +123,8 @@ def build_voucher_payload(invoice: dict, emitter: dict, sequence: dict) -> dict:
 		"branch_address": emitter["branch_address"],
 		"special_taxpayer": emitter.get("special_taxpayer", ""),
 		"accounting_required": emitter.get("accounting_required", False),
+		"withholding_agent": emitter.get("withholding_agent", False),
+		"rimpe_regime": emitter.get("rimpe_regime", False),
 	}
 	lines = [map_line_taxes(line) for line in invoice.get("lines", [])]
 	totals = map_tax_totals(invoice.get("tax_totals", []))
@@ -302,6 +304,38 @@ def save_voucher(doc):
 		raise RuntimeError("frappe is required to save vouchers.")
 	doc.save(ignore_permissions=True)
 	return doc
+
+
+def request_void(voucher_name: str, void_date=None, reason: str | None = None) -> str:
+	"""Record the SRI-side void of an Authorized voucher (no SRI API call).
+
+	Voiding is a manual portal/presencial tramite (carta + annex): SRI offers
+	no void endpoint, so this only records the outcome locally. The voucher
+	must be Authorized; every other state fails loud via the transition
+	table. Stamps `void_date` (default today) and `void_reason` on the
+	document, saves, and returns the new state.
+	"""
+	if frappe is None:  # pragma: no cover
+		raise RuntimeError("frappe is required to void vouchers.")
+	doc = frappe.get_doc("SRI Electronic Voucher", voucher_name)
+	if doc.voucher_state != "Authorized":
+		raise SriVoucherError(
+			_("Voucher '{}' must be Authorized to record a void, found '{}'.").format(
+				voucher_name, doc.voucher_state
+			)
+		)
+	if void_date is None:
+		void_date = date.today()
+	apply_transition(doc, "void")
+	doc.void_date = void_date
+	doc.void_reason = reason or ""
+	note = _("Void recorded on {}.").format(void_date)
+	if reason:
+		note = f"{note} {reason}"
+	previous = getattr(doc, "last_message", "") or ""
+	doc.last_message = f"{previous} | {note}".strip(" |") if previous else note
+	save_voucher(doc)
+	return doc.voucher_state
 
 
 def persist_voucher_xml(doc, fieldname: str) -> str:
@@ -669,6 +703,8 @@ def _assemble_payload(
 		"branch_address": address,
 		"special_taxpayer": getattr(company, "special_taxpayer_resolution", "") or "",
 		"accounting_required": bool(getattr(company, "accounting_required", False)),
+		"withholding_agent": bool(getattr(company, "withholding_agent_resolution", "")),
+		"rimpe_regime": bool(getattr(company, "rimpe_regime", "")),
 	}
 	sequence = {"sequential": sequential, "access_key": doc.access_key}
 	resolve_payment_method(payment_method)
