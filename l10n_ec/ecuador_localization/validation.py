@@ -85,6 +85,17 @@ def validate_final_consumer_amount(
 		)
 
 
+TAX_DESCRIPTIONS = {
+	"1010504": "IVA Pagado",
+	"2010707": "IVA Cobrado",
+	"2010710": "ICE",
+	"2010711": "IRBPNR",
+	"2010708": "Ret. IVA",
+	"2010709": "Ret. IR",
+	"1010501": "TDS IVA",
+	"1010502": "TDS IR",
+}
+
 IVA_WH_ACCOUNT_NUMBER = "2010708"
 IVA_DEDUCTION_DESCRIPTION = "SRI IVA withholding"
 
@@ -112,6 +123,29 @@ def _iva_withholding_account(company: str) -> str | None:
 	return frappe.db.get_value(
 		"Account", {"company": company, "account_number": IVA_WH_ACCOUNT_NUMBER}, "name"
 	)
+
+
+def sync_tax_row_descriptions(doc, method=None) -> None:
+	"""Make tax row descriptions speak the tax, not just the account.
+
+	ERPNext defaults `description = account_head` (e.g. `1010504 - IVA PAGADO...`),
+	so the SRI tax is invisible. This rewrites it to `IVA 15%`, `ICE 5%`, etc.,
+	using the account number + row rate, for presentation only (no GL/ATS impact).
+	"""
+	for row in doc.get("taxes") or []:
+		if (row.get("description") or "").startswith("SRI IVA withholding"):
+			continue
+		account_head = row.get("account_head") or ""
+		number = (account_head.split(" - ")[0] or "").strip()
+		label = TAX_DESCRIPTIONS.get(number)
+		if not label:
+			continue
+		rate = row.get("rate")
+		try:
+			rate_str = f"{float(rate):g}%" if rate not in (None, "") else ""
+		except (TypeError, ValueError):
+			rate_str = ""
+		row.description = f"{label} {rate_str}".strip()
 
 
 def enforce_iva_deduction_row(doc, method=None, resolve_account=None, company_code=None) -> None:

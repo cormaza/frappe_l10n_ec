@@ -2,8 +2,10 @@
 
 Item Tax Templates are company-scoped (they point at the company's own
 accounts), so they are created by :func:`setup_ecuadorian_taxes` right
-after the chart install. ICE/IRBPNR templates are account-bound shells:
-their effective assessment happens at transaction level (Phase 6).
+after the chart install. Generic ICE/IRBPNR shells stay at 0% (real
+tariffs are product-specific, Tabla 18); specific example rows like
+`Ecuador ICE 5%` carry an illustrative 5% for demo coverage (ATS
+`montoIce` only) and are distinguished by SRI tarifa in codigo 8.
 Withholding percentages below are rate data for Phase 7; ATS mapping
 arrives with the withholding doctypes.
 """

@@ -3,9 +3,10 @@
 Rate codes follow the SRI Ficha Técnica (IVA `0`=0%, `2`=12%, `3`=14%,
 `4`=15%, `6`=no-object, `7`=exempt, `8`=diferenciado: any non-standard
 rate such as 5% or decreed 8% holiday rates, distinguished by `tarifa`). Matching is by
-template title because several titles share a 0.0 rate. ICE/IRBPNR rates
-depend on the good itself and cannot map from a template: callers handle
-those manually.
+template title because several titles share a 0.0 rate. Generic ICE/IRBPNR
+templates stay at 0% shells (real tariffs are product-specific, see
+Tabla 18); specific example rows like `Ecuador ICE 5%` map illustratively
+to `3072` (ficha ejemplo) and callers may pass per-template `extra` codes.
 """
 
 TEMPLATE_TAX_CODES = {

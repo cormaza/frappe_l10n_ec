@@ -43,9 +43,11 @@ doc_events = {
 	},
 	"Sales Invoice": {
 		"before_save": "l10n_ec.ecuador_localization.invoice_hooks.validate_sri_invoice",
+		"validate": "l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",
 	},
 	"Purchase Invoice": {
 		"validate": "l10n_ec.ecuador_localization.validation.enforce_iva_deduction_row",
+		"before_save": "l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",
 	},
 	"Company": {
 		"after_insert": "l10n_ec.ecuador_localization.chart_setup.setup_company_chart",
