@@ -803,7 +803,7 @@ def _invoice_dict(
 	return base
 
 
-def _synthesize_iva_row(mapped_lines: list, iva_concepto: str) -> dict | None:
+def synthesize_iva_row(mapped_lines: list, iva_concepto: str) -> dict | None:
 	"""Synthesize one IVA withholding row from IVA line taxes (ERPNext gap).
 
 	ERPNext only computes Net/Gross-basis withholdings, so IVA (tax-on-tax)
@@ -870,7 +870,7 @@ def _withholding_subject_and_docs(
 		for row in ref.tax_withholding_entries
 	]
 	if iva_concepto is not None:
-		synthesized = _synthesize_iva_row(mapped, iva_concepto)
+		synthesized = synthesize_iva_row(mapped, iva_concepto)
 		if synthesized is not None:
 			native.append(synthesized)
 	inputs = sustento_entries(native, purchase, withholding_codes)

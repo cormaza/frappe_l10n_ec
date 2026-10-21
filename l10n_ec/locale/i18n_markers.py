@@ -26,7 +26,21 @@ CUSTOM_FIELD_STRINGS = [
 	_("SRI Identification Type"),
 	_("Related Party"),
 	_("SRI Payment Code"),
+	_("SRI IR Concepto"),
+	_(
+		"SRI IR withholding concepto withheld by the customer (e.g. 303, 312), validated against the concepto table; feeds the received-withholding settlement entry; leave empty when no IR withholding applies."
+	),
 	_("SRI IVA Concepto"),
+	_("Received Retencion Number"),
+	_(
+		"Number of the Comprobante de Retencion issued by the customer (e.g. 001-001-000000001); feeds ATS and Form 103 as tax credit."
+	),
+	_("Received Retencion Authorization"),
+	_("SRI authorization number of the customer-issued withholding voucher."),
+	_("Received Retencion Date"),
+	_("Issue date of the customer-issued withholding voucher."),
+	_("Received Retencion Access Key"),
+	_("49-digit access key of the customer-issued withholding voucher."),
 	_(
 		"SRI Tabla 23 IVA withholding concepto driving the automatic deduction row and the voucher (1 bienes 30%, 2 servicios 70%, 3 honorarios 100%); leave empty when no IVA withholding applies."
 	),

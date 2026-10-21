@@ -52,9 +52,7 @@ def _doc(**overrides) -> FakePI:
 class TestIvaDeductionRow(UnitTestCase):
 	def test_appends_deduction_row_and_recalculates(self) -> None:
 		doc = _doc()
-		enforce_iva_deduction_row(
-			doc, company_code="EC", resolve_account=lambda company: "2010708 - WH"
-		)
+		enforce_iva_deduction_row(doc, company_code="EC", resolve_account=lambda company: "2010708 - WH")
 		self.assertEqual(len(doc["taxes"]), 2)
 		row = doc["taxes"][1]
 		self.assertEqual(row.charge_type, "On Previous Row Amount")
@@ -80,9 +78,7 @@ class TestIvaDeductionRow(UnitTestCase):
 				),
 			]
 		)
-		enforce_iva_deduction_row(
-			doc, company_code="EC", resolve_account=lambda company: "2010708 - WH"
-		)
+		enforce_iva_deduction_row(doc, company_code="EC", resolve_account=lambda company: "2010708 - WH")
 		self.assertEqual(len(doc["taxes"]), 2)
 		self.assertEqual(doc["taxes"][1].rate, 30.0)
 

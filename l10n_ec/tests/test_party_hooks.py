@@ -65,6 +65,12 @@ class TestIvaAssignmentGuard(UnitTestCase):
 		doc = _StubDoc("Supplier", tax_withholding_category="Ecuador IR 2%")
 		self.assertIsNone(party_hooks.validate_sri_identification(doc))
 
-	def test_customer_iva_assignment_ignored(self) -> None:
+	def test_customer_iva_assignment_raises(self) -> None:
 		doc = _StubDoc("Customer", tax_withholding_category="Ecuador IVA 30%")
-		self.assertIsNone(party_hooks.validate_sri_identification(doc))
+		with self.assertRaises(EXPECTED_ERROR):
+			party_hooks.validate_sri_identification(doc)
+
+	def test_customer_ir_assignment_raises(self) -> None:
+		doc = _StubDoc("Customer", tax_withholding_category="Ecuador IR 2%")
+		with self.assertRaises(EXPECTED_ERROR):
+			party_hooks.validate_sri_identification(doc)

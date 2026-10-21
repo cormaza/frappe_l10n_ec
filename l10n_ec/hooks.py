@@ -46,4 +46,8 @@ doc_events = {
 	"Company": {
 		"after_insert": "l10n_ec.ecuador_localization.chart_setup.setup_company_chart",
 	},
+	"Payment Entry": {
+		"on_submit": "l10n_ec.ecuador_localization.received_settlement.settle_received_withholdings",
+		"on_cancel": "l10n_ec.ecuador_localization.received_settlement.cancel_received_settlements",
+	},
 }

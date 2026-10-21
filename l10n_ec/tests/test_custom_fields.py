@@ -19,6 +19,14 @@ EXPECTED_FIELDS = {
 	"Customer": {"sri_identification_type", "sri_related_party"},
 	"Mode of Payment": {"sri_payment_code"},
 	"Purchase Invoice": {"sri_iva_concepto"},
+	"Sales Invoice": {
+		"sri_ir_concepto",
+		"sri_iva_concepto",
+		"sri_received_retencion_number",
+		"sri_received_retencion_auth",
+		"sri_received_retencion_date",
+		"sri_received_retencion_key",
+	},
 	"Supplier": {"sri_identification_type", "sri_related_party"},
 }
 

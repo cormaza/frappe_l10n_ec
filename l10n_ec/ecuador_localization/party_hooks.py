@@ -50,13 +50,18 @@ def _reject_duplicate_final_consumer(doc) -> None:
 
 
 def _reject_iva_withholding_assignment(doc) -> None:
-	"""Suppliers must never carry IVA withholding categories (pure; raises ValueError)."""
-	if doc.get("doctype") == "Supplier" and (doc.get("tax_withholding_category") or "").startswith(
-		"Ecuador IVA "
-	):
+	"""Parties must never carry uncomputable withholding categories (pure; raises ValueError)."""
+	category = doc.get("tax_withholding_category") or ""
+	if doc.get("doctype") == "Supplier" and category.startswith("Ecuador IVA "):
 		raise ValueError(
 			_(
-				"IVA withholding categories cannot be assigned to suppliers: ERPNext cannot compute tax-on-tax withholdings. IVA withholdings are computed at emission from the invoice IVA taxes."
+				"IVA withholding categories cannot be assigned to suppliers: ERPNext cannot compute tax-on-tax withholdings. Purchase-side IVA is computed at emission; sales-side IVA settles via the received-withholding entry."
+			)
+		)
+	if doc.get("doctype") == "Customer" and category.startswith("Ecuador "):
+		raise ValueError(
+			_(
+				"Withholding categories cannot be assigned to customers: received withholdings settle via the payment-time entry (invoice stays gross, native rows inflate it and mis-side the liability). Leave the category empty and record the customer conceptos on the invoice."
 			)
 		)
 

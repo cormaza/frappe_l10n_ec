@@ -73,6 +73,52 @@ CUSTOM_FIELDS = {
 			"label": "Related Party",
 		},
 	],
+	"Sales Invoice": [
+		{
+			"fieldname": "sri_ir_concepto",
+			"fieldtype": "Data",
+			"insert_after": "taxes_and_charges",
+			"label": "SRI IR Concepto",
+			"description": "SRI IR withholding concepto withheld by the customer (e.g. 303, 312), validated against the concepto table; feeds the received-withholding settlement entry; leave empty when no IR withholding applies.",
+		},
+		{
+			"fieldname": "sri_iva_concepto",
+			"fieldtype": "Select",
+			"insert_after": "taxes_and_charges",
+			"label": "SRI IVA Concepto",
+			"default": "",
+			"options": "\n1\n2\n3\n7\n8\n9\n10\n11",
+			"description": "SRI Tabla 23 IVA withholding concepto withheld by the customer; feeds the received-withholding settlement entry (1 bienes 30%, 2 servicios 70%, 3 honorarios 100%); leave empty when no IVA withholding applies.",
+		},
+		{
+			"fieldname": "sri_received_retencion_number",
+			"fieldtype": "Data",
+			"insert_after": "sri_iva_concepto",
+			"label": "Received Retencion Number",
+			"description": "Number of the Comprobante de Retencion issued by the customer (e.g. 001-001-000000001); feeds ATS and Form 103 as tax credit.",
+		},
+		{
+			"fieldname": "sri_received_retencion_auth",
+			"fieldtype": "Data",
+			"insert_after": "sri_received_retencion_number",
+			"label": "Received Retencion Authorization",
+			"description": "SRI authorization number of the customer-issued withholding voucher.",
+		},
+		{
+			"fieldname": "sri_received_retencion_date",
+			"fieldtype": "Date",
+			"insert_after": "sri_received_retencion_auth",
+			"label": "Received Retencion Date",
+			"description": "Issue date of the customer-issued withholding voucher.",
+		},
+		{
+			"fieldname": "sri_received_retencion_key",
+			"fieldtype": "Data",
+			"insert_after": "sri_received_retencion_date",
+			"label": "Received Retencion Access Key",
+			"description": "49-digit access key of the customer-issued withholding voucher.",
+		},
+	],
 	"Purchase Invoice": [
 		{
 			"fieldname": "sri_iva_concepto",
