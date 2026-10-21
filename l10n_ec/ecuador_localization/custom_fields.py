@@ -121,6 +121,13 @@ CUSTOM_FIELDS = {
 	],
 	"Purchase Invoice": [
 		{
+			"fieldname": "sri_supplier_auth_number",
+			"fieldtype": "Data",
+			"insert_after": "bill_no",
+			"label": "Supplier Auth Number",
+			"description": "SRI authorization number printed on the supplier invoice; feeds ATS compras.",
+		},
+		{
 			"fieldname": "sri_iva_concepto",
 			"fieldtype": "Select",
 			"insert_after": "taxes_and_charges",

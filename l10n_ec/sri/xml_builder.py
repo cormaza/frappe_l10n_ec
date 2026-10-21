@@ -26,6 +26,7 @@ SCHEMAS = {
 	"liquidacion_compra": ("LiquidacionCompra_V1.1.0.xsd", "1.1.0", "liquidacionCompra"),
 	"retencion": ("ComprobanteRetencion_V2.0.0.xsd", "2.0.0", "comprobanteRetencion"),
 	"guia": ("GuiaRemision_V1.1.0.xsd", "1.1.0", "guiaRemision"),
+	"ats": ("ats.xsd", "", "iva"),
 }
 
 

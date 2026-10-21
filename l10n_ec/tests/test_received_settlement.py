@@ -32,8 +32,12 @@ class TestSettlementLines(UnitTestCase):
 		self.assertEqual(lines[2]["account"], "131001 - REC")
 
 	def test_empty_inputs_return_none(self) -> None:
-		self.assertIsNone(settlement_lines(0.0, 0.0, ACCOUNTS, {"party_type": "Customer", "party": "Demo Customer RUC"}))
-		self.assertIsNone(settlement_lines(0.0, 0.0, ACCOUNTS, {"party_type": "Customer", "party": "Demo Customer RUC"}))
+		self.assertIsNone(
+			settlement_lines(0.0, 0.0, ACCOUNTS, {"party_type": "Customer", "party": "Demo Customer RUC"})
+		)
+		self.assertIsNone(
+			settlement_lines(0.0, 0.0, ACCOUNTS, {"party_type": "Customer", "party": "Demo Customer RUC"})
+		)
 
 	def test_ir_only_has_no_iva_line(self) -> None:
 		lines = settlement_lines(2.0, 0.0, ACCOUNTS, {"party_type": "Customer", "party": "Demo Customer RUC"})

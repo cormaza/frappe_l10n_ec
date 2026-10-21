@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: l10n_ec 16.0.0\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-21 09:13-0719\n"
+"POT-Creation-Date: 2026-10-21 11:57-0719\n"
 "PO-Revision-Date: 2026-10-20 11:05+0000\n"
 "Last-Translator: Ecuador Localization Contributors\n"
 "Language-Team: Ecuador Localization Contributors\n"
@@ -16,16 +16,92 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
 
-#: l10n_ec/locale/i18n_markers.py:41
+#: l10n_ec/locale/i18n_markers.py:43
 msgid "49-digit access key of the customer-issued withholding voucher."
 msgstr "Clave de acceso de 49 dígitos del comprobante de retención emitido por el cliente."
+
+#: l10n_ec/locale/i18n_markers.py:375 l10n_ec/sri/ats_builder.py:184
+msgid "ATS 'TipoIDInformante' '{}' is not 'R'."
+msgstr "ATS 'TipoIDInformante' '{}' no es 'R'."
+
+#: l10n_ec/locale/i18n_markers.py:376 l10n_ec/sri/ats_builder.py:188
+msgid "ATS 'codigoOperativo' '{}' is not 'IVA'."
+msgstr "ATS 'codigoOperativo' '{}' no es 'IVA'."
+
+#: l10n_ec/locale/i18n_markers.py:381 l10n_ec/sri/ats_builder.py:395
+msgid "ATS collected payload must be a dict of sections."
+msgstr "La carga ATS debe ser un dict de secciones."
+
+#: l10n_ec/locale/i18n_markers.py:359 l10n_ec/sri/ats_collector.py:167
+msgid "ATS collection month '{}' is out of range."
+msgstr "Mes '{}' de recolección ATS fuera de rango."
+
+#: l10n_ec/locale/i18n_markers.py:357 l10n_ec/sri/ats_collector.py:163
+msgid "ATS collection needs a company for '{}-{:02d}'."
+msgstr "La recolección ATS necesita una compañía para '{}-{:02d}'."
+
+#: l10n_ec/locale/i18n_markers.py:358 l10n_ec/sri/ats_collector.py:165
+msgid "ATS collection year '{}' is out of range."
+msgstr "Año '{}' de recolección ATS fuera de rango."
+
+#: l10n_ec/locale/i18n_markers.py:379 l10n_ec/sri/ats_builder.py:247
+msgid "ATS compras row carries a partial withholding reference ({})."
+msgstr "La fila de compras ATS trae una referencia de retención parcial ({})."
+
+#: l10n_ec/locale/i18n_markers.py:360 l10n_ec/sri/ats_collector.py:180
+msgid "ATS document number '{}' is not a SRI number."
+msgstr "El número de documento ATS '{}' no es un número SRI."
+
+#: l10n_ec/locale/i18n_markers.py:372 l10n_ec/sri/ats_builder.py:168
+msgid "ATS informante must be a dict of header fields."
+msgstr "El informante ATS debe ser un dict de campos de cabecera."
+
+#: l10n_ec/locale/i18n_markers.py:373 l10n_ec/sri/ats_builder.py:179
+msgid "ATS informante needs 'IdInformante' (RUC)."
+msgstr "El informante ATS necesita 'IdInformante' (RUC)."
+
+#: l10n_ec/locale/i18n_markers.py:374 l10n_ec/sri/ats_builder.py:181
+msgid "ATS informante needs 'razonSocial'."
+msgstr "El informante ATS necesita 'razonSocial'."
+
+#: l10n_ec/locale/i18n_markers.py:382 l10n_ec/sri/ats_builder.py:401
+msgid "ATS payload carries unknown section '{}'."
+msgstr "La carga ATS trae una sección desconocida '{}'."
+
+#: l10n_ec/locale/i18n_markers.py:369 l10n_ec/sri/ats_builder.py:150
+msgid "ATS period '{}' is not a fiscal month (MMYYYY)."
+msgstr "El período ATS '{}' no es un mes fiscal (MMAAAA)."
+
+#: l10n_ec/locale/i18n_markers.py:370 l10n_ec/sri/ats_builder.py:153
+msgid "ATS period month '{}' is out of range."
+msgstr "Mes '{}' del período ATS fuera de rango."
+
+#: l10n_ec/locale/i18n_markers.py:371 l10n_ec/sri/ats_builder.py:155
+msgid "ATS period year '{}' is out of range."
+msgstr "Año '{}' del período ATS fuera de rango."
+
+#: l10n_ec/locale/i18n_markers.py:380 l10n_ec/sri/ats_builder.py:379
+msgid "ATS section '{}' must be a list of rows."
+msgstr "La sección ATS '{}' debe ser una lista de filas."
+
+#: l10n_ec/locale/i18n_markers.py:383 l10n_ec/sri/ats_builder.py:450
+msgid "ATS zip needs the built XML string."
+msgstr "El zip ATS necesita el string XML construido."
+
+#: l10n_ec/locale/i18n_markers.py:377 l10n_ec/sri/ats_builder.py:198
+msgid "ATS {} row carries unknown field '{}'."
+msgstr "La fila ATS {} trae un campo desconocido '{}'."
+
+#: l10n_ec/locale/i18n_markers.py:378 l10n_ec/sri/ats_builder.py:207
+msgid "ATS {} row needs '{}'."
+msgstr "La fila ATS {} necesita '{}'."
 
 #. Label of the access_key (Data) field in DocType 'SRI Electronic Voucher'
 #: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 msgid "Access Key"
 msgstr "Clave de Acceso"
 
-#: l10n_ec/locale/i18n_markers.py:324
+#: l10n_ec/locale/i18n_markers.py:326
 msgid "Access Key:"
 msgstr "Clave de acceso:"
 
@@ -58,19 +134,19 @@ msgstr "Gerente de Cuentas"
 msgid "Active"
 msgstr "Activo"
 
-#: l10n_ec/locale/i18n_markers.py:330
+#: l10n_ec/locale/i18n_markers.py:332
 msgid "Address:"
 msgstr "Dirección:"
 
-#: l10n_ec/locale/i18n_markers.py:158
+#: l10n_ec/locale/i18n_markers.py:160
 msgid "Anticipo dividendos"
 msgstr "Anticipo dividendos"
 
-#: l10n_ec/locale/i18n_markers.py:80
+#: l10n_ec/locale/i18n_markers.py:82
 msgid "Arriendo inmuebles"
 msgstr "Arriendo inmuebles"
 
-#: l10n_ec/locale/i18n_markers.py:72
+#: l10n_ec/locale/i18n_markers.py:74
 msgid "Artistas"
 msgstr "Artistas"
 
@@ -95,31 +171,31 @@ msgstr "Autorizado"
 msgid "Authorized electronic voucher {}"
 msgstr "Comprobante electrónico autorizado {}"
 
-#: l10n_ec/locale/i18n_markers.py:225
+#: l10n_ec/locale/i18n_markers.py:227
 msgid "Autorretenciones Sociedades Grandes Contribuyentes"
 msgstr "Autorretenciones Sociedades Grandes Contribuyentes"
 
-#: l10n_ec/locale/i18n_markers.py:346
+#: l10n_ec/locale/i18n_markers.py:348
 msgid "Base"
 msgstr "Base"
 
-#: l10n_ec/locale/i18n_markers.py:92
+#: l10n_ec/locale/i18n_markers.py:94
 msgid "Bienes"
 msgstr "Bienes"
 
-#: l10n_ec/locale/i18n_markers.py:78
+#: l10n_ec/locale/i18n_markers.py:80
 msgid "Bienes muebles"
 msgstr "Bienes muebles"
 
-#: l10n_ec/locale/i18n_markers.py:87
+#: l10n_ec/locale/i18n_markers.py:89
 msgid "Botellas PET"
 msgstr "Botellas PET"
 
-#: l10n_ec/locale/i18n_markers.py:107
+#: l10n_ec/locale/i18n_markers.py:109
 msgid "COMPRAS AL COMERCIALIZADOR: de bienes de origen bioacuático, forestal y los descritos  el art.27.1 de LRTI"
 msgstr "COMPRAS AL COMERCIALIZADOR: de bienes de origen bioacuático, forestal y los descritos  el art.27.1 de LRTI"
 
-#: l10n_ec/locale/i18n_markers.py:105
+#: l10n_ec/locale/i18n_markers.py:107
 msgid "COMPRAS AL PRODUCTOR: de bienes de origen bioacuático, forestal y los descritos  el art.27.1 de LRTI"
 msgstr "COMPRAS AL PRODUCTOR: de bienes de origen bioacuático, forestal y los descritos  el art.27.1 de LRTI"
 
@@ -131,7 +207,7 @@ msgstr "No se puede aplicar el evento '{}' en el estado '{}'."
 msgid "Cannot reinstall the chart: the company already has ledger entries."
 msgstr "No se puede reinstalar el plan contable: la compañía ya tiene movimientos contables."
 
-#: l10n_ec/locale/i18n_markers.py:332
+#: l10n_ec/locale/i18n_markers.py:334
 msgid "Carrier:"
 msgstr "Transportista:"
 
@@ -159,15 +235,15 @@ msgstr "Versión del certificado"
 #: l10n_ec/ecuador_localization/doctype/sri_identification_type/sri_identification_type.json
 #: l10n_ec/ecuador_localization/doctype/sri_payment_method/sri_payment_method.json
 #: l10n_ec/ecuador_localization/doctype/sri_tax_support/sri_tax_support.json
-#: l10n_ec/locale/i18n_markers.py:337
+#: l10n_ec/locale/i18n_markers.py:339
 msgid "Code"
 msgstr "Código"
 
-#: l10n_ec/locale/i18n_markers.py:70
+#: l10n_ec/locale/i18n_markers.py:72
 msgid "Comisiones intelecto"
 msgstr "Comisiones intelecto"
 
-#: l10n_ec/locale/i18n_markers.py:91
+#: l10n_ec/locale/i18n_markers.py:93
 msgid "Comisiones sociedades"
 msgstr "Comisiones sociedades"
 
@@ -193,7 +269,7 @@ msgstr "La compañía '{}' necesita un tax_id (RUC) para emitir comprobantes."
 msgid "Company RUC must be 13 numeric digits (got '{}')."
 msgstr "El RUC de la compañía debe tener 13 dígitos numéricos (se recibió '{}')."
 
-#: l10n_ec/locale/i18n_markers.py:53
+#: l10n_ec/locale/i18n_markers.py:55
 msgid "Compensación de deudas"
 msgstr "Compensación de deudas"
 
@@ -201,19 +277,19 @@ msgstr "Compensación de deudas"
 msgid "Complete document number must be 15 digits (got '{}')."
 msgstr "El número de comprobante completo debe tener 15 dígitos (se recibió '{}')."
 
-#: l10n_ec/locale/i18n_markers.py:172
+#: l10n_ec/locale/i18n_markers.py:174
 msgid "Compra de bienes inmuebles"
 msgstr "Compra de bienes inmuebles"
 
-#: l10n_ec/locale/i18n_markers.py:178
+#: l10n_ec/locale/i18n_markers.py:180
 msgid "Compraventa de divisas distintas al dólar de los Estados Unidos de América"
 msgstr "Compraventa de divisas distintas al dólar de los Estados Unidos de América"
 
-#: l10n_ec/locale/i18n_markers.py:86
+#: l10n_ec/locale/i18n_markers.py:88
 msgid "Construcción"
 msgstr "Construcción"
 
-#: l10n_ec/locale/i18n_markers.py:185
+#: l10n_ec/locale/i18n_markers.py:187
 msgid "Contraprestación producida por la enajenación de derechos representativos de capital u otros derechos que permitan la exploración, explotación, concesión o similares de sociedades, no cotizados en bolsa de valores del Ecuador"
 msgstr "Contraprestación producida por la enajenación de derechos representativos de capital u otros derechos que permitan la exploración, explotación, concesión o similares de sociedades, no cotizados en bolsa de valores del Ecuador"
 
@@ -222,15 +298,15 @@ msgstr "Contraprestación producida por la enajenación de derechos representati
 msgid "Current Sequence"
 msgstr "Secuencia actual"
 
-#: l10n_ec/locale/i18n_markers.py:117
+#: l10n_ec/locale/i18n_markers.py:119
 msgid "Cánones, derechos de autor,  marcas, patentes y similares de acuerdo  al Código INGENIOS (COESCCI)"
 msgstr "Cánones, derechos de autor,  marcas, patentes y similares de acuerdo  al Código INGENIOS (COESCCI)"
 
-#: l10n_ec/locale/i18n_markers.py:113
+#: l10n_ec/locale/i18n_markers.py:115
 msgid "Cánones, derechos de autor,  marcas, patentes y similares de acuerdo  al Código INGENIOS (COESCCI) – pago a personas naturales"
 msgstr "Cánones, derechos de autor,  marcas, patentes y similares de acuerdo  al Código INGENIOS (COESCCI) – pago a personas naturales"
 
-#: l10n_ec/locale/i18n_markers.py:326
+#: l10n_ec/locale/i18n_markers.py:328
 msgid "DOCUMENT IN PROCESS"
 msgstr "DOCUMENTO EN TRÁMITE"
 
@@ -261,71 +337,71 @@ msgstr "Las guías necesitan exactamente un documento de sustento en guia_data['
 msgid "Delivery notes need explicit guia_data {carrier, transport, docs}."
 msgstr "Las guías necesitan guia_data explícito {carrier, transport, docs}."
 
-#: l10n_ec/locale/i18n_markers.py:71
+#: l10n_ec/locale/i18n_markers.py:73
 msgid "Deportistas"
 msgstr "Deportistas"
 
-#: l10n_ec/locale/i18n_markers.py:338
+#: l10n_ec/locale/i18n_markers.py:340
 msgid "Description"
 msgstr "Descripción"
 
-#: l10n_ec/locale/i18n_markers.py:55
+#: l10n_ec/locale/i18n_markers.py:57
 msgid "Dinero electrónico"
 msgstr "Dinero electrónico"
 
-#: l10n_ec/locale/i18n_markers.py:241
+#: l10n_ec/locale/i18n_markers.py:243
 msgid "Dividendos a fideicomisos o establecidos en paraísos fiscales o regímenes de menor imposición (con beneficiario Persona Natural residente en Ecuador)"
 msgstr "Dividendos a fideicomisos o establecidos en paraísos fiscales o regímenes de menor imposición (con beneficiario Persona Natural residente en Ecuador)"
 
-#: l10n_ec/locale/i18n_markers.py:237
+#: l10n_ec/locale/i18n_markers.py:239
 msgid "Dividendos a no residentes incumpliendo el deber de informar la composición societaria"
 msgstr "Dividendos a no residentes incumpliendo el deber de informar la composición societaria"
 
-#: l10n_ec/locale/i18n_markers.py:238
+#: l10n_ec/locale/i18n_markers.py:240
 msgid "Dividendos a residentes o establecidos en paraísos fiscales o regímenes de menor imposición (con beneficiario Persona Natural residente en Ecuador)"
 msgstr "Dividendos a residentes o establecidos en paraísos fiscales o regímenes de menor imposición (con beneficiario Persona Natural residente en Ecuador)"
 
-#: l10n_ec/locale/i18n_markers.py:236
+#: l10n_ec/locale/i18n_markers.py:238
 msgid "Dividendos a sociedades con beneficiario efectivo persona natural residente en el Ecuador"
 msgstr "Dividendos a sociedades con beneficiario efectivo persona natural residente en el Ecuador"
 
-#: l10n_ec/locale/i18n_markers.py:220
+#: l10n_ec/locale/i18n_markers.py:222
 msgid "Dividendos anticipados préstamos accionistas, beneficiarios o partícipes"
 msgstr "Dividendos anticipados préstamos accionistas, beneficiarios o partícipes"
 
-#: l10n_ec/locale/i18n_markers.py:166
+#: l10n_ec/locale/i18n_markers.py:168
 msgid "Dividendos distribuidos a fideicomisos residentes"
 msgstr "Dividendos distribuidos a fideicomisos residentes"
 
-#: l10n_ec/locale/i18n_markers.py:164
+#: l10n_ec/locale/i18n_markers.py:166
 msgid "Dividendos distribuidos a personas naturales residentes"
 msgstr "Dividendos distribuidos a personas naturales residentes"
 
-#: l10n_ec/locale/i18n_markers.py:165
+#: l10n_ec/locale/i18n_markers.py:167
 msgid "Dividendos distribuidos a sociedades residentes"
 msgstr "Dividendos distribuidos a sociedades residentes"
 
-#: l10n_ec/locale/i18n_markers.py:161
+#: l10n_ec/locale/i18n_markers.py:163
 msgid "Dividendos distribuidos que correspondan al impuesto a la renta único establecido en el art. 27 de la LRTI"
 msgstr "Dividendos distribuidos que correspondan al impuesto a la renta único establecido en el art. 27 de la LRTI"
 
-#: l10n_ec/locale/i18n_markers.py:170
+#: l10n_ec/locale/i18n_markers.py:172
 msgid "Dividendos en acciones (capitalización de utilidades)"
 msgstr "Dividendos en acciones (capitalización de utilidades)"
 
-#: l10n_ec/locale/i18n_markers.py:159
+#: l10n_ec/locale/i18n_markers.py:161
 msgid "Dividendos exentos (por no llegar a franja exenta o beneficio de otras leyes)"
 msgstr "Dividendos exentos (por no llegar a franja exenta o beneficio de otras leyes)"
 
-#: l10n_ec/locale/i18n_markers.py:208
+#: l10n_ec/locale/i18n_markers.py:210
 msgid "Dividendos exentos a sociedades, nacionales o extranjeras, domiciliadas en el Ecuador"
 msgstr "Dividendos exentos a sociedades, nacionales o extranjeras, domiciliadas en el Ecuador"
 
-#: l10n_ec/locale/i18n_markers.py:209
+#: l10n_ec/locale/i18n_markers.py:211
 msgid "Dividendos exentos distribuidos en acciones (reinversión de utilidades con derecho a reducción tarifa IR)"
 msgstr "Dividendos exentos distribuidos en acciones (reinversión de utilidades con derecho a reducción tarifa IR)"
 
-#: l10n_ec/locale/i18n_markers.py:167
+#: l10n_ec/locale/i18n_markers.py:169
 msgid "Dividendos gravados distribuidos en acciones (reinversión de utilidades sin derecho a reducción tarifa IR)"
 msgstr "Dividendos gravados distribuidos en acciones (reinversión de utilidades sin derecho a reducción tarifa IR)"
 
@@ -338,11 +414,11 @@ msgstr "El código SRI del comprobante debe tener 2 dígitos (se recibió '{}').
 msgid "Document Type"
 msgstr "Tipo de comprobante"
 
-#: l10n_ec/locale/i18n_markers.py:219
+#: l10n_ec/locale/i18n_markers.py:221
 msgid "Donaciones en dinero -Impuesto a la donaciones"
 msgstr "Donaciones en dinero -Impuesto a la donaciones"
 
-#: l10n_ec/locale/i18n_markers.py:214
+#: l10n_ec/locale/i18n_markers.py:216
 msgid "Donaciones en dinero -Impuesto a las donaciones"
 msgstr "Donaciones en dinero -Impuesto a las donaciones"
 
@@ -356,11 +432,11 @@ msgstr "Código de punto de emisión"
 msgid "Emission point '{}' has no sequence for '{}'."
 msgstr "El punto de emisión '{}' no tiene secuencia para '{}'."
 
-#: l10n_ec/locale/i18n_markers.py:59
+#: l10n_ec/locale/i18n_markers.py:61
 msgid "Endoso de títulos"
 msgstr "Endoso de títulos"
 
-#: l10n_ec/locale/i18n_markers.py:85
+#: l10n_ec/locale/i18n_markers.py:87
 msgid "Energía eléctrica"
 msgstr "Energía eléctrica"
 
@@ -372,15 +448,15 @@ msgstr "Emprendedor"
 msgid "Error opening the signature, possibly the signature key has been entered incorrectly or the file is not supported: {}"
 msgstr "Error al abrir la firma, es posible que la clave se haya ingresado incorrectamente o que el archivo no sea compatible: {}"
 
-#: l10n_ec/locale/i18n_markers.py:97
+#: l10n_ec/locale/i18n_markers.py:99
 msgid "Especial 10%"
 msgstr "Especial 10%"
 
-#: l10n_ec/locale/i18n_markers.py:98
+#: l10n_ec/locale/i18n_markers.py:100
 msgid "Especial 20%"
 msgstr "Especial 20%"
 
-#: l10n_ec/locale/i18n_markers.py:99
+#: l10n_ec/locale/i18n_markers.py:101
 msgid "Especial 50%"
 msgstr "Especial 50%"
 
@@ -398,11 +474,11 @@ msgstr "Cada fila de secuencia de emisión SRI requiere un tipo de comprobante."
 msgid "Expiration Date"
 msgstr "Fecha de vencimiento"
 
-#: l10n_ec/locale/i18n_markers.py:341
+#: l10n_ec/locale/i18n_markers.py:343
 msgid "Fiscal Period:"
 msgstr "Período fiscal:"
 
-#: l10n_ec/locale/i18n_markers.py:182
+#: l10n_ec/locale/i18n_markers.py:184
 msgid "Ganancia en la enajenación de derechos representativos de capital u otros derechos que permitan la exploración, explotación, concesión o similares de sociedades, que se coticen en bolsa de valores del Ecuador"
 msgstr "Ganancia en la enajenación de derechos representativos de capital u otros derechos que permitan la exploración, explotación, concesión o similares de sociedades, que se coticen en bolsa de valores del Ecuador"
 
@@ -415,15 +491,15 @@ msgstr "Generado"
 msgid "Generated XML is malformed: {}. Head: {!r}"
 msgstr "El XML generado está mal formado: {}. Inicio: {!r}"
 
-#: l10n_ec/locale/i18n_markers.py:94
+#: l10n_ec/locale/i18n_markers.py:96
 msgid "Honorarios"
 msgstr "Honorarios"
 
-#: l10n_ec/locale/i18n_markers.py:67
+#: l10n_ec/locale/i18n_markers.py:69
 msgid "Honorarios profesionales"
 msgstr "Honorarios profesionales"
 
-#: l10n_ec/locale/i18n_markers.py:104
+#: l10n_ec/locale/i18n_markers.py:106
 msgid "Honorarios y demás pagos por servicios de docencia"
 msgstr "Honorarios y demás pagos por servicios de docencia"
 
@@ -440,59 +516,59 @@ msgstr "Las categorías de retención de IVA no pueden asignarse a proveedores: 
 msgid "IVA withholding needs an IVA concepto, got '{}'."
 msgstr "La retención de IVA necesita un concepto de IVA, recibido '{}'."
 
-#: l10n_ec/locale/i18n_markers.py:74
+#: l10n_ec/locale/i18n_markers.py:76
 msgid "Imagen y renombre"
 msgstr "Imagen y renombre"
 
-#: l10n_ec/locale/i18n_markers.py:106
+#: l10n_ec/locale/i18n_markers.py:108
 msgid "Impuesto a la Renta único para la actividad de producción y cultivo de palma aceitera"
 msgstr "Impuesto a la Renta único para la actividad de producción y cultivo de palma aceitera"
 
-#: l10n_ec/locale/i18n_markers.py:224
+#: l10n_ec/locale/i18n_markers.py:226
 msgid "Impuesto a la renta único sobre los ingresos percibidos por los operadores de pronósticos deportivos"
 msgstr "Impuesto a la renta único sobre los ingresos percibidos por los operadores de pronósticos deportivos"
 
-#: l10n_ec/locale/i18n_markers.py:221
+#: l10n_ec/locale/i18n_markers.py:223
 msgid "Impuesto único a ingresos provenientes de actividades agropecuarias en etapa de producción / comercialización local o exportación"
 msgstr "Impuesto único a ingresos provenientes de actividades agropecuarias en etapa de producción / comercialización local o exportación"
 
-#: l10n_ec/locale/i18n_markers.py:193
+#: l10n_ec/locale/i18n_markers.py:195
 msgid "Impuesto único a la exportación de banano"
 msgstr "Impuesto único a la exportación de banano"
 
-#: l10n_ec/locale/i18n_markers.py:198
+#: l10n_ec/locale/i18n_markers.py:200
 msgid "Impuesto único a la exportación de banano de producción propia - componente 2"
 msgstr "Impuesto único a la exportación de banano de producción propia - componente 2"
 
-#: l10n_ec/locale/i18n_markers.py:199
+#: l10n_ec/locale/i18n_markers.py:201
 msgid "Impuesto único a la exportación de banano producido por terceros"
 msgstr "Impuesto único a la exportación de banano producido por terceros"
 
-#: l10n_ec/locale/i18n_markers.py:200
+#: l10n_ec/locale/i18n_markers.py:202
 msgid "Impuesto único a la exportación de banano producido por terceros de Asociaciones de micro y pequeños productores hasta 1000 cajas por semana por cada socio."
 msgstr "Impuesto único a la exportación de banano producido por terceros de Asociaciones de micro y pequeños productores hasta 1000 cajas por semana por cada socio."
 
-#: l10n_ec/locale/i18n_markers.py:203
+#: l10n_ec/locale/i18n_markers.py:205
 msgid "Impuesto único a la exportación de banano producido por terceros de Asociaciones de micro, pequeños y medianos productores"
 msgstr "Impuesto único a la exportación de banano producido por terceros de Asociaciones de micro, pequeños y medianos productores"
 
-#: l10n_ec/locale/i18n_markers.py:100
+#: l10n_ec/locale/i18n_markers.py:102
 msgid "Ingresos del trabajo en relación de dependencia"
 msgstr "Ingresos del trabajo en relación de dependencia"
 
-#: l10n_ec/locale/i18n_markers.py:69
+#: l10n_ec/locale/i18n_markers.py:71
 msgid "Intelecto sin título"
 msgstr "Intelecto sin título"
 
-#: l10n_ec/locale/i18n_markers.py:151
+#: l10n_ec/locale/i18n_markers.py:153
 msgid "Intereses en operaciones de crédito entre instituciones del sistema financiero y entidades economía popular y solidaria."
 msgstr "Intereses en operaciones de crédito entre instituciones del sistema financiero y entidades economía popular y solidaria."
 
-#: l10n_ec/locale/i18n_markers.py:141
+#: l10n_ec/locale/i18n_markers.py:143
 msgid "Intereses pagados por entidades del sector público a favor de sujetos pasivos"
 msgstr "Intereses pagados por entidades del sector público a favor de sujetos pasivos"
 
-#: l10n_ec/locale/i18n_markers.py:138
+#: l10n_ec/locale/i18n_markers.py:140
 msgid "Intereses y demás rendimientos financieros pagados a bancos y otras entidades sometidas al control de la Superintendencia de Bancos y de la Economía Popular y Solidaria"
 msgstr "Intereses y demás rendimientos financieros pagados a bancos y otras entidades sometidas al control de la Superintendencia de Bancos y de la Economía Popular y Solidaria"
 
@@ -504,11 +580,11 @@ msgstr "Número de comprobante ecuatoriano inválido '{}'. Formato esperado '001
 msgid "Invalid tax identification '{}' for type '{}'."
 msgstr "Identificación tributaria inválida '{}' para el tipo '{}'."
 
-#: l10n_ec/locale/i18n_markers.py:126
+#: l10n_ec/locale/i18n_markers.py:128
 msgid "Inversiones (captaciones) rendimientos distintos de aquellos pagados a IFIs"
 msgstr "Inversiones (captaciones) rendimientos distintos de aquellos pagados a IFIs"
 
-#: l10n_ec/locale/i18n_markers.py:154
+#: l10n_ec/locale/i18n_markers.py:156
 msgid "Inversiones entre instituciones del sistema financiero y entidades economía popular y solidaria"
 msgstr "Inversiones entre instituciones del sistema financiero y entidades economía popular y solidaria"
 
@@ -517,11 +593,11 @@ msgstr "Inversiones entre instituciones del sistema financiero y entidades econo
 msgid "Issue Date"
 msgstr "Fecha de emisión"
 
-#: l10n_ec/locale/i18n_markers.py:39
+#: l10n_ec/locale/i18n_markers.py:41
 msgid "Issue date of the customer-issued withholding voucher."
 msgstr "Fecha de emisión del comprobante de retención emitido por el cliente."
 
-#: l10n_ec/locale/i18n_markers.py:323
+#: l10n_ec/locale/i18n_markers.py:325
 msgid "Issuer:"
 msgstr "Emisor:"
 
@@ -531,23 +607,23 @@ msgstr "Emisor:"
 msgid "Last Message"
 msgstr "Último mensaje"
 
-#: l10n_ec/locale/i18n_markers.py:79
+#: l10n_ec/locale/i18n_markers.py:81
 msgid "Leasing"
 msgstr "Leasing"
 
-#: l10n_ec/locale/i18n_markers.py:77
+#: l10n_ec/locale/i18n_markers.py:79
 msgid "Liquidación compra"
 msgstr "Liquidación compra"
 
-#: l10n_ec/locale/i18n_markers.py:192
+#: l10n_ec/locale/i18n_markers.py:194
 msgid "Liquidación impuesto único a la venta local de banano de producción propia"
 msgstr "Liquidación impuesto único a la venta local de banano de producción propia"
 
-#: l10n_ec/locale/i18n_markers.py:188
+#: l10n_ec/locale/i18n_markers.py:190
 msgid "Loterías, rifas, pronósticos deportivos, apuestas y similares"
 msgstr "Loterías, rifas, pronósticos deportivos, apuestas y similares"
 
-#: l10n_ec/locale/i18n_markers.py:73
+#: l10n_ec/locale/i18n_markers.py:75
 msgid "Mano de obra"
 msgstr "Mano de obra"
 
@@ -557,7 +633,7 @@ msgstr "Mano de obra"
 msgid "Messages"
 msgstr "Mensajes"
 
-#: l10n_ec/locale/i18n_markers.py:89
+#: l10n_ec/locale/i18n_markers.py:91
 msgid "Minerales"
 msgstr "Minerales"
 
@@ -565,7 +641,7 @@ msgstr "Minerales"
 msgid "Missing IVA withholding account {} for company '{}'."
 msgstr "Falta la cuenta de retención de IVA {} para la compañía '{}'."
 
-#: l10n_ec/ecuador_localization/received_settlement.py:134
+#: l10n_ec/ecuador_localization/received_settlement.py:132
 msgid "Missing TDS credit accounts for company '{}'."
 msgstr "Faltan las cuentas de crédito TDS para la compañía '{}'."
 
@@ -577,7 +653,7 @@ msgstr "Falta la cuenta {} para la plantilla de impuestos '{}'."
 msgid "Missing account {} for withholding setup."
 msgstr "Falta la cuenta {} para la configuración de retenciones."
 
-#: l10n_ec/locale/i18n_markers.py:329
+#: l10n_ec/locale/i18n_markers.py:331
 msgid "Name:"
 msgstr "Nombre:"
 
@@ -589,11 +665,11 @@ msgstr "No hay contenido de firma PKCS#12 adjunto al documento de Firma SRI."
 msgid "No SRI Emission Point for company '{}' and document '{}'."
 msgstr "No hay punto de emisión SRI para la compañía '{}' y el documento '{}'."
 
-#: l10n_ec/locale/i18n_markers.py:96
+#: l10n_ec/locale/i18n_markers.py:98
 msgid "No procede"
 msgstr "No procede"
 
-#: l10n_ec/locale/i18n_markers.py:83
+#: l10n_ec/locale/i18n_markers.py:85
 msgid "No sujeto"
 msgstr "No sujeto"
 
@@ -619,47 +695,47 @@ msgstr "Organización (emisor)"
 msgid "Organization (Subject)"
 msgstr "Organización (titular)"
 
-#: l10n_ec/locale/i18n_markers.py:331
+#: l10n_ec/locale/i18n_markers.py:333
 msgid "Origin Address:"
 msgstr "Dirección de partida:"
 
-#: l10n_ec/locale/i18n_markers.py:84
+#: l10n_ec/locale/i18n_markers.py:86
 msgid "Otras 1%"
 msgstr "Otras 1%"
 
-#: l10n_ec/locale/i18n_markers.py:90
+#: l10n_ec/locale/i18n_markers.py:92
 msgid "Otras 3%"
 msgstr "Otras 3%"
 
-#: l10n_ec/locale/i18n_markers.py:226
+#: l10n_ec/locale/i18n_markers.py:228
 msgid "Otras autorretenciones (inciso 1 y 2 Art.92.1 RLRTI)"
 msgstr "Otras autorretenciones (inciso 1 y 2 Art.92.1 RLRTI)"
 
-#: l10n_ec/locale/i18n_markers.py:213
+#: l10n_ec/locale/i18n_markers.py:215
 msgid "Otras ganancias de capital distintas de enajenación de derechos representativos de capital"
 msgstr "Otras ganancias de capital distintas de enajenación de derechos representativos de capital"
 
-#: l10n_ec/locale/i18n_markers.py:212
+#: l10n_ec/locale/i18n_markers.py:214
 msgid "Otras retenciones aplicables a otros porcentajes"
 msgstr "Otras retenciones aplicables a otros porcentajes"
 
-#: l10n_ec/locale/i18n_markers.py:206
+#: l10n_ec/locale/i18n_markers.py:208
 msgid "Otras retenciones aplicables el 2%"
 msgstr "Otras retenciones aplicables el 2%"
 
-#: l10n_ec/locale/i18n_markers.py:207
+#: l10n_ec/locale/i18n_markers.py:209
 msgid "Otras retenciones aplicables el 8%"
 msgstr "Otras retenciones aplicables el 8%"
 
-#: l10n_ec/locale/i18n_markers.py:58
+#: l10n_ec/locale/i18n_markers.py:60
 msgid "Otros con utilización del sistema financiero"
 msgstr "Otros con utilización del sistema financiero"
 
-#: l10n_ec/locale/i18n_markers.py:143
+#: l10n_ec/locale/i18n_markers.py:145
 msgid "Otros intereses y rendimientos financieros exentos"
 msgstr "Otros intereses y rendimientos financieros exentos"
 
-#: l10n_ec/locale/i18n_markers.py:142
+#: l10n_ec/locale/i18n_markers.py:144
 msgid "Otros intereses y rendimientos financieros gravados"
 msgstr "Otros intereses y rendimientos financieros gravados"
 
@@ -674,243 +750,243 @@ msgstr "Credenciales de firma PKCS#12"
 msgid "PKCS#12 Signature File (.p12)"
 msgstr "Archivo de firma PKCS#12 (.p12)"
 
-#: l10n_ec/locale/i18n_markers.py:247
+#: l10n_ec/locale/i18n_markers.py:249
 msgid "Pago a no residentes - Anticipo dividendos (domiciliadas en paraísos fiscales o regímenes de menor imposición)"
 msgstr "Pago a no residentes - Anticipo dividendos (domiciliadas en paraísos fiscales o regímenes de menor imposición)"
 
-#: l10n_ec/locale/i18n_markers.py:244
+#: l10n_ec/locale/i18n_markers.py:246
 msgid "Pago a no residentes - Anticipo dividendos (no domiciliada en paraísos fiscales o regímenes de menor imposición)"
 msgstr "Pago a no residentes - Anticipo dividendos (no domiciliada en paraísos fiscales o regímenes de menor imposición)"
 
-#: l10n_ec/locale/i18n_markers.py:291
+#: l10n_ec/locale/i18n_markers.py:293
 msgid "Pago a no residentes - Arrendamientos mercantil internacional"
 msgstr "Pago a no residentes - Arrendamientos mercantil internacional"
 
-#: l10n_ec/locale/i18n_markers.py:229
+#: l10n_ec/locale/i18n_markers.py:231
 msgid "Pago a no residentes - Beneficios/Servicios  Empresariales"
 msgstr "Pago a no residentes - Beneficios/Servicios  Empresariales"
 
-#: l10n_ec/locale/i18n_markers.py:293
+#: l10n_ec/locale/i18n_markers.py:295
 msgid "Pago a no residentes - Comisiones por exportaciones y por promoción de turismo receptivo"
 msgstr "Pago a no residentes - Comisiones por exportaciones y por promoción de turismo receptivo"
 
-#: l10n_ec/locale/i18n_markers.py:298
+#: l10n_ec/locale/i18n_markers.py:300
 msgid "Pago a no residentes - Contratos de fletamento de naves para empresas de transporte aéreo o marítimo internacional"
 msgstr "Pago a no residentes - Contratos de fletamento de naves para empresas de transporte aéreo o marítimo internacional"
 
-#: l10n_ec/locale/i18n_markers.py:280
+#: l10n_ec/locale/i18n_markers.py:282
 msgid "Pago a no residentes - Deportistas"
 msgstr "Pago a no residentes - Deportistas"
 
-#: l10n_ec/locale/i18n_markers.py:301
+#: l10n_ec/locale/i18n_markers.py:303
 msgid "Pago a no residentes - Enajenación de derechos representativos de capital u otros derechos que permitan la exploración, explotación, concesión o similares de sociedades"
 msgstr "Pago a no residentes - Enajenación de derechos representativos de capital u otros derechos que permitan la exploración, explotación, concesión o similares de sociedades"
 
-#: l10n_ec/locale/i18n_markers.py:288
+#: l10n_ec/locale/i18n_markers.py:290
 msgid "Pago a no residentes - Estudiantes"
 msgstr "Pago a no residentes - Estudiantes"
 
-#: l10n_ec/locale/i18n_markers.py:267
+#: l10n_ec/locale/i18n_markers.py:269
 msgid "Pago a no residentes - Intereses de otros créditos externos"
 msgstr "Pago a no residentes - Intereses de otros créditos externos"
 
-#: l10n_ec/locale/i18n_markers.py:266
+#: l10n_ec/locale/i18n_markers.py:268
 msgid "Pago a no residentes - Intereses por financiamiento de proveedores externos"
 msgstr "Pago a no residentes - Intereses por financiamiento de proveedores externos"
 
-#: l10n_ec/locale/i18n_markers.py:274
+#: l10n_ec/locale/i18n_markers.py:276
 msgid "Pago a no residentes - Otras ganancias de capital distintas de enajenación de derechos representativos de capital"
 msgstr "Pago a no residentes - Otras ganancias de capital distintas de enajenación de derechos representativos de capital"
 
-#: l10n_ec/locale/i18n_markers.py:268
+#: l10n_ec/locale/i18n_markers.py:270
 msgid "Pago a no residentes - Otros Intereses y Rendimientos Financieros"
 msgstr "Pago a no residentes - Otros Intereses y Rendimientos Financieros"
 
-#: l10n_ec/locale/i18n_markers.py:290
+#: l10n_ec/locale/i18n_markers.py:292
 msgid "Pago a no residentes - Pago a proveedores de servicios hoteleros y turísticos en el exterior"
 msgstr "Pago a no residentes - Pago a proveedores de servicios hoteleros y turísticos en el exterior"
 
-#: l10n_ec/locale/i18n_markers.py:281
+#: l10n_ec/locale/i18n_markers.py:283
 msgid "Pago a no residentes - Participación de consejeros"
 msgstr "Pago a no residentes - Participación de consejeros"
 
-#: l10n_ec/locale/i18n_markers.py:285
+#: l10n_ec/locale/i18n_markers.py:287
 msgid "Pago a no residentes - Pensiones"
 msgstr "Pago a no residentes - Pensiones"
 
-#: l10n_ec/locale/i18n_markers.py:297
+#: l10n_ec/locale/i18n_markers.py:299
 msgid "Pago a no residentes - Por las agencias internacionales de prensa"
 msgstr "Pago a no residentes - Por las agencias internacionales de prensa"
 
-#: l10n_ec/locale/i18n_markers.py:294
+#: l10n_ec/locale/i18n_markers.py:296
 msgid "Pago a no residentes - Por las empresas de transporte marítimo o aéreo y por empresas pesqueras de alta mar, por su actividad."
 msgstr "Pago a no residentes - Por las empresas de transporte marítimo o aéreo y por empresas pesqueras de alta mar, por su actividad."
 
-#: l10n_ec/locale/i18n_markers.py:253
+#: l10n_ec/locale/i18n_markers.py:255
 msgid "Pago a no residentes - Préstamos accionistas, beneficiarios o partícipes (domiciliadas en paraísos fiscales o regímenes de menor imposición)"
 msgstr "Pago a no residentes - Préstamos accionistas, beneficiarios o partícipes (domiciliadas en paraísos fiscales o regímenes de menor imposición)"
 
-#: l10n_ec/locale/i18n_markers.py:250
+#: l10n_ec/locale/i18n_markers.py:252
 msgid "Pago a no residentes - Préstamos accionistas, beneficiarios o partícipes (no domiciliadas en paraísos fiscales o regímenes de menor imposición)"
 msgstr "Pago a no residentes - Préstamos accionistas, beneficiarios o partícipes (no domiciliadas en paraísos fiscales o regímenes de menor imposición)"
 
-#: l10n_ec/locale/i18n_markers.py:259
+#: l10n_ec/locale/i18n_markers.py:261
 msgid "Pago a no residentes - Préstamos no comerciales a partes relacionadas  (domiciliadas en paraísos fiscales o regímenes de menor imposición)"
 msgstr "Pago a no residentes - Préstamos no comerciales a partes relacionadas  (domiciliadas en paraísos fiscales o regímenes de menor imposición)"
 
-#: l10n_ec/locale/i18n_markers.py:256
+#: l10n_ec/locale/i18n_markers.py:258
 msgid "Pago a no residentes - Préstamos no comerciales a partes relacionadas  (no domiciliadas en paraísos fiscales o regímenes de menor imposición)"
 msgstr "Pago a no residentes - Préstamos no comerciales a partes relacionadas  (no domiciliadas en paraísos fiscales o regímenes de menor imposición)"
 
-#: l10n_ec/locale/i18n_markers.py:273
+#: l10n_ec/locale/i18n_markers.py:275
 msgid "Pago a no residentes - Regalías por concepto de franquicias"
 msgstr "Pago a no residentes - Regalías por concepto de franquicias"
 
-#: l10n_ec/locale/i18n_markers.py:262
+#: l10n_ec/locale/i18n_markers.py:264
 msgid "Pago a no residentes - Rendimientos financieros"
 msgstr "Pago a no residentes - Rendimientos financieros"
 
-#: l10n_ec/locale/i18n_markers.py:228
+#: l10n_ec/locale/i18n_markers.py:230
 msgid "Pago a no residentes - Rentas Inmobiliarias"
 msgstr "Pago a no residentes - Rentas Inmobiliarias"
 
-#: l10n_ec/locale/i18n_markers.py:313
+#: l10n_ec/locale/i18n_markers.py:315
 msgid "Pago a no residentes - Seguros y reaseguros (primas y cesiones)"
 msgstr "Pago a no residentes - Seguros y reaseguros (primas y cesiones)"
 
-#: l10n_ec/locale/i18n_markers.py:278
+#: l10n_ec/locale/i18n_markers.py:280
 msgid "Pago a no residentes - Servicios profesionales dependientes"
 msgstr "Pago a no residentes - Servicios profesionales dependientes"
 
-#: l10n_ec/locale/i18n_markers.py:277
+#: l10n_ec/locale/i18n_markers.py:279
 msgid "Pago a no residentes - Servicios profesionales independientes"
 msgstr "Pago a no residentes - Servicios profesionales independientes"
 
-#: l10n_ec/locale/i18n_markers.py:230
+#: l10n_ec/locale/i18n_markers.py:232
 msgid "Pago a no residentes - Servicios técnicos, administrativos o de consultoría y regalías"
 msgstr "Pago a no residentes - Servicios técnicos, administrativos o de consultoría y regalías"
 
-#: l10n_ec/locale/i18n_markers.py:263
+#: l10n_ec/locale/i18n_markers.py:265
 msgid "Pago a no residentes – Intereses de créditos de Instituciones Financieras del exterior"
 msgstr "Pago a no residentes – Intereses de créditos de Instituciones Financieras del exterior"
 
-#: l10n_ec/locale/i18n_markers.py:264
+#: l10n_ec/locale/i18n_markers.py:266
 msgid "Pago a no residentes – Intereses de créditos de gobierno a gobierno"
 msgstr "Pago a no residentes – Intereses de créditos de gobierno a gobierno"
 
-#: l10n_ec/locale/i18n_markers.py:265
+#: l10n_ec/locale/i18n_markers.py:267
 msgid "Pago a no residentes – Intereses de créditos de organismos multilaterales"
 msgstr "Pago a no residentes – Intereses de créditos de organismos multilaterales"
 
-#: l10n_ec/locale/i18n_markers.py:279
+#: l10n_ec/locale/i18n_markers.py:281
 msgid "Pago a no residentes- Artistas"
 msgstr "Pago a no residentes- Artistas"
 
-#: l10n_ec/locale/i18n_markers.py:282
+#: l10n_ec/locale/i18n_markers.py:284
 msgid "Pago a no residentes- Artistas y relacionados a  organización, producción y espectáculos artísticos y culturales en Ecuador"
 msgstr "Pago a no residentes- Artistas y relacionados a  organización, producción y espectáculos artísticos y culturales en Ecuador"
 
-#: l10n_ec/locale/i18n_markers.py:272
+#: l10n_ec/locale/i18n_markers.py:274
 msgid "Pago a no residentes- Cánones, derechos de autor,  marcas, patentes y similares"
 msgstr "Pago a no residentes- Cánones, derechos de autor,  marcas, patentes y similares"
 
-#: l10n_ec/locale/i18n_markers.py:233
+#: l10n_ec/locale/i18n_markers.py:235
 msgid "Pago a no residentes- Dividendos distribuidos a personas naturales (domiciliados o no en paraíso fiscal) o a sociedades sin beneficiario efectivo persona natural residente en Ecuador"
 msgstr "Pago a no residentes- Dividendos distribuidos a personas naturales (domiciliados o no en paraíso fiscal) o a sociedades sin beneficiario efectivo persona natural residente en Ecuador"
 
-#: l10n_ec/locale/i18n_markers.py:317
+#: l10n_ec/locale/i18n_markers.py:319
 msgid "Pago a no residentes- Donaciones en dinero -Impuesto a las donaciones"
 msgstr "Pago a no residentes- Donaciones en dinero -Impuesto a las donaciones"
 
-#: l10n_ec/locale/i18n_markers.py:287
+#: l10n_ec/locale/i18n_markers.py:289
 msgid "Pago a no residentes- Funciones Públicas"
 msgstr "Pago a no residentes- Funciones Públicas"
 
-#: l10n_ec/locale/i18n_markers.py:232
+#: l10n_ec/locale/i18n_markers.py:234
 msgid "Pago a no residentes- Navegación Marítima y/o aérea"
 msgstr "Pago a no residentes- Navegación Marítima y/o aérea"
 
-#: l10n_ec/locale/i18n_markers.py:286
+#: l10n_ec/locale/i18n_markers.py:288
 msgid "Pago a no residentes- Reembolso de Gastos"
 msgstr "Pago a no residentes- Reembolso de Gastos"
 
-#: l10n_ec/locale/i18n_markers.py:181
+#: l10n_ec/locale/i18n_markers.py:183
 msgid "Pago a través de convenio de debito (Clientes IFI`s)"
 msgstr "Pago a través de convenio de debito (Clientes IFI`s)"
 
-#: l10n_ec/locale/i18n_markers.py:271
+#: l10n_ec/locale/i18n_markers.py:273
 msgid "Pago al exterior - Créditos de IFI's organismos y gobierno a gobierno"
 msgstr "Pago al exterior - Créditos de IFI's organismos y gobierno a gobierno"
 
-#: l10n_ec/locale/i18n_markers.py:270
+#: l10n_ec/locale/i18n_markers.py:272
 msgid "Pago al exterior - Intereses de créditos externos"
 msgstr "Pago al exterior - Intereses de créditos externos"
 
-#: l10n_ec/locale/i18n_markers.py:269
+#: l10n_ec/locale/i18n_markers.py:271
 msgid "Pago al exterior - Intereses por Financiamiento de proveedores externos"
 msgstr "Pago al exterior - Intereses por Financiamiento de proveedores externos"
 
-#: l10n_ec/locale/i18n_markers.py:289
+#: l10n_ec/locale/i18n_markers.py:291
 msgid "Pago al exterior - Otros conceptos de ingresos gravados"
 msgstr "Pago al exterior - Otros conceptos de ingresos gravados"
 
-#: l10n_ec/locale/i18n_markers.py:316
+#: l10n_ec/locale/i18n_markers.py:318
 msgid "Pago al exterior - Otros pagos al exterior no sujetos a retención"
 msgstr "Pago al exterior - Otros pagos al exterior no sujetos a retención"
 
-#: l10n_ec/locale/i18n_markers.py:315
+#: l10n_ec/locale/i18n_markers.py:317
 msgid "Pago al exterior - Seguros y reaseguros (primas y cesiones) en paraísos fiscales"
 msgstr "Pago al exterior - Seguros y reaseguros (primas y cesiones) en paraísos fiscales"
 
-#: l10n_ec/locale/i18n_markers.py:314
+#: l10n_ec/locale/i18n_markers.py:316
 msgid "Pago al exterior - Seguros y reaseguros (primas y cesiones) sin convenio de doble tributación"
 msgstr "Pago al exterior - Seguros y reaseguros (primas y cesiones) sin convenio de doble tributación"
 
-#: l10n_ec/locale/i18n_markers.py:292
+#: l10n_ec/locale/i18n_markers.py:294
 msgid "Pago al exterior - Seguros, cesiones y reaseguros"
 msgstr "Pago al exterior - Seguros, cesiones y reaseguros"
 
-#: l10n_ec/locale/i18n_markers.py:231
+#: l10n_ec/locale/i18n_markers.py:233
 msgid "Pago al exterior - Servicios Empresariales"
 msgstr "Pago al exterior - Servicios Empresariales"
 
-#: l10n_ec/locale/i18n_markers.py:304
+#: l10n_ec/locale/i18n_markers.py:306
 msgid "Pago al exterior - Servicios técnicos, administrativos o de consultoría y regalías con convenio de doble tributación"
 msgstr "Pago al exterior - Servicios técnicos, administrativos o de consultoría y regalías con convenio de doble tributación"
 
-#: l10n_ec/locale/i18n_markers.py:310
+#: l10n_ec/locale/i18n_markers.py:312
 msgid "Pago al exterior - Servicios técnicos, administrativos o de consultoría y regalías en paraísos fiscales"
 msgstr "Pago al exterior - Servicios técnicos, administrativos o de consultoría y regalías en paraísos fiscales"
 
-#: l10n_ec/locale/i18n_markers.py:307
+#: l10n_ec/locale/i18n_markers.py:309
 msgid "Pago al exterior - Servicios técnicos, administrativos o de consultoría y regalías sin convenio de doble tributación"
 msgstr "Pago al exterior - Servicios técnicos, administrativos o de consultoría y regalías sin convenio de doble tributación"
 
-#: l10n_ec/locale/i18n_markers.py:180
+#: l10n_ec/locale/i18n_markers.py:182
 msgid "Pago al exterior tarjeta de crédito reportada por la Emisora de tarjeta de crédito, solo recap"
 msgstr "Pago al exterior tarjeta de crédito reportada por la Emisora de tarjeta de crédito, solo recap"
 
-#: l10n_ec/locale/i18n_markers.py:101
+#: l10n_ec/locale/i18n_markers.py:103
 msgid "Pagos a notarios y registradores de la propiedad y mercantil por sus actividades ejercidas como tales"
 msgstr "Pagos a notarios y registradores de la propiedad y mercantil por sus actividades ejercidas como tales"
 
-#: l10n_ec/locale/i18n_markers.py:179
+#: l10n_ec/locale/i18n_markers.py:181
 msgid "Pagos con tarjeta de crédito"
 msgstr "Pagos con tarjeta de crédito"
 
-#: l10n_ec/locale/i18n_markers.py:174
+#: l10n_ec/locale/i18n_markers.py:176
 msgid "Pagos en el país por transporte de pasajeros o transporte internacional de carga, a compañías nacionales o extranjeras de aviación o marítimas"
 msgstr "Pagos en el país por transporte de pasajeros o transporte internacional de carga, a compañías nacionales o extranjeras de aviación o marítimas"
 
-#: l10n_ec/locale/i18n_markers.py:155
+#: l10n_ec/locale/i18n_markers.py:157
 msgid "Pagos y créditos en cuenta efectuados por el BCE y los depósitos centralizados de valores, en calidad de intermediarios, a instituciones del sistema financiero por cuenta de otras instituciones del sistema financiero"
 msgstr "Pagos y créditos en cuenta efectuados por el BCE y los depósitos centralizados de valores, en calidad de intermediarios, a instituciones del sistema financiero por cuenta de otras instituciones del sistema financiero"
 
-#: l10n_ec/locale/i18n_markers.py:144
+#: l10n_ec/locale/i18n_markers.py:146
 msgid "Pagos y créditos en cuenta efectuados por el BCE y los depósitos centralizados de valores, en calidad de intermediarios, a instituciones del sistema financiero por cuenta de otras personas naturales y sociedades"
 msgstr "Pagos y créditos en cuenta efectuados por el BCE y los depósitos centralizados de valores, en calidad de intermediarios, a instituciones del sistema financiero por cuenta de otras personas naturales y sociedades"
 
-#: l10n_ec/locale/i18n_markers.py:334
+#: l10n_ec/locale/i18n_markers.py:336
 msgid "Plate:"
 msgstr "Placa:"
 
@@ -918,43 +994,43 @@ msgstr "Placa:"
 msgid "Popular Business"
 msgstr "Negocio popular"
 
-#: l10n_ec/locale/i18n_markers.py:120
+#: l10n_ec/locale/i18n_markers.py:122
 msgid "Por RF:  depósitos Cta. Ahorros Persona Natural"
 msgstr "Por RF:  depósitos Cta. Ahorros Persona Natural"
 
-#: l10n_ec/locale/i18n_markers.py:130
+#: l10n_ec/locale/i18n_markers.py:132
 msgid "Por RF: Intereses en operaciones de crédito entre instituciones del sistema financiero y entidades economía popular y solidaria."
 msgstr "Por RF: Intereses en operaciones de crédito entre instituciones del sistema financiero y entidades economía popular y solidaria."
 
-#: l10n_ec/locale/i18n_markers.py:133
+#: l10n_ec/locale/i18n_markers.py:135
 msgid "Por RF: Por inversiones entre instituciones del sistema financiero y entidades economía popular y solidaria."
 msgstr "Por RF: Por inversiones entre instituciones del sistema financiero y entidades economía popular y solidaria."
 
-#: l10n_ec/locale/i18n_markers.py:129
+#: l10n_ec/locale/i18n_markers.py:131
 msgid "Por RF: bonos de organismos y gobiernos extranjeros"
 msgstr "Por RF: bonos de organismos y gobiernos extranjeros"
 
-#: l10n_ec/locale/i18n_markers.py:195
+#: l10n_ec/locale/i18n_markers.py:197
 msgid "Por actividades de construcción de obra material inmueble, urbanización, lotización o actividades similares"
 msgstr "Por actividades de construcción de obra material inmueble, urbanización, lotización o actividades similares"
 
-#: l10n_ec/locale/i18n_markers.py:194
+#: l10n_ec/locale/i18n_markers.py:196
 msgid "Por energía eléctrica"
 msgstr "Por energía eléctrica"
 
-#: l10n_ec/locale/i18n_markers.py:171
+#: l10n_ec/locale/i18n_markers.py:173
 msgid "Por la enajenación ocasional de acciones o participaciones y títulos valores"
 msgstr "Por la enajenación ocasional de acciones o participaciones y títulos valores"
 
-#: l10n_ec/locale/i18n_markers.py:121
+#: l10n_ec/locale/i18n_markers.py:123
 msgid "Por rendimientos financieros:  depósitos en cuentas exentas"
 msgstr "Por rendimientos financieros:  depósitos en cuentas exentas"
 
-#: l10n_ec/locale/i18n_markers.py:122
+#: l10n_ec/locale/i18n_markers.py:124
 msgid "Por rendimientos financieros: compra, cancelación o redención de mini bem´s y bem´s"
 msgstr "Por rendimientos financieros: compra, cancelación o redención de mini bem´s y bem´s"
 
-#: l10n_ec/locale/i18n_markers.py:191
+#: l10n_ec/locale/i18n_markers.py:193
 msgid "Producción y venta local de banano producido o no por el mismo sujeto pasivo"
 msgstr "Producción y venta local de banano producido o no por el mismo sujeto pasivo"
 
@@ -962,11 +1038,11 @@ msgstr "Producción y venta local de banano producido o no por el mismo sujeto p
 msgid "Production"
 msgstr "Producción"
 
-#: l10n_ec/locale/i18n_markers.py:160
+#: l10n_ec/locale/i18n_markers.py:162
 msgid "Préstamos accionistas, beneficiarios o partícipes residentes o establecidos en el Ecuador"
 msgstr "Préstamos accionistas, beneficiarios o partícipes residentes o establecidos en el Ecuador"
 
-#: l10n_ec/locale/i18n_markers.py:75
+#: l10n_ec/locale/i18n_markers.py:77
 msgid "Publicidad"
 msgstr "Publicidad"
 
@@ -976,15 +1052,15 @@ msgstr "Publicidad"
 msgid "Purchase Invoice"
 msgstr "Factura de Compra"
 
-#: l10n_ec/locale/i18n_markers.py:339
+#: l10n_ec/locale/i18n_markers.py:341
 msgid "Quantity"
 msgstr "Cantidad"
 
-#: l10n_ec/locale/i18n_markers.py:321
+#: l10n_ec/locale/i18n_markers.py:323
 msgid "RIDE — Delivery Note"
 msgstr "RIDE — Guía de remisión"
 
-#: l10n_ec/locale/i18n_markers.py:322
+#: l10n_ec/locale/i18n_markers.py:324
 msgid "RIDE — Withholding"
 msgstr "RIDE — Retención"
 
@@ -992,7 +1068,7 @@ msgstr "RIDE — Retención"
 msgid "RIMPE Regime"
 msgstr "Régimen RIMPE"
 
-#: l10n_ec/locale/i18n_markers.py:347
+#: l10n_ec/locale/i18n_markers.py:349
 msgid "Rate %"
 msgstr "Porcentaje %"
 
@@ -1001,15 +1077,15 @@ msgstr "Porcentaje %"
 msgid "Received"
 msgstr "Recibido"
 
-#: l10n_ec/locale/i18n_markers.py:40
+#: l10n_ec/locale/i18n_markers.py:42
 msgid "Received Retencion Access Key"
 msgstr "Clave de acceso de retención recibida"
 
-#: l10n_ec/locale/i18n_markers.py:36
+#: l10n_ec/locale/i18n_markers.py:38
 msgid "Received Retencion Authorization"
 msgstr "Autorización de retención recibida"
 
-#: l10n_ec/locale/i18n_markers.py:38
+#: l10n_ec/locale/i18n_markers.py:40
 msgid "Received Retencion Date"
 msgstr "Fecha de retención recibida"
 
@@ -1017,7 +1093,7 @@ msgstr "Fecha de retención recibida"
 msgid "Received Retencion Number"
 msgstr "Número de retención recibida"
 
-#: l10n_ec/locale/i18n_markers.py:328
+#: l10n_ec/locale/i18n_markers.py:330
 msgid "Recipient"
 msgstr "Destinatario"
 
@@ -1033,11 +1109,11 @@ msgstr "Referencia"
 msgid "Reference DocType"
 msgstr "Tipo de documento de referencia"
 
-#: l10n_ec/locale/i18n_markers.py:110
+#: l10n_ec/locale/i18n_markers.py:112
 msgid "Regalías por concepto de franquicias de acuerdo al Código INGENIOS (COESCCI) - pago a personas naturales"
 msgstr "Regalías por concepto de franquicias de acuerdo al Código INGENIOS (COESCCI) - pago a personas naturales"
 
-#: l10n_ec/locale/i18n_markers.py:116
+#: l10n_ec/locale/i18n_markers.py:118
 msgid "Regalías por concepto de franquicias de acuerdo al Código INGENIOS (COESCCI) - pago a sociades"
 msgstr "Regalías por concepto de franquicias de acuerdo al Código INGENIOS (COESCCI) - pago a sociades"
 
@@ -1050,63 +1126,63 @@ msgstr "Rechazado"
 msgid "Related Party"
 msgstr "Parte relacionada"
 
-#: l10n_ec/locale/i18n_markers.py:82
+#: l10n_ec/locale/i18n_markers.py:84
 msgid "Rendimientos financieros"
 msgstr "Rendimientos financieros"
 
-#: l10n_ec/locale/i18n_markers.py:137
+#: l10n_ec/locale/i18n_markers.py:139
 msgid "Rendimientos financieros  Inversiones en títulos valores en renta fija exentos"
 msgstr "Rendimientos financieros  Inversiones en títulos valores en renta fija exentos"
 
-#: l10n_ec/locale/i18n_markers.py:128
+#: l10n_ec/locale/i18n_markers.py:130
 msgid "Rendimientos financieros  bonos convertible en acciones"
 msgstr "Rendimientos financieros  bonos convertible en acciones"
 
-#: l10n_ec/locale/i18n_markers.py:119
+#: l10n_ec/locale/i18n_markers.py:121
 msgid "Rendimientos financieros  depósitos Cta. Ahorros Sociedades"
 msgstr "Rendimientos financieros  depósitos Cta. Ahorros Sociedades"
 
-#: l10n_ec/locale/i18n_markers.py:127
+#: l10n_ec/locale/i18n_markers.py:129
 msgid "Rendimientos financieros  obligaciones"
 msgstr "Rendimientos financieros  obligaciones"
 
-#: l10n_ec/locale/i18n_markers.py:136
+#: l10n_ec/locale/i18n_markers.py:138
 msgid "Rendimientos financieros : Inversiones en títulos valores en renta fija gravados"
 msgstr "Rendimientos financieros : Inversiones en títulos valores en renta fija gravados"
 
-#: l10n_ec/locale/i18n_markers.py:123
+#: l10n_ec/locale/i18n_markers.py:125
 msgid "Rendimientos financieros depósito a plazo fijo  gravados"
 msgstr "Rendimientos financieros depósito a plazo fijo  gravados"
 
-#: l10n_ec/locale/i18n_markers.py:124
+#: l10n_ec/locale/i18n_markers.py:126
 msgid "Rendimientos financieros depósito a plazo fijo exentos"
 msgstr "Rendimientos financieros depósito a plazo fijo exentos"
 
-#: l10n_ec/locale/i18n_markers.py:118
+#: l10n_ec/locale/i18n_markers.py:120
 msgid "Rendimientos financieros depósitos Cta. Corriente"
 msgstr "Rendimientos financieros depósitos Cta. Corriente"
 
-#: l10n_ec/locale/i18n_markers.py:125
+#: l10n_ec/locale/i18n_markers.py:127
 msgid "Rendimientos financieros operaciones de reporto - repos"
 msgstr "Rendimientos financieros operaciones de reporto - repos"
 
-#: l10n_ec/locale/i18n_markers.py:147
+#: l10n_ec/locale/i18n_markers.py:149
 msgid "Rendimientos financieros originados en la deuda pública ecuatoriana"
 msgstr "Rendimientos financieros originados en la deuda pública ecuatoriana"
 
-#: l10n_ec/locale/i18n_markers.py:148
+#: l10n_ec/locale/i18n_markers.py:150
 msgid "Rendimientos financieros originados en títulos valores de obligaciones de 360 días o más para el financiamiento de proyectos públicos en asociación público-privada"
 msgstr "Rendimientos financieros originados en títulos valores de obligaciones de 360 días o más para el financiamiento de proyectos públicos en asociación público-privada"
 
-#: l10n_ec/locale/i18n_markers.py:218
+#: l10n_ec/locale/i18n_markers.py:220
 msgid "Retención a cargo del propio sujeto pasivo por la comercialización de productos forestales"
 msgstr "Retención a cargo del propio sujeto pasivo por la comercialización de productos forestales"
 
-#: l10n_ec/locale/i18n_markers.py:215
+#: l10n_ec/locale/i18n_markers.py:217
 msgid "Retención a cargo del propio sujeto pasivo por la producción y/o comercialización de minerales y otros bienes"
 msgstr "Retención a cargo del propio sujeto pasivo por la producción y/o comercialización de minerales y otros bienes"
 
-#: l10n_ec/locale/i18n_markers.py:95
+#: l10n_ec/locale/i18n_markers.py:97
 msgid "Retención cero"
 msgstr "Retención cero"
 
@@ -1115,11 +1191,11 @@ msgstr "Retención cero"
 msgid "Returned"
 msgstr "Devuelto"
 
-#: l10n_ec/locale/i18n_markers.py:227
+#: l10n_ec/locale/i18n_markers.py:229
 msgid "Régimen Microempresarial"
 msgstr "Régimen Microempresarial"
 
-#: l10n_ec/locale/i18n_markers.py:325
+#: l10n_ec/locale/i18n_markers.py:327
 msgid "SRI Authorization:"
 msgstr "Autorización SRI:"
 
@@ -1168,6 +1244,10 @@ msgstr "Concepto IVA SRI"
 msgid "SRI IVA concepto '{}' is set but the invoice has no IVA taxes."
 msgstr "El concepto IVA SRI '{}' está fijado pero la factura no tiene impuestos IVA."
 
+#: l10n_ec/locale/i18n_markers.py:363 l10n_ec/sri/ats_collector.py:285
+msgid "SRI IVA withholding concepto '{}' has no ATS bucket for rate '{}'."
+msgstr "El concepto de retención IVA SRI '{}' no tiene casillero ATS para la tarifa '{}'."
+
 #: l10n_ec/ecuador_localization/validation.py:150
 msgid "SRI IVA withholding needs exactly one IVA tax row, found {}."
 msgstr "La retención IVA SRI necesita exactamente una fila de impuesto IVA, encontradas {}."
@@ -1202,7 +1282,7 @@ msgstr "Firma SRI"
 msgid "SRI Signature '{}' is not usable."
 msgstr "La firma SRI '{}' no es utilizable."
 
-#: l10n_ec/locale/i18n_markers.py:42
+#: l10n_ec/locale/i18n_markers.py:44
 msgid "SRI Tabla 23 IVA withholding concepto driving the automatic deduction row and the voucher (1 bienes 30%, 2 servicios 70%, 3 honorarios 100%); leave empty when no IVA withholding applies."
 msgstr "Concepto de retención IVA Tabla 23 SRI que genera la fila de deducción automática y el comprobante (1 bienes 30%, 2 servicios 70%, 3 honorarios 100%); dejar vacío cuando no aplica retención IVA."
 
@@ -1215,7 +1295,7 @@ msgstr "Sustento tributario SRI"
 msgid "SRI access key must be 49 numeric digits (got '{}')."
 msgstr "La clave de acceso SRI debe tener 49 dígitos numéricos (recibido '{}')."
 
-#: l10n_ec/locale/i18n_markers.py:37
+#: l10n_ec/locale/i18n_markers.py:39
 msgid "SRI authorization number of the customer-issued withholding voucher."
 msgstr "Número de autorización SRI del comprobante de retención emitido por el cliente."
 
@@ -1235,6 +1315,10 @@ msgstr "Retenciones SRI recibidas {}"
 msgid "SRI sequence {} must be between 0 and {}."
 msgstr "La secuencia SRI {} debe estar entre 0 y {}."
 
+#: l10n_ec/locale/i18n_markers.py:362 l10n_ec/sri/ats_collector.py:268
+msgid "SRI withholding concepto '{}' carries rate '{}' but the official rate is '{}'."
+msgstr "El concepto de retención SRI '{}' trae tarifa '{}' pero la oficial es '{}'."
+
 #: l10n_ec/sri/withholding_concepts.py:1233
 msgid "SRI withholding concepto '{}' has no official rate for the current vigencia."
 msgstr "El concepto de retención SRI '{}' no tiene tarifa oficial para la vigencia actual."
@@ -1242,6 +1326,10 @@ msgstr "El concepto de retención SRI '{}' no tiene tarifa oficial para la vigen
 #: l10n_ec/sri/withholding_concepts.py:1252
 msgid "SRI withholding concepto '{}' is ATS scope and cannot be used as an XML codigoRetencion."
 msgstr "El concepto de retención SRI '{}' es de alcance ATS y no puede usarse como codigoRetencion XML."
+
+#: l10n_ec/locale/i18n_markers.py:361 l10n_ec/sri/ats_collector.py:261
+msgid "SRI withholding concepto '{}' is ATS scope and has no XML retention row."
+msgstr "El concepto de retención SRI '{}' es de alcance ATS y no tiene fila de retención XML."
 
 #. Option for the 'Reference DocType' (Select) field in DocType 'SRI Electronic
 #. Voucher'
@@ -1253,7 +1341,7 @@ msgstr "Factura de Venta"
 msgid "Sales to Consumidor Final above {} are not allowed; register the buyer identification."
 msgstr "Las ventas a Consumidor Final sobre {} no están permitidas; registre la identificación del comprador."
 
-#: l10n_ec/locale/i18n_markers.py:81
+#: l10n_ec/locale/i18n_markers.py:83
 msgid "Seguros"
 msgstr "Seguros"
 
@@ -1267,11 +1355,11 @@ msgstr "Secuencias por tipo de comprobante"
 msgid "Serial Number (Subject)"
 msgstr "Número de serie (titular)"
 
-#: l10n_ec/locale/i18n_markers.py:93
+#: l10n_ec/locale/i18n_markers.py:95
 msgid "Servicios"
 msgstr "Servicios"
 
-#: l10n_ec/locale/i18n_markers.py:68
+#: l10n_ec/locale/i18n_markers.py:70
 msgid "Servicios profesionales sociedades"
 msgstr "Servicios profesionales sociedades"
 
@@ -1301,7 +1389,7 @@ msgstr "Contraseña de firma"
 msgid "Signing password is required to decode the PKCS#12 file."
 msgstr "Se requiere la contraseña para descifrar el archivo PKCS#12."
 
-#: l10n_ec/locale/i18n_markers.py:52
+#: l10n_ec/locale/i18n_markers.py:54
 msgid "Sin utilización del sistema financiero"
 msgstr "Sin utilización del sistema financiero"
 
@@ -1317,15 +1405,15 @@ msgstr "Resolución de contribuyente especial"
 msgid "State"
 msgstr "Estado"
 
-#: l10n_ec/locale/i18n_markers.py:340
+#: l10n_ec/locale/i18n_markers.py:342
 msgid "Subject:"
 msgstr "Sujeto:"
 
-#: l10n_ec/locale/i18n_markers.py:336
+#: l10n_ec/locale/i18n_markers.py:338
 msgid "Support Document:"
 msgstr "Documento de sustento:"
 
-#: l10n_ec/locale/i18n_markers.py:342
+#: l10n_ec/locale/i18n_markers.py:344
 msgid "Sustento:"
 msgstr "Sustento:"
 
@@ -1341,23 +1429,23 @@ msgstr "Sustento:"
 msgid "System Manager"
 msgstr "Administrador del sistema"
 
-#: l10n_ec/locale/i18n_markers.py:57
+#: l10n_ec/locale/i18n_markers.py:59
 msgid "Tarjeta de crédito"
 msgstr "Tarjeta de crédito"
 
-#: l10n_ec/locale/i18n_markers.py:54
+#: l10n_ec/locale/i18n_markers.py:56
 msgid "Tarjeta de débito"
 msgstr "Tarjeta de débito"
 
-#: l10n_ec/locale/i18n_markers.py:56
+#: l10n_ec/locale/i18n_markers.py:58
 msgid "Tarjeta prepago"
 msgstr "Tarjeta prepago"
 
-#: l10n_ec/locale/i18n_markers.py:88
+#: l10n_ec/locale/i18n_markers.py:90
 msgid "Tarjetas"
 msgstr "Tarjetas"
 
-#: l10n_ec/locale/i18n_markers.py:344
+#: l10n_ec/locale/i18n_markers.py:346
 msgid "Tax"
 msgstr "Impuesto"
 
@@ -1384,27 +1472,27 @@ msgstr "La firma electrónica venció el {} y no se puede firmar el comprobante.
 msgid "Title"
 msgstr "Título"
 
-#: l10n_ec/locale/i18n_markers.py:349
+#: l10n_ec/locale/i18n_markers.py:351
 msgid "Total Withheld:"
 msgstr "Total retenido:"
 
-#: l10n_ec/locale/i18n_markers.py:343
+#: l10n_ec/locale/i18n_markers.py:345
 msgid "Totals:"
 msgstr "Totales:"
 
-#: l10n_ec/locale/i18n_markers.py:335
+#: l10n_ec/locale/i18n_markers.py:337
 msgid "Transfer Reason:"
 msgstr "Motivo de traslado:"
 
-#: l10n_ec/locale/i18n_markers.py:333
+#: l10n_ec/locale/i18n_markers.py:335
 msgid "Transport Dates:"
 msgstr "Fechas de transporte:"
 
-#: l10n_ec/locale/i18n_markers.py:76
+#: l10n_ec/locale/i18n_markers.py:78
 msgid "Transporte"
 msgstr "Transporte"
 
-#: l10n_ec/locale/i18n_markers.py:173
+#: l10n_ec/locale/i18n_markers.py:175
 msgid "Transporte público de pasajeros"
 msgstr "Transporte público de pasajeros"
 
@@ -1438,19 +1526,19 @@ msgstr "XML sin firmar"
 msgid "Unsupported SRI document code '{}'."
 msgstr "Código de documento SRI no soportado '{}'."
 
-#: l10n_ec/locale/i18n_markers.py:177
+#: l10n_ec/locale/i18n_markers.py:179
 msgid "Valores entregados por las cooperativas de transporte a sus socios"
 msgstr "Valores entregados por las cooperativas de transporte a sus socios"
 
-#: l10n_ec/locale/i18n_markers.py:348
+#: l10n_ec/locale/i18n_markers.py:350
 msgid "Value"
 msgstr "Valor"
 
-#: l10n_ec/locale/i18n_markers.py:189
+#: l10n_ec/locale/i18n_markers.py:191
 msgid "Venta de combustibles a comercializadoras"
 msgstr "Venta de combustibles a comercializadoras"
 
-#: l10n_ec/locale/i18n_markers.py:190
+#: l10n_ec/locale/i18n_markers.py:192
 msgid "Venta de combustibles a distribuidores"
 msgstr "Venta de combustibles a distribuidores"
 
@@ -1458,7 +1546,7 @@ msgstr "Venta de combustibles a distribuidores"
 msgid "Withholding Agent Resolution"
 msgstr "Resolución de agente de retención"
 
-#: l10n_ec/locale/i18n_markers.py:345
+#: l10n_ec/locale/i18n_markers.py:347
 msgid "Withholding Code"
 msgstr "Código de retención"
 
@@ -1479,7 +1567,7 @@ msgstr "La categoría de retención '{}' mapea impuesto '{}' pero el concepto '{
 msgid "Withholding vouchers need explicit withholding_codes {category: (impuesto, codigo)}."
 msgstr "Los comprobantes de retención necesitan withholding_codes explícitos {categoría: (impuesto, código)}."
 
-#: l10n_ec/sri/xml_builder.py:313
+#: l10n_ec/sri/xml_builder.py:314
 msgid "XML does not validate against {}: {}"
 msgstr "El XML no valida contra {}: {}"
 
@@ -1496,7 +1584,7 @@ msgstr "Vencido"
 msgid "guia_data is missing keys: {}."
 msgstr "A guia_data le faltan claves: {}."
 
-#: l10n_ec/locale/i18n_markers.py:327
+#: l10n_ec/locale/i18n_markers.py:329
 msgid "pending SRI authorization."
 msgstr "pendiente de autorización del SRI."
 

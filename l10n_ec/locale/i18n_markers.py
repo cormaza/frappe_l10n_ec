@@ -350,3 +350,35 @@ RIDE_PRINT_FORMAT_STRINGS = [
 	_("Value"),
 	_("Total Withheld:"),
 ]
+
+ATS_COLLECTOR_STRINGS = [
+	# User-facing ATS collector errors (l10n_ec/sri/ats_collector.py).
+	# Extraction markers only; this module is never imported at runtime.
+	_("ATS collection needs a company for '{}-{:02d}'."),
+	_("ATS collection year '{}' is out of range."),
+	_("ATS collection month '{}' is out of range."),
+	_("ATS document number '{}' is not a SRI number."),
+	_("SRI withholding concepto '{}' is ATS scope and has no XML retention row."),
+	_("SRI withholding concepto '{}' carries rate '{}' but the official rate is '{}'."),
+	_("SRI IVA withholding concepto '{}' has no ATS bucket for rate '{}'."),
+]
+
+ATS_BUILDER_STRINGS = [
+	# User-facing ATS renderer errors (l10n_ec/sri/ats_builder.py).
+	# Extraction markers only; this module is never imported at runtime.
+	_("ATS period '{}' is not a fiscal month (MMYYYY)."),
+	_("ATS period month '{}' is out of range."),
+	_("ATS period year '{}' is out of range."),
+	_("ATS informante must be a dict of header fields."),
+	_("ATS informante needs 'IdInformante' (RUC)."),
+	_("ATS informante needs 'razonSocial'."),
+	_("ATS 'TipoIDInformante' '{}' is not 'R'."),
+	_("ATS 'codigoOperativo' '{}' is not 'IVA'."),
+	_("ATS {} row carries unknown field '{}'."),
+	_("ATS {} row needs '{}'."),
+	_("ATS compras row carries a partial withholding reference ({})."),
+	_("ATS section '{}' must be a list of rows."),
+	_("ATS collected payload must be a dict of sections."),
+	_("ATS payload carries unknown section '{}'."),
+	_("ATS zip needs the built XML string."),
+]

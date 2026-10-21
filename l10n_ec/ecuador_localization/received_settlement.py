@@ -125,9 +125,7 @@ def build_settlement_for_si(si_doc, resolve_asset=None, cost_center_resolver=Non
 	}
 	if not accounts["receivable"]:
 		return None
-	lines = settlement_lines(
-		ir_amount, iva_amount, {k: (v or "") for k, v in accounts.items()}, party
-	)
+	lines = settlement_lines(ir_amount, iva_amount, {k: (v or "") for k, v in accounts.items()}, party)
 	if lines is None:
 		return None
 	if (ir_amount and not accounts["ir_asset"]) or (iva_amount and not accounts["iva_asset"]):
