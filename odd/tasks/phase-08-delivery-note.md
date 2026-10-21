@@ -8,7 +8,7 @@
 - T1 (S1): Guía XSD + `build_guia_xml` + tests. Route: inline. Commit: 237378c
 - T2 (S1): Destinatarios mapping + voucher `06` integration + tests. Route: inline. Commit: 237378c
 - T3 (S2): Live proof, verify, commit and push to `version-16`. Route: inline. Commit: 49083ad
-- T4 (S1): RIDE print formats + email for 06/07 from the emitted XML (worker mvhymgzq-1-4jc5 + parent defect fix: `sri_voucher_data` resolver reading unsigned_xml). Route: worker. Commit: -
+- T4 (S1): RIDE print formats + email for 06/07 from the emitted XML (worker mvhymgzq-1-4jc5 + parent defect fix: `sri_voucher_data` resolver reading unsigned_xml). Route: worker. Commit: 05a7773
 
 ## Log
 - L1: "bien avancemos con fase 8"
