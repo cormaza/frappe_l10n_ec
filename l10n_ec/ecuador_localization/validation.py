@@ -83,3 +83,104 @@ def validate_final_consumer_amount(
 				"Sales to Consumidor Final above {} are not allowed; register the buyer identification."
 			).format(threshold)
 		)
+
+
+IVA_WH_ACCOUNT_NUMBER = "2010708"
+IVA_DEDUCTION_DESCRIPTION = "SRI IVA withholding"
+
+
+def company_country_code(company: str | None) -> str | None:
+	"""Resolve a Company country name to its ISO code, if determinable."""
+	try:
+		import frappe
+	except ImportError:
+		return None
+	if not company:
+		return None
+	country = frappe.db.get_value("Company", company, "country")
+	if not country:
+		return None
+	return frappe.db.get_value("Country", country, "code")
+
+
+def _iva_withholding_account(company: str) -> str | None:
+	"""Ledger account for IVA withholdings (bench only; None in Ring 1)."""
+	try:
+		import frappe
+	except ImportError:
+		return None
+	return frappe.db.get_value(
+		"Account", {"company": company, "account_number": IVA_WH_ACCOUNT_NUMBER}, "name"
+	)
+
+
+def enforce_iva_deduction_row(doc, method=None, resolve_account=None, company_code=None) -> None:
+	"""Ensure the automatic IVA withholding deduction row on Purchase Invoice.
+
+	ERPNext cannot compute tax-on-tax withholdings natively, so the IVA
+	withholding lives in a `Deduct` / `On Previous Row Amount` taxes row
+	driven by `sri_iva_concepto`: rate comes from the caller-chosen IVA
+	concepto, base is the referenced IVA row amount, and everything
+	downstream (details, totals, GL, outstanding) stays native. Mixed IVA
+	rates on one invoice fail loud instead of guessing. Existing rows owned
+	by this automation (same account + Deduct) are updated, never doubled.
+	"""
+	code = company_code if company_code is not None else company_country_code(doc.get("company"))
+	if not is_ecuadorian_contact(code):
+		return
+	concepto = (doc.get("sri_iva_concepto") or "").strip()
+	if not concepto:
+		return
+	from l10n_ec.sri.withholding_concepts import resolve_concepto
+
+	impuesto, rate, _description = resolve_concepto(concepto)
+	if impuesto != "2":
+		raise ValueError(_("IVA withholding needs an IVA concepto, got '{}'.").format(concepto))
+	iva_rows = [
+		row
+		for row in doc.get("taxes") or []
+		if not row.get("is_tax_withholding_account")
+		and row.get("add_deduct_tax") != "Deduct"
+		and float(row.get("tax_amount") or 0) != 0
+	]
+	if not iva_rows:
+		raise ValueError(_("SRI IVA concepto '{}' is set but the invoice has no IVA taxes.").format(concepto))
+	if len(iva_rows) > 1:
+		raise ValueError(
+			_("SRI IVA withholding needs exactly one IVA tax row, found {}.").format(len(iva_rows))
+		)
+	target = iva_rows[0]
+	resolver = resolve_account or _iva_withholding_account
+	account = resolver(doc.get("company"))
+	if not account:
+		raise ValueError(
+			_("Missing IVA withholding account {} for company '{}'.").format(
+				IVA_WH_ACCOUNT_NUMBER, doc.get("company")
+			)
+		)
+	owned = [
+		row
+		for row in doc.get("taxes") or []
+		if row.get("account_head") == account and row.get("add_deduct_tax") == "Deduct"
+	]
+	if owned:
+		row = owned[0]
+		row.rate = rate
+		row.row_id = str(target.idx)
+		row.description = f"{IVA_DEDUCTION_DESCRIPTION} {concepto}"
+	else:
+		doc.append(
+			"taxes",
+			{
+				"charge_type": "On Previous Row Amount",
+				"add_deduct_tax": "Deduct",
+				"category": "Total",
+				"rate": rate,
+				"row_id": str(target.idx),
+				"account_head": account,
+				"description": f"{IVA_DEDUCTION_DESCRIPTION} {concepto}",
+			},
+		)
+	refresh = getattr(doc, "calculate_taxes_and_totals", None)
+	if callable(refresh):
+		refresh()

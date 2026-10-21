@@ -40,6 +40,9 @@ doc_events = {
 	"Sales Invoice": {
 		"before_save": "l10n_ec.ecuador_localization.invoice_hooks.validate_sri_invoice",
 	},
+	"Purchase Invoice": {
+		"validate": "l10n_ec.ecuador_localization.validation.enforce_iva_deduction_row",
+	},
 	"Company": {
 		"after_insert": "l10n_ec.ecuador_localization.chart_setup.setup_company_chart",
 	},

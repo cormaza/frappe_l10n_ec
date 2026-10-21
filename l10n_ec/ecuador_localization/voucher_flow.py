@@ -788,9 +788,16 @@ def _invoice_dict(
 			raise SriVoucherError(
 				_("Withholding vouchers need explicit withholding_codes {category: (impuesto, codigo)}.")
 			)
+		# Single source by default: the PI field drives GL + voucher alike;
+		# an explicit per-call concepto still wins when given.
 		base.update(
 			_withholding_subject_and_docs(
-				doc, ref, withholding_codes, sustento_code, payment_method, iva_concepto
+				doc,
+				ref,
+				withholding_codes,
+				sustento_code,
+				payment_method,
+				iva_concepto or ref.get("sri_iva_concepto") or None,
 			)
 		)
 	return base

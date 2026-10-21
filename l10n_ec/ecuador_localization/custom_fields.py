@@ -1,4 +1,4 @@
-"""Programmatic custom fields for Company, Customer, and Supplier (roadmap Phase 3)."""
+"""Programmatic custom fields for Company, Customer, Supplier, Mode of Payment, and Purchase Invoice."""
 
 try:
 	import frappe
@@ -71,6 +71,16 @@ CUSTOM_FIELDS = {
 			"fieldtype": "Check",
 			"insert_after": "sri_identification_type",
 			"label": "Related Party",
+		},
+	],
+	"Purchase Invoice": [
+		{
+			"fieldname": "sri_iva_concepto",
+			"fieldtype": "Select",
+			"insert_after": "taxes_and_charges",
+			"label": "SRI IVA Concepto",
+			"options": "1\n2\n3\n7\n8\n9\n10\n11",
+			"description": "SRI Tabla 23 IVA withholding concepto driving the automatic deduction row and the voucher (1 bienes 30%, 2 servicios 70%, 3 honorarios 100%); leave empty when no IVA withholding applies.",
 		},
 	],
 	"Mode of Payment": [

@@ -26,6 +26,10 @@ CUSTOM_FIELD_STRINGS = [
 	_("SRI Identification Type"),
 	_("Related Party"),
 	_("SRI Payment Code"),
+	_("SRI IVA Concepto"),
+	_(
+		"SRI Tabla 23 IVA withholding concepto driving the automatic deduction row and the voucher (1 bienes 30%, 2 servicios 70%, 3 honorarios 100%); leave empty when no IVA withholding applies."
+	),
 ]
 
 PAYMENT_METHOD_STRINGS = [
