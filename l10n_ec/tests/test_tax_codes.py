@@ -30,3 +30,15 @@ class TestTaxCodes(UnitTestCase):
 
 	def test_company_suffix_is_stripped(self) -> None:
 		self.assertEqual(tax_codes_for_template("Ecuador VAT 15% - Sales - DE"), ("2", "4"))
+
+	def test_explicit_map_covers_non_vat_taxes(self) -> None:
+		# Illustrative codes only: real ICE/IRBPNR rate codes come from the
+		# SRI tariff tables per product (out of scope for 9.0). The mechanism
+		# passes explicit codes through without inferring them from rates.
+		extra = {
+			"Ecuador ICE Example - Sales": ("3", "XXXX"),
+			"Ecuador IRBPNR Example - Sales": ("5", "YYYY"),
+		}
+		self.assertEqual(tax_codes_for_template("Ecuador ICE Example - Sales", extra), ("3", "XXXX"))
+		self.assertEqual(tax_codes_for_template("Ecuador IRBPNR Example - Sales - DE", extra), ("5", "YYYY"))
+		self.assertEqual(tax_codes_for_template("Ecuador VAT 15% - Sales", extra), ("2", "4"))

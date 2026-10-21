@@ -21,17 +21,22 @@ TEMPLATE_TAX_CODES = {
 }
 
 
-def tax_codes_for_template(title: str) -> tuple[str, str]:
+def tax_codes_for_template(title: str, extra: dict | None = None) -> tuple[str, str]:
 	"""Return `(codigo, codigoPorcentaje)` for a template title.
 
 	ERPNext template names append `" - {company abbr}"`; one suffix strip
-	is retried before giving up.
+	is retried before giving up. `extra` carries explicit per-template
+	codes for non-VAT taxes (ICE codigo `3`, IRBPNR codigo `5`), whose
+	tariffs are product-specific and never inferred from rates.
 	"""
-	if title in TEMPLATE_TAX_CODES:
-		return TEMPLATE_TAX_CODES[title]
+	registries = (extra or {}, TEMPLATE_TAX_CODES)
+	for registry in registries:
+		if title in registry:
+			return registry[title]
 	base = (title or "").rsplit(" - ", 1)[0]
-	if base in TEMPLATE_TAX_CODES:
-		return TEMPLATE_TAX_CODES[base]
+	for registry in registries:
+		if base in registry:
+			return registry[base]
 	raise ValueError(
 		f"Tax template '{title}' has no automatic SRI code mapping (ICE/IRBPNR need manual codes)."
 	)

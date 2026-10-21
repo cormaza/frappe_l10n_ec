@@ -36,6 +36,7 @@ from l10n_ec.sri.soap_client import (
 )
 from l10n_ec.sri.tax_codes import tax_codes_for_template
 from l10n_ec.sri.voucher_states import SriVoucherError, next_state
+from l10n_ec.sri.withholding_concepts import validate_concepto_map
 
 BUILDERS = {
 	"01": "build_factura_xml",
@@ -552,8 +553,10 @@ def sustento_entries(native_rows: list, purchase: dict, code_map: dict) -> list:
 
 	`native_rows` carry `category`, `rate`, `taxable`, `amount` (mirroring
 	Tax Withholding Entry fields); `code_map` resolves category names to
-	`(impuesto, codigoRetencion)` with no guessing inside.
+	`(impuesto, codigoRetencion)` with no guessing inside. Unknown or
+	pending concepto codes fail loud via `validate_concepto_map`.
 	"""
+	validate_concepto_map(code_map)
 	adapted = []
 	for row in native_rows:
 		if row["category"] not in code_map:
