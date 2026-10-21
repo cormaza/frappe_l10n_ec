@@ -187,6 +187,29 @@ def sync_tax_row_descriptions(doc, method=None) -> None:
 			rate_val = float(rate) if rate not in (None, "") else 0.0
 		except (TypeError, ValueError):
 			rate_val = 0.0
+		if not rate_val and label in ("IVA Cobrado", "IVA Pagado", "ICE", "IRBPNR"):
+			# Item Tax Templates leave rate=0 in the taxes table (amount comes
+			# from item-wise details). Infer for display from the first item
+			# template so the Rate column isn't blank.
+			try:
+				import frappe as _frappe2
+			except ImportError:
+				_frappe2 = None  # type: ignore[assignment]
+			if _frappe2 is not None:
+				for item in doc.get("items") or []:
+					tmpl = item.get("item_tax_template")
+					if not tmpl:
+						continue
+					try:
+						tdoc = _frappe2.get_doc("Item Tax Template", tmpl)
+						if tdoc.taxes:
+							inferred = float(tdoc.taxes[0].tax_rate)
+							if inferred:
+								rate_val = inferred
+								row.rate = rate_val
+								break
+					except Exception:
+						continue
 		if rate_val:
 			row.description = f"{label} {rate_val:g}%"
 		else:
