@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecuador Localization VERSION\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-21 13:31-0641\n"
-"PO-Revision-Date: 2026-10-21 13:31-0641\n"
+"POT-Creation-Date: 2026-10-21 14:23-0641\n"
+"PO-Revision-Date: 2026-10-21 14:23-0641\n"
 "Last-Translator: developers@example.com\n"
 "Language-Team: developers@example.com\n"
 "MIME-Version: 1.0\n"
@@ -118,6 +118,7 @@ msgid "Accounting Required"
 msgstr ""
 
 #. Name of a role
+#: l10n_ec/ecuador_localization/doctype/sri_additional_information/sri_additional_information.json
 #: l10n_ec/ecuador_localization/doctype/sri_document_type/sri_document_type.json
 #: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 #: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
@@ -257,21 +258,23 @@ msgstr ""
 msgid "Comisiones sociedades"
 msgstr ""
 
+#. Label of the company (Link) field in DocType 'SRI Additional Information'
 #. Label of the company (Link) field in DocType 'SRI Electronic Voucher'
 #. Label of the company (Link) field in DocType 'SRI Emission Point'
 #. Label of the company (Link) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_additional_information/sri_additional_information.json
 #: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 #: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "Company"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:550
+#: l10n_ec/ecuador_localization/voucher_flow.py:551
 msgid "Company '{}' has no SRI Signature configured."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:456
-#: l10n_ec/ecuador_localization/voucher_flow.py:656
+#: l10n_ec/ecuador_localization/voucher_flow.py:457
+#: l10n_ec/ecuador_localization/voucher_flow.py:657
 msgid "Company '{}' needs a tax_id (RUC) to emit vouchers."
 msgstr ""
 
@@ -325,7 +328,7 @@ msgstr ""
 msgid "Days for Notification"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:799
+#: l10n_ec/ecuador_localization/voucher_flow.py:802
 msgid "Debit notes need explicit reasons [{reason, value}]."
 msgstr ""
 
@@ -335,15 +338,15 @@ msgstr ""
 msgid "Delivery Note"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:927
+#: l10n_ec/ecuador_localization/voucher_flow.py:988
 msgid "Delivery Note '{}' needs a shipping address for the guia recipient."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:921
+#: l10n_ec/ecuador_localization/voucher_flow.py:982
 msgid "Delivery notes need exactly one sustento doc in guia_data['docs']."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:750
+#: l10n_ec/ecuador_localization/voucher_flow.py:751
 msgid "Delivery notes need explicit guia_data {carrier, transport, docs}."
 msgstr ""
 
@@ -438,8 +441,13 @@ msgstr ""
 msgid "Emission Point Code"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:535
+#: l10n_ec/ecuador_localization/voucher_flow.py:536
 msgid "Emission point '{}' has no sequence for '{}'."
+msgstr ""
+
+#. Label of the enabled (Check) field in DocType 'SRI Additional Information'
+#: l10n_ec/ecuador_localization/doctype/sri_additional_information/sri_additional_information.json
+msgid "Enabled"
 msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:69
@@ -452,6 +460,11 @@ msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:24
 msgid "Entrepreneur"
+msgstr ""
+
+#. Label of the entries (Table) field in DocType 'SRI Additional Information'
+#: l10n_ec/ecuador_localization/doctype/sri_additional_information/sri_additional_information.json
+msgid "Entries"
 msgstr ""
 
 #: l10n_ec/sri/signer.py:68
@@ -488,40 +501,40 @@ msgstr ""
 msgid "Fiscal Period:"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:400 l10n_ec/sri/form103.py:95
+#: l10n_ec/locale/i18n_markers.py:400 l10n_ec/sri/form103.py:93
 msgid "Form 103 collection month '{}' is out of range."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:399 l10n_ec/sri/form103.py:93
+#: l10n_ec/locale/i18n_markers.py:399 l10n_ec/sri/form103.py:91
 msgid "Form 103 collection year '{}' is out of range."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:417 l10n_ec/sri/form104.py:410
+#: l10n_ec/locale/i18n_markers.py:417 l10n_ec/sri/form104.py:420
 msgid "Form 104 IVA deduction rate '{}' has no retention box."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:415 l10n_ec/sri/form104.py:288
-#: l10n_ec/sri/form104.py:303
+#: l10n_ec/locale/i18n_markers.py:415 l10n_ec/sri/form104.py:298
+#: l10n_ec/sri/form104.py:313
 msgid "Form 104 VAT rate code '{}' is not a SRI rate."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:413 l10n_ec/sri/form104.py:256
+#: l10n_ec/locale/i18n_markers.py:413 l10n_ec/sri/form104.py:266
 msgid "Form 104 collection month '{}' is out of range."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:412 l10n_ec/sri/form104.py:254
+#: l10n_ec/locale/i18n_markers.py:412 l10n_ec/sri/form104.py:264
 msgid "Form 104 collection year '{}' is out of range."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:418 l10n_ec/sri/form104.py:422
+#: l10n_ec/locale/i18n_markers.py:418 l10n_ec/sri/form104.py:432
 msgid "Form 104 received reference needs a document number."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:416 l10n_ec/sri/form104.py:394
+#: l10n_ec/locale/i18n_markers.py:416 l10n_ec/sri/form104.py:404
 msgid "Form 104 settlement account '{}' is not a received-withholding asset."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:414 l10n_ec/sri/form104.py:268
+#: l10n_ec/locale/i18n_markers.py:414 l10n_ec/sri/form104.py:278
 msgid "Form 104 tax code '{}' is not a SRI impuesto."
 msgstr ""
 
@@ -534,7 +547,7 @@ msgstr ""
 msgid "Generated"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:238
+#: l10n_ec/ecuador_localization/voucher_flow.py:239
 msgid "Generated XML is malformed: {}. Head: {!r}"
 msgstr ""
 
@@ -559,7 +572,7 @@ msgid "IVA withholding categories cannot be assigned to suppliers: ERPNext canno
 msgstr ""
 
 #: l10n_ec/ecuador_localization/validation.py:138
-#: l10n_ec/ecuador_localization/voucher_flow.py:834
+#: l10n_ec/ecuador_localization/voucher_flow.py:837
 msgid "IVA withholding needs an IVA concepto, got '{}'."
 msgstr ""
 
@@ -692,12 +705,22 @@ msgstr ""
 msgid "Missing TDS credit accounts for company '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/tax_templates.py:58 l10n_ec/tax_templates.py:58
+#: l10n_ec/ecuador_localization/tax_templates.py:60 l10n_ec/tax_templates.py:58
 msgid "Missing account {} for tax template '{}'."
 msgstr ""
 
 #: l10n_ec/ecuador_localization/withholding_setup.py:48
 msgid "Missing account {} for withholding setup."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:901
+msgid "Multiple enabled SRI Additional Information records for company '{}'."
+msgstr ""
+
+#. Label of the nombre (Data) field in DocType 'SRI Additional Information
+#. Entry'
+#: l10n_ec/ecuador_localization/doctype/sri_additional_information_entry/sri_additional_information_entry.json
+msgid "Name"
 msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:339
@@ -708,7 +731,7 @@ msgstr ""
 msgid "No PKCS#12 signature content attached to SRI Signature document."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:528
+#: l10n_ec/ecuador_localization/voucher_flow.py:529
 msgid "No SRI Emission Point for company '{}' and document '{}'."
 msgstr ""
 
@@ -720,7 +743,7 @@ msgstr ""
 msgid "No sujeto"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:1013
+#: l10n_ec/ecuador_localization/voucher_flow.py:1074
 msgid "No voucher found for modified document '{}'."
 msgstr ""
 
@@ -1099,7 +1122,7 @@ msgstr ""
 msgid "Purchase Invoice"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:500
+#: l10n_ec/ecuador_localization/voucher_flow.py:501
 msgid "Purchase Invoice '{}' is a supplier-issued document: only liquidations (SRI Liquidacion) emit vouchers."
 msgstr ""
 
@@ -1246,6 +1269,16 @@ msgstr ""
 msgid "Régimen Microempresarial"
 msgstr ""
 
+#. Name of a DocType
+#: l10n_ec/ecuador_localization/doctype/sri_additional_information/sri_additional_information.json
+msgid "SRI Additional Information"
+msgstr ""
+
+#. Name of a DocType
+#: l10n_ec/ecuador_localization/doctype/sri_additional_information_entry/sri_additional_information_entry.json
+msgid "SRI Additional Information Entry"
+msgstr ""
+
 #: l10n_ec/locale/i18n_markers.py:335
 msgid "SRI Authorization:"
 msgstr ""
@@ -1343,7 +1376,7 @@ msgstr ""
 msgid "SRI Signature"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:555
+#: l10n_ec/ecuador_localization/voucher_flow.py:556
 msgid "SRI Signature '{}' is not usable."
 msgstr ""
 
@@ -1384,7 +1417,7 @@ msgstr ""
 msgid "SRI sequence {} must be between 0 and {}."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:402 l10n_ec/sri/form103.py:105
+#: l10n_ec/locale/i18n_markers.py:402 l10n_ec/sri/form103.py:103
 msgid "SRI voucher '{}' carries no usable authorization date or fiscal period."
 msgstr ""
 
@@ -1396,7 +1429,7 @@ msgstr ""
 msgid "SRI withholding concepto '{}' carries rate '{}' but the official rate is '{}'."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:406 l10n_ec/sri/form103.py:160
+#: l10n_ec/locale/i18n_markers.py:406 l10n_ec/sri/form103.py:158
 msgid "SRI withholding concepto '{}' has no Form 103 casilleros; cannot collect."
 msgstr ""
 
@@ -1412,7 +1445,7 @@ msgstr ""
 msgid "SRI withholding concepto '{}' is ATS scope and has no XML retention row."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:403 l10n_ec/sri/form103.py:151
+#: l10n_ec/locale/i18n_markers.py:403 l10n_ec/sri/form103.py:149
 msgid "SRI withholding concepto '{}' is exterior scope and stays out of Form 103 residentes; the exterior section is recorded empty."
 msgstr ""
 
@@ -1494,7 +1527,7 @@ msgstr ""
 msgid "Subject:"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:771
+#: l10n_ec/ecuador_localization/voucher_flow.py:772
 msgid "Supplier '{}' needs an identification type and tax ID to emit vouchers."
 msgstr ""
 
@@ -1507,6 +1540,8 @@ msgid "Sustento:"
 msgstr ""
 
 #. Name of a role
+#: l10n_ec/ecuador_localization/doctype/sri_additional_information/sri_additional_information.json
+#: l10n_ec/ecuador_localization/doctype/sri_additional_information_entry/sri_additional_information_entry.json
 #: l10n_ec/ecuador_localization/doctype/sri_document_type/sri_document_type.json
 #: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 #: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
@@ -1558,10 +1593,12 @@ msgstr ""
 msgid "This supplier document is a Nota de Debito (ATS classification only; their emission, no voucher from us)."
 msgstr ""
 
+#. Label of the title (Data) field in DocType 'SRI Additional Information'
 #. Label of the title (Data) field in DocType 'SRI Document Type'
 #. Label of the title (Data) field in DocType 'SRI Identification Type'
 #. Label of the title (Data) field in DocType 'SRI Payment Method'
 #. Label of the title (Data) field in DocType 'SRI Tax Support'
+#: l10n_ec/ecuador_localization/doctype/sri_additional_information/sri_additional_information.json
 #: l10n_ec/ecuador_localization/doctype/sri_document_type/sri_document_type.json
 #: l10n_ec/ecuador_localization/doctype/sri_identification_type/sri_identification_type.json
 #: l10n_ec/ecuador_localization/doctype/sri_payment_method/sri_payment_method.json
@@ -1619,7 +1656,7 @@ msgstr ""
 msgid "Unsigned XML"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:213
+#: l10n_ec/ecuador_localization/voucher_flow.py:214
 msgid "Unsupported SRI document code '{}'."
 msgstr ""
 
@@ -1627,6 +1664,9 @@ msgstr ""
 msgid "Valores entregados por las cooperativas de transporte a sus socios"
 msgstr ""
 
+#. Label of the valor (Small Text) field in DocType 'SRI Additional Information
+#. Entry'
+#: l10n_ec/ecuador_localization/doctype/sri_additional_information_entry/sri_additional_information_entry.json
 #: l10n_ec/locale/i18n_markers.py:358
 msgid "Value"
 msgstr ""
@@ -1651,7 +1691,7 @@ msgstr ""
 msgid "Withholding categories cannot be assigned to customers: received withholdings settle via the payment-time entry (invoice stays gross, native rows inflate it and mis-side the liability). Leave the category empty and record the customer conceptos on the invoice."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:586
+#: l10n_ec/ecuador_localization/voucher_flow.py:587
 #: l10n_ec/sri/withholding_concepts.py:1248
 msgid "Withholding category '{}' has no SRI code mapping."
 msgstr ""
@@ -1660,11 +1700,11 @@ msgstr ""
 msgid "Withholding category '{}' maps impuesto '{}' but concepto '{}' is impuesto '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:804
+#: l10n_ec/ecuador_localization/voucher_flow.py:807
 msgid "Withholding vouchers need explicit withholding_codes {category: (impuesto, codigo)}."
 msgstr ""
 
-#: l10n_ec/sri/xml_builder.py:314
+#: l10n_ec/sri/xml_builder.py:315
 msgid "XML does not validate against {}: {}"
 msgstr ""
 
@@ -1677,8 +1717,12 @@ msgstr ""
 msgid "expired"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:918
+#: l10n_ec/ecuador_localization/voucher_flow.py:979
 msgid "guia_data is missing keys: {}."
+msgstr ""
+
+#: l10n_ec/sri/xml_builder.py:329
+msgid "infoAdicional supports at most 15 rows, got {}."
 msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:337

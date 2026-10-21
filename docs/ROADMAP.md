@@ -150,9 +150,9 @@ Therefore, `l10n_ec` for Frappe v16 combines **both** the base accounting/catalo
 
 ## E-Invoicing Hardening Roadmap (see `docs/KNOWN_ISSUES_EINVOICING.md`)
 
-- **H1 (correctness)**: anulacion lifecycle + ATS coverage; `agenteRetencion`/`contribuyenteRimpe`/`rise` tags from Company master; `infoAdicional` passthrough.
-- **H2 (robustness)**: contingency emission (`tipoEmision` 2 + keys + regularization); `compensaciones` on debit notes; RIDE annexes on demand.
-- **H3 (deferred)**: factura comercial negociable; schema version watch (migrate only on mandate or refusal).
+- **H1 (correctness)**: anulacion lifecycle + ATS coverage; `agenteRetencion`/`contribuyenteRimpe`/`rise` tags from Company master; `infoAdicional` DONE (central entity + Quote/SO/SI chain + factura emission).
+- **H2 (robustness, under review)**: `compensaciones` on debit notes; RIDE annexes on demand (contingency dropped as unused).
+- **H3 (dropped)**: factura comercial negociable; contingency emission.
 
 ---
 

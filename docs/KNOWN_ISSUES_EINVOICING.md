@@ -33,26 +33,25 @@ evidence and severity.
    `contribuyenteRimpe`, or `rise`, so RIMPE/agent taxpayers emit
    incomplete tributaria blocks. Needed: source flags from Company
    master + conditional tags.
-3. **infoAdicional**: never emitted. Widely used for emails/descriptions
-   and surfaced in RIDE/print contexts. Needed: optional passthrough
-   (explicit map, never scraped).
+3. **infoAdicional**: DONE — central `SRI Additional Information` entity
+   (company-scoped) + transactional `sri_info_adicional` tables on
+   Quotation/Sales Order/Sales Invoice + lazy resolution (SI, order,
+   quote, central; nearest wins; 15-row cap) + factura emission with
+   live proof.
 
-## H2 — Robustness gaps (medium)
+## H2 — Robustness gaps (medium, under review before implementing)
 
-4. **Contingency emission** (`tipoEmision` hardcoded `1`): SRI contingency
-   flow (type 2 + contingency access keys) for outages is unimplemented.
-   Needed: contingency keygen + emission path + resend regularization.
-5. **Compensaciones on debit notes**: XSD `compensaciones` block not
+4. **Compensaciones on debit notes**: XSD `compensaciones` block not
    emitted (Res. NAC-DGERCGC16-00000285 context: credit notes with
    compensations). Needed: optional block when data present.
-6. **RIDE annexes**: standard RIDE only; subsidy RIDE (Anexo 7) and
+5. **RIDE annexes**: standard RIDE only; subsidy RIDE (Anexo 7) and
    third-party-items formats (Anexo 8) uncovered. Needed on demand.
 
-## H3 — Deferred / out of scope
+## H3 — Dropped (not to be done)
 
-7. **Factura comercial negociable** (Anexo 11): separate document type
-   with its own lifecycle; not requested.
-8. **Schema version watch**: re-verify against each new ficha tecnica;
+Contingency emission (unused in practice) and factura comercial
+negociable (Anexo 11, separate lifecycle, not requested) are dropped.
+Schema version watch continues as monitoring only.: re-verify against each new ficha tecnica;
    migrate only on SRI mandate or reception refusal (never speculative).
 
 ## Execution

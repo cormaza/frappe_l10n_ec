@@ -66,6 +66,7 @@ def build_factura_xml(ctx: dict, data: dict) -> str:
 		f"<pagos>{payments}</pagos>"
 		"</infoFactura>"
 		f"<detalles>{lines}</detalles>"
+		f"{_info_adicional(data)}"
 		"</factura>"
 	)
 
@@ -313,6 +314,35 @@ def validate_against_xsd(xml_string: str | bytes, schema_name: str) -> bool:
 		details = "; ".join(str(error) for error in schema.error_log)
 		raise SriXmlError(_("XML does not validate against {}: {}").format(filename, details))
 	return True
+
+
+def merge_info_adicional(levels: list) -> list:
+	"""Merge infoAdicional levels, nearest wins per nombre (max 15 rows)."""
+	merged: dict = {}
+	for level in levels or []:
+		for row in level or []:
+			name = (row.get("nombre") or "").strip()
+			value = row.get("valor") or ""
+			if name and name not in merged:
+				merged[name] = value
+	if len(merged) > 15:
+		raise SriXmlError(_("infoAdicional supports at most 15 rows, got {}.").format(len(merged)))
+	return [{"nombre": name, "valor": merged[name]} for name in merged]
+
+
+def _info_adicional(data: dict) -> str:
+	"""Build the optional trailing `infoAdicional` block (max 15 rows)."""
+	rows = data.get("info_adicional") or []
+	if not rows:
+		return ""
+	return (
+		"<infoAdicional>"
+		+ "".join(
+			f'<campoAdicional nombre="{escape_xml(row["nombre"])}">{escape_xml(row["valor"])}</campoAdicional>'
+			for row in rows
+		)
+		+ "</infoAdicional>"
+	)
 
 
 def escape_xml(text: str) -> str:

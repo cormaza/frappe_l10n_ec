@@ -75,6 +75,14 @@ CUSTOM_FIELDS = {
 	],
 	"Sales Invoice": [
 		{
+			"fieldname": "sri_info_adicional",
+			"fieldtype": "Table",
+			"insert_after": "taxes_and_charges",
+			"label": "SRI Additional Information",
+			"options": "SRI Additional Information Entry",
+			"description": "Per-document infoAdicional rows for the voucher (transactional rows win over central ones).",
+		},
+		{
 			"fieldname": "sri_ir_concepto",
 			"fieldtype": "Data",
 			"insert_after": "taxes_and_charges",
@@ -117,6 +125,26 @@ CUSTOM_FIELDS = {
 			"insert_after": "sri_received_retencion_date",
 			"label": "Received Retencion Access Key",
 			"description": "49-digit access key of the customer-issued withholding voucher.",
+		},
+	],
+	"Quotation": [
+		{
+			"fieldname": "sri_info_adicional",
+			"fieldtype": "Table",
+			"insert_after": "taxes_and_charges",
+			"label": "SRI Additional Information",
+			"options": "SRI Additional Information Entry",
+			"description": "Per-document infoAdicional rows; flow into order and invoice, then the voucher (transactional rows win over central ones).",
+		},
+	],
+	"Sales Order": [
+		{
+			"fieldname": "sri_info_adicional",
+			"fieldtype": "Table",
+			"insert_after": "taxes_and_charges",
+			"label": "SRI Additional Information",
+			"options": "SRI Additional Information Entry",
+			"description": "Per-document infoAdicional rows; flow into the invoice, then the voucher (transactional rows win over central ones).",
 		},
 	],
 	"Purchase Invoice": [

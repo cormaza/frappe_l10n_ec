@@ -533,3 +533,60 @@ class TestDeriveCodDoc(UnitTestCase):
 		from l10n_ec.ecuador_localization.voucher_flow import _derive_cod_doc
 
 		self.assertEqual(_derive_cod_doc("Delivery Note", "DN-1"), "06")
+
+
+class FakeInfoDoc(dict):
+	@property
+	def items(self):
+		return self["items"]
+
+
+class TestResolveInfoAdicional(UnitTestCase):
+	def test_si_rows_win_without_chain(self) -> None:
+		from l10n_ec.ecuador_localization.voucher_flow import resolve_info_adicional
+
+		doc = FakeInfoDoc(
+			{
+				"company": "Demo No Central Co",
+				"sri_info_adicional": [{"nombre": "Email", "valor": "si@example.com"}],
+				"items": [],
+			}
+		)
+		rows = resolve_info_adicional(doc)
+		self.assertEqual(rows, [{"nombre": "Email", "valor": "si@example.com"}])
+
+	def test_chain_merges_quote_order_invoice_central(self) -> None:
+		from unittest.mock import patch
+
+		from l10n_ec.ecuador_localization import voucher_flow
+
+		quote = FakeInfoDoc(
+			{
+				"sri_info_adicional": [
+					{"nombre": "Email", "valor": "quote@example.com"},
+					{"nombre": "Web", "valor": "x.ec"},
+				],
+				"items": [],
+			}
+		)
+		order = FakeInfoDoc(
+			{
+				"sri_info_adicional": [{"nombre": "Email", "valor": "order@example.com"}],
+				"items": [{"prevdoc_doctype": "Quotation", "prevdoc_docname": "Q-1", "sales_order": ""}],
+			}
+		)
+		si = FakeInfoDoc(
+			{
+				"company": "Demo Ecuador",
+				"sri_info_adicional": [],
+				"items": [{"prevdoc_doctype": "", "prevdoc_docname": "", "sales_order": "SO-1"}],
+			}
+		)
+		fake_frappe = SimpleNamespace(
+			get_doc=lambda doctype, name: {"SO-1": order, "Q-1": quote}[name],
+			get_all=lambda *args, **kwargs: [],
+		)
+		with patch.object(voucher_flow, "frappe", fake_frappe):
+			rows = voucher_flow.resolve_info_adicional(si)
+		by_name = {row["nombre"]: row["valor"] for row in rows}
+		self.assertEqual(by_name, {"Email": "order@example.com", "Web": "x.ec"})

@@ -134,6 +134,7 @@ def build_voucher_payload(invoice: dict, emitter: dict, sequence: dict) -> dict:
 				"buyer_name": invoice["buyer_name"],
 				"buyer_id": invoice["buyer_id"],
 				"buyer_address": invoice.get("buyer_address", ""),
+				"info_adicional": invoice.get("info_adicional", []),
 				"discount": invoice.get("discount", 0.0),
 				"tax_totals": totals,
 				"tip": invoice.get("tip", 0.0),
@@ -781,6 +782,8 @@ def _invoice_dict(
 			}
 		)
 	base["tax_totals"] = aggregate_raw_totals(base["lines"])
+	if doc.sri_doc_code == "01":
+		base["info_adicional"] = resolve_info_adicional(ref)
 	if doc.sri_doc_code in ("04", "05"):
 		original = _original_voucher(ref)
 		base.update(
@@ -841,6 +844,64 @@ def synthesize_iva_row(mapped_lines: list, iva_concepto: str) -> dict | None:
 		"taxable": base,
 		"amount": round(base * rate / 100, 2),
 	}
+
+
+def resolve_info_adicional(ref) -> list:
+	"""Resolve infoAdicional rows for an invoice: SI, order, quote, central.
+
+	Nearest level wins per nombre; enabled central records fill the gaps.
+	Multiple enabled central records fail loud (ambiguous configuration).
+	"""
+	from l10n_ec.sri.xml_builder import merge_info_adicional
+
+	levels = [_info_rows(ref)]
+	order_name = _prevdoc_name(ref, ("Sales Order",))
+	order = frappe.get_doc("Sales Order", order_name) if order_name and frappe else None
+	if order is not None:
+		levels.append(_info_rows(order))
+	quote_name = _prevdoc_name(order, ("Quotation",)) or _prevdoc_name(ref, ("Quotation",))
+	quote = frappe.get_doc("Quotation", quote_name) if quote_name and frappe else None
+	if quote is not None:
+		levels.append(_info_rows(quote))
+	levels.append(_central_info_rows(ref.get("company")))
+	return merge_info_adicional(levels)
+
+
+def _info_rows(doc) -> list:
+	"""infoAdicional rows carried by one document, if any."""
+	return [
+		{"nombre": row.get("nombre"), "valor": row.get("valor")}
+		for row in doc.get("sri_info_adicional") or []
+	]
+
+
+def _prevdoc_name(doc, doctypes: tuple) -> str | None:
+	"""First previous-document name of the given types across items."""
+	if doc is None:
+		return None
+	for row in doc.get("items") or []:
+		if row.get("prevdoc_doctype") in doctypes and row.get("prevdoc_docname"):
+			return row.get("prevdoc_docname")
+		if row.get("sales_order") and "Sales Order" in doctypes:
+			return row.get("sales_order")
+	return None
+
+
+def _central_info_rows(company: str | None) -> list:
+	"""Enabled central infoAdicional rows for a company, if exactly one record."""
+	if frappe is None or not company:
+		return []
+	names = frappe.get_all(
+		"SRI Additional Information", filters={"company": company, "enabled": 1}, pluck="name"
+	)
+	if not names:
+		return []
+	if len(names) > 1:
+		raise SriVoucherError(
+			_("Multiple enabled SRI Additional Information records for company '{}'.").format(company)
+		)
+	central = frappe.get_doc("SRI Additional Information", names[0])
+	return [{"nombre": row.get("nombre"), "valor": row.get("valor")} for row in central.get("entries") or []]
 
 
 def _withholding_subject_and_docs(

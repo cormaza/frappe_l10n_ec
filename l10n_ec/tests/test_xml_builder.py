@@ -139,3 +139,51 @@ class TestSriXmlBuilder(UnitTestCase):
 	def test_invalid_xml_raises_sri_xml_error(self) -> None:
 		with self.assertRaises(SriXmlError):
 			validate_against_xsd("<factura/>", "factura")
+
+
+class TestInfoAdicional(unittest.TestCase):
+	def test_merge_prefers_nearest_per_nombre(self) -> None:
+		from l10n_ec.sri.xml_builder import merge_info_adicional
+
+		merged = merge_info_adicional(
+			[
+				[{"nombre": "Email", "valor": "si@example.com"}],
+				[{"nombre": "Email", "valor": "quote@example.com"}, {"nombre": "Web", "valor": "x.ec"}],
+				[],
+			]
+		)
+		self.assertEqual(
+			merged,
+			[{"nombre": "Email", "valor": "si@example.com"}, {"nombre": "Web", "valor": "x.ec"}],
+		)
+
+	def test_merge_caps_at_fifteen_rows(self) -> None:
+		from l10n_ec.sri.xml_builder import SriXmlError, merge_info_adicional
+
+		levels = [[{"nombre": f"K{i:02d}", "valor": "v"} for i in range(16)]]
+		with self.assertRaises(SriXmlError):
+			merge_info_adicional(levels)
+
+	def test_factura_renders_info_adicional_block(self) -> None:
+		from l10n_ec.sri.xml_builder import build_factura_xml, validate_against_xsd
+
+		xml = build_factura_xml(
+			_context("01"),
+			{
+				"issue_date": "20/10/2026",
+				"buyer_id_type": "07",
+				"buyer_name": "CONSUMIDOR FINAL",
+				"buyer_id": "9999999999999",
+				"buyer_address": "",
+				"subtotal": 100.00,
+				"discount": 0.0,
+				"tax_totals": [TAX_TOTAL],
+				"tip": 0.0,
+				"total": 115.00,
+				"payments": [{"method": "01", "amount": 115.00}],
+				"lines": [LINE],
+				"info_adicional": [{"nombre": "Email", "valor": "buyer@example.com"}],
+			},
+		)
+		self.assertIn('<campoAdicional nombre="Email">buyer@example.com</campoAdicional>', xml)
+		self.assertTrue(validate_against_xsd(xml, "factura"))
