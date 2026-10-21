@@ -16,6 +16,7 @@ except ImportError:  # pragma: no cover
 TAX_TEMPLATES = [
 	{"title": "Ecuador VAT 15% - Sales", "account_number": "2010707", "rate": 15.0},
 	{"title": "Ecuador VAT 5% - Sales", "account_number": "2010707", "rate": 5.0},
+	{"title": "Ecuador VAT 8% - Sales", "account_number": "2010707", "rate": 8.0},
 	{"title": "Ecuador VAT 0% - Sales", "account_number": "2010707", "rate": 0.0},
 	{"title": "Ecuador VAT Exempt - Sales", "account_number": "2010707", "rate": 0.0},
 	{"title": "Ecuador No VAT Object - Sales", "account_number": "2010707", "rate": 0.0},
@@ -23,6 +24,7 @@ TAX_TEMPLATES = [
 	{"title": "Ecuador IRBPNR - Sales", "account_number": "2010711", "rate": 0.0},
 	{"title": "Ecuador VAT 15% - Purchases", "account_number": "1010504", "rate": 15.0},
 	{"title": "Ecuador VAT 5% - Purchases", "account_number": "1010504", "rate": 5.0},
+	{"title": "Ecuador VAT 8% - Purchases", "account_number": "1010504", "rate": 8.0},
 	{"title": "Ecuador VAT 0% - Purchases", "account_number": "1010504", "rate": 0.0},
 	{"title": "Ecuador VAT Exempt - Purchases", "account_number": "1010504", "rate": 0.0},
 	{"title": "Ecuador No VAT Object - Purchases", "account_number": "1010504", "rate": 0.0},

@@ -14,13 +14,15 @@ class TestTaxCodes(UnitTestCase):
 	def test_vat_family_resolves(self) -> None:
 		self.assertEqual(tax_codes_for_template("Ecuador VAT 15% - Sales"), ("2", "4"))
 		self.assertEqual(tax_codes_for_template("Ecuador VAT 5% - Sales"), ("2", "8"))
+		self.assertEqual(tax_codes_for_template("Ecuador VAT 8% - Sales"), ("2", "8"))
+		self.assertEqual(tax_codes_for_template("Ecuador VAT 8% - Purchases - DE"), ("2", "8"))
 		self.assertEqual(tax_codes_for_template("Ecuador VAT 0% - Sales"), ("2", "0"))
 		self.assertEqual(tax_codes_for_template("Ecuador VAT Exempt - Sales"), ("2", "7"))
 		self.assertEqual(tax_codes_for_template("Ecuador No VAT Object - Sales"), ("2", "6"))
 		self.assertEqual(tax_codes_for_template("Ecuador VAT 15% - Purchases"), ("2", "4"))
 
 	def test_catalog_covers_all_vat_templates(self) -> None:
-		self.assertEqual(len(TEMPLATE_TAX_CODES), 10)
+		self.assertEqual(len(TEMPLATE_TAX_CODES), 12)
 
 	def test_unmapped_template_raises_helpful_error(self) -> None:
 		with self.assertRaisesRegex(ValueError, "no automatic SRI code mapping"):

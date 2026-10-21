@@ -32,7 +32,7 @@ class TestEcuadorTaxTemplates(UnitTestCase):
 	def test_vat_rates_cover_sales_and_purchases(self) -> None:
 		by_title = {spec["title"]: spec["rate"] for spec in TAX_TEMPLATES}
 		for side in ("Sales", "Purchases"):
-			for rate in (15.0, 5.0, 0.0):
+			for rate in (15.0, 8.0, 5.0, 0.0):
 				self.assertIn(f"Ecuador VAT {rate:g}% - {side}", by_title)
 
 	def test_template_title_expects_erpnext_suffix(self) -> None:
