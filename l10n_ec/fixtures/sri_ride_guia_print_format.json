@@ -1,0 +1,16 @@
+[
+ {
+  "custom_format": 1,
+  "disabled": 0,
+  "doctype": "Print Format",
+  "doc_type": "Delivery Note",
+  "font_size": 14,
+  "html": "<div class=\"sri-ride\">\n<h2>RIDE — Delivery Note</h2>\n{% set emisor = sri_emisor(doc.company) %}\n<p><strong>Issuer:</strong> {{ emisor.legal_name if emisor else doc.company }} (RUC {{ emisor.ruc if emisor else \"\" }})</p>\n{% set voucher = sri_voucher_data(\"Delivery Note\", doc.name) %}\n{% if voucher and voucher.body %}\n{% set body = voucher.body %}\n<p><strong>Access Key:</strong> {{ voucher.access_key }}</p>\n<p><img src=\"{{ sri_barcode(voucher.access_key) }}\" alt=\"Access key\" /></p>\n{% if voucher.voucher_state == \"Authorized\" %}\n<p><strong>SRI Authorization:</strong> {{ voucher.authorization_number }} ({{ voucher.authorization_date }})</p>\n{% else %}\n<p><strong>DOCUMENT IN PROCESS</strong> — pending SRI authorization.</p>\n{% endif %}\n<p><strong>Origin Address:</strong> {{ body.origin_address }}</p>\n<p><strong>Carrier:</strong> {{ body.carrier_name }} ({{ body.carrier_id_type }} {{ body.carrier_id }})</p>\n<p><strong>Transport Dates:</strong> {{ body.transport_start }} — {{ body.transport_end }}</p>\n<p><strong>Plate:</strong> {{ body.plate }}</p>\n{% for recipient in body.recipients %}\n<h3>Recipient</h3>\n<p><strong>Name:</strong> {{ recipient.recipient_name }} ({{ recipient.recipient_id }})</p>\n<p><strong>Address:</strong> {{ recipient.recipient_address }}</p>\n<p><strong>Transfer Reason:</strong> {{ recipient.transfer_reason }}{% if recipient.route %} ({{ recipient.route }}){% endif %}</p>\n<p><strong>Support Document:</strong> {{ recipient.doc_code }} {{ recipient.doc_number }} ({{ recipient.doc_issue_date }})</p>\n<table class=\"table table-bordered\">\n<thead><tr><th>Code</th><th>Description</th><th>Quantity</th></tr></thead>\n<tbody>\n{% for row in recipient.lines %}\n<tr><td>{{ row.code }}</td><td>{{ row.description }}</td><td>{{ row.qty }}</td></tr>\n{% endfor %}\n</tbody>\n</table>\n{% endfor %}\n{% else %}\n<p><strong>DOCUMENT IN PROCESS</strong> — pending SRI authorization.</p>\n{% endif %}\n</div>",
+  "module": "Ecuador Localization",
+  "name": "SRI RIDE Delivery Note",
+  "print_format_builder": 0,
+  "print_format_type": "Jinja",
+  "pdf_generator": "WeasyPrint",
+  "standard": "No"
+ }
+]

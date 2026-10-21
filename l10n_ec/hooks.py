@@ -11,7 +11,10 @@ fixtures = [
 	"SRI Document Type",
 	"SRI Payment Method",
 	"SRI Tax Support",
-	{"dt": "Print Format", "filters": [["name", "in", ["SRI RIDE"]]]},
+	{
+		"dt": "Print Format",
+		"filters": [["name", "in", ["SRI RIDE", "SRI RIDE Delivery Note", "SRI RIDE Withholding"]]],
+	},
 ]
 
 after_install = "l10n_ec.ecuador_localization.setup.after_install"
@@ -22,6 +25,7 @@ jinja = {
 	"methods": [
 		"l10n_ec.ecuador_localization.jinja.sri_barcode",
 		"l10n_ec.ecuador_localization.jinja.sri_authorized_voucher",
+		"l10n_ec.ecuador_localization.jinja.sri_voucher_data",
 		"l10n_ec.ecuador_localization.jinja.sri_emisor",
 	],
 }

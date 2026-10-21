@@ -1,0 +1,16 @@
+[
+ {
+  "custom_format": 1,
+  "disabled": 0,
+  "doctype": "Print Format",
+  "doc_type": "Purchase Invoice",
+  "font_size": 14,
+  "html": "<div class=\"sri-ride\">\n<h2>RIDE — Withholding</h2>\n{% set emisor = sri_emisor(doc.company) %}\n<p><strong>Issuer:</strong> {{ emisor.legal_name if emisor else doc.company }} (RUC {{ emisor.ruc if emisor else \"\" }})</p>\n{% set voucher = sri_voucher_data(\"Purchase Invoice\", doc.name) %}\n{% if voucher and voucher.body %}\n{% set body = voucher.body %}\n<p><strong>Access Key:</strong> {{ voucher.access_key }}</p>\n<p><img src=\"{{ sri_barcode(voucher.access_key) }}\" alt=\"Access key\" /></p>\n{% if voucher.voucher_state == \"Authorized\" %}\n<p><strong>SRI Authorization:</strong> {{ voucher.authorization_number }} ({{ voucher.authorization_date }})</p>\n{% else %}\n<p><strong>DOCUMENT IN PROCESS</strong> — pending SRI authorization.</p>\n{% endif %}\n<p><strong>Subject:</strong> {{ body.subject_name }} ({{ body.subject_id_type }} {{ body.subject_id }})</p>\n<p><strong>Fiscal Period:</strong> {{ body.fiscal_period }}</p>\n{% for sustento in body.docs %}\n<h3>Support Document {{ sustento.doc_number }}</h3>\n<p><strong>Sustento:</strong> {{ sustento.sustento_code }} / {{ sustento.doc_code }} ({{ sustento.doc_issue_date }})</p>\n<p><strong>Totals:</strong> {{ sustento.subtotal }} + taxes = {{ sustento.total }}</p>\n<table class=\"table table-bordered\">\n<thead><tr><th>Tax</th><th>Withholding Code</th><th>Base</th><th>Rate %</th><th>Value</th></tr></thead>\n<tbody>\n{% for row in sustento.withholdings %}\n<tr><td>{{ row.tax_code }}</td><td>{{ row.withholding_code }}</td><td>{{ row.base }}</td><td>{{ row.rate }}</td><td>{{ row.value }}</td></tr>\n{% endfor %}\n</tbody>\n</table>\n<p><strong>Total Withheld:</strong> {{ sustento.withholdings | sum(attribute=\"value\") }}</p>\n{% endfor %}\n{% else %}\n<p><strong>DOCUMENT IN PROCESS</strong> — pending SRI authorization.</p>\n{% endif %}\n</div>",
+  "module": "Ecuador Localization",
+  "name": "SRI RIDE Withholding",
+  "print_format_builder": 0,
+  "print_format_type": "Jinja",
+  "pdf_generator": "WeasyPrint",
+  "standard": "No"
+ }
+]

@@ -31,6 +31,39 @@ def sri_authorized_voucher(reference_doctype: str, reference_name: str) -> dict 
 	return rows[0] if rows else None
 
 
+def sri_voucher_data(reference_doctype: str, reference_name: str) -> dict | None:
+	"""Latest voucher with its emitted-XML body parsed, or None when absent."""
+	if frappe is None:
+		return None
+	from l10n_ec.sri.voucher_data import parse_emitted_xml
+
+	rows = frappe.get_all(
+		"SRI Electronic Voucher",
+		filters={
+			"reference_doctype": reference_doctype,
+			"reference_name": reference_name,
+		},
+		fields=[
+			"access_key",
+			"authorization_number",
+			"authorization_date",
+			"voucher_state",
+			"unsigned_xml",
+		],
+		order_by="modified desc",
+		limit=1,
+	)
+	if not rows:
+		return None
+	voucher = rows[0]
+	body = None
+	if voucher.get("unsigned_xml"):
+		file_name = frappe.db.get_value("File", {"file_url": voucher["unsigned_xml"]}, "name")
+		if file_name:
+			body = parse_emitted_xml(frappe.get_doc("File", file_name).get_content())
+	return {**voucher, "body": body}
+
+
 def sri_emisor(company_name: str) -> dict | None:
 	"""Emisor identity for print formats, or None when unavailable."""
 	if frappe is None:
