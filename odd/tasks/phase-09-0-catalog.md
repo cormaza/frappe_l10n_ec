@@ -12,6 +12,7 @@
 - T3 (S2): ICE/IRBPNR mapping mechanism (explicit per-template `extra` map in `tax_codes_for_template`; real tariff rate codes stay per-product user configuration) + tests. Route: parent-inline. Commit: ae52b57
 - T4 (S3): Tabla 20 + Mode of Payment bridge + tests. Route: worker. Commit: ee3ed26
 - T5 (S4): Verify, commit and push to `version-16`. Route: parent. Commit: ee3ed26
+- T6 (S1): Extend concepto table from OCA guide extraction (full residentes set + casilleros; rates only where sourced, else None). Route: worker. Commit: -
 
 ## Log
 - L1: "adelanta vamos con la 9.0"
