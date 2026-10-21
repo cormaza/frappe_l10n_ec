@@ -182,7 +182,7 @@ class TestForm103ReportRing1(UnitTestCase):
 
 	def test_execute_without_frappe_returns_empty(self) -> None:
 		try:
-			import frappe  # noqa: F401
+			import frappe
 		except ImportError:
 			frappe = None  # type: ignore[assignment]
 		if frappe is not None:

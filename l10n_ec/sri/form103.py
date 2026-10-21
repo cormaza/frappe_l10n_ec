@@ -72,9 +72,7 @@ def collect_103(vouchers: list, year: int, month: int) -> dict:
 		xml = voucher.get("unsigned_xml") or ""
 		if not xml:
 			raise SriVoucherError(
-				_("SRI voucher '{}' has no withholding XML to collect.").format(
-					voucher.get("sri_number", "")
-				)
+				_("SRI voucher '{}' has no withholding XML to collect.").format(voucher.get("sri_number", ""))
 			)
 		body = parse_emitted_xml(xml)
 		if body.get("kind") != "retencion":

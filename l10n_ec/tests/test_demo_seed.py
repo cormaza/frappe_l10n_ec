@@ -6,6 +6,11 @@ from l10n_ec.ecuador_localization.demo_seed import (
 	DEMO_ADDRESS_TEMPLATE,
 	DEMO_COMPANY,
 	DEMO_COMPANY_ADDRESS,
+	DEMO_COMPANY_CO,
+	DEMO_EXTRA_DN,
+	DEMO_EXTRA_ITEMS,
+	DEMO_EXTRA_PURCHASES,
+	DEMO_EXTRA_SALES,
 	DEMO_GROUPS,
 	DEMO_ITEM,
 	DEMO_LOGO_FILENAME,
@@ -14,11 +19,14 @@ from l10n_ec.ecuador_localization.demo_seed import (
 	DEMO_PARTIES,
 	DEMO_PAYMENTS,
 	DEMO_PURCHASE,
+	DEMO_RUSTIC_SUPPLIER,
 	DEMO_SALES,
+	DEMO_SUPPLIER_AUTH,
 	DEMO_TIMEZONE,
 	DEMO_TODAY,
 	NEGATIVE_PARTY,
 	PARTY_TYPES,
+	WAREHOUSE_TYPES,
 	fiscal_year_data,
 	group_key,
 	master_key,
@@ -156,3 +164,45 @@ class TestDemoSeed(UnitTestCase):
 				parent = by_key.get(group.get(parent_field))
 				self.assertIsNotNone(parent, f"Missing parent for {group_key(group)}")
 				self.assertTrue(parent.get("is_group"))
+
+
+class TestDemoSeedExtension(UnitTestCase):
+	"""Pins for the extended demo catalog (multi-tax, multi-flow coverage)."""
+
+	def test_extra_items_cover_zero_five_and_ice(self) -> None:
+		codes = [item["item_code"] for item in DEMO_EXTRA_ITEMS]
+		self.assertEqual(codes, ["DEMO-WIDGET-ZERO", "DEMO-CEMENT", "DEMO-ICE-BEER"])
+		for item in DEMO_EXTRA_ITEMS:
+			self.assertEqual(item["item_group"], "Demo Goods")
+			self.assertEqual(item["stock_uom"], "Nos")
+
+	def test_foreign_company_and_rustic_supplier(self) -> None:
+		self.assertEqual(DEMO_COMPANY_CO["country"], "Colombia")
+		self.assertEqual(DEMO_RUSTIC_SUPPLIER["supplier_type"], "Individual")
+		self.assertNotIn("tax_id", DEMO_RUSTIC_SUPPLIER)
+
+	def test_extra_purchases_cover_all_flows(self) -> None:
+		bills = [spec.get("bill_no") for spec in DEMO_EXTRA_PURCHASES]
+		self.assertIn("001-001-000000011", bills)
+		self.assertIn("001-001-000000016", bills)
+		self.assertIn(None, bills)
+		by_bill = {spec.get("bill_no"): spec for spec in DEMO_EXTRA_PURCHASES}
+		self.assertEqual(by_bill["001-001-000000012"]["sri_iva_concepto"], "1")
+		self.assertEqual(by_bill["001-001-000000016"]["return_against_bill"], "001-001-000000011")
+		liquidations = [spec for spec in DEMO_EXTRA_PURCHASES if spec.get("sri_is_liquidacion")]
+		self.assertEqual(len(liquidations), 1)
+		self.assertEqual(DEMO_SUPPLIER_AUTH, "1234567890")
+
+	def test_extra_sales_cover_received_cycle(self) -> None:
+		conceptos = [(spec.get("sri_ir_concepto"), spec.get("sri_iva_concepto")) for spec in DEMO_EXTRA_SALES]
+		self.assertIn(("303", "3"), conceptos)
+		self.assertEqual(DEMO_EXTRA_SALES[0]["payment"], 900.0)
+		self.assertEqual(DEMO_EXTRA_SALES[0]["sri_received_retencion_number"], "001-001-000000101")
+
+	def test_delivery_note_covers_guia_path(self) -> None:
+		self.assertEqual(DEMO_EXTRA_DN["customer"], "Demo Customer RUC")
+		self.assertEqual(DEMO_EXTRA_DN["items"][0]["qty"], 2)
+
+	def test_wizard_fixtures_cover_company_creation(self) -> None:
+		names = [entry["name"] for entry in WAREHOUSE_TYPES]
+		self.assertIn("Transit", names)

@@ -14,8 +14,16 @@ Ledger interface (plain data, documented here as the contract)::
         "purchase_taxes": [{"code": "2", "rate_code": "4", "base": 2000.0, "value": 300.0}, ...],
         "iva_deduction_rows": [{"rate": 30.0, "amount": 90.0}, ...],
         "settlements": [{"account_number": "1010501", "debit": 45.0}, ...],
-        "received_refs": [{"number": "001-002-000000009", "authorization": "0987654321",
-                           "date": "28/03/2026", "iva_value": 45.0, "renta_value": 20.0}, ...],
+        "received_refs": [
+            {
+                "number": "001-002-000000009",
+                "authorization": "0987654321",
+                "date": "28/03/2026",
+                "iva_value": 45.0,
+                "renta_value": 20.0,
+            },
+            ...,
+        ],
     }
 
 Missing section keys behave as empty lists. The bench report owns the posted
@@ -243,9 +251,11 @@ def collect_104(ledger: dict, year: int, month: int) -> dict:
 	computed.update(sales)
 	computed.update(purchases)
 	computed.update(_settle(sales, purchases, ledger))
-	return {**{box: round(float(computed.get(box, 0.0)), 2) for box in _BOX_ORDER},
+	return {
+		**{box: round(float(computed.get(box, 0.0)), 2) for box in _BOX_ORDER},
 		"received_refs": _normalize_refs(ledger.get("received_refs") or []),
-		"received_ir_credit": round(float(computed.get("received_ir_credit", 0.0)), 2)}
+		"received_ir_credit": round(float(computed.get("received_ir_credit", 0.0)), 2),
+	}
 
 
 def _validate_period(year: int, month: int) -> None:
@@ -306,11 +316,14 @@ def _purchase_boxes(rate_code: str) -> tuple:
 def _settle(sales: dict, purchases: dict, ledger: dict) -> dict:
 	"""Compute totals, liquidation, perception, and retention boxes."""
 	boxes: dict = {}
-	boxes["409"] = sum(sales.get(box, 0.0) for box in ("401", "402", "403", "404", "405", "406", "407", "408", "410", "425"))
-	boxes["419"] = sum(sales.get(box, 0.0) for box in ("411", "412", "413", "414", "415", "416", "417", "418", "420", "435"))
-	boxes["429"] = (
-		sum(sales.get(box, 0.0) for box in ("421", "422", "423", "430", "445"))
-		- sales.get("424", 0.0)
+	boxes["409"] = sum(
+		sales.get(box, 0.0) for box in ("401", "402", "403", "404", "405", "406", "407", "408", "410", "425")
+	)
+	boxes["419"] = sum(
+		sales.get(box, 0.0) for box in ("411", "412", "413", "414", "415", "416", "417", "418", "420", "435")
+	)
+	boxes["429"] = sum(sales.get(box, 0.0) for box in ("421", "422", "423", "430", "445")) - sales.get(
+		"424", 0.0
 	)
 	boxes["509"] = sum(
 		purchases.get(box, 0.0)
@@ -320,10 +333,9 @@ def _settle(sales: dict, purchases: dict, ledger: dict) -> dict:
 		purchases.get(box, 0.0)
 		for box in ("510", "511", "512", "513", "514", "515", "516", "517", "518", "533", "550")
 	)
-	boxes["529"] = (
-		sum(purchases.get(box, 0.0) for box in ("520", "521", "522", "523", "524", "525", "526", "534", "560"))
-		- purchases.get("527", 0.0)
-	)
+	boxes["529"] = sum(
+		purchases.get(box, 0.0) for box in ("520", "521", "522", "523", "524", "525", "526", "534", "560")
+	) - purchases.get("527", 0.0)
 	nonzero_base = sum(sales.get(box, 0.0) for box in ("401", "402", "410", "425"))
 	nonzero_tax = sum(sales.get(box, 0.0) for box in ("421", "422", "430", "445"))
 	boxes["480"] = nonzero_base
@@ -336,15 +348,13 @@ def _settle(sales: dict, purchases: dict, ledger: dict) -> dict:
 	total_net = boxes["419"]
 	if total_net:
 		boxes["563"] = (
-			sum(sales.get(box, 0.0) for box in ("411", "412", "420", "415", "416", "417", "418"))
-			/ total_net
+			sum(sales.get(box, 0.0) for box in ("411", "412", "420", "415", "416", "417", "418")) / total_net
 		)
 	else:
 		boxes["563"] = 1.0
-	credit_base = (
-		sum(purchases.get(box, 0.0) for box in ("520", "521", "534", "560", "523", "524", "525", "526"))
-		- purchases.get("527", 0.0)
-	)
+	credit_base = sum(
+		purchases.get(box, 0.0) for box in ("520", "521", "534", "560", "523", "524", "525", "526")
+	) - purchases.get("527", 0.0)
 	boxes["564"] = credit_base * boxes["563"]
 	boxes["565"] = credit_base - boxes["564"]
 	difference = boxes["499"] - boxes["564"]

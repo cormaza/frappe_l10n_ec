@@ -190,6 +190,59 @@ DEMO_ITEM = {
 	"warehouse": "Demo Stores - DE",
 }
 
+DEMO_EXTRA_ITEMS = [
+	{
+		"doctype": "Item",
+		"expense_account_number": "520128",
+		"income_account_number": "4101",
+		"is_stock_item": 1,
+		"item_code": "DEMO-WIDGET-ZERO",
+		"item_group": "Demo Goods",
+		"item_name": "Demo Widget Zero",
+		"description": "Demo zero-rated product (IVA 0% bucket coverage)",
+		"stock_uom": "Nos",
+		"warehouse": "Demo Stores - DE",
+	},
+	{
+		"doctype": "Item",
+		"expense_account_number": "520128",
+		"income_account_number": "4101",
+		"is_stock_item": 1,
+		"item_code": "DEMO-CEMENT",
+		"item_group": "Demo Goods",
+		"item_name": "Demo Cement",
+		"description": "Demo construction material (IVA 5% bucket coverage)",
+		"stock_uom": "Nos",
+		"warehouse": "Demo Stores - DE",
+	},
+	{
+		"doctype": "Item",
+		"expense_account_number": "520128",
+		"income_account_number": "4101",
+		"is_stock_item": 1,
+		"item_code": "DEMO-ICE-BEER",
+		"item_group": "Demo Goods",
+		"item_name": "Demo ICE Beer",
+		"description": "Demo ICE product (master coverage only; ICE tariffs stay user-configured, no SRI mapping yet)",
+		"stock_uom": "Nos",
+		"warehouse": "Demo Stores - DE",
+	},
+]
+DEMO_COMPANY_CO = {
+	"abbr": "CO",
+	"company_name": "Demo Colombia",
+	"country": "Colombia",
+	"default_currency": "USD",
+}
+
+DEMO_RUSTIC_SUPPLIER = {
+	"doctype": "Supplier",
+	"supplier_name": "Demo Rustic Seller",
+	"supplier_type": "Individual",
+	"supplier_group": "Demo Suppliers",
+	"country": "Ecuador",
+}
+
 DEMO_PURCHASE = {
 	"bill_date": DEMO_TODAY,
 	"bill_no": "DEMO-BILL-001",
@@ -227,12 +280,179 @@ DEMO_PAYMENTS = [
 	{"amount": 115.0, "against": "purchase", "party": "Demo Supplier RUC", "payment_type": "Pay"},
 ]
 
+# Demo placeholder for supplier-side SRI authorizations (their data, not ours).
+DEMO_SUPPLIER_AUTH = "1234567890"
+
+DEMO_EXTRA_PURCHASES = [
+	{
+		"bill_no": "001-001-000000011",
+		"supplier": "Demo Supplier RUC",
+		"apply_tds": 1,
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET",
+				"qty": 10,
+				"rate": 10.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
+			}
+		],
+		"payment": 113.0,
+	},
+	{
+		"bill_no": "001-001-000000012",
+		"supplier": "Demo Supplier RUC",
+		"apply_tds": 1,
+		"sri_iva_concepto": "1",
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET",
+				"qty": 10,
+				"rate": 10.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
+			}
+		],
+		"payment": 108.50,
+	},
+	{
+		"bill_no": "001-001-000000013",
+		"supplier": "Demo Supplier RUC",
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET-ZERO",
+				"qty": 10,
+				"rate": 5.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 0% - Purchases - DE",
+			}
+		],
+	},
+	{
+		"bill_no": "001-001-000000014",
+		"supplier": "Demo Supplier RUC",
+		"items": [
+			{
+				"item_code": "DEMO-CEMENT",
+				"qty": 10,
+				"rate": 20.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 5% - Purchases - DE",
+			}
+		],
+	},
+	{
+		"bill_no": "001-001-000000015",
+		"supplier": "Demo Supplier RUC",
+		"items": [{"item_code": "DEMO-ICE-BEER", "qty": 10, "rate": 5.0, "warehouse": "Demo Stores - DE"}],
+	},
+	{
+		"bill_no": "001-001-000000016",
+		"supplier": "Demo Supplier RUC",
+		"is_return": 1,
+		"return_against_bill": "001-001-000000011",
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET",
+				"qty": -2,
+				"rate": 10.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
+			}
+		],
+	},
+	{
+		"bill_no": None,
+		"supplier": "Demo Rustic Seller",
+		"sri_is_liquidacion": 1,
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET",
+				"qty": 5,
+				"rate": 10.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 0% - Purchases - DE",
+			}
+		],
+	},
+]
+
+DEMO_EXTRA_SALES = [
+	{
+		"customer": "Demo Customer RUC",
+		"sri_ir_concepto": "303",
+		"sri_iva_concepto": "3",
+		"sri_received_retencion_number": "001-001-000000101",
+		"sri_received_retencion_auth": "2110202607112345678901234567890123456789012",
+		"sri_received_retencion_date": DEMO_TODAY,
+		"sri_received_retencion_key": "2110202607112345678901234567890123456789012",
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET",
+				"qty": 10,
+				"rate": 100.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 15% - Sales - DE",
+			},
+		],
+		"payment": 900.0,
+	},
+	{
+		"customer": "Demo Customer RUC",
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET-ZERO",
+				"qty": 4,
+				"rate": 5.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 0% - Sales - DE",
+			}
+		],
+	},
+	{
+		"customer": "Demo Customer RUC",
+		"items": [
+			{
+				"item_code": "DEMO-CEMENT",
+				"qty": 4,
+				"rate": 20.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 5% - Sales - DE",
+			},
+		],
+	},
+	{
+		"customer": "Demo Customer RUC",
+		"is_return": 1,
+		"return_against_customer": "Demo Customer RUC",
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET",
+				"qty": -1,
+				"rate": 15.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 15% - Sales - DE",
+			},
+		],
+	},
+]
+
+DEMO_EXTRA_DN = {
+	"customer": "Demo Customer RUC",
+	"items": [{"item_code": "DEMO-WIDGET", "qty": 2, "rate": 15.0, "warehouse": "Demo Stores - DE"}],
+}
+
 # Mirrors ERPNext setup-wizard presets: sites that skip the wizard lack these.
 PARTY_TYPES = [
 	{"doctype": "Party Type", "party_type": "Customer", "account_type": "Receivable"},
 	{"doctype": "Party Type", "party_type": "Supplier", "account_type": "Payable"},
 	{"doctype": "Party Type", "party_type": "Employee", "account_type": "Payable"},
 	{"doctype": "Party Type", "party_type": "Shareholder", "account_type": "Payable"},
+]
+
+# Company creation auto-builds a transit warehouse; the wizard owns this type.
+WAREHOUSE_TYPES = [
+	{"doctype": "Warehouse Type", "name": "Transit", "warehouse_type": "Transit"},
 ]
 
 NEGATIVE_PARTY = {
@@ -283,6 +503,10 @@ def seed_demo() -> dict:
 	for party_type in PARTY_TYPES:
 		if not frappe.db.exists("Party Type", party_type["party_type"]):
 			frappe.get_doc(party_type).insert(ignore_permissions=True)
+
+	for warehouse_type in WAREHOUSE_TYPES:
+		if not frappe.db.exists("Warehouse Type", warehouse_type["name"]):
+			frappe.get_doc(warehouse_type).insert(ignore_permissions=True)
 
 	if frappe.db.get_single_value("Global Defaults", "default_currency") != "USD":
 		frappe.db.set_single_value("Global Defaults", "default_currency", "USD")
@@ -359,6 +583,32 @@ def seed_demo() -> dict:
 		]
 		frappe.get_doc(item).insert(ignore_permissions=True)
 
+	for extra in DEMO_EXTRA_ITEMS:
+		if not frappe.db.exists("Item", extra["item_code"]):
+			item = dict(extra)
+			item["item_defaults"] = [
+				{
+					"company": company,
+					"default_warehouse": item.pop("warehouse"),
+					"income_account": account_name(item.pop("income_account_number")),
+					"expense_account": account_name(item.pop("expense_account_number")),
+				}
+			]
+			frappe.get_doc(item).insert(ignore_permissions=True)
+
+	if not frappe.db.exists("Company", DEMO_COMPANY_CO["company_name"]):
+		frappe.get_doc({"doctype": "Company", **DEMO_COMPANY_CO}).insert(ignore_permissions=True)
+
+	if not frappe.db.exists("Supplier", DEMO_RUSTIC_SUPPLIER["supplier_name"]):
+		frappe.get_doc(DEMO_RUSTIC_SUPPLIER).insert(ignore_permissions=True)
+
+	if not frappe.db.get_value("Supplier", "Demo Supplier RUC", "tax_withholding_category"):
+		frappe.db.set_value("Supplier", "Demo Supplier RUC", "tax_withholding_category", "Ecuador IR 2%")
+
+	from l10n_ec.ecuador_localization.withholding_setup import setup_ecuadorian_withholdings
+
+	setup_ecuadorian_withholdings(company)
+
 	purchase_name = frappe.db.exists(
 		"Purchase Invoice",
 		{"supplier": DEMO_PURCHASE["supplier"], "bill_no": DEMO_PURCHASE["bill_no"], "docstatus": 1},
@@ -399,6 +649,110 @@ def seed_demo() -> dict:
 		sales.insert(ignore_permissions=True)
 		sales.submit()
 		sales_name = sales.name
+
+	for spec in DEMO_EXTRA_PURCHASES:
+		filters: dict = {"supplier": spec["supplier"], "docstatus": 1}
+		if spec.get("bill_no"):
+			filters["bill_no"] = spec["bill_no"]
+		else:
+			filters["sri_is_liquidacion"] = 1
+		if frappe.db.exists("Purchase Invoice", filters):
+			continue
+		doc = {
+			"doctype": "Purchase Invoice",
+			"supplier": spec["supplier"],
+			"company": company,
+			"billing_address": company_address,
+			"currency": "USD",
+			"bill_date": DEMO_TODAY,
+			"posting_date": DEMO_TODAY,
+			"update_stock": 1,
+			"items": spec["items"],
+		}
+		for key in ("bill_no", "apply_tds", "sri_iva_concepto", "sri_is_liquidacion"):
+			if spec.get(key) is not None:
+				doc[key] = spec[key]
+		if spec.get("bill_no"):
+			doc["sri_supplier_auth_number"] = DEMO_SUPPLIER_AUTH
+		if spec.get("is_return"):
+			target = frappe.db.get_value(
+				"Purchase Invoice", {"bill_no": spec["return_against_bill"], "docstatus": 1}, "name"
+			)
+			if not target:
+				continue
+			doc["is_return"] = 1
+			doc["return_against"] = target
+		purchase = frappe.get_doc(doc)
+		purchase.insert(ignore_permissions=True)
+		purchase.submit()
+
+	for spec in DEMO_EXTRA_SALES:
+		if spec.get("is_return"):
+			if frappe.db.exists(
+				"Sales Invoice", {"customer": spec["customer"], "is_return": 1, "docstatus": 1}
+			):
+				continue
+			doc = {
+				"doctype": "Sales Invoice",
+				"customer": spec["customer"],
+				"company": company,
+				"company_address": company_address,
+				"currency": "USD",
+				"posting_date": DEMO_TODAY,
+				"update_stock": 1,
+				"is_return": 1,
+				"return_against": sales_name,
+				"items": spec["items"],
+			}
+		else:
+			if frappe.db.exists(
+				"Sales Invoice",
+				{
+					"customer": spec["customer"],
+					"sri_ir_concepto": spec.get("sri_ir_concepto") or "",
+					"docstatus": 1,
+				},
+			):
+				continue
+			doc = {
+				"doctype": "Sales Invoice",
+				"customer": spec["customer"],
+				"company": company,
+				"company_address": company_address,
+				"currency": "USD",
+				"posting_date": DEMO_TODAY,
+				"update_stock": 1,
+				"items": spec["items"],
+			}
+			for key in (
+				"sri_ir_concepto",
+				"sri_iva_concepto",
+				"sri_received_retencion_number",
+				"sri_received_retencion_auth",
+				"sri_received_retencion_date",
+				"sri_received_retencion_key",
+			):
+				if spec.get(key) is not None:
+					doc[key] = spec[key]
+		sale = frappe.get_doc(doc)
+		sale.insert(ignore_permissions=True)
+		sale.submit()
+
+	if not frappe.db.exists("Delivery Note", {"customer": DEMO_EXTRA_DN["customer"], "docstatus": 1}):
+		shipping = get_default_address("Customer", DEMO_EXTRA_DN["customer"])
+		delivery = frappe.get_doc(
+			{
+				"doctype": "Delivery Note",
+				"customer": DEMO_EXTRA_DN["customer"],
+				"company": company,
+				"currency": "USD",
+				"posting_date": DEMO_TODAY,
+				"shipping_address_name": shipping,
+				"items": DEMO_EXTRA_DN["items"],
+			}
+		)
+		delivery.insert(ignore_permissions=True)
+		delivery.submit()
 
 	cash = account_name("1010101")
 	receivable = account_name(RECEIVABLE_ACCOUNT_NUMBER)
@@ -448,6 +802,69 @@ def seed_demo() -> dict:
 		payment.insert(ignore_permissions=True)
 		payment.submit()
 		payment_names.append(payment.name)
+
+	def _pay_invoice(doctype: str, name: str, party_type: str, party: str, amount: float) -> None:
+		outstanding = frappe.db.get_value(doctype, name, "outstanding_amount") or 0.0
+		if outstanding <= 0:
+			return
+		if doctype == "Purchase Invoice":
+			paid_from, paid_to = cash, payable
+			payment_type = "Pay"
+		else:
+			paid_from, paid_to = receivable, cash
+			payment_type = "Receive"
+		payment = frappe.get_doc(
+			{
+				"doctype": "Payment Entry",
+				"naming_series": "ACC-PAY-.YYYY.-",
+				"payment_type": payment_type,
+				"party_type": party_type,
+				"party": party,
+				"company": company,
+				"posting_date": DEMO_TODAY,
+				"paid_amount": amount,
+				"received_amount": amount,
+				"paid_from": paid_from,
+				"paid_to": paid_to,
+				"paid_from_account_currency": "USD",
+				"paid_to_account_currency": "USD",
+				"source_exchange_rate": 1,
+				"target_exchange_rate": 1,
+				"base_paid_amount": amount,
+				"base_received_amount": amount,
+				"references": [
+					{
+						"reference_doctype": doctype,
+						"reference_name": name,
+						"allocated_amount": amount,
+					}
+				],
+			}
+		)
+		payment.insert(ignore_permissions=True)
+		payment.submit()
+		payment_names.append(payment.name)
+
+	for spec in DEMO_EXTRA_PURCHASES:
+		if not spec.get("payment") or not spec.get("bill_no"):
+			continue
+		name = frappe.db.exists("Purchase Invoice", {"bill_no": spec["bill_no"], "docstatus": 1})
+		if name:
+			_pay_invoice("Purchase Invoice", name, "Supplier", spec["supplier"], spec["payment"])
+
+	for spec in DEMO_EXTRA_SALES:
+		if not spec.get("payment"):
+			continue
+		name = frappe.db.exists(
+			"Sales Invoice",
+			{
+				"customer": spec["customer"],
+				"sri_ir_concepto": spec.get("sri_ir_concepto") or "",
+				"docstatus": 1,
+			},
+		)
+		if name:
+			_pay_invoice("Sales Invoice", name, "Customer", spec["customer"], spec["payment"])
 
 	report["purchase_invoice"] = purchase_name
 	report["sales_invoice"] = sales_name

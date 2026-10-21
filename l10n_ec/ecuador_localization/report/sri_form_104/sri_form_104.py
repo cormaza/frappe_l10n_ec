@@ -41,9 +41,7 @@ def execute(filters=None):
 	if not company or not year or not month:
 		return columns, []
 	totals = collect_104(_fetch_month_ledger(company, year, month), year, month)
-	data = [
-		{"casillero": int(box), "amount": value} for box, value in totals.items() if box in FORM104_BOXES
-	]
+	data = [{"casillero": int(box), "amount": value} for box, value in totals.items() if box in FORM104_BOXES]
 	return columns, data
 
 
