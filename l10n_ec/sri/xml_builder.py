@@ -9,6 +9,14 @@ from pathlib import Path
 
 from lxml import etree
 
+try:
+	from frappe import _
+except ImportError:  # pragma: no cover
+
+	def _(message: str) -> str:
+		return message
+
+
 XSD_DIR = Path(__file__).resolve().parent / "xsd"
 
 SCHEMAS = {
@@ -302,7 +310,7 @@ def validate_against_xsd(xml_string: str | bytes, schema_name: str) -> bool:
 	document = etree.fromstring(xml_string.encode("utf-8") if isinstance(xml_string, str) else xml_string)
 	if not schema.validate(document):
 		details = "; ".join(str(error) for error in schema.error_log)
-		raise SriXmlError(f"XML does not validate against {filename}: {details}")
+		raise SriXmlError(_("XML does not validate against {}: {}").format(filename, details))
 	return True
 
 

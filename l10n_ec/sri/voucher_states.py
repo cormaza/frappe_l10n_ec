@@ -6,6 +6,14 @@
 
 STATES = ("Generated", "Signed", "Received", "Authorized", "Returned", "Rejected")
 
+try:
+	from frappe import _
+except ImportError:  # pragma: no cover
+
+	def _(message: str) -> str:
+		return message
+
+
 TERMINAL_STATES = ("Authorized", "Rejected")
 
 TRANSITIONS = {
@@ -27,7 +35,7 @@ def next_state(current: str, event: str) -> str:
 	try:
 		return TRANSITIONS[(current, event)]
 	except KeyError:
-		raise SriVoucherError(f"Cannot apply event '{event}' in state '{current}'.") from None
+		raise SriVoucherError(_("Cannot apply event '{}' in state '{}'.").format(event, current)) from None
 
 
 def is_terminal(state: str) -> bool:

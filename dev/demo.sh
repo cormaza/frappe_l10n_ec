@@ -58,6 +58,7 @@ cmd_reset() {
 	bench --site "$SITE" migrate
 	bench --site "$SITE" set-config allow_tests true
 	bench --site "$SITE" execute "frappe.db.set_single_value('System Settings', 'time_zone', 'America/Guayaquil')"
+	bench --site "$SITE" execute "frappe.db.set_single_value('System Settings', 'language', 'es')"
 	bench --site "$SITE" execute "[frappe.db.set_value('Installed Application', {'app_name': a}, 'is_setup_complete', 1) for a in ('frappe', 'erpnext', 'l10n_ec')]"
 	cmd_seed
 }

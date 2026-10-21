@@ -18,6 +18,14 @@ try:
 except ImportError:  # pragma: no cover
 	frappe = None  # type: ignore[assignment]
 
+try:
+	from frappe import _
+except ImportError:  # pragma: no cover
+
+	def _(message: str) -> str:
+		return message
+
+
 from l10n_ec.sri import xml_builder
 from l10n_ec.sri.access_key import generate_access_key
 from l10n_ec.sri.signer import sign_xml_xades_bes
@@ -200,7 +208,7 @@ def build_voucher_payload(invoice: dict, emitter: dict, sequence: dict) -> dict:
 			}
 		)
 	else:
-		raise SriVoucherError(f"Unsupported SRI document code '{cod_doc}'.")
+		raise SriVoucherError(_("Unsupported SRI document code '{}'.").format(cod_doc))
 	return {"builder": BUILDERS[cod_doc], "schema": DOC_SCHEMAS[cod_doc], "ctx": ctx, "data": data}
 
 
@@ -224,7 +232,9 @@ def generate_voucher_xml_doc(doc, payload: dict) -> dict:
 			doc.unsigned_xml.encode("utf-8") if isinstance(doc.unsigned_xml, str) else doc.unsigned_xml
 		)
 	except Exception as exc:
-		raise xml_builder.SriXmlError(f"Generated XML is malformed: {exc}. Head: {doc.unsigned_xml[:200]!r}")
+		raise xml_builder.SriXmlError(
+			_("Generated XML is malformed: {}. Head: {!r}").format(exc, doc.unsigned_xml[:200])
+		)
 	return {"ok": True, "state": doc.voucher_state}
 
 
@@ -431,7 +441,7 @@ def create_and_process(
 	number15 = f"{emission.establishment_code}{emission.emission_point_code}{sequential}"
 	company_tax_id = frappe.db.get_value("Company", ref.company, "tax_id")
 	if not company_tax_id:
-		raise SriVoucherError(f"Company '{ref.company}' needs a tax_id (RUC) to emit vouchers.")
+		raise SriVoucherError(_("Company '{}' needs a tax_id (RUC) to emit vouchers.").format(ref.company))
 	issue_date = ref.posting_date.date() if hasattr(ref.posting_date, "date") else ref.posting_date
 	access_key = generate_access_key(
 		cod_doc, number15, "1" if env == "test" else "2", issue_date, company_tax_id
@@ -493,13 +503,15 @@ def _resolve_emission_point(company: str, cod_doc: str, emission_point: str | No
 				emission = candidate
 				break
 	if emission is None:
-		raise SriVoucherError(f"No SRI Emission Point for company '{company}' and document '{cod_doc}'.")
+		raise SriVoucherError(
+			_("No SRI Emission Point for company '{}' and document '{}'.").format(company, cod_doc)
+		)
 	for row in emission.sequences:
 		if row.document_type == cod_doc:
 			row.current_sequence = (row.current_sequence or 0) + 1
 			emission.save(ignore_permissions=True)
 			return emission, f"{row.current_sequence:09d}"
-	raise SriVoucherError(f"Emission point '{emission.name}' has no sequence for '{cod_doc}'.")
+	raise SriVoucherError(_("Emission point '{}' has no sequence for '{}'.").format(emission.name, cod_doc))
 
 
 def _format_sri_number(establishment: str, emission_point: str, sequential: str) -> str:
@@ -514,12 +526,12 @@ def _resolve_environment(company: str) -> str:
 def _resolve_key_material(company: str) -> tuple:
 	signature = frappe.db.get_value("Company", company, "sri_signature")
 	if not signature:
-		raise SriVoucherError(f"Company '{company}' has no SRI Signature configured.")
+		raise SriVoucherError(_("Company '{}' has no SRI Signature configured.").format(company))
 	from l10n_ec.ecuador_localization.doctype.sri_signature.sri_signature import SRISignature
 
 	sig_doc = frappe.get_doc("SRI Signature", signature)
 	if not isinstance(sig_doc, SRISignature):  # pragma: no cover
-		raise SriVoucherError(f"SRI Signature '{signature}' is not usable.")
+		raise SriVoucherError(_("SRI Signature '{}' is not usable.").format(signature))
 	return sig_doc._get_p12_bytes(), sig_doc._get_signing_password()
 
 
@@ -545,7 +557,9 @@ def sustento_entries(native_rows: list, purchase: dict, code_map: dict) -> list:
 	adapted = []
 	for row in native_rows:
 		if row["category"] not in code_map:
-			raise SriVoucherError(f"Withholding category '{row['category']}' has no SRI code mapping.")
+			raise SriVoucherError(
+				_("Withholding category '{}' has no SRI code mapping.").format(row["category"])
+			)
 		impuesto, codigo = code_map[row["category"]]
 		adapted.append(
 			{
@@ -607,7 +621,7 @@ def _assemble_payload(
 	"""Build the builder payload from live Company/invoice documents."""
 	company = frappe.get_doc("Company", doc.company)
 	if not getattr(company, "tax_id", None):
-		raise SriVoucherError(f"Company '{doc.company}' needs a tax_id (RUC) to emit vouchers.")
+		raise SriVoucherError(_("Company '{}' needs a tax_id (RUC) to emit vouchers.").format(doc.company))
 	env = _resolve_environment(doc.company)
 	estab, pto, sequential = doc.sri_number.split("-")
 	address = _company_address_line(company)
@@ -690,7 +704,7 @@ def _invoice_dict(
 	}
 	if doc.sri_doc_code == "06":
 		if guia_data is None:
-			raise SriVoucherError("Delivery notes need explicit guia_data {carrier, transport, docs}.")
+			raise SriVoucherError(_("Delivery notes need explicit guia_data {carrier, transport, docs}."))
 		base.update(_guia_recipient_and_carrier(doc, ref, guia_data))
 		return base
 	if doc.sri_doc_code in ("01", "04", "05"):
@@ -733,7 +747,7 @@ def _invoice_dict(
 		)
 	if doc.sri_doc_code == "05":
 		if not reasons:
-			raise SriVoucherError("Debit notes need explicit reasons [{razon, valor}].")
+			raise SriVoucherError(_("Debit notes need explicit reasons [{razon, valor}]."))
 		base.update({"taxes": base.pop("tax_totals"), "total_value": ref.grand_total, "reasons": reasons})
 	if doc.sri_doc_code == "07":
 		if withholding_codes is None:
@@ -804,15 +818,17 @@ def _guia_recipient_and_carrier(doc, ref, guia_data: dict) -> dict:
 	}
 	missing = sorted(required - set(guia_data))
 	if missing:
-		raise SriVoucherError(f"guia_data is missing keys: {', '.join(missing)}.")
+		raise SriVoucherError(_("guia_data is missing keys: {}.").format(", ".join(missing)))
 	docs = guia_data.get("docs", [])
 	if len(docs) != 1:
-		raise SriVoucherError("Delivery notes need exactly one sustento doc in guia_data['docs'].")
+		raise SriVoucherError(_("Delivery notes need exactly one sustento doc in guia_data['docs']."))
 	party = frappe.db.get_value(
 		"Customer", ref.customer, ["sri_identification_type", "tax_id", "customer_name"], as_dict=True
 	)
 	if not ref.shipping_address_name:
-		raise SriVoucherError(f"Delivery Note '{ref.name}' needs a shipping address for the guia recipient.")
+		raise SriVoucherError(
+			_("Delivery Note '{}' needs a shipping address for the guia recipient.").format(ref.name)
+		)
 	address = frappe.get_doc("Address", ref.shipping_address_name)
 	recipient_address = address.address_line1
 	if getattr(address, "city", None):
@@ -897,7 +913,7 @@ def _original_voucher(ref) -> dict:
 		"name",
 	)
 	if not name:
-		raise SriVoucherError(f"No voucher found for modified document '{ref.return_against}'.")
+		raise SriVoucherError(_("No voucher found for modified document '{}'.").format(ref.return_against))
 	voucher = frappe.get_doc("SRI Electronic Voucher", name)
 	original = frappe.get_doc(ref.doctype, ref.return_against)
 	return {

@@ -10,6 +10,14 @@ try:
 except ImportError:  # pragma: no cover
 	frappe = None  # type: ignore[assignment]
 
+try:
+	from frappe import _
+except ImportError:  # pragma: no cover
+
+	def _(message: str) -> str:
+		return message
+
+
 EC_WITHHOLDING_CATEGORIES = [
 	{"name": "Ecuador IR 1%", "tax_type": "IR", "rate": 1.0, "account_number": "2010709"},
 	{"name": "Ecuador IR 1.75%", "tax_type": "IR", "rate": 1.75, "account_number": "2010709"},
@@ -35,7 +43,7 @@ def setup_ecuadorian_withholdings(company: str) -> None:
 			"Account", {"company": company, "account_number": spec["account_number"]}, "name"
 		)
 		if not account:
-			raise ValueError(f"Missing account {spec['account_number']} for withholding setup.")
+			raise ValueError(_("Missing account {} for withholding setup.").format(spec["account_number"]))
 		if not frappe.db.exists("Tax Withholding Category", spec["name"]):
 			frappe.get_doc(
 				{

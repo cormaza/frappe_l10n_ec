@@ -7,14 +7,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecuador Localization VERSION\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-20 11:03-0641\n"
-"PO-Revision-Date: 2026-10-20 11:03-0641\n"
+"POT-Creation-Date: 2026-10-20 19:03-0641\n"
+"PO-Revision-Date: 2026-10-20 19:03-0641\n"
 "Last-Translator: developers@example.com\n"
 "Language-Team: developers@example.com\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
+
+#. Label of the access_key (Data) field in DocType 'SRI Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Access Key"
+msgstr ""
 
 #: l10n_ec/sri/access_key.py:51
 msgid "Access key payload must be exactly 48 numeric digits before check digit."
@@ -26,6 +31,7 @@ msgstr ""
 
 #. Name of a role
 #: l10n_ec/ecuador_localization/doctype/sri_document_type/sri_document_type.json
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 #: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
 #: l10n_ec/ecuador_localization/doctype/sri_identification_type/sri_identification_type.json
 #: l10n_ec/ecuador_localization/doctype/sri_payment_method/sri_payment_method.json
@@ -39,7 +45,32 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/chart_setup.py:77
+#. Label of the authorization_date (Datetime) field in DocType 'SRI Electronic
+#. Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Authorization Date"
+msgstr ""
+
+#. Label of the authorization_number (Data) field in DocType 'SRI Electronic
+#. Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Authorization Number"
+msgstr ""
+
+#. Option for the 'State' (Select) field in DocType 'SRI Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Authorized"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_mail.py:33
+msgid "Authorized electronic voucher {}"
+msgstr ""
+
+#: l10n_ec/sri/voucher_states.py:38
+msgid "Cannot apply event '{}' in state '{}'."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/chart_setup.py:100
 msgid "Cannot reinstall the chart: the company already has ledger entries."
 msgstr ""
 
@@ -70,11 +101,22 @@ msgstr ""
 msgid "Code"
 msgstr ""
 
+#. Label of the company (Link) field in DocType 'SRI Electronic Voucher'
 #. Label of the company (Link) field in DocType 'SRI Emission Point'
 #. Label of the company (Link) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 #: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "Company"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:529
+msgid "Company '{}' has no SRI Signature configured."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:444
+#: l10n_ec/ecuador_localization/voucher_flow.py:624
+msgid "Company '{}' needs a tax_id (RUC) to emit vouchers."
 msgstr ""
 
 #: l10n_ec/sri/access_key.py:98
@@ -95,6 +137,28 @@ msgstr ""
 msgid "Days for Notification"
 msgstr ""
 
+#: l10n_ec/ecuador_localization/voucher_flow.py:750
+msgid "Debit notes need explicit reasons [{razon, valor}]."
+msgstr ""
+
+#. Option for the 'Reference DocType' (Select) field in DocType 'SRI Electronic
+#. Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Delivery Note"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:830
+msgid "Delivery Note '{}' needs a shipping address for the guia recipient."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:824
+msgid "Delivery notes need exactly one sustento doc in guia_data['docs']."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:707
+msgid "Delivery notes need explicit guia_data {carrier, transport, docs}."
+msgstr ""
+
 #: l10n_ec/sri/access_key.py:104
 msgid "Document SRI code must be 2 digits (got '{}')."
 msgstr ""
@@ -108,6 +172,10 @@ msgstr ""
 #. Point'
 #: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
 msgid "Emission Point Code"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:514
+msgid "Emission point '{}' has no sequence for '{}'."
 msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:24
@@ -132,11 +200,20 @@ msgstr ""
 msgid "Expiration Date"
 msgstr ""
 
+#. Option for the 'State' (Select) field in DocType 'SRI Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Generated"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:236
+msgid "Generated XML is malformed: {}. Head: {!r}"
+msgstr ""
+
 #: l10n_ec/sri/access_key.py:32
 msgid "Invalid Ecuadorian document number '{}'. Expected format '001-001-000000001'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/validation.py:41
+#: l10n_ec/ecuador_localization/validation.py:60
 msgid "Invalid tax identification '{}' for type '{}'."
 msgstr ""
 
@@ -145,12 +222,36 @@ msgstr ""
 msgid "Issue Date"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/tax_templates.py:51
+#. Label of the last_message (Small Text) field in DocType 'SRI Electronic
+#. Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Last Message"
+msgstr ""
+
+#. Label of the section_break_messages (Section Break) field in DocType 'SRI
+#. Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Messages"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/tax_templates.py:58 l10n_ec/tax_templates.py:58
 msgid "Missing account {} for tax template '{}'."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/withholding_setup.py:46
+msgid "Missing account {} for withholding setup."
 msgstr ""
 
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.py:83
 msgid "No PKCS#12 signature content attached to SRI Signature document."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:507
+msgid "No SRI Emission Point for company '{}' and document '{}'."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:916
+msgid "No voucher found for modified document '{}'."
 msgstr ""
 
 #: l10n_ec/sri/access_key.py:113
@@ -186,17 +287,60 @@ msgstr ""
 msgid "Production"
 msgstr ""
 
+#. Option for the 'Reference DocType' (Select) field in DocType 'SRI Electronic
+#. Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Purchase Invoice"
+msgstr ""
+
 #: l10n_ec/locale/i18n_markers.py:22
 msgid "RIMPE Regime"
+msgstr ""
+
+#. Option for the 'State' (Select) field in DocType 'SRI Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Received"
+msgstr ""
+
+#. Label of the reference_name (Dynamic Link) field in DocType 'SRI Electronic
+#. Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Reference"
+msgstr ""
+
+#. Label of the reference_doctype (Select) field in DocType 'SRI Electronic
+#. Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Reference DocType"
+msgstr ""
+
+#. Option for the 'State' (Select) field in DocType 'SRI Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Rejected"
 msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:27
 msgid "Related Party"
 msgstr ""
 
+#. Option for the 'State' (Select) field in DocType 'SRI Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Returned"
+msgstr ""
+
+#. Label of the sri_doc_code (Select) field in DocType 'SRI Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "SRI Document Code"
+msgstr ""
+
 #. Name of a DocType
 #: l10n_ec/ecuador_localization/doctype/sri_document_type/sri_document_type.json
 msgid "SRI Document Type"
+msgstr ""
+
+#. Name of a DocType
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "SRI Electronic Voucher"
 msgstr ""
 
 #. Name of a DocType
@@ -219,6 +363,11 @@ msgstr ""
 msgid "SRI Identification Type"
 msgstr ""
 
+#. Label of the sri_number (Data) field in DocType 'SRI Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "SRI Number"
+msgstr ""
+
 #. Name of a DocType
 #: l10n_ec/ecuador_localization/doctype/sri_payment_method/sri_payment_method.json
 msgid "SRI Payment Method"
@@ -230,9 +379,17 @@ msgstr ""
 msgid "SRI Signature"
 msgstr ""
 
+#: l10n_ec/ecuador_localization/voucher_flow.py:534
+msgid "SRI Signature '{}' is not usable."
+msgstr ""
+
 #. Name of a DocType
 #: l10n_ec/ecuador_localization/doctype/sri_tax_support/sri_tax_support.json
 msgid "SRI Tax Support"
+msgstr ""
+
+#: l10n_ec/sri/barcode.py:21
+msgid "SRI access key must be 49 numeric digits (got '{}')."
 msgstr ""
 
 #: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.py:58
@@ -245,6 +402,16 @@ msgstr ""
 
 #: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.py:64
 msgid "SRI sequence {} must be between 0 and {}."
+msgstr ""
+
+#. Option for the 'Reference DocType' (Select) field in DocType 'SRI Electronic
+#. Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Sales Invoice"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/validation.py:82
+msgid "Sales to Consumidor Final above {} are not allowed; register the buyer identification."
 msgstr ""
 
 #. Label of the sequences (Table) field in DocType 'SRI Emission Point'
@@ -262,6 +429,18 @@ msgstr ""
 msgid "Signature Name"
 msgstr ""
 
+#. Option for the 'State' (Select) field in DocType 'SRI Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Signed"
+msgstr ""
+
+#. Label of the section_break_xml (Section Break) field in DocType 'SRI
+#. Electronic Voucher'
+#. Label of the signed_xml (Attach) field in DocType 'SRI Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Signed XML"
+msgstr ""
+
 #. Label of the password (Password) field in DocType 'SRI Signature'
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "Signing Password"
@@ -275,13 +454,17 @@ msgstr ""
 msgid "Special Taxpayer Resolution"
 msgstr ""
 
+#. Label of the voucher_state (Select) field in DocType 'SRI Electronic
+#. Voucher'
 #. Label of the state (Select) field in DocType 'SRI Signature'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "State"
 msgstr ""
 
 #. Name of a role
 #: l10n_ec/ecuador_localization/doctype/sri_document_type/sri_document_type.json
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 #: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
 #: l10n_ec/ecuador_localization/doctype/sri_emission_sequence/sri_emission_sequence.json
 #: l10n_ec/ecuador_localization/doctype/sri_identification_type/sri_identification_type.json
@@ -318,13 +501,38 @@ msgstr ""
 msgid "Unknown SRI service type: {}"
 msgstr ""
 
+#. Label of the unsigned_xml (Attach) field in DocType 'SRI Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Unsigned XML"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:211
+msgid "Unsupported SRI document code '{}'."
+msgstr ""
+
 #: l10n_ec/locale/i18n_markers.py:21
 msgid "Withholding Agent Resolution"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:561
+msgid "Withholding category '{}' has no SRI code mapping."
+msgstr ""
+
+#: l10n_ec/sri/xml_builder.py:313
+msgid "XML does not validate against {}: {}"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_mail.py:74
+msgid "Your electronic voucher was authorized by the SRI."
 msgstr ""
 
 #. Option for the 'State' (Select) field in DocType 'SRI Signature'
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "expired"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:821
+msgid "guia_data is missing keys: {}."
 msgstr ""
 
 #. Option for the 'State' (Select) field in DocType 'SRI Signature'
@@ -335,5 +543,9 @@ msgstr ""
 #. Option for the 'State' (Select) field in DocType 'SRI Signature'
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "valid"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/party_hooks.py:49
+msgid "{} '{}' is already the generic final consumer."
 msgstr ""
 

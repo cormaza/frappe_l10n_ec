@@ -254,7 +254,7 @@
 			<xsd:element name="ptoEmi" type="puntoEmision"/>
 			<xsd:element name="secuencial" type="secuencial"/>
 			<!-- <xsd:element name="docAduaneroUnico" type="numeroRucType" minOccurs="0"/> -->
-			<xsd:element name="dirMatriz" type="dirMatriz"/>			
+			<xsd:element name="dirMatriz" type="dirMatriz"/>
 			<xsd:element name="agenteRetencion" minOccurs="0"	type="agenteRetencion"/>
 			<xsd:element name="contribuyenteRimpe" minOccurs="0"	type="contribuyenteRimpe"/>
 		</xsd:sequence>

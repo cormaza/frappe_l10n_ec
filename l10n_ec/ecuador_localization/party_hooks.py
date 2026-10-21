@@ -5,6 +5,14 @@ try:
 except ImportError:  # pragma: no cover
 	frappe = None  # type: ignore[assignment]
 
+try:
+	from frappe import _
+except ImportError:  # pragma: no cover
+
+	def _(message: str) -> str:
+		return message
+
+
 from l10n_ec.ecuador_localization.validation import (
 	is_generic_final_consumer,
 	validate_contact_tax_id,
@@ -38,7 +46,7 @@ def _reject_duplicate_final_consumer(doc) -> None:
 			doctype, {"name": ("!=", doc.get("name")), "tax_id": (doc.get("tax_id") or "").strip()}
 		)
 		if duplicate:
-			frappe.throw(f"{doctype} '{duplicate}' is already the generic final consumer.")
+			frappe.throw(_("{} '{}' is already the generic final consumer.").format(doctype, duplicate))
 
 
 def validate_sri_identification(doc, method=None) -> None:

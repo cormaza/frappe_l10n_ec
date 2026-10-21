@@ -6,12 +6,19 @@ import io
 from barcode import Code128
 from barcode.writer import ImageWriter
 
+try:
+	from frappe import _
+except ImportError:  # pragma: no cover
+
+	def _(message: str) -> str:
+		return message
+
 
 def access_key_barcode_png(access_key: str) -> bytes:
 	"""Render the 49-digit access key as a Code128 PNG image."""
 	key = (access_key or "").strip()
 	if len(key) != 49 or not key.isdigit():
-		raise ValueError(f"SRI access key must be 49 numeric digits (got '{access_key}').")
+		raise ValueError(_("SRI access key must be 49 numeric digits (got '{}').").format(access_key))
 	buffer = io.BytesIO()
 	Code128(key, writer=ImageWriter()).write(buffer)
 	return buffer.getvalue()
