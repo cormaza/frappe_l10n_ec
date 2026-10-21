@@ -241,6 +241,8 @@ DEMO_RUSTIC_SUPPLIER = {
 	"supplier_type": "Individual",
 	"supplier_group": "Demo Suppliers",
 	"country": "Ecuador",
+	"sri_identification_type": "05",
+	"tax_id": "1710034065",
 }
 
 DEMO_PURCHASE = {
@@ -286,6 +288,7 @@ DEMO_SUPPLIER_AUTH = "1234567890"
 DEMO_EXTRA_PURCHASES = [
 	{
 		"bill_no": "001-001-000000011",
+		"sri_sustento_code": "06",
 		"supplier": "Demo Supplier RUC",
 		"apply_tds": 1,
 		"items": [
@@ -301,6 +304,7 @@ DEMO_EXTRA_PURCHASES = [
 	},
 	{
 		"bill_no": "001-001-000000012",
+		"sri_sustento_code": "06",
 		"supplier": "Demo Supplier RUC",
 		"apply_tds": 1,
 		"sri_iva_concepto": "1",
@@ -317,6 +321,7 @@ DEMO_EXTRA_PURCHASES = [
 	},
 	{
 		"bill_no": "001-001-000000013",
+		"sri_sustento_code": "06",
 		"supplier": "Demo Supplier RUC",
 		"items": [
 			{
@@ -330,6 +335,7 @@ DEMO_EXTRA_PURCHASES = [
 	},
 	{
 		"bill_no": "001-001-000000014",
+		"sri_sustento_code": "02",
 		"supplier": "Demo Supplier RUC",
 		"items": [
 			{
@@ -342,12 +348,36 @@ DEMO_EXTRA_PURCHASES = [
 		],
 	},
 	{
+		"bill_no": "001-001-000000018",
+		"supplier": "Demo Rustic Seller",
+		"sri_sustento_code": "06",
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET",
+				"qty": 4,
+				"rate": 10.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
+			}
+		],
+	},
+	{
 		"bill_no": "001-001-000000015",
+		"sri_sustento_code": "06",
 		"supplier": "Demo Supplier RUC",
-		"items": [{"item_code": "DEMO-ICE-BEER", "qty": 10, "rate": 5.0, "warehouse": "Demo Stores - DE"}],
+		"items": [
+			{
+				"item_code": "DEMO-ICE-BEER",
+				"qty": 10,
+				"rate": 5.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador ICE 5% - Purchases - DE",
+			}
+		],
 	},
 	{
 		"bill_no": "001-001-000000016",
+		"sri_sustento_code": "06",
 		"supplier": "Demo Supplier RUC",
 		"is_return": 1,
 		"return_against_bill": "001-001-000000011",
@@ -355,6 +385,20 @@ DEMO_EXTRA_PURCHASES = [
 			{
 				"item_code": "DEMO-WIDGET",
 				"qty": -2,
+				"rate": 10.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
+			}
+		],
+	},
+	{
+		"bill_no": "001-001-000000017",
+		"supplier": "Demo Supplier RUC",
+		"sri_is_supplier_debit_note": 1,
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET",
+				"qty": 1,
 				"rate": 10.0,
 				"warehouse": "Demo Stores - DE",
 				"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
@@ -669,7 +713,14 @@ def seed_demo() -> dict:
 			"update_stock": 1,
 			"items": spec["items"],
 		}
-		for key in ("bill_no", "apply_tds", "sri_iva_concepto", "sri_is_liquidacion"):
+		for key in (
+			"bill_no",
+			"apply_tds",
+			"sri_iva_concepto",
+			"sri_is_liquidacion",
+			"sri_is_supplier_debit_note",
+			"sri_sustento_code",
+		):
 			if spec.get(key) is not None:
 				doc[key] = spec[key]
 		if spec.get("bill_no"):

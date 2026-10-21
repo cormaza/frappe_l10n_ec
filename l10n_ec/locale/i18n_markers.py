@@ -39,6 +39,10 @@ CUSTOM_FIELD_STRINGS = [
 		"SRI IR withholding concepto withheld by the customer (e.g. 303, 312), validated against the concepto table; feeds the received-withholding settlement entry; leave empty when no IR withholding applies."
 	),
 	_("SRI IVA Concepto"),
+	_("SRI Sustento Code"),
+	_(
+		"SRI Tabla 5 sustento for ATS (01 credit goods, 02 no-credit, 03/04 fixed assets, 06/07 inventory...); drives ATS classification."
+	),
 	_("Received Retencion Number"),
 	_(
 		"Number of the Comprobante de Retencion issued by the customer (e.g. 001-001-000000001); feeds ATS and Form 103 as tax credit."

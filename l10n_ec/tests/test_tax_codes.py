@@ -22,7 +22,7 @@ class TestTaxCodes(UnitTestCase):
 		self.assertEqual(tax_codes_for_template("Ecuador VAT 15% - Purchases"), ("2", "4"))
 
 	def test_catalog_covers_all_vat_templates(self) -> None:
-		self.assertEqual(len(TEMPLATE_TAX_CODES), 12)
+		self.assertEqual(len(TEMPLATE_TAX_CODES), 14)
 
 	def test_unmapped_template_raises_helpful_error(self) -> None:
 		with self.assertRaisesRegex(ValueError, "no automatic SRI code mapping"):
@@ -44,3 +44,9 @@ class TestTaxCodes(UnitTestCase):
 		self.assertEqual(tax_codes_for_template("Ecuador ICE Example - Sales", extra), ("3", "XXXX"))
 		self.assertEqual(tax_codes_for_template("Ecuador IRBPNR Example - Sales - DE", extra), ("5", "YYYY"))
 		self.assertEqual(tax_codes_for_template("Ecuador VAT 15% - Sales", extra), ("2", "4"))
+
+
+class TestIceMapping(UnitTestCase):
+	def test_ice_uses_ficha_ejemplo_codes(self) -> None:
+		self.assertEqual(tax_codes_for_template("Ecuador ICE 5% - Sales"), ("3", "3072"))
+		self.assertEqual(tax_codes_for_template("Ecuador ICE 5% - Purchases - DE"), ("3", "3072"))

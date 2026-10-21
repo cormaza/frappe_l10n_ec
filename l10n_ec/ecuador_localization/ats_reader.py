@@ -59,13 +59,14 @@ def purchase_row(pi: dict, supplier: dict, voucher: dict | None, doc_code: str =
 		"supplier_id_type": supplier.get("sri_identification_type", ""),
 		"supplier_id": supplier.get("tax_id", ""),
 		"supplier_name": supplier.get("supplier_name", ""),
-		"sustento_code": "02",
+		"sustento_code": pi.get("sri_sustento_code", "02"),
 		"doc_code": doc_code,
 		"sri_number": number,
 		"issue_date": pi.get("bill_date", ""),
 		"register_date": pi.get("posting_date", ""),
 		"auth_number": auth,
 		"taxes": pi.get("taxes", []),
+		"ice_amount": round(sum(t.get("value", 0.0) for t in pi.get("taxes", []) if t.get("code") == "3"), 2),
 		"payments": [{"method": "01", "amount": pi.get("grand_total", 0.0)}],
 	}
 	if voucher is not None and voucher.get("voucher_state") == "Authorized" and voucher.get("body"):
@@ -99,6 +100,7 @@ def sale_row(si: dict, customer: dict, voucher: dict | None, settlement: dict | 
 		"issue_date": si.get("posting_date", ""),
 		"auth_number": voucher.get("authorization_number", "") if voucher else "",
 		"taxes": si.get("taxes", []),
+		"ice_amount": round(sum(t.get("value", 0.0) for t in si.get("taxes", []) if t.get("code") == "3"), 2),
 		"payments": [{"method": "01", "amount": si.get("grand_total", 0.0)}],
 	}
 	if settlement is not None:
@@ -240,6 +242,7 @@ def read_month(company: str, year: int, month: int) -> dict:
 					"posting_date": _iso_to_sri(pi.get("posting_date")),
 					"grand_total": pi.get("grand_total"),
 					"sri_supplier_auth_number": pi.get("sri_supplier_auth_number") or "",
+					"sri_sustento_code": pi.get("sri_sustento_code") or "02",
 					"taxes": [
 						{
 							"code": tax["code"],

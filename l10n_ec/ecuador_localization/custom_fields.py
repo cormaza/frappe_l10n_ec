@@ -149,6 +149,15 @@ CUSTOM_FIELDS = {
 	],
 	"Purchase Invoice": [
 		{
+			"fieldname": "sri_sustento_code",
+			"fieldtype": "Select",
+			"insert_after": "bill_no",
+			"label": "SRI Sustento Code",
+			"default": "02",
+			"options": "01\n02\n03\n04\n05\n06\n07\n08\n09\n10\n11\n12\n13\n14\n15",
+			"description": "SRI Tabla 5 sustento for ATS (01 credit goods, 02 no-credit, 03/04 fixed assets, 06/07 inventory...); drives ATS classification.",
+		},
+		{
 			"fieldname": "sri_is_liquidacion",
 			"fieldtype": "Check",
 			"insert_after": "bill_no",

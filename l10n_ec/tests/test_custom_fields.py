@@ -22,6 +22,7 @@ EXPECTED_FIELDS = {
 	"Sales Order": {"sri_info_adicional"},
 	"Purchase Invoice": {
 		"sri_supplier_auth_number",
+		"sri_sustento_code",
 		"sri_is_liquidacion",
 		"sri_is_supplier_debit_note",
 		"sri_iva_concepto",

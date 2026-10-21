@@ -106,9 +106,7 @@ class FakeFrappe:
 		self.vouchers = vouchers
 		self.db = SimpleNamespace(
 			get_value=lambda doctype, name, field=None, **kwargs: (
-				{"tax_id": "1760013210001", "company_name": "Demo Ecuador"}
-				if doctype == "Company"
-				else None
+				{"tax_id": "1760013210001", "company_name": "Demo Ecuador"} if doctype == "Company" else None
 			)
 		)
 
@@ -125,17 +123,19 @@ class FakeFrappe:
 class TestAtsAnnulledSourcing(UnitTestCase):
 	"""`read_month` sources Annulled vouchers into cancelled with SRI numbers."""
 
-	ANNULLED = {
-		"sri_doc_code": "01",
-		"sri_number": "001-001-000000001",
-		"authorization_number": "AUTH001",
-		"voucher_state": "Annulled",
-	}
+	@staticmethod
+	def annulled_voucher() -> dict:
+		return {
+			"sri_doc_code": "01",
+			"sri_number": "001-001-000000001",
+			"authorization_number": "AUTH001",
+			"voucher_state": "Annulled",
+		}
 
 	def test_annulled_row_feeds_cancelled_with_auth(self) -> None:
 		from l10n_ec.ecuador_localization.ats_reader import annulled_row
 
-		row = collect_cancelled(annulled_row(dict(self.ANNULLED)))
+		row = collect_cancelled(annulled_row(self.annulled_voucher()))
 		self.assertEqual(row["tipoComprobante"], "01")
 		self.assertEqual(row["secuencialInicio"], "000000001")
 		self.assertEqual(row["secuencialFin"], "000000001")
@@ -145,7 +145,7 @@ class TestAtsAnnulledSourcing(UnitTestCase):
 		from l10n_ec.ecuador_localization import ats_reader
 
 		vouchers = {
-			"VOID-1": dict(self.ANNULLED),
+			"VOID-1": self.annulled_voucher(),
 			"VOID-2": {
 				"sri_doc_code": "04",
 				"sri_number": "001-001-000000002",

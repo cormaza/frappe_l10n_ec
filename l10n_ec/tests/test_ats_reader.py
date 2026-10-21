@@ -186,3 +186,53 @@ class TestPurchaseDocCode(UnitTestCase):
 		self.assertEqual(row["doc_code"], "03")
 		self.assertEqual(row["sri_number"], "001-001-000000101")
 		self.assertEqual(row["auth_number"], "AUTH101")
+
+
+class TestSustentoCode(unittest.TestCase):
+	def test_explicit_sustento_flows_through(self) -> None:
+		from l10n_ec.ecuador_localization.ats_reader import purchase_row
+
+		row = purchase_row(
+			{
+				"bill_no": "001-001-000000007",
+				"bill_date": "20/10/2026",
+				"posting_date": "21/10/2026",
+				"grand_total": 115.0,
+				"sri_sustento_code": "06",
+				"taxes": [],
+			},
+			{},
+			None,
+		)
+		self.assertEqual(row["sustento_code"], "06")
+
+	def test_missing_sustento_defaults_02(self) -> None:
+		from l10n_ec.ecuador_localization.ats_reader import purchase_row
+
+		row = purchase_row({"bill_no": "001-001-000000007", "taxes": []}, {}, None)
+		self.assertEqual(row["sustento_code"], "02")
+
+
+class TestIceAmount(unittest.TestCase):
+	def test_ice_values_sum_into_monto(self) -> None:
+		from l10n_ec.ecuador_localization.ats_reader import purchase_row, sale_row
+
+		pi = {
+			"bill_no": "001-001-000000015",
+			"bill_date": "20/10/2026",
+			"posting_date": "21/10/2026",
+			"grand_total": 52.50,
+			"taxes": [{"code": "3", "rate_code": "3072", "base": 50.0, "value": 2.50}],
+		}
+		self.assertEqual(purchase_row(pi, {}, None)["ice_amount"], 2.50)
+		si = {"posting_date": "21/10/2026", "grand_total": 52.50, "taxes": pi["taxes"]}
+		self.assertEqual(sale_row(si, {}, None, None)["ice_amount"], 2.50)
+
+	def test_no_ice_taxes_yield_zero(self) -> None:
+		from l10n_ec.ecuador_localization.ats_reader import purchase_row
+
+		pi = {
+			"bill_no": "001-001-000000011",
+			"taxes": [{"code": "2", "rate_code": "4", "base": 100.0, "value": 15.0}],
+		}
+		self.assertEqual(purchase_row(pi, {}, None)["ice_amount"], 0.0)

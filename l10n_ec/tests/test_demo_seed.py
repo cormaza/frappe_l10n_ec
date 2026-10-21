@@ -179,7 +179,8 @@ class TestDemoSeedExtension(UnitTestCase):
 	def test_foreign_company_and_rustic_supplier(self) -> None:
 		self.assertEqual(DEMO_COMPANY_CO["country"], "Colombia")
 		self.assertEqual(DEMO_RUSTIC_SUPPLIER["supplier_type"], "Individual")
-		self.assertNotIn("tax_id", DEMO_RUSTIC_SUPPLIER)
+		self.assertEqual(DEMO_RUSTIC_SUPPLIER["sri_identification_type"], "05")
+		self.assertEqual(DEMO_RUSTIC_SUPPLIER["tax_id"], "1710034065")
 
 	def test_extra_purchases_cover_all_flows(self) -> None:
 		bills = [spec.get("bill_no") for spec in DEMO_EXTRA_PURCHASES]
@@ -206,3 +207,12 @@ class TestDemoSeedExtension(UnitTestCase):
 	def test_wizard_fixtures_cover_company_creation(self) -> None:
 		names = [entry["name"] for entry in WAREHOUSE_TYPES]
 		self.assertIn("Transit", names)
+
+	def test_extra_purchases_cover_debit_and_sustento(self) -> None:
+		by_bill = {spec.get("bill_no"): spec for spec in DEMO_EXTRA_PURCHASES}
+		self.assertTrue(by_bill["001-001-000000017"]["sri_is_supplier_debit_note"])
+		self.assertEqual(by_bill["001-001-000000011"]["sri_sustento_code"], "06")
+		self.assertEqual(by_bill["001-001-000000014"]["sri_sustento_code"], "02")
+		self.assertEqual(by_bill["001-001-000000018"]["supplier"], "Demo Rustic Seller")
+		ice = by_bill["001-001-000000015"]
+		self.assertEqual(ice["items"][0]["item_tax_template"], "Ecuador ICE 5% - Purchases - DE")

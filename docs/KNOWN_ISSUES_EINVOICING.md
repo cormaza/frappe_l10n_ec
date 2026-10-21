@@ -39,7 +39,9 @@ evidence and severity.
    quote, central; nearest wins; 15-row cap) + factura emission with
    live proof.
 
-## H2 — Robustness gaps (medium, under review before implementing)
+## H2 — Out of scope (will not be done)
+
+Compensaciones and RIDE annexes are sector-special cases (compensation regime, subsidized fuels): implement only on sector demand. Parked.
 
 4. **Compensaciones on debit notes**: XSD `compensaciones` block not
    emitted (Res. NAC-DGERCGC16-00000285 context: credit notes with
