@@ -184,10 +184,13 @@ def sync_tax_row_descriptions(doc, method=None) -> None:
 			continue
 		rate = row.get("rate")
 		try:
-			rate_str = f"{float(rate):g}%" if rate not in (None, "") else ""
-		except TypeError, ValueError:
-			rate_str = ""
-		row.description = f"{label} {rate_str}".strip()
+			rate_val = float(rate) if rate not in (None, "") else 0.0
+		except (TypeError, ValueError):
+			rate_val = 0.0
+		if rate_val:
+			row.description = f"{label} {rate_val:g}%"
+		else:
+			row.description = label
 
 
 def enforce_iva_deduction_row(doc, method=None, resolve_account=None, company_code=None) -> None:
