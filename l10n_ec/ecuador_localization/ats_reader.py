@@ -33,18 +33,36 @@ def is_sri_number(value: str | None) -> bool:
 	return bool(value and SRI_NUMBER_PATTERN.match(value.strip()))
 
 
-def purchase_row(pi: dict, supplier: dict, voucher: dict | None) -> dict:
+def classify_purchase(is_return: bool, is_liquidacion: bool, is_debit_note: bool) -> str:
+	"""ATS document code for a purchase (fail loud on contradictory states)."""
+	if is_return and is_liquidacion:
+		raise ValueError(_("A purchase cannot be a return and a liquidacion at once."))
+	if is_return:
+		return "04"
+	if is_debit_note:
+		return "05"
+	if is_liquidacion:
+		return "03"
+	return "01"
+
+
+def purchase_row(pi: dict, supplier: dict, voucher: dict | None, doc_code: str = "01") -> dict:
 	"""Shape one submitted Purchase Invoice for the ATS collector."""
+	number = pi.get("bill_no", "")
+	auth = pi.get("sri_supplier_auth_number", "")
+	if doc_code == "03" and voucher is not None:
+		number = voucher.get("sri_number", number)
+		auth = voucher.get("authorization_number", auth)
 	row: dict = {
 		"supplier_id_type": supplier.get("sri_identification_type", ""),
 		"supplier_id": supplier.get("tax_id", ""),
 		"supplier_name": supplier.get("supplier_name", ""),
 		"sustento_code": "02",
-		"doc_code": "01",
-		"sri_number": pi.get("bill_no", ""),
+		"doc_code": doc_code,
+		"sri_number": number,
 		"issue_date": pi.get("bill_date", ""),
 		"register_date": pi.get("posting_date", ""),
-		"auth_number": pi.get("sri_supplier_auth_number", ""),
+		"auth_number": auth,
 		"taxes": pi.get("taxes", []),
 		"payments": [{"method": "01", "amount": pi.get("grand_total", 0.0)}],
 	}
@@ -176,10 +194,18 @@ def read_month(company: str, year: int, month: int) -> dict:
 		pluck="name",
 	):
 		pi = frappe.get_doc("Purchase Invoice", name)
-		if not is_sri_number(pi.get("bill_no")):
+		doc_code = classify_purchase(
+			bool(pi.get("is_return")),
+			bool(pi.get("sri_is_liquidacion")),
+			bool(pi.get("sri_is_supplier_debit_note")),
+		)
+		if doc_code == "01" and not is_sri_number(pi.get("bill_no")):
 			continue
 		supplier = frappe.get_doc("Supplier", pi.get("supplier"))
 		mapped = [map_line_taxes(line) for line in base_lines(pi)]
+		voucher = _authorized_voucher("Purchase Invoice", name)
+		if doc_code == "03" and voucher is None:
+			continue
 		purchases.append(
 			purchase_row(
 				{
@@ -204,7 +230,8 @@ def read_month(company: str, year: int, month: int) -> dict:
 					"tax_id": supplier.get("tax_id"),
 					"supplier_name": supplier.get("supplier_name"),
 				},
-				_authorized_voucher("Purchase Invoice", name),
+				voucher,
+				doc_code,
 			)
 		)
 	sales = []
@@ -269,5 +296,8 @@ def generate_ats_files(company: str, year: int, month: int, reader=None) -> dict
 	return {
 		"xml": xml,
 		"zip": build_ats_zip(xml, period),
-		"counts": {section: len(collected.get(section) or []) for section in ("compras", "ventas", "exportaciones", "anulados")},
+		"counts": {
+			section: len(collected.get(section) or [])
+			for section in ("compras", "ventas", "exportaciones", "anulados")
+		},
 	}

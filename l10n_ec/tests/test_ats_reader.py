@@ -89,7 +89,12 @@ class TestSaleRow(unittest.TestCase):
 			"sri_received_retencion_date": "22/10/2026",
 			"sri_received_retencion_key": "1" * 49,
 		}
-		row = sale_row(si, {}, {"sri_number": "001-001-000000050", "authorization_number": "AUTHP"}, {"iva_value": 150.0, "renta_value": 100.0})
+		row = sale_row(
+			si,
+			{},
+			{"sri_number": "001-001-000000050", "authorization_number": "AUTHP"},
+			{"iva_value": 150.0, "renta_value": 100.0},
+		)
 		self.assertEqual(row["sri_number"], "001-001-000000050")
 		self.assertEqual(row["received"]["iva_value"], 150.0)
 		self.assertEqual(row["received"]["renta_value"], 100.0)
@@ -130,3 +135,54 @@ class TestGenerateAtsFiles(UnitTestCase):
 		self.assertIn("<iva>", result["xml"])
 		self.assertEqual(result["counts"]["compras"], 1)
 		self.assertTrue(result["zip"].startswith(b"PK"))
+
+
+class TestClassifyPurchase(UnitTestCase):
+	def test_normal_invoice_is_01(self) -> None:
+		from l10n_ec.ecuador_localization.ats_reader import classify_purchase
+
+		self.assertEqual(classify_purchase(False, False, False), "01")
+
+	def test_return_is_04(self) -> None:
+		from l10n_ec.ecuador_localization.ats_reader import classify_purchase
+
+		self.assertEqual(classify_purchase(True, False, False), "04")
+
+	def test_supplier_debit_note_is_05(self) -> None:
+		from l10n_ec.ecuador_localization.ats_reader import classify_purchase
+
+		self.assertEqual(classify_purchase(False, False, True), "05")
+
+	def test_liquidacion_is_03(self) -> None:
+		from l10n_ec.ecuador_localization.ats_reader import classify_purchase
+
+		self.assertEqual(classify_purchase(False, True, False), "03")
+
+	def test_return_plus_liquidacion_raises(self) -> None:
+		from l10n_ec.ecuador_localization.ats_reader import classify_purchase
+
+		with self.assertRaises(ValueError):
+			classify_purchase(True, True, False)
+
+
+class TestPurchaseDocCode(UnitTestCase):
+	def test_liquidacion_uses_voucher_numbers(self) -> None:
+		voucher = {
+			"voucher_state": "Authorized",
+			"sri_number": "001-001-000000101",
+			"authorization_number": "AUTH101",
+			"authorization_date": "22/10/2026",
+			"body": {"docs": []},
+		}
+		pi = {
+			"bill_no": "",
+			"bill_date": "20/10/2026",
+			"posting_date": "21/10/2026",
+			"grand_total": 100.0,
+			"sri_supplier_auth_number": "",
+			"taxes": [],
+		}
+		row = purchase_row(pi, {}, voucher, "03")
+		self.assertEqual(row["doc_code"], "03")
+		self.assertEqual(row["sri_number"], "001-001-000000101")
+		self.assertEqual(row["auth_number"], "AUTH101")

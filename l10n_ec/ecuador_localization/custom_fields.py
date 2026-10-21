@@ -121,6 +121,20 @@ CUSTOM_FIELDS = {
 	],
 	"Purchase Invoice": [
 		{
+			"fieldname": "sri_is_liquidacion",
+			"fieldtype": "Check",
+			"insert_after": "bill_no",
+			"label": "SRI Liquidacion",
+			"description": "This purchase has no supplier invoice: we emit the Liquidacion de Compra (03). Drives voucher emission and ATS classification.",
+		},
+		{
+			"fieldname": "sri_is_supplier_debit_note",
+			"fieldtype": "Check",
+			"insert_after": "sri_is_liquidacion",
+			"label": "SRI Supplier Debit Note",
+			"description": "This supplier document is a Nota de Debito (ATS classification only; their emission, no voucher from us).",
+		},
+		{
 			"fieldname": "sri_supplier_auth_number",
 			"fieldtype": "Data",
 			"insert_after": "bill_no",

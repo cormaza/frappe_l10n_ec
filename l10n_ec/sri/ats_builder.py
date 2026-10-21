@@ -146,9 +146,7 @@ def _parse_period(period: str) -> tuple:
 			else:
 				month, year = text[:2], text[2:]
 		else:
-			raise SriXmlError(
-				_("ATS period '{}' is not a fiscal month (MMYYYY).").format(period)
-			)
+			raise SriXmlError(_("ATS period '{}' is not a fiscal month (MMYYYY).").format(period))
 	if not ("01" <= month <= "12"):
 		raise SriXmlError(_("ATS period month '{}' is out of range.").format(period))
 	if not ("2000" <= year <= "9999"):
@@ -180,13 +178,9 @@ def _informante(collected: dict) -> dict:
 	if not informante["razonSocial"]:
 		raise SriXmlError(_("ATS informante needs 'razonSocial'."))
 	if informante["TipoIDInformante"] != "R":
-		raise SriXmlError(
-			_("ATS 'TipoIDInformante' '{}' is not 'R'.").format(header.get("TipoIDInformante"))
-		)
+		raise SriXmlError(_("ATS 'TipoIDInformante' '{}' is not 'R'.").format(header.get("TipoIDInformante")))
 	if informante["codigoOperativo"] != "IVA":
-		raise SriXmlError(
-			_("ATS 'codigoOperativo' '{}' is not 'IVA'.").format(header.get("codigoOperativo"))
-		)
+		raise SriXmlError(_("ATS 'codigoOperativo' '{}' is not 'IVA'.").format(header.get("codigoOperativo")))
 	return informante
 
 
@@ -194,18 +188,14 @@ def _check_keys(row: dict, known: frozenset, where: str) -> None:
 	"""Refuse row keys that are neither schema elements nor documented extras."""
 	for key in row:
 		if key not in known:
-			raise SriXmlError(
-				_("ATS {} row carries unknown field '{}'.").format(where, key)
-			)
+			raise SriXmlError(_("ATS {} row carries unknown field '{}'.").format(where, key))
 
 
 def _require(row: dict, fields: tuple, where: str) -> None:
 	"""Fail loud on missing mandatory elements instead of inventing values."""
 	for field in fields:
 		if row.get(field) in (None, ""):
-			raise SriXmlError(
-				_("ATS {} row needs '{}'.").format(where, field)
-			)
+			raise SriXmlError(_("ATS {} row needs '{}'.").format(where, field))
 
 
 def _money(value: float) -> str:
@@ -231,9 +221,7 @@ def _air_block(entries: list) -> str:
 
 def _formas_de_pago_block(methods: list) -> str:
 	"""Render one ``formasDePago`` wrapper; empty lists produce no element."""
-	codes = "".join(
-		f"<formaPago>{escape_xml(str(code))}</formaPago>" for code in methods or []
-	)
+	codes = "".join(f"<formaPago>{escape_xml(str(code))}</formaPago>" for code in methods or [])
 	return f"<formasDePago>{codes}</formasDePago>" if codes else ""
 
 
@@ -244,9 +232,7 @@ def _retencion_block(row: dict) -> str:
 		return ""
 	if len(present) != len(RETENCION_FIELDS):
 		raise SriXmlError(
-			_("ATS compras row carries a partial withholding reference ({}).").format(
-				", ".join(present)
-			)
+			_("ATS compras row carries a partial withholding reference ({}).").format(", ".join(present))
 		)
 	return (
 		f"<estabRetencion1>{escape_xml(str(row['estabRetencion1']))}</estabRetencion1>"
@@ -268,9 +254,7 @@ def _optional_scalar(row: dict, field: str, money: bool = False) -> str:
 
 def _render_compra(row: dict) -> str:
 	"""Render one ``detalleCompras`` in ats.xsd element order."""
-	known = frozenset(
-		COMPRAS_REQUIRED + COMPRAS_OPTIONAL + ("formasDePago", "air") + RETENCION_FIELDS
-	)
+	known = frozenset(COMPRAS_REQUIRED + COMPRAS_OPTIONAL + ("formasDePago", "air") + RETENCION_FIELDS)
 	_check_keys(row, known, "compras")
 	_require(row, COMPRAS_REQUIRED, "compras")
 	optional_head = "".join(_optional_scalar(row, field) for field in ("denoProv", "parteRel"))
@@ -310,7 +294,7 @@ def _render_compra(row: dict) -> str:
 
 def _render_venta(row: dict) -> str:
 	"""Render one ``detalleVentas`` in ats.xsd element order."""
-	known = frozenset(VENTAS_REQUIRED + ("denoCli", "montoIce", "formasDePago")) | IGNORED_VENTAS_KEYS
+	known = frozenset((*VENTAS_REQUIRED, "denoCli", "montoIce", "formasDePago")) | IGNORED_VENTAS_KEYS
 	_check_keys(row, known, "ventas")
 	_require(row, VENTAS_REQUIRED, "ventas")
 	return (
@@ -402,21 +386,15 @@ def build_ats_xml(collected: dict, period: str) -> str:
 	optional_header = ""
 	if informante.get("regimenMicroempresa") not in (None, ""):
 		optional_header += (
-			"<regimenMicroempresa>"
-			f"{escape_xml(str(informante['regimenMicroempresa']))}"
-			"</regimenMicroempresa>"
+			f"<regimenMicroempresa>{escape_xml(str(informante['regimenMicroempresa']))}</regimenMicroempresa>"
 		)
 	if informante.get("numEstabRuc") not in (None, ""):
-		optional_header += (
-			f"<numEstabRuc>{escape_xml(str(informante['numEstabRuc']))}</numEstabRuc>"
-		)
+		optional_header += f"<numEstabRuc>{escape_xml(str(informante['numEstabRuc']))}</numEstabRuc>"
 	if informante.get("totalVentas") not in (None, ""):
 		optional_header += f"<totalVentas>{_money(informante['totalVentas'])}</totalVentas>"
 	compras_xml = _section("compras", collected.get("compras") or [], _render_compra)
 	ventas_xml = _section("ventas", collected.get("ventas") or [], _render_venta)
-	exportaciones_xml = _section(
-		"exportaciones", collected.get("exportaciones") or [], _render_exportacion
-	)
+	exportaciones_xml = _section("exportaciones", collected.get("exportaciones") or [], _render_exportacion)
 	anulados_xml = _section("anulados", collected.get("anulados") or [], _render_anulado)
 	xml = (
 		'<?xml version="1.0" encoding="UTF-8"?>\n'

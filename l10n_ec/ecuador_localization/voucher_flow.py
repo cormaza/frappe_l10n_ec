@@ -493,7 +493,14 @@ def create_and_process(
 def _derive_cod_doc(reference_doctype: str, reference_name: str) -> str:
 	"""Derive the SRI document code from the referenced invoice."""
 	if reference_doctype == "Purchase Invoice":
-		return "03"
+		ref = frappe.get_doc(reference_doctype, reference_name)
+		if getattr(ref, "sri_is_liquidacion", None):
+			return "03"
+		raise SriVoucherError(
+			_(
+				"Purchase Invoice '{}' is a supplier-issued document: only liquidations (SRI Liquidacion) emit vouchers."
+			).format(reference_name)
+		)
 	if reference_doctype == "Delivery Note":
 		return "06"
 	ref = frappe.get_doc(reference_doctype, reference_name)

@@ -329,6 +329,27 @@ def collect_purchase(doc: dict) -> dict:
 				"fechaEmiRet1": retencion.get("date", ""),
 			}
 		)
+	if row.get("tipoComprobante") in ("04", "05"):
+		row = _abs_credit_note_amounts(row)
+	return row
+
+
+def _abs_credit_note_amounts(row: dict) -> dict:
+	"""Report credit/debit-note amounts positive (SRI type-driven netting).
+
+	Compras amount elements are `minInclusive 0` (only ventas totals admit
+	a minus per `totalVentasType`): the `04`/`05` document type carries the
+	sign, so values travel absolute. Never applied to `01`/`03` rows.
+	"""
+	for key in ("baseNoGraIva", "baseImponible", "baseImpGrav", "baseImpExe", "montoIce", "montoIva"):
+		if key in row:
+			row[key] = abs(row[key])
+	for bucket in ("valRetBien10", "valRetServ20", "valRetServ50"):
+		if bucket in row:
+			row[bucket] = abs(row[bucket])
+	for entry in row.get("air") or []:
+		for key in ("baseImpAir", "valRetAir"):
+			entry[key] = abs(entry.get(key, 0.0))
 	return row
 
 

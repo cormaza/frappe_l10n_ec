@@ -176,11 +176,12 @@ class TestBuildAtsXml(UnitTestCase):
 		self.assertIn("<secuencialFin>000000124</secuencialFin>", xml)
 
 	def test_optional_buckets_render_in_schema_order(self) -> None:
-		xml = build_ats_xml(
-			_collected(compras=[_compra(valRetBien10=3.0, valRetServ50=7.0)]), "032026"
-		)
+		xml = build_ats_xml(_collected(compras=[_compra(valRetBien10=3.0, valRetServ50=7.0)]), "032026")
 		self.assertTrue(validate_against_xsd(xml, "ats"))
-		positions = [xml.index(f"<{tag}>") for tag in ("valRetBien10", "valorRetBienes", "valRetServ50", "valorRetServicios")]
+		positions = [
+			xml.index(f"<{tag}>")
+			for tag in ("valRetBien10", "valorRetBienes", "valRetServ50", "valorRetServicios")
+		]
 		self.assertEqual(positions, sorted(positions))
 
 	def test_zero_optional_buckets_are_omitted(self) -> None:

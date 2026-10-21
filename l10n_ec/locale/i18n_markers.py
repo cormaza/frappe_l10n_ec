@@ -26,6 +26,10 @@ CUSTOM_FIELD_STRINGS = [
 	_("SRI Identification Type"),
 	_("Related Party"),
 	_("SRI Payment Code"),
+	_("SRI Liquidacion"),
+	_("This purchase has no supplier invoice: we emit the Liquidacion de Compra (03). Drives voucher emission and ATS classification."),
+	_("SRI Supplier Debit Note"),
+	_("This supplier document is a Nota de Debito (ATS classification only; their emission, no voucher from us)."),
 	_("SRI IR Concepto"),
 	_(
 		"SRI IR withholding concepto withheld by the customer (e.g. 303, 312), validated against the concepto table; feeds the received-withholding settlement entry; leave empty when no IR withholding applies."

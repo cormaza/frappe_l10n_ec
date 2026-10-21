@@ -498,3 +498,33 @@ class TestSynthesizeIvaRow(UnitTestCase):
 	def test_zero_iva_base_emits_nothing(self) -> None:
 		mapped = [{"taxes": [{"code": "3", "rate_code": "3001", "rate": 0.0, "base": 10.0, "value": 5.0}]}]
 		self.assertIsNone(synthesize_iva_row(mapped, "1"))
+
+
+class TestDeriveCodDoc(UnitTestCase):
+	"""Unit tests for SRI document code derivation (mocked frappe)."""
+
+	def test_liquidacion_purchase_derives_03(self) -> None:
+		from unittest.mock import patch
+
+		from l10n_ec.ecuador_localization.voucher_flow import _derive_cod_doc
+
+		doc = SimpleNamespace(sri_is_liquidacion=1)
+		with patch("l10n_ec.ecuador_localization.voucher_flow.frappe") as mock_frappe:
+			mock_frappe.get_doc.return_value = doc
+			self.assertEqual(_derive_cod_doc("Purchase Invoice", "PI-1"), "03")
+
+	def test_supplier_invoice_refuses_emission(self) -> None:
+		from unittest.mock import patch
+
+		from l10n_ec.ecuador_localization.voucher_flow import _derive_cod_doc
+
+		doc = SimpleNamespace(sri_is_liquidacion=0)
+		with patch("l10n_ec.ecuador_localization.voucher_flow.frappe") as mock_frappe:
+			mock_frappe.get_doc.return_value = doc
+			with self.assertRaises(SriVoucherError):
+				_derive_cod_doc("Purchase Invoice", "PI-1")
+
+	def test_delivery_note_derives_06_without_frappe(self) -> None:
+		from l10n_ec.ecuador_localization.voucher_flow import _derive_cod_doc
+
+		self.assertEqual(_derive_cod_doc("Delivery Note", "DN-1"), "06")

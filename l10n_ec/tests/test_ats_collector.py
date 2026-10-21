@@ -299,3 +299,39 @@ class TestHelpers(UnitTestCase):
 
 if __name__ == "__main__":
 	unittest.main()
+
+
+class TestCreditNoteAbsValues(UnitTestCase):
+	def test_04_amounts_report_positive(self) -> None:
+		from l10n_ec.sri.ats_collector import collect_purchase
+
+		row = collect_purchase(
+			{
+				"sri_number": "001-001-000000050",
+				"doc_code": "04",
+				"supplier_id_type": "04",
+				"supplier_id": "1790016919001",
+				"issue_date": "21/10/2026",
+				"auth_number": "1234567890",
+				"taxes": [{"code": "2", "rate_code": "4", "base": -20.0, "value": -3.0}],
+			}
+		)
+		self.assertEqual(row["tipoComprobante"], "04")
+		self.assertEqual(row["baseImpGrav"], 20.0)
+		self.assertEqual(row["montoIva"], 3.0)
+
+	def test_01_amounts_pass_through(self) -> None:
+		from l10n_ec.sri.ats_collector import collect_purchase
+
+		row = collect_purchase(
+			{
+				"sri_number": "001-001-000000007",
+				"doc_code": "01",
+				"supplier_id_type": "04",
+				"supplier_id": "1790016919001",
+				"issue_date": "20/10/2026",
+				"auth_number": "1234567890",
+				"taxes": [{"code": "2", "rate_code": "4", "base": 100.0, "value": 15.0}],
+			}
+		)
+		self.assertEqual(row["baseImpGrav"], 100.0)
