@@ -562,7 +562,9 @@ def aggregate_raw_totals(lines: list) -> list:
 	for line in lines:
 		for tax in line.get("taxes", []):
 			key = tax["template"]
-			entry = grouped.setdefault(key, {"template": key, "base": 0.0, "value": 0.0})
+			entry = grouped.setdefault(
+				key, {"template": key, "rate": tax.get("rate"), "base": 0.0, "value": 0.0}
+			)
 			entry["base"] = round(entry["base"] + tax["base"], 2)
 			entry["value"] = round(entry["value"] + tax["value"], 2)
 	return list(grouped.values())
@@ -764,6 +766,12 @@ def _invoice_dict(
 		party = frappe.db.get_value(
 			"Supplier", ref.supplier, ["sri_identification_type", "tax_id", "supplier_name"], as_dict=True
 		)
+		if not party or not party.sri_identification_type or not party.tax_id:
+			raise SriVoucherError(
+				_("Supplier '{}' needs an identification type and tax ID to emit vouchers.").format(
+					ref.supplier
+				)
+			)
 		base.update(
 			{
 				"supplier_id_type": party.sri_identification_type,
@@ -788,7 +796,7 @@ def _invoice_dict(
 		)
 	if doc.sri_doc_code == "05":
 		if not reasons:
-			raise SriVoucherError(_("Debit notes need explicit reasons [{razon, valor}]."))
+			raise SriVoucherError(_("Debit notes need explicit reasons [{reason, value}]."))
 		base.update({"taxes": base.pop("tax_totals"), "total_value": ref.grand_total, "reasons": reasons})
 	if doc.sri_doc_code == "07":
 		if withholding_codes is None:

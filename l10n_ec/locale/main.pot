@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecuador Localization VERSION\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-21 12:09-0641\n"
-"PO-Revision-Date: 2026-10-21 12:09-0641\n"
+"POT-Creation-Date: 2026-10-21 12:13-0641\n"
+"PO-Revision-Date: 2026-10-21 12:13-0641\n"
 "Last-Translator: developers@example.com\n"
 "Language-Team: developers@example.com\n"
 "MIME-Version: 1.0\n"
@@ -260,7 +260,7 @@ msgid "Company '{}' has no SRI Signature configured."
 msgstr ""
 
 #: l10n_ec/ecuador_localization/voucher_flow.py:456
-#: l10n_ec/ecuador_localization/voucher_flow.py:654
+#: l10n_ec/ecuador_localization/voucher_flow.py:656
 msgid "Company '{}' needs a tax_id (RUC) to emit vouchers."
 msgstr ""
 
@@ -314,8 +314,8 @@ msgstr ""
 msgid "Days for Notification"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:791
-msgid "Debit notes need explicit reasons [{razon, valor}]."
+#: l10n_ec/ecuador_localization/voucher_flow.py:799
+msgid "Debit notes need explicit reasons [{reason, value}]."
 msgstr ""
 
 #. Option for the 'Reference DocType' (Select) field in DocType 'SRI Electronic
@@ -324,15 +324,15 @@ msgstr ""
 msgid "Delivery Note"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:919
+#: l10n_ec/ecuador_localization/voucher_flow.py:927
 msgid "Delivery Note '{}' needs a shipping address for the guia recipient."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:913
+#: l10n_ec/ecuador_localization/voucher_flow.py:921
 msgid "Delivery notes need exactly one sustento doc in guia_data['docs']."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:748
+#: l10n_ec/ecuador_localization/voucher_flow.py:750
 msgid "Delivery notes need explicit guia_data {carrier, transport, docs}."
 msgstr ""
 
@@ -511,7 +511,7 @@ msgid "IVA withholding categories cannot be assigned to suppliers: ERPNext canno
 msgstr ""
 
 #: l10n_ec/ecuador_localization/validation.py:138
-#: l10n_ec/ecuador_localization/voucher_flow.py:826
+#: l10n_ec/ecuador_localization/voucher_flow.py:834
 msgid "IVA withholding needs an IVA concepto, got '{}'."
 msgstr ""
 
@@ -672,7 +672,7 @@ msgstr ""
 msgid "No sujeto"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:1005
+#: l10n_ec/ecuador_localization/voucher_flow.py:1013
 msgid "No voucher found for modified document '{}'."
 msgstr ""
 
@@ -1420,6 +1420,10 @@ msgstr ""
 msgid "Subject:"
 msgstr ""
 
+#: l10n_ec/ecuador_localization/voucher_flow.py:771
+msgid "Supplier '{}' needs an identification type and tax ID to emit vouchers."
+msgstr ""
+
 #: l10n_ec/locale/i18n_markers.py:342
 msgid "Support Document:"
 msgstr ""
@@ -1573,7 +1577,7 @@ msgstr ""
 msgid "Withholding categories cannot be assigned to customers: received withholdings settle via the payment-time entry (invoice stays gross, native rows inflate it and mis-side the liability). Leave the category empty and record the customer conceptos on the invoice."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:584
+#: l10n_ec/ecuador_localization/voucher_flow.py:586
 #: l10n_ec/sri/withholding_concepts.py:1248
 msgid "Withholding category '{}' has no SRI code mapping."
 msgstr ""
@@ -1582,7 +1586,7 @@ msgstr ""
 msgid "Withholding category '{}' maps impuesto '{}' but concepto '{}' is impuesto '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:796
+#: l10n_ec/ecuador_localization/voucher_flow.py:804
 msgid "Withholding vouchers need explicit withholding_codes {category: (impuesto, codigo)}."
 msgstr ""
 
@@ -1599,7 +1603,7 @@ msgstr ""
 msgid "expired"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:910
+#: l10n_ec/ecuador_localization/voucher_flow.py:918
 msgid "guia_data is missing keys: {}."
 msgstr ""
 

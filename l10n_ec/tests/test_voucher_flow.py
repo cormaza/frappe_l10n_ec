@@ -375,11 +375,16 @@ class TestVoucherFlowPipeline(UnitTestCase):
 
 	def test_aggregate_raw_totals_groups_by_template(self) -> None:
 		lines = [
-			{"taxes": [{"template": "Ecuador VAT 15% - Sales", "base": 100.00, "value": 15.00}]},
-			{"taxes": [{"template": "Ecuador VAT 15% - Sales", "base": 50.00, "value": 7.50}]},
+			{
+				"taxes": [
+					{"template": "Ecuador VAT 15% - Sales", "rate": 15.0, "base": 100.00, "value": 15.00}
+				]
+			},
+			{"taxes": [{"template": "Ecuador VAT 15% - Sales", "rate": 15.0, "base": 50.00, "value": 7.50}]},
 		]
 		totals = aggregate_raw_totals(lines)
 		self.assertEqual(len(totals), 1)
+		self.assertEqual(totals[0]["rate"], 15.0)
 		self.assertEqual(totals[0]["base"], 150.00)
 		self.assertEqual(totals[0]["value"], 22.50)
 
