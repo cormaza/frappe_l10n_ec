@@ -125,6 +125,48 @@ def _iva_withholding_account(company: str) -> str | None:
 	)
 
 
+def validate_sustento_code(doc, method=None) -> None:
+	"""Guard SRI sustento vs tipoComprobante/tpIdProv (Tabla 5)."""
+	if doc.get("doctype") != "Purchase Invoice":
+		return
+	from l10n_ec.sri.sustentos import validate_sustento
+
+	try:
+		import frappe as _frappe
+	except ImportError:
+		_frappe = None  # type: ignore[assignment]
+
+	code = (doc.get("sri_sustento_code") or "").strip() or "02"
+	tp = (
+		(doc.get("sri_identification_type") or "")
+		or (
+			_frappe.db.get_value("Supplier", doc.get("supplier"), "sri_identification_type")
+			if _frappe and doc.get("supplier")
+			else ""
+		)
+		if _frappe
+		else "04"
+	)
+	# Derive doc_code from flags (same logic as ats_reader.classify_purchase)
+	if doc.get("is_return") and doc.get("sri_is_liquidacion"):
+		raise ValueError(_("A purchase cannot be a return and a liquidacion at once."))
+	doc_code = (
+		"04"
+		if doc.get("is_return")
+		else "05"
+		if doc.get("sri_is_supplier_debit_note")
+		else "03"
+		if doc.get("sri_is_liquidacion")
+		else "01"
+	)
+	try:
+		validate_sustento(code, doc_code, tp)
+	except ValueError as exc:
+		if _frappe:
+			_frappe.throw(str(exc))
+		raise
+
+
 def sync_tax_row_descriptions(doc, method=None) -> None:
 	"""Make tax row descriptions speak the tax, not just the account.
 
@@ -143,7 +185,7 @@ def sync_tax_row_descriptions(doc, method=None) -> None:
 		rate = row.get("rate")
 		try:
 			rate_str = f"{float(rate):g}%" if rate not in (None, "") else ""
-		except (TypeError, ValueError):
+		except TypeError, ValueError:
 			rate_str = ""
 		row.description = f"{label} {rate_str}".strip()
 

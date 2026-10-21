@@ -25,6 +25,10 @@ after_install = "l10n_ec.ecuador_localization.setup.after_install"
 after_migrate = "l10n_ec.ecuador_localization.setup.after_migrate"
 before_uninstall = "l10n_ec.ecuador_localization.setup.before_uninstall"
 
+doctype_js = {
+	"Purchase Invoice": "public/js/purchase_invoice_sustento.js",
+}
+
 jinja = {
 	"methods": [
 		"l10n_ec.ecuador_localization.jinja.sri_barcode",
@@ -46,7 +50,11 @@ doc_events = {
 		"validate": "l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",
 	},
 	"Purchase Invoice": {
-		"validate": "l10n_ec.ecuador_localization.validation.enforce_iva_deduction_row",
+		"validate": [
+			"l10n_ec.ecuador_localization.validation.enforce_iva_deduction_row",
+			"l10n_ec.ecuador_localization.validation.validate_sustento_code",
+			"l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",
+		],
 		"before_save": "l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",
 	},
 	"Company": {
