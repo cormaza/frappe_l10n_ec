@@ -171,7 +171,7 @@ class TestDemoSeedExtension(UnitTestCase):
 
 	def test_extra_items_cover_zero_five_and_ice(self) -> None:
 		codes = [item["item_code"] for item in DEMO_EXTRA_ITEMS]
-		self.assertEqual(codes, ["DEMO-WIDGET-ZERO", "DEMO-CEMENT", "DEMO-ICE-BEER"])
+		self.assertEqual(codes, ["DEMO-WIDGET-ZERO", "DEMO-CEMENT", "DEMO-ICE-BEER", "DEMO-TOUR"])
 		for item in DEMO_EXTRA_ITEMS:
 			self.assertEqual(item["item_group"], "Demo Goods")
 			self.assertEqual(item["stock_uom"], "Nos")
@@ -216,3 +216,11 @@ class TestDemoSeedExtension(UnitTestCase):
 		self.assertEqual(by_bill["001-001-000000018"]["supplier"], "Demo Rustic Seller")
 		ice = by_bill["001-001-000000015"]
 		self.assertEqual(ice["items"][0]["item_tax_template"], "Ecuador ICE 5% - Purchases - DE")
+
+	def test_tourism_item_and_holiday_sale(self) -> None:
+		codes = [item["item_code"] for item in DEMO_EXTRA_ITEMS]
+		self.assertIn("DEMO-TOUR", codes)
+		tour = [spec for spec in DEMO_EXTRA_SALES if spec.get("tourism_8pct")]
+		self.assertEqual(len(tour), 1)
+		self.assertEqual(tour[0]["items"][0]["item_tax_template"], "Ecuador VAT 8% - Sales - DE")
+		self.assertEqual(tour[0]["update_stock"], 0)

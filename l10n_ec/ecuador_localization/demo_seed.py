@@ -227,6 +227,18 @@ DEMO_EXTRA_ITEMS = [
 		"stock_uom": "Nos",
 		"warehouse": "Demo Stores - DE",
 	},
+	{
+		"doctype": "Item",
+		"expense_account_number": "520128",
+		"income_account_number": "4101",
+		"is_stock_item": 1,
+		"item_code": "DEMO-TOUR",
+		"item_group": "Demo Goods",
+		"item_name": "Demo Tour Service",
+		"description": "Demo tourism service for holiday 8% IVA scenarios",
+		"stock_uom": "Nos",
+		"warehouse": "Demo Stores - DE",
+	},
 ]
 DEMO_COMPANY_CO = {
 	"abbr": "CO",
@@ -462,6 +474,20 @@ DEMO_EXTRA_SALES = [
 				"rate": 20.0,
 				"warehouse": "Demo Stores - DE",
 				"item_tax_template": "Ecuador VAT 5% - Sales - DE",
+			},
+		],
+	},
+	{
+		"customer": "Demo Customer RUC",
+		"tourism_8pct": True,
+		"update_stock": 0,
+		"items": [
+			{
+				"item_code": "DEMO-TOUR",
+				"qty": 2,
+				"rate": 100.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 8% - Sales - DE",
 			},
 		],
 	},
@@ -772,7 +798,7 @@ def seed_demo() -> dict:
 				"company_address": company_address,
 				"currency": "USD",
 				"posting_date": DEMO_TODAY,
-				"update_stock": 1,
+				"update_stock": spec.get("update_stock", 1),
 				"items": spec["items"],
 			}
 			for key in (
@@ -858,6 +884,7 @@ def seed_demo() -> dict:
 		outstanding = frappe.db.get_value(doctype, name, "outstanding_amount") or 0.0
 		if outstanding <= 0:
 			return
+		amount = min(amount, outstanding)
 		if doctype == "Purchase Invoice":
 			paid_from, paid_to = cash, payable
 			payment_type = "Pay"
