@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: l10n_ec 16.0.0\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-21 08:20-0719\n"
+"POT-Creation-Date: 2026-10-21 08:33-0719\n"
 "PO-Revision-Date: 2026-10-20 11:05+0000\n"
 "Last-Translator: Ecuador Localization Contributors\n"
 "Language-Team: Ecuador Localization Contributors\n"
@@ -176,12 +176,12 @@ msgstr "Comisiones sociedades"
 msgid "Company"
 msgstr "Compañía"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:539
+#: l10n_ec/ecuador_localization/voucher_flow.py:543
 msgid "Company '{}' has no SRI Signature configured."
 msgstr "La compañía '{}' no tiene firma SRI configurada."
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:453
-#: l10n_ec/ecuador_localization/voucher_flow.py:642
+#: l10n_ec/ecuador_localization/voucher_flow.py:456
+#: l10n_ec/ecuador_localization/voucher_flow.py:647
 msgid "Company '{}' needs a tax_id (RUC) to emit vouchers."
 msgstr "La compañía '{}' necesita un tax_id (RUC) para emitir comprobantes."
 
@@ -235,7 +235,7 @@ msgstr "DOCUMENTO EN TRÁMITE"
 msgid "Days for Notification"
 msgstr "Días para notificación"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:777
+#: l10n_ec/ecuador_localization/voucher_flow.py:784
 msgid "Debit notes need explicit reasons [{razon, valor}]."
 msgstr "Las notas de débito necesitan motivos explícitos [{razon, valor}]."
 
@@ -245,15 +245,15 @@ msgstr "Las notas de débito necesitan motivos explícitos [{razon, valor}]."
 msgid "Delivery Note"
 msgstr "Nota de entrega"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:860
+#: l10n_ec/ecuador_localization/voucher_flow.py:905
 msgid "Delivery Note '{}' needs a shipping address for the guia recipient."
 msgstr "La nota de entrega '{}' necesita una dirección de envío para el destinatario de la guía."
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:854
+#: l10n_ec/ecuador_localization/voucher_flow.py:899
 msgid "Delivery notes need exactly one sustento doc in guia_data['docs']."
 msgstr "Las guías necesitan exactamente un documento de sustento en guia_data['docs']."
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:734
+#: l10n_ec/ecuador_localization/voucher_flow.py:741
 msgid "Delivery notes need explicit guia_data {carrier, transport, docs}."
 msgstr "Las guías necesitan guia_data explícito {carrier, transport, docs}."
 
@@ -348,7 +348,7 @@ msgstr "Donaciones en dinero -Impuesto a las donaciones"
 msgid "Emission Point Code"
 msgstr "Código de punto de emisión"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:524
+#: l10n_ec/ecuador_localization/voucher_flow.py:528
 msgid "Emission point '{}' has no sequence for '{}'."
 msgstr "El punto de emisión '{}' no tiene secuencia para '{}'."
 
@@ -422,6 +422,14 @@ msgstr "Honorarios profesionales"
 #: l10n_ec/locale/i18n_markers.py:88
 msgid "Honorarios y demás pagos por servicios de docencia"
 msgstr "Honorarios y demás pagos por servicios de docencia"
+
+#: l10n_ec/ecuador_localization/party_hooks.py:58
+msgid "IVA withholding categories cannot be assigned to suppliers: ERPNext cannot compute tax-on-tax withholdings. IVA withholdings are computed at emission from the invoice IVA taxes."
+msgstr "Las categorías de retención de IVA no pueden asignarse a proveedores: ERPNext no puede calcular retenciones sobre impuestos. Las retenciones de IVA se calculan al emitir desde los impuestos IVA de la factura."
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:812
+msgid "IVA withholding needs an IVA concepto, got '{}'."
+msgstr "La retención de IVA necesita un concepto de IVA, recibido '{}'."
 
 #: l10n_ec/locale/i18n_markers.py:58
 msgid "Imagen y renombre"
@@ -544,7 +552,7 @@ msgstr "Minerales"
 msgid "Missing account {} for tax template '{}'."
 msgstr "Falta la cuenta {} para la plantilla de impuestos '{}'."
 
-#: l10n_ec/ecuador_localization/withholding_setup.py:46
+#: l10n_ec/ecuador_localization/withholding_setup.py:48
 msgid "Missing account {} for withholding setup."
 msgstr "Falta la cuenta {} para la configuración de retenciones."
 
@@ -556,7 +564,7 @@ msgstr "Nombre:"
 msgid "No PKCS#12 signature content attached to SRI Signature document."
 msgstr "No hay contenido de firma PKCS#12 adjunto al documento de Firma SRI."
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:517
+#: l10n_ec/ecuador_localization/voucher_flow.py:521
 msgid "No SRI Emission Point for company '{}' and document '{}'."
 msgstr "No hay punto de emisión SRI para la compañía '{}' y el documento '{}'."
 
@@ -568,7 +576,7 @@ msgstr "No procede"
 msgid "No sujeto"
 msgstr "No sujeto"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:946
+#: l10n_ec/ecuador_localization/voucher_flow.py:991
 msgid "No voucher found for modified document '{}'."
 msgstr "No se encontró comprobante para el documento modificado '{}'."
 
@@ -1129,7 +1137,7 @@ msgstr "Forma de pago SRI"
 msgid "SRI Signature"
 msgstr "Firma SRI"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:544
+#: l10n_ec/ecuador_localization/voucher_flow.py:548
 msgid "SRI Signature '{}' is not usable."
 msgstr "La firma SRI '{}' no es utilizable."
 
@@ -1381,7 +1389,7 @@ msgstr "Resolución de agente de retención"
 msgid "Withholding Code"
 msgstr "Código de retención"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:573
+#: l10n_ec/ecuador_localization/voucher_flow.py:577
 #: l10n_ec/sri/withholding_concepts.py:1248
 msgid "Withholding category '{}' has no SRI code mapping."
 msgstr "La categoría de retención '{}' no tiene mapeo de código SRI."
@@ -1389,6 +1397,10 @@ msgstr "La categoría de retención '{}' no tiene mapeo de código SRI."
 #: l10n_ec/sri/withholding_concepts.py:1258
 msgid "Withholding category '{}' maps impuesto '{}' but concepto '{}' is impuesto '{}'."
 msgstr "La categoría de retención '{}' mapea impuesto '{}' pero el concepto '{}' es impuesto '{}'."
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:789
+msgid "Withholding vouchers need explicit withholding_codes {category: (impuesto, codigo)}."
+msgstr "Los comprobantes de retención necesitan withholding_codes explícitos {categoría: (impuesto, código)}."
 
 #: l10n_ec/sri/xml_builder.py:313
 msgid "XML does not validate against {}: {}"
@@ -1403,7 +1415,7 @@ msgstr "Su comprobante electrónico fue autorizado por el SRI."
 msgid "expired"
 msgstr "Vencido"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:851
+#: l10n_ec/ecuador_localization/voucher_flow.py:896
 msgid "guia_data is missing keys: {}."
 msgstr "A guia_data le faltan claves: {}."
 

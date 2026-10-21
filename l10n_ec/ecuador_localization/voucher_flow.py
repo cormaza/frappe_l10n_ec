@@ -349,6 +349,7 @@ def process_voucher(
 	sustento_code: str = "02",
 	guia_data: dict | None = None,
 	payment_method: str = "01",
+	iva_concepto: str | None = None,
 ) -> dict:
 	"""Run generate/sign/submit/poll for one voucher; safe to re-run anytime."""
 	resolve_payment_method(payment_method)
@@ -366,6 +367,7 @@ def process_voucher(
 			sustento_code=sustento_code,
 			guia_data=guia_data,
 			payment_method=payment_method,
+			iva_concepto=iva_concepto,
 		)
 		generated = generate_voucher_xml_doc(doc, payload)
 		if not generated["ok"]:
@@ -435,6 +437,7 @@ def create_and_process(
 	sustento_code: str = "02",
 	guia_data: dict | None = None,
 	payment_method: str = "01",
+	iva_concepto: str | None = None,
 	run_now: bool = False,
 	key_material: tuple | None = None,
 	client_ws=None,
@@ -481,6 +484,7 @@ def create_and_process(
 			sustento_code=sustento_code,
 			guia_data=guia_data,
 			payment_method=payment_method,
+			iva_concepto=iva_concepto,
 		)
 	enqueue_process_voucher(voucher.name, payment_method=payment_method)
 	return {"ok": True, "voucher": voucher.name, "queued": True}
@@ -635,6 +639,7 @@ def _assemble_payload(
 	sustento_code="02",
 	guia_data=None,
 	payment_method="01",
+	iva_concepto=None,
 ):
 	"""Build the builder payload from live Company/invoice documents."""
 	company = frappe.get_doc("Company", doc.company)
@@ -665,6 +670,7 @@ def _assemble_payload(
 		sustento_code=sustento_code,
 		guia_data=guia_data,
 		payment_method=payment_method,
+		iva_concepto=iva_concepto,
 	)
 	return build_voucher_payload(invoice, emitter, sequence)
 
@@ -715,6 +721,7 @@ def _invoice_dict(
 	sustento_code="02",
 	guia_data=None,
 	payment_method="01",
+	iva_concepto=None,
 ) -> dict:
 	"""Map a live invoice document to the normalized payload dict."""
 	resolve_payment_method(payment_method)
@@ -779,14 +786,48 @@ def _invoice_dict(
 	if doc.sri_doc_code == "07":
 		if withholding_codes is None:
 			raise SriVoucherError(
-				"Withholding vouchers need explicit withholding_codes {category: (impuesto, codigo)}."
+				_("Withholding vouchers need explicit withholding_codes {category: (impuesto, codigo)}.")
 			)
-		base.update(_withholding_subject_and_docs(doc, ref, withholding_codes, sustento_code, payment_method))
+		base.update(
+			_withholding_subject_and_docs(
+				doc, ref, withholding_codes, sustento_code, payment_method, iva_concepto
+			)
+		)
 	return base
 
 
+def _synthesize_iva_row(mapped_lines: list, iva_concepto: str) -> dict | None:
+	"""Synthesize one IVA withholding row from IVA line taxes (ERPNext gap).
+
+	ERPNext only computes Net/Gross-basis withholdings, so IVA (tax-on-tax)
+	categories must never be assigned natively (see the Supplier guard).
+	At emission, the IVA base is the sum of IVA (`code == "2"`) line taxes
+	and the rate comes from the caller-chosen IVA concepto; zero base emits
+	nothing.
+	"""
+	from l10n_ec.sri.withholding_concepts import resolve_concepto
+
+	impuesto, rate, _description = resolve_concepto(iva_concepto)
+	if impuesto != "2":
+		raise SriVoucherError(_("IVA withholding needs an IVA concepto, got '{}'.").format(iva_concepto))
+	base = round(sum(tax["value"] for line in mapped_lines for tax in line["taxes"] if tax["code"] == "2"), 2)
+	if not base:
+		return None
+	return {
+		"category": f"Ecuador IVA {rate:g}%",
+		"rate": rate,
+		"taxable": base,
+		"amount": round(base * rate / 100, 2),
+	}
+
+
 def _withholding_subject_and_docs(
-	doc, ref, withholding_codes: dict, sustento_code: str, payment_method: str = "01"
+	doc,
+	ref,
+	withholding_codes: dict,
+	sustento_code: str,
+	payment_method: str = "01",
+	iva_concepto: str | None = None,
 ) -> dict:
 	"""Build the 07 subject block plus grouped sustento docs from native entries."""
 	resolve_payment_method(payment_method)
@@ -821,6 +862,10 @@ def _withholding_subject_and_docs(
 		}
 		for row in ref.tax_withholding_entries
 	]
+	if iva_concepto is not None:
+		synthesized = _synthesize_iva_row(mapped, iva_concepto)
+		if synthesized is not None:
+			native.append(synthesized)
 	inputs = sustento_entries(native, purchase, withholding_codes)
 	party = frappe.db.get_value(
 		"Supplier", ref.supplier, ["sri_identification_type", "tax_id", "supplier_name"], as_dict=True

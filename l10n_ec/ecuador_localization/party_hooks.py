@@ -49,8 +49,26 @@ def _reject_duplicate_final_consumer(doc) -> None:
 			frappe.throw(_("{} '{}' is already the generic final consumer.").format(doctype, duplicate))
 
 
+def _reject_iva_withholding_assignment(doc) -> None:
+	"""Suppliers must never carry IVA withholding categories (pure; raises ValueError)."""
+	if doc.get("doctype") == "Supplier" and (doc.get("tax_withholding_category") or "").startswith(
+		"Ecuador IVA "
+	):
+		raise ValueError(
+			_(
+				"IVA withholding categories cannot be assigned to suppliers: ERPNext cannot compute tax-on-tax withholdings. IVA withholdings are computed at emission from the invoice IVA taxes."
+			)
+		)
+
+
 def validate_sri_identification(doc, method=None) -> None:
 	"""Validate the party tax ID for Ecuadorian contacts; skip when not applicable."""
+	try:
+		_reject_iva_withholding_assignment(doc)
+	except ValueError as exc:
+		if frappe:
+			frappe.throw(str(exc))
+		raise
 	identification_type = doc.get("sri_identification_type")
 	if not identification_type:
 		return

@@ -23,6 +23,10 @@ class _StubDoc:
 		self._values = values
 
 	def get(self, key, default=None):
+		if key == "doctype":
+			return self.doctype
+		if key == "name":
+			return self.name
 		return self._values.get(key, default)
 
 
@@ -47,3 +51,20 @@ class TestPartyHooks(UnitTestCase):
 		doc = _StubDoc(sri_identification_type="04", tax_id="1790016919001")
 		with patch.object(party_hooks, "_resolve_country_code", return_value="EC"):
 			self.assertIsNone(party_hooks.validate_sri_identification(doc))
+
+
+class TestIvaAssignmentGuard(UnitTestCase):
+	"""Suppliers must never carry IVA withholding categories (ERPNext gap)."""
+
+	def test_supplier_iva_assignment_raises(self) -> None:
+		doc = _StubDoc("Supplier", tax_withholding_category="Ecuador IVA 30%")
+		with self.assertRaises(EXPECTED_ERROR):
+			party_hooks.validate_sri_identification(doc)
+
+	def test_supplier_ir_assignment_passes_guard(self) -> None:
+		doc = _StubDoc("Supplier", tax_withholding_category="Ecuador IR 2%")
+		self.assertIsNone(party_hooks.validate_sri_identification(doc))
+
+	def test_customer_iva_assignment_ignored(self) -> None:
+		doc = _StubDoc("Customer", tax_withholding_category="Ecuador IVA 30%")
+		self.assertIsNone(party_hooks.validate_sri_identification(doc))

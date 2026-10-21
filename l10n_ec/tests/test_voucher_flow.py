@@ -13,6 +13,7 @@ from l10n_ec.ecuador_localization.doctype.sri_electronic_voucher.sri_electronic_
 	SRIElectronicVoucher,
 )
 from l10n_ec.ecuador_localization.voucher_flow import (
+	_synthesize_iva_row,
 	aggregate_raw_totals,
 	apply_transition,
 	build_voucher_payload,
@@ -476,3 +477,24 @@ class TestVoucherFlowPipeline(UnitTestCase):
 		self.assertTrue(url.endswith("-unsigned.xml"))
 		self.assertEqual(read_voucher_xml(doc, "unsigned_xml"), "<factura/>")
 		frappe.delete_doc("File", frappe.db.get_value("File", {"file_url": url}, "name"))
+
+
+class TestSynthesizeIvaRow(UnitTestCase):
+	"""IVA withholdings synthesize from IVA line taxes (ERPNext gap)."""
+
+	def test_iva_lines_synthesize_rated_row(self) -> None:
+		mapped = [map_line_taxes(LINE)]
+		row = _synthesize_iva_row(mapped, "1")
+		self.assertEqual(row, {"category": "Ecuador IVA 30%", "rate": 30.0, "taxable": 15.0, "amount": 4.5})
+
+	def test_non_iva_concepto_raises(self) -> None:
+		with self.assertRaises(SriVoucherError):
+			_synthesize_iva_row([map_line_taxes(LINE)], "303")
+
+	def test_unknown_concepto_raises(self) -> None:
+		with self.assertRaises(SriVoucherError):
+			_synthesize_iva_row([map_line_taxes(LINE)], "9999")
+
+	def test_zero_iva_base_emits_nothing(self) -> None:
+		mapped = [{"taxes": [{"code": "3", "rate_code": "3001", "rate": 0.0, "base": 10.0, "value": 5.0}]}]
+		self.assertIsNone(_synthesize_iva_row(mapped, "1"))

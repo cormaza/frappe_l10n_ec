@@ -25,9 +25,11 @@ EC_WITHHOLDING_CATEGORIES = [
 	{"name": "Ecuador IR 2.75%", "tax_type": "IR", "rate": 2.75, "account_number": "2010709"},
 	{"name": "Ecuador IR 8%", "tax_type": "IR", "rate": 8.0, "account_number": "2010709"},
 	{"name": "Ecuador IR 10%", "tax_type": "IR", "rate": 10.0, "account_number": "2010709"},
-	{"name": "Ecuador IVA 30%", "tax_type": "IVA", "rate": 30.0, "account_number": "2010708"},
-	{"name": "Ecuador IVA 70%", "tax_type": "IVA", "rate": 70.0, "account_number": "2010708"},
-	{"name": "Ecuador IVA 100%", "tax_type": "IVA", "rate": 100.0, "account_number": "2010708"},
+	# NOTE: no IVA categories on purpose. ERPNext only computes Net/Gross-basis
+	# withholdings, so assigning an IVA (tax-on-tax) category natively posts wrong
+	# amounts (proven: 30.00 instead of 4.50). IVA withholdings are synthesized at
+	# emission from the invoice IVA taxes (see _synthesize_iva_row) and the
+	# Supplier guard rejects IVA assignments fail-loud.
 ]
 
 WITHHOLDING_YEAR_START = "2026-01-01"
