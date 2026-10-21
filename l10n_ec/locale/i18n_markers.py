@@ -25,6 +25,22 @@ CUSTOM_FIELD_STRINGS = [
 	_("Accounting Required"),
 	_("SRI Identification Type"),
 	_("Related Party"),
+	_("SRI Payment Code"),
+]
+
+PAYMENT_METHOD_STRINGS = [
+	# Official SRI Tabla 24 descriptions. Spanish is the source wording here
+	# (protocol exception); entries exist so the translation catalog carries
+	# the official vocabulary. TABLA_24 codes stay verbatim and are never
+	# translated.
+	_("Sin utilización del sistema financiero"),
+	_("Compensación de deudas"),
+	_("Tarjeta de débito"),
+	_("Dinero electrónico"),
+	_("Tarjeta prepago"),
+	_("Tarjeta de crédito"),
+	_("Otros con utilización del sistema financiero"),
+	_("Endoso de títulos"),
 ]
 
 WITHHOLDING_CONCEPTO_STRINGS = [

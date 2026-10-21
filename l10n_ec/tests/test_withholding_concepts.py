@@ -1,13 +1,13 @@
 import unittest
 
 from l10n_ec.ecuador_localization.voucher_flow import sustento_entries
+from l10n_ec.sri.voucher_states import SriVoucherError
 from l10n_ec.sri.withholding_concepts import (
 	CONCEPTS,
 	WITHHOLDING_CONCEPTS_VALID_FROM,
 	resolve_concepto,
 	validate_concepto_map,
 )
-from l10n_ec.sri.voucher_states import SriVoucherError
 
 try:
 	from frappe.tests import UnitTestCase

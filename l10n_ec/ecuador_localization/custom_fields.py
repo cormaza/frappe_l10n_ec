@@ -73,6 +73,17 @@ CUSTOM_FIELDS = {
 			"label": "Related Party",
 		},
 	],
+	"Mode of Payment": [
+		{
+			"default": "01",
+			"fieldname": "sri_payment_code",
+			"fieldtype": "Select",
+			"insert_after": "mode_of_payment",
+			"label": "SRI Payment Code",
+			"options": "01\n15\n16\n17\n18\n19\n20\n21",
+			"description": "SRI Tabla 24 payment code. Forward-placed mapping point POS and ATS readers will use in Phase 9A; vouchers still emit the default until wired.",
+		},
+	],
 	"Supplier": [
 		{
 			"fieldname": "sri_identification_type",

@@ -28,6 +28,7 @@ except ImportError:  # pragma: no cover
 
 from l10n_ec.sri import xml_builder
 from l10n_ec.sri.access_key import generate_access_key
+from l10n_ec.sri.payment_methods import resolve_payment_method
 from l10n_ec.sri.signer import sign_xml_xades_bes
 from l10n_ec.sri.soap_client import (
 	SriSoapClient,
@@ -347,8 +348,10 @@ def process_voucher(
 	withholding_codes: dict | None = None,
 	sustento_code: str = "02",
 	guia_data: dict | None = None,
+	payment_method: str = "01",
 ) -> dict:
 	"""Run generate/sign/submit/poll for one voucher; safe to re-run anytime."""
+	resolve_payment_method(payment_method)
 	if frappe is None:  # pragma: no cover
 		raise RuntimeError("frappe is required to process vouchers.")
 	doc = frappe.get_doc("SRI Electronic Voucher", voucher_name)
@@ -362,6 +365,7 @@ def process_voucher(
 			withholding_codes=withholding_codes,
 			sustento_code=sustento_code,
 			guia_data=guia_data,
+			payment_method=payment_method,
 		)
 		generated = generate_voucher_xml_doc(doc, payload)
 		if not generated["ok"]:
@@ -406,13 +410,15 @@ def _notify_authorized(doc) -> None:
 		save_voucher(doc)
 
 
-def enqueue_process_voucher(voucher_name: str) -> None:
+def enqueue_process_voucher(voucher_name: str, payment_method: str = "01") -> None:
 	"""Enqueue asynchronous voucher processing (production entry point)."""
+	resolve_payment_method(payment_method)
 	if frappe is None:  # pragma: no cover
 		raise RuntimeError("frappe is required to enqueue vouchers.")
 	frappe.enqueue(
 		"l10n_ec.ecuador_localization.voucher_flow.process_voucher",
 		voucher_name=voucher_name,
+		payment_method=payment_method,
 		enqueue_after_commit=True,
 	)
 
@@ -428,11 +434,13 @@ def create_and_process(
 	withholding_codes: dict | None = None,
 	sustento_code: str = "02",
 	guia_data: dict | None = None,
+	payment_method: str = "01",
 	run_now: bool = False,
 	key_material: tuple | None = None,
 	client_ws=None,
 ) -> dict:
 	"""Create a voucher for an invoice and process it (whitelisted entry point)."""
+	resolve_payment_method(payment_method)
 	if frappe is None:  # pragma: no cover
 		raise RuntimeError("frappe is required to create vouchers.")
 	ref = frappe.get_doc(reference_doctype, reference_name)
@@ -472,8 +480,9 @@ def create_and_process(
 			withholding_codes=withholding_codes,
 			sustento_code=sustento_code,
 			guia_data=guia_data,
+			payment_method=payment_method,
 		)
-	enqueue_process_voucher(voucher.name)
+	enqueue_process_voucher(voucher.name, payment_method=payment_method)
 	return {"ok": True, "voucher": voucher.name, "queued": True}
 
 
@@ -619,7 +628,13 @@ def group_withholdings_by_sustento(withholdings: list, sustento_code: str = "02"
 
 
 def _assemble_payload(
-	doc, reason=None, reasons=None, withholding_codes=None, sustento_code="02", guia_data=None
+	doc,
+	reason=None,
+	reasons=None,
+	withholding_codes=None,
+	sustento_code="02",
+	guia_data=None,
+	payment_method="01",
 ):
 	"""Build the builder payload from live Company/invoice documents."""
 	company = frappe.get_doc("Company", doc.company)
@@ -641,6 +656,7 @@ def _assemble_payload(
 		"accounting_required": bool(getattr(company, "accounting_required", False)),
 	}
 	sequence = {"sequential": sequential, "access_key": doc.access_key}
+	resolve_payment_method(payment_method)
 	invoice = _invoice_dict(
 		doc,
 		reason=reason,
@@ -648,6 +664,7 @@ def _assemble_payload(
 		withholding_codes=withholding_codes,
 		sustento_code=sustento_code,
 		guia_data=guia_data,
+		payment_method=payment_method,
 	)
 	return build_voucher_payload(invoice, emitter, sequence)
 
@@ -691,9 +708,16 @@ def _invoice_line(row) -> dict:
 
 
 def _invoice_dict(
-	doc, reason=None, reasons=None, withholding_codes=None, sustento_code="02", guia_data=None
+	doc,
+	reason=None,
+	reasons=None,
+	withholding_codes=None,
+	sustento_code="02",
+	guia_data=None,
+	payment_method="01",
 ) -> dict:
 	"""Map a live invoice document to the normalized payload dict."""
+	resolve_payment_method(payment_method)
 	ref = frappe.get_doc(doc.reference_doctype, doc.reference_name)
 	base: dict = {
 		"doctype": doc.reference_doctype,
@@ -702,7 +726,7 @@ def _invoice_dict(
 		"subtotal": ref.total,
 		"discount": ref.discount_amount or 0.0,
 		"total": ref.grand_total,
-		"payments": [{"method": "01", "amount": ref.grand_total}],
+		"payments": [{"method": payment_method, "amount": ref.grand_total}],
 		"lines": [_invoice_line(row) for row in ref.items],
 	}
 	if doc.sri_doc_code == "06":
@@ -757,12 +781,15 @@ def _invoice_dict(
 			raise SriVoucherError(
 				"Withholding vouchers need explicit withholding_codes {category: (impuesto, codigo)}."
 			)
-		base.update(_withholding_subject_and_docs(doc, ref, withholding_codes, sustento_code))
+		base.update(_withholding_subject_and_docs(doc, ref, withholding_codes, sustento_code, payment_method))
 	return base
 
 
-def _withholding_subject_and_docs(doc, ref, withholding_codes: dict, sustento_code: str) -> dict:
+def _withholding_subject_and_docs(
+	doc, ref, withholding_codes: dict, sustento_code: str, payment_method: str = "01"
+) -> dict:
 	"""Build the 07 subject block plus grouped sustento docs from native entries."""
+	resolve_payment_method(payment_method)
 	mapped = [map_line_taxes(line) for line in base_lines(ref)]
 	doc_taxes = [
 		{
@@ -783,7 +810,7 @@ def _withholding_subject_and_docs(doc, ref, withholding_codes: dict, sustento_co
 		"subtotal": ref.total,
 		"total": ref.grand_total,
 		"doc_taxes": doc_taxes,
-		"payments": [{"method": "01", "amount": ref.grand_total}],
+		"payments": [{"method": payment_method, "amount": ref.grand_total}],
 	}
 	native = [
 		{

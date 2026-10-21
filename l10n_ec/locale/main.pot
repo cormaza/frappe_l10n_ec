@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecuador Localization VERSION\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-21 05:35-0641\n"
-"PO-Revision-Date: 2026-10-21 05:35-0641\n"
+"POT-Creation-Date: 2026-10-21 07:37-0641\n"
+"PO-Revision-Date: 2026-10-21 07:37-0641\n"
 "Last-Translator: developers@example.com\n"
 "Language-Team: developers@example.com\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Access Key"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:34
+#: l10n_ec/locale/i18n_markers.py:90
 msgid "Access Key:"
 msgstr ""
 
@@ -49,8 +49,16 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:40
+#: l10n_ec/locale/i18n_markers.py:96
 msgid "Address:"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:64
+msgid "Arriendo inmuebles"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:56
+msgid "Artistas"
 msgstr ""
 
 #. Label of the authorization_date (Datetime) field in DocType 'SRI Electronic
@@ -74,8 +82,20 @@ msgstr ""
 msgid "Authorized electronic voucher {}"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:56
+#: l10n_ec/locale/i18n_markers.py:112
 msgid "Base"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:76
+msgid "Bienes"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:62
+msgid "Bienes muebles"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:71
+msgid "Botellas PET"
 msgstr ""
 
 #: l10n_ec/sri/voucher_states.py:38
@@ -86,7 +106,7 @@ msgstr ""
 msgid "Cannot reinstall the chart: the company already has ledger entries."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:42
+#: l10n_ec/locale/i18n_markers.py:98
 msgid "Carrier:"
 msgstr ""
 
@@ -114,8 +134,16 @@ msgstr ""
 #: l10n_ec/ecuador_localization/doctype/sri_identification_type/sri_identification_type.json
 #: l10n_ec/ecuador_localization/doctype/sri_payment_method/sri_payment_method.json
 #: l10n_ec/ecuador_localization/doctype/sri_tax_support/sri_tax_support.json
-#: l10n_ec/locale/i18n_markers.py:47
+#: l10n_ec/locale/i18n_markers.py:103
 msgid "Code"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:54
+msgid "Comisiones intelecto"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:75
+msgid "Comisiones sociedades"
 msgstr ""
 
 #. Label of the company (Link) field in DocType 'SRI Electronic Voucher'
@@ -127,12 +155,12 @@ msgstr ""
 msgid "Company"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:529
+#: l10n_ec/ecuador_localization/voucher_flow.py:539
 msgid "Company '{}' has no SRI Signature configured."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:444
-#: l10n_ec/ecuador_localization/voucher_flow.py:624
+#: l10n_ec/ecuador_localization/voucher_flow.py:453
+#: l10n_ec/ecuador_localization/voucher_flow.py:642
 msgid "Company '{}' needs a tax_id (RUC) to emit vouchers."
 msgstr ""
 
@@ -140,8 +168,16 @@ msgstr ""
 msgid "Company RUC must be 13 numeric digits (got '{}')."
 msgstr ""
 
+#: l10n_ec/locale/i18n_markers.py:37
+msgid "Compensación de deudas"
+msgstr ""
+
 #: l10n_ec/sri/access_key.py:95
 msgid "Complete document number must be 15 digits (got '{}')."
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:70
+msgid "Construcción"
 msgstr ""
 
 #. Label of the current_sequence (Int) field in DocType 'SRI Emission Sequence'
@@ -149,7 +185,7 @@ msgstr ""
 msgid "Current Sequence"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:36
+#: l10n_ec/locale/i18n_markers.py:92
 msgid "DOCUMENT IN PROCESS"
 msgstr ""
 
@@ -158,7 +194,7 @@ msgstr ""
 msgid "Days for Notification"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:750
+#: l10n_ec/ecuador_localization/voucher_flow.py:777
 msgid "Debit notes need explicit reasons [{razon, valor}]."
 msgstr ""
 
@@ -168,20 +204,28 @@ msgstr ""
 msgid "Delivery Note"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:830
+#: l10n_ec/ecuador_localization/voucher_flow.py:860
 msgid "Delivery Note '{}' needs a shipping address for the guia recipient."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:824
+#: l10n_ec/ecuador_localization/voucher_flow.py:854
 msgid "Delivery notes need exactly one sustento doc in guia_data['docs']."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:707
+#: l10n_ec/ecuador_localization/voucher_flow.py:734
 msgid "Delivery notes need explicit guia_data {carrier, transport, docs}."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:48
+#: l10n_ec/locale/i18n_markers.py:55
+msgid "Deportistas"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:104
 msgid "Description"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:39
+msgid "Dinero electrónico"
 msgstr ""
 
 #: l10n_ec/sri/access_key.py:104
@@ -199,8 +243,16 @@ msgstr ""
 msgid "Emission Point Code"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:514
+#: l10n_ec/ecuador_localization/voucher_flow.py:524
 msgid "Emission point '{}' has no sequence for '{}'."
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:43
+msgid "Endoso de títulos"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:69
+msgid "Energía eléctrica"
 msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:24
@@ -209,6 +261,18 @@ msgstr ""
 
 #: l10n_ec/sri/signer.py:68
 msgid "Error opening the signature, possibly the signature key has been entered incorrectly or the file is not supported: {}"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:81
+msgid "Especial 10%"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:82
+msgid "Especial 20%"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:83
+msgid "Especial 50%"
 msgstr ""
 
 #. Label of the establishment_code (Data) field in DocType 'SRI Emission Point'
@@ -225,7 +289,7 @@ msgstr ""
 msgid "Expiration Date"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:51
+#: l10n_ec/locale/i18n_markers.py:107
 msgid "Fiscal Period:"
 msgstr ""
 
@@ -234,8 +298,24 @@ msgstr ""
 msgid "Generated"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:236
+#: l10n_ec/ecuador_localization/voucher_flow.py:238
 msgid "Generated XML is malformed: {}. Head: {!r}"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:78
+msgid "Honorarios"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:51
+msgid "Honorarios profesionales"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:58
+msgid "Imagen y renombre"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:53
+msgid "Intelecto sin título"
 msgstr ""
 
 #: l10n_ec/sri/access_key.py:32
@@ -251,7 +331,7 @@ msgstr ""
 msgid "Issue Date"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:33
+#: l10n_ec/locale/i18n_markers.py:89
 msgid "Issuer:"
 msgstr ""
 
@@ -261,10 +341,26 @@ msgstr ""
 msgid "Last Message"
 msgstr ""
 
+#: l10n_ec/locale/i18n_markers.py:63
+msgid "Leasing"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:61
+msgid "Liquidación compra"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:57
+msgid "Mano de obra"
+msgstr ""
+
 #. Label of the section_break_messages (Section Break) field in DocType 'SRI
 #. Electronic Voucher'
 #: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 msgid "Messages"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:73
+msgid "Minerales"
 msgstr ""
 
 #: l10n_ec/ecuador_localization/tax_templates.py:58 l10n_ec/tax_templates.py:58
@@ -275,7 +371,7 @@ msgstr ""
 msgid "Missing account {} for withholding setup."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:39
+#: l10n_ec/locale/i18n_markers.py:95
 msgid "Name:"
 msgstr ""
 
@@ -283,11 +379,19 @@ msgstr ""
 msgid "No PKCS#12 signature content attached to SRI Signature document."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:507
+#: l10n_ec/ecuador_localization/voucher_flow.py:517
 msgid "No SRI Emission Point for company '{}' and document '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:916
+#: l10n_ec/locale/i18n_markers.py:80
+msgid "No procede"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:67
+msgid "No sujeto"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:946
 msgid "No voucher found for modified document '{}'."
 msgstr ""
 
@@ -305,8 +409,20 @@ msgstr ""
 msgid "Organization (Subject)"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:41
+#: l10n_ec/locale/i18n_markers.py:97
 msgid "Origin Address:"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:68
+msgid "Otras 1%"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:74
+msgid "Otras 3%"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:42
+msgid "Otros con utilización del sistema financiero"
 msgstr ""
 
 #. Label of the section_break_credentials (Section Break) field in DocType 'SRI
@@ -320,7 +436,7 @@ msgstr ""
 msgid "PKCS#12 Signature File (.p12)"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:44
+#: l10n_ec/locale/i18n_markers.py:100
 msgid "Plate:"
 msgstr ""
 
@@ -332,21 +448,25 @@ msgstr ""
 msgid "Production"
 msgstr ""
 
+#: l10n_ec/locale/i18n_markers.py:59
+msgid "Publicidad"
+msgstr ""
+
 #. Option for the 'Reference DocType' (Select) field in DocType 'SRI Electronic
 #. Voucher'
 #: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 msgid "Purchase Invoice"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:49
+#: l10n_ec/locale/i18n_markers.py:105
 msgid "Quantity"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:31
+#: l10n_ec/locale/i18n_markers.py:87
 msgid "RIDE — Delivery Note"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:32
+#: l10n_ec/locale/i18n_markers.py:88
 msgid "RIDE — Withholding"
 msgstr ""
 
@@ -354,7 +474,7 @@ msgstr ""
 msgid "RIMPE Regime"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:57
+#: l10n_ec/locale/i18n_markers.py:113
 msgid "Rate %"
 msgstr ""
 
@@ -363,7 +483,7 @@ msgstr ""
 msgid "Received"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:38
+#: l10n_ec/locale/i18n_markers.py:94
 msgid "Recipient"
 msgstr ""
 
@@ -388,12 +508,20 @@ msgstr ""
 msgid "Related Party"
 msgstr ""
 
+#: l10n_ec/locale/i18n_markers.py:66
+msgid "Rendimientos financieros"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:79
+msgid "Retención cero"
+msgstr ""
+
 #. Option for the 'State' (Select) field in DocType 'SRI Electronic Voucher'
 #: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 msgid "Returned"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:35
+#: l10n_ec/locale/i18n_markers.py:91
 msgid "SRI Authorization:"
 msgstr ""
 
@@ -437,6 +565,10 @@ msgstr ""
 msgid "SRI Number"
 msgstr ""
 
+#: l10n_ec/locale/i18n_markers.py:28
+msgid "SRI Payment Code"
+msgstr ""
+
 #. Name of a DocType
 #: l10n_ec/ecuador_localization/doctype/sri_payment_method/sri_payment_method.json
 msgid "SRI Payment Method"
@@ -448,7 +580,7 @@ msgstr ""
 msgid "SRI Signature"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:534
+#: l10n_ec/ecuador_localization/voucher_flow.py:544
 msgid "SRI Signature '{}' is not usable."
 msgstr ""
 
@@ -483,6 +615,10 @@ msgstr ""
 msgid "Sales to Consumidor Final above {} are not allowed; register the buyer identification."
 msgstr ""
 
+#: l10n_ec/locale/i18n_markers.py:65
+msgid "Seguros"
+msgstr ""
+
 #. Label of the sequences (Table) field in DocType 'SRI Emission Point'
 #: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
 msgid "Sequences by Document Type"
@@ -491,6 +627,14 @@ msgstr ""
 #. Label of the subject_serial_number (Data) field in DocType 'SRI Signature'
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "Serial Number (Subject)"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:77
+msgid "Servicios"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:52
+msgid "Servicios profesionales sociedades"
 msgstr ""
 
 #. Label of the signature_name (Data) field in DocType 'SRI Signature'
@@ -519,6 +663,10 @@ msgstr ""
 msgid "Signing password is required to decode the PKCS#12 file."
 msgstr ""
 
+#: l10n_ec/locale/i18n_markers.py:36
+msgid "Sin utilización del sistema financiero"
+msgstr ""
+
 #: l10n_ec/locale/i18n_markers.py:20
 msgid "Special Taxpayer Resolution"
 msgstr ""
@@ -531,15 +679,15 @@ msgstr ""
 msgid "State"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:50
+#: l10n_ec/locale/i18n_markers.py:106
 msgid "Subject:"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:46
+#: l10n_ec/locale/i18n_markers.py:102
 msgid "Support Document:"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:52
+#: l10n_ec/locale/i18n_markers.py:108
 msgid "Sustento:"
 msgstr ""
 
@@ -555,7 +703,23 @@ msgstr ""
 msgid "System Manager"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:54
+#: l10n_ec/locale/i18n_markers.py:41
+msgid "Tarjeta de crédito"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:38
+msgid "Tarjeta de débito"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:40
+msgid "Tarjeta prepago"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:72
+msgid "Tarjetas"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:110
 msgid "Tax"
 msgstr ""
 
@@ -582,28 +746,40 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:59
+#: l10n_ec/locale/i18n_markers.py:115
 msgid "Total Withheld:"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:53
+#: l10n_ec/locale/i18n_markers.py:109
 msgid "Totals:"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:45
+#: l10n_ec/locale/i18n_markers.py:101
 msgid "Transfer Reason:"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:43
+#: l10n_ec/locale/i18n_markers.py:99
 msgid "Transport Dates:"
+msgstr ""
+
+#: l10n_ec/locale/i18n_markers.py:60
+msgid "Transporte"
 msgstr ""
 
 #: l10n_ec/ecuador_localization/voucher_mail.py:49
 msgid "Unknown SRI document code '{}'."
 msgstr ""
 
+#: l10n_ec/sri/payment_methods.py:39
+msgid "Unknown SRI payment method code '{}'."
+msgstr ""
+
 #: l10n_ec/sri/soap_client.py:56
 msgid "Unknown SRI service type: {}"
+msgstr ""
+
+#: l10n_ec/sri/withholding_concepts.py:71
+msgid "Unknown SRI withholding concepto code '{}'."
 msgstr ""
 
 #: l10n_ec/ecuador_localization/voucher_mail.py:84
@@ -615,11 +791,11 @@ msgstr ""
 msgid "Unsigned XML"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:211
+#: l10n_ec/ecuador_localization/voucher_flow.py:213
 msgid "Unsupported SRI document code '{}'."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:58
+#: l10n_ec/locale/i18n_markers.py:114
 msgid "Value"
 msgstr ""
 
@@ -627,12 +803,17 @@ msgstr ""
 msgid "Withholding Agent Resolution"
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:55
+#: l10n_ec/locale/i18n_markers.py:111
 msgid "Withholding Code"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:561
+#: l10n_ec/ecuador_localization/voucher_flow.py:573
+#: l10n_ec/sri/withholding_concepts.py:84
 msgid "Withholding category '{}' has no SRI code mapping."
+msgstr ""
+
+#: l10n_ec/sri/withholding_concepts.py:88
+msgid "Withholding category '{}' maps impuesto '{}' but concepto '{}' is impuesto '{}'."
 msgstr ""
 
 #: l10n_ec/sri/xml_builder.py:313
@@ -648,11 +829,11 @@ msgstr ""
 msgid "expired"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:821
+#: l10n_ec/ecuador_localization/voucher_flow.py:851
 msgid "guia_data is missing keys: {}."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:37
+#: l10n_ec/locale/i18n_markers.py:93
 msgid "pending SRI authorization."
 msgstr ""
 

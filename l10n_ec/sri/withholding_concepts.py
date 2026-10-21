@@ -81,9 +81,7 @@ def validate_concepto_map(code_map: dict) -> None:
 	for category, pair in code_map.items():
 		impuesto, codigo = pair
 		if codigo is None:
-			raise SriVoucherError(
-				_("Withholding category '{}' has no SRI code mapping.").format(category)
-			)
+			raise SriVoucherError(_("Withholding category '{}' has no SRI code mapping.").format(category))
 		expected, _rate, _description = resolve_concepto(codigo)
 		if impuesto != expected:
 			raise SriVoucherError(
