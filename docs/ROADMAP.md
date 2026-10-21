@@ -132,16 +132,18 @@ Therefore, `l10n_ec` for Frappe v16 combines **both** the base accounting/catalo
 - **Source Equivalence**: [`OCA/l10n-ecuador` PR #105 (`l10n_ec_ats`)](https://github.com/OCA/l10n-ecuador/pull/105), [`PR #108 (`l10n_ec_104`)](https://github.com/OCA/l10n-ecuador/pull/108), [`PR #109 (`l10n_ec_103`)](https://github.com/OCA/l10n-ecuador/pull/109).
 - **Split rationale**: filings aggregate the full fiscal catalog; emitting them on the current IVA-only subset would be wrong, not incomplete. `9.0` completes the catalog first; `9A`/`9B` consume it.
 
-#### Phase 9.0: Complete Fiscal Catalog (prerequisite)
-- Official IR/IVA withholding concepto table (`303`, `304`, `307`, …) plus Form 103 casillero mapping.
-- ICE/IRBPNR line-tax mapping (SRI codes `3`/`5`) with Item Tax Templates and ledger accounts (product-specific rates stay user-configured).
-- SRI Payment Method table (Tabla 20: `01`, `16` credit card, `20` transfer, …) bridged from ERPNext Mode of Payment (today everything emits as `01`).
+#### Phase 9.0: Complete Fiscal Catalog (prerequisite) — DELIVERED
+- Withholding concepto table (176 XML `codigoRetencion` values: IR Tabla 20 + IVA Tabla 23, vigencia 2026-03-01, casillero pairs, rates only where sourced) + explicit per-call validation.
+- ICE/IRBPNR line-tax mapping mechanism (explicit per-template codes; tariffs stay per-product user configuration).
+- SRI Payment Method table (Tabla 24, corrected from the initial "Tabla 20" label; 16=debito/19=credito) bridged from Mode of Payment + explicit voucher parameter.
+- Related completions feeding 9A/9B: purchase-side IVA deduction rows (native GL), sales-side received settlement JEs + SI concepto/received-ref fields, Supplier/Customer assignment guards.
 
 #### Phase 9A: `ATS` (Anexo Transaccional Simplificado)
-- Monthly `AT{mmaaaa}.xml` + `.zip` covering purchases (`compras`), sales (`ventas`), exports (`exportaciones`), and annulled vouchers (`anulados`), validated offline against `ats.xsd`, reading posted ledger/voucher data through the `9.0` catalog.
+- Monthly `AT{mmaaaa}.xml` + `.zip` covering purchases (`compras`), sales (`ventas`), exports (`exportaciones`), and annulled vouchers (`anulados`), validated offline against the vendored `l10n_ec/sri/xsd/ats.xsd` (SRI-published, via OCA PR #105 reference).
+- Reads: posted ledger (incl. IVA deduction rows + settlement JEs), voucher XML + RIDE data, SI received refs, Tabla 24 payment codes, concepto/casillero table. No new computation model: ATS aggregates what 9.0 + the invoice flows already book.
 
 #### Phase 9B: SRI Forms 104 & 103
-- **Form 104 (VAT Declaration)** & **Form 103 (Income Tax Withholding Declaration)**: Frappe Script Reports aggregating tax bases and withholdings by official SRI casillero codes, sourced from the `9.0` catalog.
+- **Form 104 (VAT Declaration)** & **Form 103 (Income Tax Withholding Declaration)**: Frappe Script Reports aggregating tax bases and withholdings by the concepto→casillero pairs in the table; TDS credits from `1010501`/`1010502` (+ settlement JEs), received refs from SI fields, IVA credit from deduction rows.
 - **Out of scope**: automatic ICE computation per product, card processing (SRI payment code only, no gateway), and automatic SRI submission (ATS delivers as file+zip for the portal).
 
 ---
