@@ -146,3 +146,33 @@ def inherit_pos_point_invoice(doc, method=None) -> None:
 		frappe.throw(_("POS Profile '{}' needs an SRI Emission Point before selling.").format(profile))
 	ensure_ticket_point(doc.get("sri_emission_point"), point, doc.get("name") or _("(new invoice)"))
 	doc.sri_emission_point = point
+
+
+def validate_merge_identity(doc, method=None) -> None:
+	"""Pin one fiscal identity per merge log (explicit anti-mix guard)."""
+	if frappe is None:
+		return
+	from l10n_ec.ecuador_localization.validation import is_generic_final_consumer
+	from l10n_ec.ecuador_localization.voucher_flow import (
+		SriVoucherError,
+		check_merge_identity_uniform,
+	)
+
+	def identity(customer: str | None) -> bool:
+		if not customer:
+			return True
+		return bool(
+			is_generic_final_consumer(
+				frappe.db.get_value("Customer", customer, "sri_identification_type"),
+				frappe.db.get_value("Customer", customer, "tax_id"),
+			)
+		)
+
+	try:
+		check_merge_identity_uniform(
+			[identity(row.get("customer")) for row in (doc.get("pos_invoices") or [])],
+			identity(doc.get("customer")),
+			doc.get("name") or _("(new merge)"),
+		)
+	except SriVoucherError as exc:
+		frappe.throw(str(exc))

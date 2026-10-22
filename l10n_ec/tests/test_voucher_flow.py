@@ -640,3 +640,33 @@ class TestShopChannelLock(UnitTestCase):
 			validate_point_channel(False, False, "001-004", "SI-1", shop_only=True)
 		with self.assertRaises(SriVoucherError):
 			validate_point_channel(True, True, "X", "S", is_shop_sale=True, shop_only=True)
+
+
+class TestTicketHelpers(UnitTestCase):
+	"""Per-ticket payment code and merge identity uniformity (pure)."""
+
+	def test_payment_code_default_and_passthrough(self) -> None:
+		from l10n_ec.ecuador_localization.voucher_flow import ticket_payment_code
+
+		self.assertEqual(ticket_payment_code(None), "01")
+		self.assertEqual(ticket_payment_code("01"), "01")
+		self.assertEqual(ticket_payment_code("19"), "19")
+
+	def test_payment_code_unknown_fails_loud(self) -> None:
+		from l10n_ec.ecuador_localization.voucher_flow import ticket_payment_code
+
+		with self.assertRaises((ValueError, SriVoucherError)):
+			ticket_payment_code("99")
+
+	def test_merge_uniform_passes(self) -> None:
+		from l10n_ec.ecuador_localization.voucher_flow import check_merge_identity_uniform
+
+		check_merge_identity_uniform([True, True], True, "M-1")
+		check_merge_identity_uniform([False], False, "M-2")
+		check_merge_identity_uniform([], True, "M-3")
+
+	def test_merge_mixed_fails_loud(self) -> None:
+		from l10n_ec.ecuador_localization.voucher_flow import check_merge_identity_uniform
+
+		with self.assertRaises(SriVoucherError):
+			check_merge_identity_uniform([True, False], True, "M-1")

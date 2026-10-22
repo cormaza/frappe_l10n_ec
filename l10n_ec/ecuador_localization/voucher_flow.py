@@ -495,7 +495,11 @@ def create_and_process(
 		reference_doctype == "Sales Invoice"
 		and bool(getattr(ref, "is_pos", 0) or getattr(ref, "is_consolidated", 0))
 	)
-	is_shop_sale = reference_doctype == "Sales Invoice" and bool(ref.get("sri_emission_point"))
+	is_shop_sale = (
+		reference_doctype == "Sales Invoice"
+		and bool(ref.get("sri_emission_point"))
+		and not is_pos_sale
+	)
 	validate_point_channel(
 		is_pos_sale,
 		bool(getattr(emission, "pos_only", 0)),
@@ -563,6 +567,31 @@ def create_and_process(
 	return {"ok": True, "voucher": voucher.name, "queued": True}
 
 
+def check_merge_identity_uniform(ticket_generics: list, merge_generic: bool, merge: str) -> None:
+	"""Every ticket in a merge shares the merge fiscal identity (pure).
+
+	The core already forces one customer per merge log; this pins the
+	invariant explicitly so a customer record reused across identities
+	(or a future core change) fails loud instead of mixing CF tickets
+	with identified ones in one consolidated document.
+	"""
+	for generic in ticket_generics or []:
+		if bool(generic) != bool(merge_generic):
+			raise SriVoucherError(
+				_("Merge '{}' mixes generic final consumer with identified buyers.").format(merge)
+			)
+
+
+def ticket_payment_code(mode_code: str | None) -> str:
+	"""Tabla 24 code for one ticket payment (pure).
+
+	Unset maps to cash `01` (the documented default); an unknown code
+	fails loud instead of emitting a guessed `formaPago`.
+	"""
+	resolve_payment_method(mode_code or "01")
+	return mode_code or "01"
+
+
 @frappe.whitelist() if frappe else (lambda f: f)
 def create_and_process_consolidated(
 	sales_invoice: str,
@@ -619,7 +648,7 @@ def create_and_process_consolidated(
 	for name in tickets:
 		ticket = frappe.get_doc("POS Invoice", name)
 		mode = (ticket.get("payments") or [{}])[0].get("mode_of_payment") or "Cash"
-		code = frappe.db.get_value("Mode of Payment", mode, "sri_payment_code") or "01"
+		code = ticket_payment_code(frappe.db.get_value("Mode of Payment", mode, "sri_payment_code"))
 		results.append(
 			create_and_process(
 				"Sales Invoice",

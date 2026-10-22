@@ -68,6 +68,9 @@ doc_events = {
 	"POS Invoice": {
 		"validate": "l10n_ec.ecuador_localization.invoice_hooks.validate_pos_ticket",
 	},
+	"POS Invoice Merge Log": {
+		"validate": "l10n_ec.ecuador_localization.invoice_hooks.validate_merge_identity",
+	},
 	"Purchase Invoice": {
 		"validate": [
 			"l10n_ec.ecuador_localization.validation.enforce_iva_deduction_row",
