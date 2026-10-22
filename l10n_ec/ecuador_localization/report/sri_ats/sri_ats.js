@@ -74,11 +74,11 @@ frappe.query_reports["SRI ATS"] = {
 						? `<p><b>${__("{0} findings", [(receipt.messages || []).length])}:</b></p><ul class="small" style="max-height:160px;overflow:auto">${lines}</ul>`
 						: `<p class="text-muted">${__("No errors or warnings reported by DIMM.")}</p>`;
 					const talon = receipt.talon_html
-						? `<hr><p><b>${__("DIMM summary (talón)")}</b></p><iframe class="ats-talon-frame" style="width:100%;height:420px;border:1px solid var(--border-color)"></iframe>`
+						? `<hr><p><b>${__("DIMM summary (talón)")}</b></p><iframe class="ats-talon-frame" style="width:100%;height:560px;border:1px solid var(--border-color);background:#fff"></iframe>`
 						: "";
 					const dialog = new frappe.ui.Dialog({
 						title: __("DIMM verdict: {0}", [receipt.verdict || "?"]),
-						width: 900,
+						size: "extra-large",
 						fields: [
 							{
 								fieldtype: "HTML",
