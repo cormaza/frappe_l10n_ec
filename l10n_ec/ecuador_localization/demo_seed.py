@@ -576,7 +576,13 @@ def _seed_demo_withholding_voucher(company: str) -> str | None:
 	posting = purchase.posting_date
 	issue = posting.strftime("%d/%m/%Y") if hasattr(posting, "strftime") else str(posting)
 	period = posting.strftime("%m/%Y") if hasattr(posting, "strftime") else "10/2026"
-	auth_date = f"{posting} 12:00:00" if hasattr(posting, "strftime") else f"{posting}"
+	from datetime import datetime as _datetime
+
+	auth_date = (
+		_datetime(posting.year, posting.month, posting.day, 12, 0, 0)
+		if hasattr(posting, "year")
+		else _datetime.today().replace(hour=12, minute=0, second=0, microsecond=0)
+	)
 
 	from l10n_ec.sri.access_key import generate_access_key
 	from l10n_ec.sri.xml_builder import build_retencion_xml, validate_against_xsd

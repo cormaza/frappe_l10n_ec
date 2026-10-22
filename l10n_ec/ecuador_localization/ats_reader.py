@@ -84,7 +84,7 @@ def purchase_row(pi: dict, supplier: dict, voucher: dict | None, doc_code: str =
 		row["retencion"] = {
 			"number": voucher.get("sri_number", ""),
 			"authorization": voucher.get("authorization_number", ""),
-			"date": voucher.get("authorization_date", ""),
+			"date": _iso_to_sri(voucher.get("authorization_date", "")),
 		}
 	return row
 
@@ -197,8 +197,8 @@ def _settlement_values(sales_invoice: str) -> dict | None:
 
 
 def _iso_to_sri(value) -> str:
-	"""`YYYY-MM-DD` (or date) to `DD/MM/YYYY`; empty stays empty."""
-	text = str(value or "")
+	"""`YYYY-MM-DD` (date, Datetime, or string) to `DD/MM/YYYY`; empty stays empty."""
+	text = str(value or "").strip().split(" ")[0]
 	parts = text.split("-")
 	if len(parts) == 3 and len(parts[0]) == 4:
 		return f"{parts[2]}/{parts[1]}/{parts[0]}"

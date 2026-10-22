@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecuador Localization VERSION\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-22 08:17-0641\n"
-"PO-Revision-Date: 2026-10-22 08:17-0641\n"
+"POT-Creation-Date: 2026-10-22 08:33-0641\n"
+"PO-Revision-Date: 2026-10-22 08:33-0641\n"
 "Last-Translator: developers@example.com\n"
 "Language-Team: developers@example.com\n"
 "MIME-Version: 1.0\n"
@@ -60,6 +60,14 @@ msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:372 l10n_ec/sri/ats_collector.py:180
 msgid "ATS document number '{}' is not a SRI number."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.py:82
+msgid "ATS download needs an Ecuadorian company, found '{}'."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:51
+msgid "ATS generated"
 msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:384 l10n_ec/sri/ats_builder.py:166
@@ -467,12 +475,20 @@ msgstr ""
 msgid "Document Type"
 msgstr ""
 
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:52
+msgid "Documents: {0} purchases, {1} sales."
+msgstr ""
+
 #: l10n_ec/locale/i18n_markers.py:233
 msgid "Donaciones en dinero -Impuesto a la donaciones"
 msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:228
 msgid "Donaciones en dinero -Impuesto a las donaciones"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:31
+msgid "Download ATS ZIP"
 msgstr ""
 
 #. Name of a Workspace
@@ -610,6 +626,10 @@ msgstr ""
 
 #: l10n_ec/ecuador_localization/voucher_flow.py:241
 msgid "Generated XML is malformed: {}. Head: {!r}"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:46
+msgid "Generating ATS files…"
 msgstr ""
 
 #: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:37
@@ -1581,6 +1601,10 @@ msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:82
 msgid "Servicios profesionales sociedades"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:34
+msgid "Set Company, Year and Month before downloading."
 msgstr ""
 
 #: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:36

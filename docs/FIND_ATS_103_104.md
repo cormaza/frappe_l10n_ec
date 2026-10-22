@@ -20,10 +20,13 @@ NAC-DGERCGC17-00000324 (`l10n_ec/sri/form104_layout.py`), Tabla 20/23 SRI
 
 **Dónde generarlo:**
 
-- **Bench (recomendado para demo):**
+- **Desk (recomendado):** abrí el reporte **SRI ATS**, fijá Company/Año/Mes y apretá
+  **Descargar ATS ZIP** — baja `AT{MMAAAA}.zip` (el que pide el portal SRI) y muestra
+  cuántos documentos entraron por sección. El XML viaja dentro del ZIP.
+- **Bench (alternativa):**
   ```bash
-  bench --site demo execute "frappe.get_attr('l10n_ec.ecuador_localization.ats_reader.generate_ats_files')('Demo Ecuador', 2026, 10)"
-  # guarda en /tmp/AT102026.xml y .zip — cópialo donde lo entrega el portal SRI
+  bench --site demo execute "frappe.get_attr('l10n_ec.ecuador_localization.report.sri_ats.sri_ats.download_ats')('Demo Ecuador',2026,10)"
+  # deja /private/files/AT102026.zip y .xml en el sitio
   ```
   El mes demo de referencia es **10/2026** (octubre): trae 8 compras con `codSustento` mixtos (`02`/`06`), `tpIdProv 04/05`, `montoIce 2.50` en `001-001-000000015`, y tipos `01/04/05`.
 

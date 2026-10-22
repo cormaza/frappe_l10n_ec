@@ -39,7 +39,7 @@ def execute(filters=None):
 	country_code = frappe.db.get_value("Country", company_country, "code") if company_country else None
 	if country_code and str(country_code).strip().upper() != "EC":
 		return columns, []
-	from l10n_ec.ecuador_localization.ats_reader import read_month
+	from l10n_ec.ecuador_localization.ats_reader import generate_ats_files, read_month
 	from l10n_ec.sri.ats_collector import collect_month
 
 	try:
@@ -56,3 +56,43 @@ def execute(filters=None):
 		for r in subtotals
 	]
 	return columns, data, None, None, summary, True
+
+
+def _whitelist():
+	"""``frappe.whitelist`` on bench, identity decorator for Ring-1 imports."""
+	if frappe is None:  # pragma: no cover
+		return lambda fn: fn
+	return frappe.whitelist()
+
+
+@_whitelist()
+def download_ats(company: str, year: int, month: int) -> dict:
+	"""Generate the ATS XML/ZIP of a month and return private File URLs.
+
+	Desk entry point for the SRI ATS report button: the portal upload is
+	the ZIP (it already embeds the XML); the XML URL stays for inspection.
+	Files regenerate on every call so the download always matches the
+	posted month. Fail loud on non-Ecuadorian companies and bad periods.
+	"""
+	from l10n_ec.ecuador_localization.ats_reader import generate_ats_files
+
+	company_country = frappe.db.get_value("Company", company, "country")
+	country_code = frappe.db.get_value("Country", company_country, "code") if company_country else None
+	if country_code and str(country_code).strip().upper() != "EC":
+		frappe.throw(_("ATS download needs an Ecuadorian company, found '{}'.").format(company))
+	result = generate_ats_files(company, int(year), int(month))
+	period = f"{int(month):02d}{int(year)}"
+	urls = {}
+	for kind, file_name, content in (
+		("zip", f"AT{period}.zip", bytes(result["zip"])),
+		("xml", f"AT{period}.xml", result["xml"].encode("utf-8")),
+	):
+		existing = frappe.db.get_value("File", {"file_name": file_name}, "name")
+		if existing:
+			frappe.delete_doc("File", existing, ignore_permissions=True, force=True)
+		file_doc = frappe.get_doc(
+			{"doctype": "File", "file_name": file_name, "content": content, "is_private": 1}
+		).insert(ignore_permissions=True)
+		urls[kind] = file_doc.file_url
+	urls["counts"] = result["counts"]
+	return urls
