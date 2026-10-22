@@ -210,10 +210,7 @@ def sync_tax_row_descriptions(doc, method=None) -> None:
 								break
 					except Exception:
 						continue
-		if rate_val:
-			row.description = f"{label} {rate_val:g}%"
-		else:
-			row.description = label
+		row.description = f"{label} {rate_val:g}%"
 
 
 def enforce_iva_deduction_row(doc, method=None, resolve_account=None, company_code=None) -> None:
