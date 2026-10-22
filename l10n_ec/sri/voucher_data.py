@@ -15,6 +15,8 @@ def parse_emitted_xml(xml_string: str | bytes) -> dict:
 		return _parse_guia(root)
 	if root.tag == "comprobanteRetencion":
 		return _parse_retencion(root)
+	if root.tag == "factura":
+		return _parse_factura(root)
 	raise ValueError(f"Unsupported emitted voucher root '{root.tag}'.")
 
 
@@ -57,6 +59,38 @@ def _parse_recipient(item: etree._Element) -> dict:
 			}
 			for line in item.findall("detalles/detalle")
 		],
+	}
+
+
+def _parse_factura(root: etree._Element) -> dict:
+	trib = root.find("infoTributaria")
+	info = root.find("infoFactura")
+	number = "-".join(
+		[
+			_text(trib.find("estab")),
+			_text(trib.find("ptoEmi")),
+			_text(trib.find("secuencial")),
+		]
+	)
+	taxes = [
+		{
+			"code": _text(row.find("codigo")),
+			"rate_code": _text(row.find("codigoPorcentaje")),
+			"base": float(_text(row.find("baseImponible")) or 0),
+			"value": float(_text(row.find("valor")) or 0),
+		}
+		for row in info.findall("totalConImpuestos/totalImpuesto")
+	]
+	return {
+		"kind": "factura",
+		"number": number,
+		"issue_date": _text(info.find("fechaEmision")),
+		"buyer_id_type": _text(info.find("tipoIdentificacionComprador")),
+		"buyer_name": _text(info.find("razonSocialComprador")),
+		"buyer_id": _text(info.find("identificacionComprador")),
+		"total": float(_text(info.find("importeTotal")) or 0),
+		"currency": _text(info.find("moneda")),
+		"taxes": taxes,
 	}
 
 

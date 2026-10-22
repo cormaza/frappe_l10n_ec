@@ -72,3 +72,23 @@ class TestTicketEmissionPoint(UnitTestCase):
 
 		with self.assertRaises(ValueError):
 			ensure_ticket_point("emission-002", "emission-001", "t1")
+
+
+class TestFacturaCfSingleVoucher(UnitTestCase):
+	"""A single factura voucher to generic CF over 50 is SRI-rejected; fail at origin."""
+
+	def test_single_cf_over_threshold_raises(self) -> None:
+		from l10n_ec.ecuador_localization.validation import validate_factura_cf_total
+
+		with self.assertRaises(ValueError):
+			validate_factura_cf_total("07", "9999999999999", 80.00)
+
+	def test_single_cf_at_threshold_passes(self) -> None:
+		from l10n_ec.ecuador_localization.validation import validate_factura_cf_total
+
+		validate_factura_cf_total("07", "9999999999999", 50.00)
+
+	def test_identified_buyer_unaffected(self) -> None:
+		from l10n_ec.ecuador_localization.validation import validate_factura_cf_total
+
+		validate_factura_cf_total("04", "1790016919001", 8000.00)

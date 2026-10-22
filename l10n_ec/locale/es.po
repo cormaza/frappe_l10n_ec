@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: l10n_ec 16.0.0\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-22 11:20-0719\n"
+"POT-Creation-Date: 2026-10-22 11:38-0719\n"
 "PO-Revision-Date: 2026-10-20 11:05+0000\n"
 "Last-Translator: Ecuador Localization Contributors\n"
 "Language-Team: Ecuador Localization Contributors\n"
@@ -30,7 +30,7 @@ msgid "<span class=\"h4\">SRI Reports (Ecuador)</span>"
 msgstr "<span class=\"h4\">Reportes SRI (Ecuador)</span>"
 
 #: l10n_ec/ecuador_localization/ats_reader.py:41
-#: l10n_ec/ecuador_localization/validation.py:178
+#: l10n_ec/ecuador_localization/validation.py:201
 msgid "A purchase cannot be a return and a liquidacion at once."
 msgstr "Una compra no puede ser devolución y liquidación a la vez."
 
@@ -322,12 +322,12 @@ msgstr "Comisiones sociedades"
 msgid "Company"
 msgstr "Compañía"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:613
+#: l10n_ec/ecuador_localization/voucher_flow.py:712
 msgid "Company '{}' has no SRI Signature configured."
 msgstr "La compañía '{}' no tiene firma SRI configurada."
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:496
-#: l10n_ec/ecuador_localization/voucher_flow.py:719
+#: l10n_ec/ecuador_localization/voucher_flow.py:517
+#: l10n_ec/ecuador_localization/voucher_flow.py:820
 msgid "Company '{}' needs a tax_id (RUC) to emit vouchers."
 msgstr "La compañía '{}' necesita un tax_id (RUC) para emitir comprobantes."
 
@@ -354,6 +354,10 @@ msgstr "Compraventa de divisas distintas al dólar de los Estados Unidos de Amé
 #: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.py:29
 msgid "Concept"
 msgstr "Concepto"
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:599
+msgid "Consolidated invoice '{}' links no submitted POS tickets."
+msgstr "La consolidada '{}' no enlaza tickets POS enviados."
 
 #: l10n_ec/locale/i18n_markers.py:110
 msgid "Construcción"
@@ -401,7 +405,7 @@ msgstr "DOCUMENTO EN TRÁMITE"
 msgid "Days for Notification"
 msgstr "Días para notificación"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:866
+#: l10n_ec/ecuador_localization/voucher_flow.py:981
 msgid "Debit notes need explicit reasons [{reason, value}]."
 msgstr "Las notas de débito necesitan motivos explícitos [{reason, value}]."
 
@@ -411,15 +415,15 @@ msgstr "Las notas de débito necesitan motivos explícitos [{reason, value}]."
 msgid "Delivery Note"
 msgstr "Nota de entrega"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:1052
+#: l10n_ec/ecuador_localization/voucher_flow.py:1167
 msgid "Delivery Note '{}' needs a shipping address for the guia recipient."
 msgstr "La nota de entrega '{}' necesita una dirección de envío para el destinatario de la guía."
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:1046
+#: l10n_ec/ecuador_localization/voucher_flow.py:1161
 msgid "Delivery notes need exactly one sustento doc in guia_data['docs']."
 msgstr "Las guías necesitan exactamente un documento de sustento en guia_data['docs']."
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:815
+#: l10n_ec/ecuador_localization/voucher_flow.py:926
 msgid "Delivery notes need explicit guia_data {carrier, transport, docs}."
 msgstr "Las guías necesitan guia_data explícito {carrier, transport, docs}."
 
@@ -432,7 +436,7 @@ msgstr "Deportistas"
 msgid "Description"
 msgstr "Descripción"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:545
+#: l10n_ec/ecuador_localization/voucher_flow.py:644
 #: l10n_ec/locale/i18n_markers.py:36
 msgid "Desk sale '{}' cannot emit from POS-only point '{}'."
 msgstr "La venta de escritorio '{}' no puede emitirse desde el punto POS-only '{}'."
@@ -538,7 +542,7 @@ msgstr "Localización Ecuador"
 msgid "Emission Point Code"
 msgstr "Código de punto de emisión"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:598
+#: l10n_ec/ecuador_localization/voucher_flow.py:697
 msgid "Emission point '{}' has no sequence for '{}'."
 msgstr "El punto de emisión '{}' no tiene secuencia para '{}'."
 
@@ -598,6 +602,10 @@ msgstr "Cada fila de secuencia de emisión SRI requiere un tipo de comprobante."
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "Expiration Date"
 msgstr "Fecha de vencimiento"
+
+#: l10n_ec/ecuador_localization/validation.py:105
+msgid "Factura to Consumidor Final above {} needs buyer identification; a single voucher cannot carry it."
+msgstr "La factura a Consumidor Final sobre {} necesita identificación; un solo voucher no puede llevarla."
 
 #: l10n_ec/locale/i18n_markers.py:365
 msgid "Fiscal Period:"
@@ -665,7 +673,7 @@ msgstr "Ganancia en la enajenación de derechos representativos de capital u otr
 msgid "Generated"
 msgstr "Generado"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:241
+#: l10n_ec/ecuador_localization/voucher_flow.py:242
 msgid "Generated XML is malformed: {}. Head: {!r}"
 msgstr "El XML generado está mal formado: {}. Inicio: {!r}"
 
@@ -697,8 +705,8 @@ msgstr "La retención de IR necesita un concepto de IR, recibido '{}'."
 msgid "IVA withholding categories cannot be assigned to suppliers: ERPNext cannot compute tax-on-tax withholdings. Purchase-side IVA is computed at emission; sales-side IVA settles via the received-withholding entry."
 msgstr "Las categorías de retención de IVA no pueden asignarse a proveedores: ERPNext no puede calcular retenciones sobre impuestos. El IVA del lado compras se calcula al emitir; el IVA del lado ventas se liquida vía el asiento de retenciones recibidas."
 
-#: l10n_ec/ecuador_localization/validation.py:280
-#: l10n_ec/ecuador_localization/voucher_flow.py:901
+#: l10n_ec/ecuador_localization/validation.py:303
+#: l10n_ec/ecuador_localization/voucher_flow.py:1016
 msgid "IVA withholding needs an IVA concepto, got '{}'."
 msgstr "La retención de IVA necesita un concepto de IVA, recibido '{}'."
 
@@ -827,7 +835,7 @@ msgstr "Mensajes"
 msgid "Minerales"
 msgstr "Minerales"
 
-#: l10n_ec/ecuador_localization/validation.py:299
+#: l10n_ec/ecuador_localization/validation.py:322
 msgid "Missing IVA withholding account {} for company '{}'."
 msgstr "Falta la cuenta de retención de IVA {} para la compañía '{}'."
 
@@ -849,7 +857,7 @@ msgstr "Falta la cuenta {} para la configuración de retenciones."
 msgid "Month"
 msgstr "Mes"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:965
+#: l10n_ec/ecuador_localization/voucher_flow.py:1080
 msgid "Multiple enabled SRI Additional Information records for company '{}'."
 msgstr "Múltiples registros de Información Adicional SRI habilitados para la compañía '{}'."
 
@@ -871,7 +879,7 @@ msgstr "Valor neto"
 msgid "No PKCS#12 signature content attached to SRI Signature document."
 msgstr "No hay contenido de firma PKCS#12 adjunto al documento de Firma SRI."
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:585
+#: l10n_ec/ecuador_localization/voucher_flow.py:684
 msgid "No SRI Emission Point for company '{}' and document '{}'."
 msgstr "No hay punto de emisión SRI para la compañía '{}' y el documento '{}'."
 
@@ -891,7 +899,7 @@ msgstr "No procede"
 msgid "No sujeto"
 msgstr "No sujeto"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:1138
+#: l10n_ec/ecuador_localization/voucher_flow.py:1253
 msgid "No voucher found for modified document '{}'."
 msgstr "No se encontró comprobante para el documento modificado '{}'."
 
@@ -989,12 +997,12 @@ msgstr "Apertura de caja POS"
 msgid "POS Profile '{}' needs an SRI Emission Point before selling."
 msgstr "El perfil POS '{}' necesita un punto de emisión SRI antes de vender."
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:542
+#: l10n_ec/ecuador_localization/voucher_flow.py:641
 #: l10n_ec/locale/i18n_markers.py:35
 msgid "POS sale '{}' must emit from a POS-only point, found '{}'."
 msgstr "La venta POS '{}' debe emitirse desde un punto POS-only, encontrado '{}'."
 
-#: l10n_ec/ecuador_localization/validation.py:105
+#: l10n_ec/ecuador_localization/validation.py:128
 msgid "POS ticket to Consumidor Final above {} is not allowed; register the buyer identification."
 msgstr "Ticket a Consumidor Final sobre {} no permitido; registrá la identificación del comprador."
 
@@ -1304,7 +1312,7 @@ msgstr "Publicidad"
 msgid "Purchase Invoice"
 msgstr "Factura de Compra"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:555
+#: l10n_ec/ecuador_localization/voucher_flow.py:654
 msgid "Purchase Invoice '{}' is a supplier-issued document: only liquidations (SRI Liquidacion) emit vouchers."
 msgstr "La factura de compra '{}' es un documento emitido por el proveedor: solo las liquidaciones (Liquidación SRI) emiten comprobantes."
 
@@ -1528,7 +1536,7 @@ msgstr "Concepto de retención IR SRI retenido por el cliente (p. ej. 303, 312),
 msgid "SRI IVA Concepto"
 msgstr "Concepto IVA SRI"
 
-#: l10n_ec/ecuador_localization/validation.py:289
+#: l10n_ec/ecuador_localization/validation.py:312
 msgid "SRI IVA concepto '{}' is set but the invoice has no IVA taxes."
 msgstr "El concepto IVA SRI '{}' está fijado pero la factura no tiene impuestos IVA."
 
@@ -1536,7 +1544,7 @@ msgstr "El concepto IVA SRI '{}' está fijado pero la factura no tiene impuestos
 msgid "SRI IVA withholding concepto '{}' has no ATS bucket for rate '{}'."
 msgstr "El concepto de retención IVA SRI '{}' no tiene casillero ATS para la tarifa '{}'."
 
-#: l10n_ec/ecuador_localization/validation.py:292
+#: l10n_ec/ecuador_localization/validation.py:315
 msgid "SRI IVA withholding needs exactly one IVA tax row, found {}."
 msgstr "La retención IVA SRI necesita exactamente una fila de impuesto IVA, encontradas {}."
 
@@ -1570,7 +1578,7 @@ msgstr "Forma de pago SRI"
 msgid "SRI Signature"
 msgstr "Firma SRI"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:618
+#: l10n_ec/ecuador_localization/voucher_flow.py:717
 msgid "SRI Signature '{}' is not usable."
 msgstr "La firma SRI '{}' no es utilizable."
 
@@ -1661,6 +1669,14 @@ msgstr "El concepto de retención SRI '{}' es de alcance exterior y queda fuera 
 msgid "Sales Invoice"
 msgstr "Factura de Venta"
 
+#: l10n_ec/ecuador_localization/voucher_flow.py:589
+msgid "Sales Invoice '{}' has an identified buyer; emit it as one voucher."
+msgstr "La '{}' tiene comprador identificado; emitala en un solo voucher."
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:578
+msgid "Sales Invoice '{}' is not consolidated; emit it as one voucher."
+msgstr "La '{}' no es consolidada; emitala en un solo voucher."
+
 #: l10n_ec/ecuador_localization/validation.py:82
 msgid "Sales to Consumidor Final above {} are not allowed; register the buyer identification."
 msgstr "Las ventas a Consumidor Final sobre {} no están permitidas; registre la identificación del comprador."
@@ -1745,7 +1761,7 @@ msgstr "Estado"
 msgid "Subject:"
 msgstr "Sujeto:"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:836
+#: l10n_ec/ecuador_localization/voucher_flow.py:947
 msgid "Supplier '{}' needs an identification type and tax ID to emit vouchers."
 msgstr "El proveedor '{}' necesita un tipo de identificación e ID tributario para emitir comprobantes."
 
@@ -1819,6 +1835,10 @@ msgstr "Este documento de proveedor es una Nota de Débito (solo clasificación 
 #: l10n_ec/ecuador_localization/invoice_hooks.py:122
 msgid "Ticket '{}' points at '{}', but its profile emits from '{}'."
 msgstr "El ticket '{}' apunta a '{}', pero su perfil emite desde '{}'."
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:606
+msgid "Ticket totals {} do not match consolidated '{}' ({}); emission refused."
+msgstr "Los tickets {} no cuadran con la consolidada '{}' ({}); emisión rechazada."
 
 #. Label of the title (Data) field in DocType 'SRI Additional Information'
 #. Label of the title (Data) field in DocType 'SRI Document Type'
@@ -1895,7 +1915,7 @@ msgstr "Tipo de documento de referencia desconocido '{}'."
 msgid "Unsigned XML"
 msgstr "XML sin firmar"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:216
+#: l10n_ec/ecuador_localization/voucher_flow.py:217
 msgid "Unsupported SRI document code '{}'."
 msgstr "Código de documento SRI no soportado '{}'."
 
@@ -1951,7 +1971,7 @@ msgstr "Fecha de anulación"
 msgid "Void Reason"
 msgstr "Motivo de anulación"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:332
+#: l10n_ec/ecuador_localization/voucher_flow.py:333
 #: l10n_ec/locale/i18n_markers.py:431
 msgid "Void recorded on {}."
 msgstr "Anulación registrada el {}."
@@ -1960,7 +1980,7 @@ msgstr "Anulación registrada el {}."
 msgid "Voucher"
 msgstr "Comprobante"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:323
+#: l10n_ec/ecuador_localization/voucher_flow.py:324
 #: l10n_ec/locale/i18n_markers.py:430
 msgid "Voucher '{}' must be Authorized to record a void, found '{}'."
 msgstr "El comprobante '{}' debe estar Autorizado para registrar una anulación, encontrado '{}'."
@@ -1989,7 +2009,7 @@ msgstr "Código de retención"
 msgid "Withholding categories cannot be assigned to customers: received withholdings settle via the payment-time entry (invoice stays gross, native rows inflate it and mis-side the liability). Leave the category empty and record the customer conceptos on the invoice."
 msgstr "Las categorías de retención no pueden asignarse a clientes: las retenciones recibidas se liquidan vía el asiento al momento del pago (la factura queda en bruto, las filas nativas la inflan y ponen el pasivo del lado equivocado). Deje la categoría vacía y registre los conceptos del cliente en la factura."
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:649
+#: l10n_ec/ecuador_localization/voucher_flow.py:748
 #: l10n_ec/sri/withholding_concepts.py:1248
 msgid "Withholding category '{}' has no SRI code mapping."
 msgstr "La categoría de retención '{}' no tiene mapeo de código SRI."
@@ -1998,7 +2018,7 @@ msgstr "La categoría de retención '{}' no tiene mapeo de código SRI."
 msgid "Withholding category '{}' maps impuesto '{}' but concepto '{}' is impuesto '{}'."
 msgstr "La categoría de retención '{}' mapea impuesto '{}' pero el concepto '{}' es impuesto '{}'."
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:871
+#: l10n_ec/ecuador_localization/voucher_flow.py:986
 msgid "Withholding vouchers need explicit withholding_codes {category: (impuesto, codigo)}."
 msgstr "Los comprobantes de retención necesitan withholding_codes explícitos {categoría: (impuesto, código)}."
 
@@ -2025,7 +2045,7 @@ msgstr "base"
 msgid "expired"
 msgstr "Vencido"
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:1043
+#: l10n_ec/ecuador_localization/voucher_flow.py:1158
 msgid "guia_data is missing keys: {}."
 msgstr "A guia_data le faltan claves: {}."
 

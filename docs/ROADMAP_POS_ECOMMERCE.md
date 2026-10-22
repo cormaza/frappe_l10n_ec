@@ -106,9 +106,13 @@ El patrón es:
 
 ## 6. Decisiones que te pido antes de implementar
 
-- **D1 (bloqueante P3): ¿un voucher por ticket o por consolidado?**
-  Recomiendo consolidado-homogéneo (sección 2); por ticket solo si tu
-  contador lo exige.
+- **D1 (resuelto): híbrido.** Consolidada identificada o CF ≤ 50 → un
+  voucher único. Consolidada CF > 50 → un voucher 01 por ticket
+  (`create_and_process_consolidated`), todos referenciados a la SI para
+  que ATS agregue cada cuerpo y el 104 siga leyendo el mayor. Regla de
+  origen: un solo voucher CF > 50 falla fuerte en creación (el SRI lo
+  rechazaría igual). Secuenciales: uno por ticket del punto de su caja,
+  en orden; suma de XMLs = neto de la SI o falla.
 - **D2: ¿el tope CF en e-commerce bloquea el pago o solo advierte?**
   Recomiendo bloquear (un pedido impagable después es peor).
 - **D3: ¿Webshop se instala en el demo?** Sin la app no hay cómo probar

@@ -85,6 +85,29 @@ def validate_final_consumer_amount(
 		)
 
 
+def validate_factura_cf_total(
+	identification_type_code: str | None,
+	tax_id: str | None,
+	total: float | None,
+	threshold: float = FINAL_CONSUMER_THRESHOLD,
+) -> None:
+	"""Reject a single factura voucher to generic CF over the threshold.
+
+	SRI authorizes no factura above the threshold without buyer
+	identification: one voucher carrying the whole amount is stillborn, so
+	it fails here instead of travelling to SRI. Consolidated invoices
+	emit per ticket (each voucher carries its own ticket total).
+	"""
+	if not is_generic_final_consumer(identification_type_code, tax_id):
+		return
+	if (total or 0) > threshold:
+		raise ValueError(
+			_(
+				"Factura to Consumidor Final above {} needs buyer identification; a single voucher cannot carry it."
+			).format(threshold)
+		)
+
+
 def validate_pos_tickets(
 	identification_type_code: str | None,
 	tax_id: str | None,

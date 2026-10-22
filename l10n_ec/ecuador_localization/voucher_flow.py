@@ -26,6 +26,7 @@ except ImportError:  # pragma: no cover
 		return message
 
 
+from l10n_ec.ecuador_localization.validation import validate_factura_cf_total
 from l10n_ec.sri import xml_builder
 from l10n_ec.sri.access_key import generate_access_key
 from l10n_ec.sri.payment_methods import resolve_payment_method
@@ -385,6 +386,8 @@ def process_voucher(
 	guia_data: dict | None = None,
 	payment_method: str = "01",
 	iva_concepto: str | None = None,
+	source_doctype: str | None = None,
+	source_name: str | None = None,
 ) -> dict:
 	"""Run generate/sign/submit/poll for one voucher; safe to re-run anytime."""
 	resolve_payment_method(payment_method)
@@ -403,6 +406,8 @@ def process_voucher(
 			guia_data=guia_data,
 			payment_method=payment_method,
 			iva_concepto=iva_concepto,
+			source_doctype=source_doctype,
+			source_name=source_name,
 		)
 		generated = generate_voucher_xml_doc(doc, payload)
 		if not generated["ok"]:
@@ -473,6 +478,8 @@ def create_and_process(
 	guia_data: dict | None = None,
 	payment_method: str = "01",
 	iva_concepto: str | None = None,
+	source_doctype: str | None = None,
+	source_name: str | None = None,
 	run_now: bool = False,
 	key_material: tuple | None = None,
 	client_ws=None,
@@ -489,6 +496,20 @@ def create_and_process(
 		and bool(getattr(ref, "is_pos", 0) or getattr(ref, "is_consolidated", 0))
 	)
 	validate_point_channel(is_pos_sale, bool(getattr(emission, "pos_only", 0)), emission.name, ref.name)
+	if cod_doc == "01" and getattr(ref, "customer", None):
+		buyer = frappe.db.get_value(
+			"Customer", ref.customer, ["sri_identification_type", "tax_id"], as_dict=True
+		)
+		if source_doctype and source_name:
+			total = frappe.db.get_value(source_doctype, source_name, "grand_total")
+		else:
+			total = ref.grand_total
+		try:
+			validate_factura_cf_total(
+				(buyer or {}).get("sri_identification_type"), (buyer or {}).get("tax_id"), total
+			)
+		except ValueError as exc:
+			raise SriVoucherError(str(exc)) from exc
 	env = _resolve_environment(ref.company)
 	number15 = f"{emission.establishment_code}{emission.emission_point_code}{sequential}"
 	company_tax_id = frappe.db.get_value("Company", ref.company, "tax_id")
@@ -514,7 +535,7 @@ def create_and_process(
 	)
 	voucher.insert(ignore_permissions=True)
 	if run_now:
-		return process_voucher(
+		result = process_voucher(
 			voucher.name,
 			key_material=key_material,
 			client_ws=client_ws,
@@ -525,9 +546,87 @@ def create_and_process(
 			guia_data=guia_data,
 			payment_method=payment_method,
 			iva_concepto=iva_concepto,
+			source_doctype=source_doctype,
+			source_name=source_name,
 		)
+		result.setdefault("voucher", voucher.name)
+		return result
 	enqueue_process_voucher(voucher.name, payment_method=payment_method)
 	return {"ok": True, "voucher": voucher.name, "queued": True}
+
+
+@frappe.whitelist() if frappe else (lambda f: f)
+def create_and_process_consolidated(
+	sales_invoice: str,
+	key_material: tuple | None = None,
+	client_ws=None,
+) -> dict:
+	"""Emit one factura voucher per ticket of a CF consolidated invoice.
+
+	A consolidated Consumidor Final invoice over the threshold cannot travel
+	as one voucher (SRI rejects faceless amounts above it): each source
+	ticket emits its own 01 voucher, all referenced to the consolidated
+	invoice so books keep one document and ATS aggregates every body.
+	Vouchers process inline in ticket order (no queue: the batch owns its
+	sequential consumption); each ticket pays with its own Tabla 24 code.
+	"""
+	if frappe is None:  # pragma: no cover
+		raise RuntimeError("frappe is required to emit vouchers.")
+	si = frappe.get_doc("Sales Invoice", sales_invoice)
+	if not si.get("is_consolidated"):
+		raise SriVoucherError(
+			_("Sales Invoice '{}' is not consolidated; emit it as one voucher.").format(sales_invoice)
+		)
+	customer = frappe.db.get_value(
+		"Customer", si.get("customer"), ["sri_identification_type", "tax_id"], as_dict=True
+	)
+	from l10n_ec.ecuador_localization.validation import is_generic_final_consumer
+
+	if not is_generic_final_consumer(
+		(customer or {}).get("sri_identification_type"), (customer or {}).get("tax_id")
+	):
+		raise SriVoucherError(
+			_("Sales Invoice '{}' has an identified buyer; emit it as one voucher.").format(sales_invoice)
+		)
+	tickets = frappe.get_all(
+		"POS Invoice",
+		filters={"consolidated_invoice": sales_invoice, "docstatus": 1},
+		pluck="name",
+		order_by="creation asc",
+	)
+	if not tickets:
+		raise SriVoucherError(
+			_("Consolidated invoice '{}' links no submitted POS tickets.").format(sales_invoice)
+		)
+	bases = [
+		round(float(frappe.db.get_value("POS Invoice", name, "grand_total") or 0.0), 2) for name in tickets
+	]
+	if round(sum(bases), 2) != round(float(si.get("grand_total") or 0.0), 2):
+		raise SriVoucherError(
+			_("Ticket totals {} do not match consolidated '{}' ({}); emission refused.").format(
+				bases, sales_invoice, si.get("grand_total")
+			)
+		)
+	results = []
+	for name in tickets:
+		ticket = frappe.get_doc("POS Invoice", name)
+		mode = (ticket.get("payments") or [{}])[0].get("mode_of_payment") or "Cash"
+		code = frappe.db.get_value("Mode of Payment", mode, "sri_payment_code") or "01"
+		results.append(
+			create_and_process(
+				"Sales Invoice",
+				sales_invoice,
+				sri_doc_code="01",
+				emission_point=ticket.get("sri_emission_point"),
+				payment_method=code,
+				source_doctype="POS Invoice",
+				source_name=name,
+				run_now=True,
+				key_material=key_material,
+				client_ws=client_ws,
+			)
+		)
+	return {"ok": all(r.get("ok") for r in results), "vouchers": results}
 
 
 def validate_point_channel(is_pos_sale: bool, pos_only: bool, point: str, sale: str = "") -> None:
@@ -712,6 +811,8 @@ def _assemble_payload(
 	guia_data=None,
 	payment_method="01",
 	iva_concepto=None,
+	source_doctype=None,
+	source_name=None,
 ):
 	"""Build the builder payload from live Company/invoice documents."""
 	company = frappe.get_doc("Company", doc.company)
@@ -745,6 +846,8 @@ def _assemble_payload(
 		guia_data=guia_data,
 		payment_method=payment_method,
 		iva_concepto=iva_concepto,
+		source_doctype=source_doctype,
+		source_name=source_name,
 	)
 	return build_voucher_payload(invoice, emitter, sequence)
 
@@ -796,19 +899,27 @@ def _invoice_dict(
 	guia_data=None,
 	payment_method="01",
 	iva_concepto=None,
+	source_doctype=None,
+	source_name=None,
 ) -> dict:
-	"""Map a live invoice document to the normalized payload dict."""
+	"""Map a live invoice document to the normalized payload dict.
+
+	`source_*` overrides the lines/totals/date source (one POS ticket)
+	while the voucher stays referenced to the consolidated invoice: SRI
+	sees one valid voucher per transaction, books keep one document.
+	"""
 	resolve_payment_method(payment_method)
 	ref = frappe.get_doc(doc.reference_doctype, doc.reference_name)
+	source = frappe.get_doc(source_doctype, source_name) if source_doctype and source_name else ref
 	base: dict = {
 		"doctype": doc.reference_doctype,
 		"cod_doc": doc.sri_doc_code,
-		"issue_date": ref.posting_date.strftime("%d/%m/%Y"),
-		"subtotal": ref.total,
-		"discount": ref.discount_amount or 0.0,
-		"total": ref.grand_total,
-		"payments": [{"method": payment_method, "amount": ref.grand_total}],
-		"lines": [_invoice_line(row) for row in ref.items],
+		"issue_date": source.posting_date.strftime("%d/%m/%Y"),
+		"subtotal": source.total,
+		"discount": source.discount_amount or 0.0,
+		"total": source.grand_total,
+		"payments": [{"method": payment_method, "amount": source.grand_total}],
+		"lines": [_invoice_line(row) for row in source.items],
 	}
 	if doc.sri_doc_code == "06":
 		if guia_data is None:
@@ -847,7 +958,11 @@ def _invoice_dict(
 		)
 	base["tax_totals"] = aggregate_raw_totals(base["lines"])
 	if doc.sri_doc_code == "01":
-		base["info_adicional"] = resolve_info_adicional(ref)
+		try:
+			validate_factura_cf_total(base.get("buyer_id_type"), base.get("buyer_id"), base.get("total"))
+		except ValueError as exc:
+			raise SriVoucherError(str(exc)) from exc
+		base["info_adicional"] = resolve_info_adicional(source)
 	if doc.sri_doc_code in ("04", "05"):
 		original = _original_voucher(ref)
 		base.update(

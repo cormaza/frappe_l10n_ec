@@ -126,3 +126,45 @@ class TestEmittedVoucherData(UnitTestCase):
 
 if __name__ == "__main__":
 	unittest.main()
+
+
+class TestFacturaRoundTrip(UnitTestCase):
+	def test_factura_round_trip(self) -> None:
+		from l10n_ec.sri.xml_builder import build_factura_xml
+
+		ctx = dict(CTX)
+		ctx["doc_code"] = "01"
+		xml = build_factura_xml(
+			ctx,
+			{
+				"issue_date": "20/10/2026",
+				"buyer_id_type": "07",
+				"buyer_name": "CONSUMIDOR FINAL",
+				"buyer_id": "9999999999999",
+				"buyer_address": "",
+				"subtotal": 100.00,
+				"discount": 0.0,
+				"tax_totals": [{"code": "2", "rate_code": "4", "base": 100.00, "value": 15.00}],
+				"tip": 0.0,
+				"total": 115.00,
+				"payments": [{"method": "01", "amount": 115.00}],
+				"lines": [
+					{
+						"code": "DEMO-WIDGET",
+						"description": "Demo widget",
+						"qty": 1.0,
+						"unit_price": 100.00,
+						"discount": 0.0,
+						"subtotal": 100.00,
+						"total": 100.00,
+						"taxes": [],
+					}
+				],
+			},
+		)
+		parsed = parse_emitted_xml(xml)
+		self.assertEqual(parsed["kind"], "factura")
+		self.assertEqual(parsed["number"], "001-001-000000001")
+		self.assertEqual(parsed["buyer_id"], "9999999999999")
+		self.assertEqual(parsed["total"], 115.00)
+		self.assertEqual(parsed["taxes"], [{"code": "2", "rate_code": "4", "base": 100.0, "value": 15.0}])

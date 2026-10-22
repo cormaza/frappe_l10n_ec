@@ -189,6 +189,42 @@ def _authorized_voucher(reference_doctype: str, reference_name: str) -> dict | N
 	}
 
 
+def _authorized_vouchers(reference_doctype: str, reference_name: str) -> list:
+	"""Every Authorized voucher body for a reference, oldest first (bench only)."""
+	if frappe is None:  # pragma: no cover
+		return []
+	from l10n_ec.sri.voucher_data import parse_emitted_xml
+
+	names = frappe.get_all(
+		"SRI Electronic Voucher",
+		filters={
+			"reference_doctype": reference_doctype,
+			"reference_name": reference_name,
+			"voucher_state": "Authorized",
+		},
+		pluck="name",
+		order_by="creation asc",
+	)
+	vouchers = []
+	for name in names:
+		voucher = frappe.get_doc("SRI Electronic Voucher", name)
+		if not voucher.get("unsigned_xml"):
+			continue
+		file_name = frappe.db.get_value("File", {"file_url": voucher.get("unsigned_xml")}, "name")
+		if not file_name:
+			continue
+		vouchers.append(
+			{
+				"body": parse_emitted_xml(frappe.get_doc("File", file_name).get_content()),
+				"voucher_state": voucher.get("voucher_state"),
+				"sri_number": voucher.get("sri_number"),
+				"authorization_number": voucher.get("authorization_number"),
+				"authorization_date": voucher.get("authorization_date"),
+			}
+		)
+	return vouchers
+
+
 def _settlement_values(sales_invoice: str) -> dict | None:
 	"""Received-withholding values from the settlement JE, if posted."""
 	from l10n_ec.ecuador_localization.received_settlement import settlement_values
@@ -203,6 +239,20 @@ def _iso_to_sri(value) -> str:
 	if len(parts) == 3 and len(parts[0]) == 4:
 		return f"{parts[2]}/{parts[1]}/{parts[0]}"
 	return text
+
+
+def _voucher_taxes(voucher: dict, mapped: list) -> list:
+	"""Tax rows for one authorized sale: the emitted XML when it carries them.
+
+	A consolidated invoice has no usable tax rows of its own (the merge
+	leaves the table empty) while each ticket voucher embeds its own
+	`totalConImpuestos`: the XML is the single source of truth. Plain SI
+	vouchers fall back to the mapped invoice lines (same numbers).
+	"""
+	body = (voucher or {}).get("body") or {}
+	if body.get("kind") == "factura" and body.get("taxes"):
+		return body["taxes"]
+	return [tax for line in mapped for tax in line.get("taxes", [])]
 
 
 def read_month(company: str, year: int, month: int) -> dict:
@@ -269,31 +319,33 @@ def read_month(company: str, year: int, month: int) -> dict:
 		filters={"company": company, "docstatus": 1, "posting_date": ["between", [start, end]]},
 		pluck="name",
 	):
-		voucher = _authorized_voucher("Sales Invoice", name)
-		if voucher is None:
+		vouchers = _authorized_vouchers("Sales Invoice", name)
+		if not vouchers:
 			continue
 		si = frappe.get_doc("Sales Invoice", name)
 		customer = frappe.get_doc("Customer", si.get("customer"))
 		mapped = [map_line_taxes(line) for line in base_lines(si)]
-		sales.append(
-			sale_row(
-				{
-					"posting_date": _iso_to_sri(si.get("posting_date")),
-					"grand_total": si.get("grand_total"),
-					"sri_received_retencion_number": si.get("sri_received_retencion_number") or "",
-					"sri_received_retencion_auth": si.get("sri_received_retencion_auth") or "",
-					"sri_received_retencion_date": _iso_to_sri(si.get("sri_received_retencion_date")),
-					"sri_received_retencion_key": si.get("sri_received_retencion_key") or "",
-				},
-				{
-					"sri_identification_type": customer.get("sri_identification_type"),
-					"tax_id": customer.get("tax_id"),
-					"customer_name": customer.get("customer_name"),
-				},
-				voucher,
-				_settlement_values(name),
+		for voucher in vouchers:
+			sales.append(
+				sale_row(
+					{
+						"posting_date": _iso_to_sri(si.get("posting_date")),
+						"grand_total": si.get("grand_total"),
+						"taxes": _voucher_taxes(voucher, mapped),
+						"sri_received_retencion_number": si.get("sri_received_retencion_number") or "",
+						"sri_received_retencion_auth": si.get("sri_received_retencion_auth") or "",
+						"sri_received_retencion_date": _iso_to_sri(si.get("sri_received_retencion_date")),
+						"sri_received_retencion_key": si.get("sri_received_retencion_key") or "",
+					},
+					{
+						"sri_identification_type": customer.get("sri_identification_type"),
+						"tax_id": customer.get("tax_id"),
+						"customer_name": customer.get("customer_name"),
+					},
+					voucher,
+					_settlement_values(name),
+				)
 			)
-		)
 	return {
 		"informante": {
 			"IdInformante": (informante or {}).get("tax_id", ""),
