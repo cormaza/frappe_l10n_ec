@@ -1,0 +1,47 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"sri_reports\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">SRI Reports (Ecuador)</span>\",\"col\":12}},{\"id\":\"report_sri_ats\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SRI ATS\",\"col\":4}},{\"id\":\"report_sri_103\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SRI Form 103\",\"col\":4}},{\"id\":\"report_sri_104\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SRI Form 104\",\"col\":4}}]",
+ "creation": "2026-10-21 00:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "flag",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Ecuador Localization",
+ "links": [],
+ "module": "Ecuador Localization",
+ "name": "Ecuador Localization",
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 1,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "SRI ATS",
+   "link_to": "SRI ATS",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "SRI Form 103",
+   "link_to": "SRI Form 103",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "SRI Form 104",
+   "link_to": "SRI Form 104",
+   "type": "Report"
+  }
+ ],
+ "title": "Ecuador Localization"
+}

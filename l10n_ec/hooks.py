@@ -17,7 +17,11 @@ fixtures = [
 	},
 	{
 		"dt": "Report",
-		"filters": [["name", "in", ["SRI Form 103", "SRI Form 104"]]],
+		"filters": [["name", "in", ["SRI ATS", "SRI Form 103", "SRI Form 104"]]],
+	},
+	{
+		"dt": "Workspace",
+		"filters": [["name", "in", ["Ecuador Localization"]]],
 	},
 ]
 

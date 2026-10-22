@@ -8,6 +8,9 @@ frappe.query_reports["SRI Form 103"] = {
 			options: "Company",
 			default: frappe.defaults.get_user_default("Company"),
 			reqd: 1,
+			get_query() {
+				return { filters: { country: "Ecuador" } };
+			},
 		},
 		{
 			fieldname: "year",
