@@ -28,6 +28,16 @@ NAC-DGERCGC17-00000324 (`l10n_ec/sri/form104_layout.py`), Tabla 20/23 SRI
   bench --site demo execute "frappe.get_attr('l10n_ec.ecuador_localization.report.sri_ats.sri_ats.download_ats')('Demo Ecuador',2026,10)"
   # deja /private/files/AT102026.zip y .xml en el sitio
   ```
+
+**Validación DIMM sin salir del desk:** el reporte muestra un indicador de estado
+del validador (`Validador ats.plugin.1.19.0` en verde = al día; rojo = desactualizado
+con el motivo; gris = no disponible). El botón **Validar en DIMM** corre el XML del
+mes por el motor oficial del SRI (sidecar `docker_ats_validator`) y devuelve el
+veredicto (`valid`/`observed`/`unavailable`), la lista de errores/advertencias y el
+talón resumen como archivo. Requiere el sidecar corriendo y, opcionalmente en
+`site_config.json`: `ats_validator_url` (default `http://127.0.0.1:8080`) y
+`ats_validator_token`. Sin sidecar el reporte dice "no validado" — jamás verde
+implícito.
   El mes demo de referencia es **10/2026** (octubre): trae 8 compras con `codSustento` mixtos (`02`/`06`), `tpIdProv 04/05`, `montoIce 2.50` en `001-001-000000015`, y tipos `01/04/05`.
 
 - **Código:** `l10n_ec/sri/ats_collector.py` (agrega) + `l10n_ec/sri/ats_builder.py` (render + XSD) + `l10n_ec/ecuador_localization/ats_reader.py` (lee mes posteado).

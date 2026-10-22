@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecuador Localization VERSION\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-22 08:33-0641\n"
-"PO-Revision-Date: 2026-10-22 08:33-0641\n"
+"POT-Creation-Date: 2026-10-22 09:09-0641\n"
+"PO-Revision-Date: 2026-10-22 09:09-0641\n"
 "Last-Translator: developers@example.com\n"
 "Language-Team: developers@example.com\n"
 "MIME-Version: 1.0\n"
@@ -66,7 +66,7 @@ msgstr ""
 msgid "ATS download needs an Ecuadorian company, found '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:51
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:100
 msgid "ATS generated"
 msgstr ""
 
@@ -362,6 +362,10 @@ msgstr ""
 msgid "Cánones, derechos de autor,  marcas, patentes y similares de acuerdo  al Código INGENIOS (COESCCI) – pago a personas naturales"
 msgstr ""
 
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:74
+msgid "DIMM verdict: {0}"
+msgstr ""
+
 #: l10n_ec/locale/i18n_markers.py:340
 msgid "DOCUMENT IN PROCESS"
 msgstr ""
@@ -475,7 +479,7 @@ msgstr ""
 msgid "Document Type"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:52
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:101
 msgid "Documents: {0} purchases, {1} sales."
 msgstr ""
 
@@ -487,7 +491,7 @@ msgstr ""
 msgid "Donaciones en dinero -Impuesto a las donaciones"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:31
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:80
 msgid "Download ATS ZIP"
 msgstr ""
 
@@ -628,7 +632,7 @@ msgstr ""
 msgid "Generated XML is malformed: {}. Head: {!r}"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:46
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:95
 msgid "Generating ATS files…"
 msgstr ""
 
@@ -850,6 +854,10 @@ msgstr ""
 msgid "Numeric code must be 8 digits (got '{}')."
 msgstr ""
 
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:71
+msgid "Open DIMM summary (talón)"
+msgstr ""
+
 #. Label of the issuer_common_name (Data) field in DocType 'SRI Signature'
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "Organization (Issuer)"
@@ -902,6 +910,14 @@ msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:156
 msgid "Otros intereses y rendimientos financieros gravados"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:68
+msgid "Outdated validator"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:38
+msgid "Outdated validator: {0}"
 msgstr ""
 
 #. Label of the section_break_credentials (Section Break) field in DocType 'SRI
@@ -1603,8 +1619,12 @@ msgstr ""
 msgid "Servicios profesionales sociedades"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:34
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:83
 msgid "Set Company, Year and Month before downloading."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:51
+msgid "Set Company, Year and Month before validating."
 msgstr ""
 
 #: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:36
@@ -1812,6 +1832,23 @@ msgstr ""
 msgid "VAT"
 msgstr ""
 
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:48
+msgid "Validate in DIMM"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:62
+msgid "Validating ATS files…"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:36
+msgid "Validator unavailable"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:42
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:75
+msgid "Validator {0}"
+msgstr ""
+
 #: l10n_ec/locale/i18n_markers.py:191
 msgid "Valores entregados por las cooperativas de transporte a sus socios"
 msgstr ""
@@ -1936,6 +1973,18 @@ msgstr ""
 #. Option for the 'State' (Select) field in DocType 'SRI Signature'
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "valid"
+msgstr ""
+
+#: l10n_ec/sri/ats_validator.py:53
+msgid "validator '{}' is '{}', expected '{}'"
+msgstr ""
+
+#: l10n_ec/sri/ats_validator.py:128
+msgid "validator answered HTTP {}."
+msgstr ""
+
+#: l10n_ec/sri/ats_validator.py:51
+msgid "validator reports no '{}'"
 msgstr ""
 
 #: l10n_ec/ecuador_localization/party_hooks.py:49

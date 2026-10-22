@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: l10n_ec 16.0.0\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-22 08:33-0719\n"
+"POT-Creation-Date: 2026-10-22 09:09-0719\n"
 "PO-Revision-Date: 2026-10-20 11:05+0000\n"
 "Last-Translator: Ecuador Localization Contributors\n"
 "Language-Team: Ecuador Localization Contributors\n"
@@ -66,7 +66,7 @@ msgstr "El número de documento ATS '{}' no es un número SRI."
 msgid "ATS download needs an Ecuadorian company, found '{}'."
 msgstr "La descarga ATS necesita una compañía ecuatoriana; es '{}'."
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:51
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:100
 msgid "ATS generated"
 msgstr "ATS generado"
 
@@ -367,6 +367,10 @@ msgstr "Cánones, derechos de autor,  marcas, patentes y similares de acuerdo  a
 msgid "Cánones, derechos de autor,  marcas, patentes y similares de acuerdo  al Código INGENIOS (COESCCI) – pago a personas naturales"
 msgstr "Cánones, derechos de autor,  marcas, patentes y similares de acuerdo  al Código INGENIOS (COESCCI) – pago a personas naturales"
 
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:74
+msgid "DIMM verdict: {0}"
+msgstr "Veredicto DIMM: {0}"
+
 #: l10n_ec/locale/i18n_markers.py:340
 msgid "DOCUMENT IN PROCESS"
 msgstr "DOCUMENTO EN TRÁMITE"
@@ -480,7 +484,7 @@ msgstr "El código SRI del comprobante debe tener 2 dígitos (se recibió '{}').
 msgid "Document Type"
 msgstr "Tipo de comprobante"
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:52
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:101
 msgid "Documents: {0} purchases, {1} sales."
 msgstr "Documentos: {0} compras, {1} ventas."
 
@@ -492,7 +496,7 @@ msgstr "Donaciones en dinero -Impuesto a la donaciones"
 msgid "Donaciones en dinero -Impuesto a las donaciones"
 msgstr "Donaciones en dinero -Impuesto a las donaciones"
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:31
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:80
 msgid "Download ATS ZIP"
 msgstr "Descargar ATS ZIP"
 
@@ -633,7 +637,7 @@ msgstr "Generado"
 msgid "Generated XML is malformed: {}. Head: {!r}"
 msgstr "El XML generado está mal formado: {}. Inicio: {!r}"
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:46
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:95
 msgid "Generating ATS files…"
 msgstr "Generando archivos ATS…"
 
@@ -855,6 +859,10 @@ msgstr "Número del Comprobante de Retención emitido por el cliente (p. ej. 001
 msgid "Numeric code must be 8 digits (got '{}')."
 msgstr "El código numérico debe tener 8 dígitos (se recibió '{}')."
 
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:71
+msgid "Open DIMM summary (talón)"
+msgstr "Abrir resumen DIMM (talón)"
+
 #. Label of the issuer_common_name (Data) field in DocType 'SRI Signature'
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "Organization (Issuer)"
@@ -908,6 +916,14 @@ msgstr "Otros intereses y rendimientos financieros exentos"
 #: l10n_ec/locale/i18n_markers.py:156
 msgid "Otros intereses y rendimientos financieros gravados"
 msgstr "Otros intereses y rendimientos financieros gravados"
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:68
+msgid "Outdated validator"
+msgstr "Validador desactualizado"
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:38
+msgid "Outdated validator: {0}"
+msgstr "Validador desactualizado: {0}"
 
 #. Label of the section_break_credentials (Section Break) field in DocType 'SRI
 #. Signature'
@@ -1608,9 +1624,13 @@ msgstr "Servicios"
 msgid "Servicios profesionales sociedades"
 msgstr "Servicios profesionales sociedades"
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:34
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:83
 msgid "Set Company, Year and Month before downloading."
 msgstr "Fije Compañía, Año y Mes antes de descargar."
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:51
+msgid "Set Company, Year and Month before validating."
+msgstr "Fije Compañía, Año y Mes antes de validar."
 
 #: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:36
 msgid "Sign"
@@ -1817,6 +1837,23 @@ msgstr "Código de documento SRI no soportado '{}'."
 msgid "VAT"
 msgstr "IVA"
 
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:48
+msgid "Validate in DIMM"
+msgstr "Validar en DIMM"
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:62
+msgid "Validating ATS files…"
+msgstr "Validando archivos ATS…"
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:36
+msgid "Validator unavailable"
+msgstr "Validador no disponible"
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:42
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:75
+msgid "Validator {0}"
+msgstr "Validador {0}"
+
 #: l10n_ec/locale/i18n_markers.py:191
 msgid "Valores entregados por las cooperativas de transporte a sus socios"
 msgstr "Valores entregados por las cooperativas de transporte a sus socios"
@@ -1942,6 +1979,18 @@ msgstr "Sin verificar"
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "valid"
 msgstr "Válido"
+
+#: l10n_ec/sri/ats_validator.py:53
+msgid "validator '{}' is '{}', expected '{}'"
+msgstr "el '{}' del validador es '{}', se esperaba '{}'"
+
+#: l10n_ec/sri/ats_validator.py:128
+msgid "validator answered HTTP {}."
+msgstr "el validador respondió HTTP {}."
+
+#: l10n_ec/sri/ats_validator.py:51
+msgid "validator reports no '{}'"
+msgstr "el validador no informa '{}'"
 
 #: l10n_ec/ecuador_localization/party_hooks.py:49
 msgid "{} '{}' is already the generic final consumer."
