@@ -33,6 +33,7 @@ def execute(filters=None):
 	columns = [
 		{"fieldname": "descripcion", "label": _("Description"), "fieldtype": "Data", "width": 520},
 		{"fieldname": "casilleros", "label": _("Boxes"), "fieldtype": "Data", "width": 130},
+		{"fieldname": "signo", "label": _("Sign"), "fieldtype": "Data", "width": 60},
 		{"fieldname": "bruto", "label": _("Gross value"), "fieldtype": "Float", "width": 140},
 		{"fieldname": "neto", "label": _("Net value"), "fieldtype": "Float", "width": 140},
 		{"fieldname": "impuesto", "label": _("Tax"), "fieldtype": "Float", "width": 140},

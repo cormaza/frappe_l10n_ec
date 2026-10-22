@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: l10n_ec 16.0.0\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-22 08:06-0719\n"
+"POT-Creation-Date: 2026-10-22 08:17-0719\n"
 "PO-Revision-Date: 2026-10-20 11:05+0000\n"
 "Last-Translator: Ecuador Localization Contributors\n"
 "Language-Team: Ecuador Localization Contributors\n"
@@ -342,7 +342,7 @@ msgstr "Contraprestación producida por la enajenación de derechos representati
 msgid "Counterparty / Section"
 msgstr "Contraparte / Sección"
 
-#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:53
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:54
 msgid "Credit (602)"
 msgstr "Crédito (602)"
 
@@ -551,9 +551,13 @@ msgstr "Fecha de vencimiento"
 msgid "Fiscal Period:"
 msgstr "Período fiscal:"
 
-#: l10n_ec/sri/form103.py:187
+#: l10n_ec/sri/form103.py:194
 msgid "Form 103 casillero '{}' belongs to no withholding concepto."
 msgstr "El casillero '{}' del Formulario 103 no pertenece a ningún concepto de retención."
+
+#: l10n_ec/sri/form103.py:182
+msgid "Form 103 casillero '{}' carries a negative value '{}'; retentions never subtract."
+msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:404 l10n_ec/sri/form103.py:93
 msgid "Form 103 collection month '{}' is out of range."
@@ -572,11 +576,11 @@ msgstr "La tarifa de deducción IVA '{}' del Formulario 104 no tiene casillero d
 msgid "Form 104 VAT rate code '{}' is not a SRI rate."
 msgstr "El código de tarifa IVA '{}' del Formulario 104 no es una tarifa SRI."
 
-#: l10n_ec/sri/form104_layout.py:268
+#: l10n_ec/sri/form104_layout.py:288
 msgid "Form 104 box '{}' has no SRI label."
 msgstr "El casillero '{}' del Formulario 104 no tiene etiqueta SRI."
 
-#: l10n_ec/sri/form104_layout.py:282
+#: l10n_ec/sri/form104_layout.py:304
 msgid "Form 104 box '{}' is not writable by the collector."
 msgstr "El casillero '{}' del Formulario 104 no lo llena el recolector."
 
@@ -613,7 +617,7 @@ msgstr "Generado"
 msgid "Generated XML is malformed: {}. Head: {!r}"
 msgstr "El XML generado está mal formado: {}. Inicio: {!r}"
 
-#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:36
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:37
 msgid "Gross value"
 msgstr "Valor bruto"
 
@@ -799,7 +803,7 @@ msgstr "Nombre"
 msgid "Name:"
 msgstr "Nombre:"
 
-#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:37
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:38
 msgid "Net value"
 msgstr "Valor neto"
 
@@ -1132,7 +1136,7 @@ msgstr "Pagos y créditos en cuenta efectuados por el BCE y los depósitos centr
 msgid "Pagos y créditos en cuenta efectuados por el BCE y los depósitos centralizados de valores, en calidad de intermediarios, a instituciones del sistema financiero por cuenta de otras personas naturales y sociedades"
 msgstr "Pagos y créditos en cuenta efectuados por el BCE y los depósitos centralizados de valores, en calidad de intermediarios, a instituciones del sistema financiero por cuenta de otras personas naturales y sociedades"
 
-#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:51
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:52
 msgid "Payable (perception 699)"
 msgstr "A pagar (percepción 699)"
 
@@ -1584,6 +1588,10 @@ msgstr "Servicios"
 msgid "Servicios profesionales sociedades"
 msgstr "Servicios profesionales sociedades"
 
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:36
+msgid "Sign"
+msgstr "Signo"
+
 #. Label of the signature_name (Data) field in DocType 'SRI Signature'
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "Signature Name"
@@ -1672,7 +1680,7 @@ msgstr "Tarjeta prepago"
 msgid "Tarjetas"
 msgstr "Tarjetas"
 
-#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:38
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:39
 #: l10n_ec/locale/i18n_markers.py:358
 msgid "Tax"
 msgstr "Impuesto"
@@ -1722,7 +1730,7 @@ msgstr "Total retenido:"
 msgid "Total base"
 msgstr "Base total"
 
-#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:50
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:51
 msgid "Total consolidated (859)"
 msgstr "Total consolidado (859)"
 
@@ -1829,7 +1837,7 @@ msgstr "Comprobante"
 msgid "Voucher '{}' must be Authorized to record a void, found '{}'."
 msgstr "El comprobante '{}' debe estar Autorizado para registrar una anulación, encontrado '{}'."
 
-#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:52
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:53
 msgid "Withheld (retention 801)"
 msgstr "Retenido (retención 801)"
 

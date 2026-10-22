@@ -176,6 +176,13 @@ def build_103_rows(totals: dict) -> list:
 	from l10n_ec.sri.withholding_concepts import CONCEPTS
 
 	normalized = {int(box): round(float(value or 0.0), 2) for box, value in (totals or {}).items()}
+	for box, value in normalized.items():
+		if value < 0:
+			raise ValueError(
+				_("Form 103 casillero '{}' carries a negative value '{}'; retentions never subtract.").format(
+					box, value
+				)
+			)
 	owned: dict = {}
 	for code, (_impuesto, _description, _rate, _valid_from, casilleros) in CONCEPTS.items():
 		if not casilleros:

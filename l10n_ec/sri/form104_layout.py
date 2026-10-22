@@ -259,6 +259,26 @@ _BLOCKS: tuple = (
 #: Boxes the collector never writes; nonzero here is a layout bug, fail loud.
 _UNWRITABLE = frozenset({"410", "420", "430", "486", "487", "492", "530", "533", "534", "623", "624", "625"})
 
+#: Single boxes with DIMM minus semantics (subtract in their total formula).
+_SIGNO_MINUS = frozenset({"424", "527", "603", "604", "605", "606", "607", "608", "609"})
+#: Single boxes that are computed totals/formulas.
+_SIGNO_EQUAL = frozenset(
+	{"485", "499", "564", "601", "602", "615", "617", "618", "619", "620", "699", "799", "801", "859"}
+)
+#: Single boxes that add (retention rates, presumptive, adjustments).
+_SIGNO_PLUS = frozenset({"610", "611", "612", "613", "614", "621", "721", "723", "725", "727", "729", "731"})
+
+
+def _single_signo(box: str) -> str:
+	"""DIMM marker for one single box: ``-`` subtracts, ``=`` totals, else ``+``/````."""
+	if box in _SIGNO_MINUS:
+		return "-"
+	if box in _SIGNO_EQUAL:
+		return "="
+	if box in _SIGNO_PLUS:
+		return "+"
+	return ""
+
 
 def label_for(box: str) -> str:
 	"""Official DIMM label for a box; fail loud on unknown boxes."""
@@ -273,8 +293,10 @@ def build_104_rows(totals: dict) -> list:
 
 	Row dicts carry ``kind`` (``section``/``triplet``/``total``/``duo``/
 	``duo-impuesto``/``single-bruto``/``single-neto``/``single-impuesto``/
-	``child-565``), ``casilleros``, ``descripcion``, ``bruto``, ``neto``,
-	``impuesto``. Keys of ``totals`` may be ``str`` or ``int``.
+	``child-565``), ``casilleros``, ``descripcion``, ``signo`` (the DIMM
+	printout marker: ``+`` adds, ``-`` subtracts in its total formula,
+	``=`` is a computed total, ``""`` is informativo), ``bruto``,
+	``neto``, ``impuesto``. Keys of ``totals`` may be ``str`` or ``int``.
 	"""
 	normalized = {str(box): round(float(value or 0.0), 2) for box, value in (totals or {}).items()}
 	for box in _UNWRITABLE:
@@ -302,6 +324,9 @@ def build_104_rows(totals: dict) -> list:
 						else "triplet",
 						"casilleros": " · ".join(b for b in boxes if b),
 						"descripcion": label_for(bruto),
+						"signo": "="
+						if boxes == ("409", "419", "429") or boxes == ("509", "519", "529")
+						else "+",
 						"bruto": normalized.get(bruto, 0.0),
 						"neto": normalized.get(neto, 0.0) if neto else None,
 						"impuesto": normalized.get(impuesto, 0.0) if impuesto else None,
@@ -314,6 +339,7 @@ def build_104_rows(totals: dict) -> list:
 						"kind": "total",
 						"casilleros": " · ".join(boxes),
 						"descripcion": "TOTAL — " + label_for(bruto),
+						"signo": "=",
 						"bruto": normalized.get(bruto, 0.0),
 						"neto": normalized.get(neto, 0.0),
 						"impuesto": normalized.get(impuesto, 0.0),
@@ -326,6 +352,7 @@ def build_104_rows(totals: dict) -> list:
 						"kind": "duo",
 						"casilleros": f"{bruto} · {neto}",
 						"descripcion": label_for(bruto),
+						"signo": "+",
 						"bruto": normalized.get(bruto, 0.0),
 						"neto": normalized.get(neto, 0.0),
 						"impuesto": None,
@@ -338,6 +365,7 @@ def build_104_rows(totals: dict) -> list:
 						"kind": "duo",
 						"casilleros": f"{neto} · {impuesto}",
 						"descripcion": label_for(neto),
+						"signo": "+",
 						"bruto": None,
 						"neto": normalized.get(neto, 0.0),
 						"impuesto": normalized.get(impuesto, 0.0),
@@ -350,6 +378,7 @@ def build_104_rows(totals: dict) -> list:
 						"kind": "single",
 						"casilleros": box,
 						"descripcion": label_for(box),
+						"signo": "=" if box in _SIGNO_EQUAL else "",
 						"bruto": normalized.get(box, 0.0),
 						"neto": None,
 						"impuesto": None,
@@ -362,6 +391,7 @@ def build_104_rows(totals: dict) -> list:
 						"kind": "total" if box in ("699", "801", "859", "620") else "single",
 						"casilleros": box,
 						"descripcion": label_for(box),
+						"signo": _single_signo(box),
 						"bruto": None,
 						"neto": normalized.get(box, 0.0),
 						"impuesto": None,
@@ -374,6 +404,7 @@ def build_104_rows(totals: dict) -> list:
 						"kind": "single",
 						"casilleros": box,
 						"descripcion": label_for(box),
+						"signo": _single_signo(box) or "+",
 						"bruto": None,
 						"neto": None,
 						"impuesto": normalized.get(box, 0.0),
@@ -385,6 +416,7 @@ def build_104_rows(totals: dict) -> list:
 						"kind": "child",
 						"casilleros": "565",
 						"descripcion": "└ diferencia no aplicable en el período (informativo, base - 564)",
+						"signo": "",
 						"bruto": None,
 						"neto": normalized.get("565", 0.0),
 						"impuesto": None,

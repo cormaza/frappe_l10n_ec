@@ -22,6 +22,7 @@ class TestForm104Layout(UnitTestCase):
 		self.assertEqual(first["bruto"], 1500.0)
 		self.assertEqual(first["neto"], 1500.0)
 		self.assertEqual(first["impuesto"], 225.0)
+		self.assertEqual(first["signo"], "+")
 
 	def test_blocks_follow_dimm_order(self) -> None:
 		rows = build_104_rows({"401": 1.0, "500": 2.0, "601": 3.0, "721": 4.0, "859": 5.0})
@@ -36,6 +37,14 @@ class TestForm104Layout(UnitTestCase):
 	def test_unexpected_nonzero_box_fails_loud(self) -> None:
 		with self.assertRaises(ValueError):
 			build_104_rows({"410": 10.0})
+
+	def test_signo_marks_minus_and_total_boxes(self) -> None:
+		rows = build_104_rows({"424": 5.0, "409": 1.0, "419": 1.0, "429": 1.0, "620": -2.0})
+		by_box = {r["casilleros"]: r for r in rows if r["kind"] != "section"}
+		self.assertEqual(by_box["424"]["signo"], "-")
+		self.assertEqual(by_box["409 · 419 · 429"]["signo"], "=")
+		self.assertEqual(by_box["620"]["signo"], "=")
+		self.assertEqual(by_box["620"]["neto"], -2.0)
 
 
 class TestForm103Rows(UnitTestCase):
@@ -58,6 +67,10 @@ class TestForm103Rows(UnitTestCase):
 	def test_unattributable_casillero_fails_loud(self) -> None:
 		with self.assertRaises(ValueError):
 			build_103_rows({99999: 1.0})
+
+	def test_negative_value_fails_loud(self) -> None:
+		with self.assertRaises(ValueError):
+			build_103_rows({312: -100.0, 362: -2.0})
 
 
 class TestAtsLayout(UnitTestCase):

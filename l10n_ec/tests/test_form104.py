@@ -246,7 +246,7 @@ class TestReportRing1Importable(UnitTestCase):
 		columns, data = module.execute(None)
 		self.assertEqual(
 			[column["fieldname"] for column in columns],
-			["descripcion", "casilleros", "bruto", "neto", "impuesto"],
+			["descripcion", "casilleros", "signo", "bruto", "neto", "impuesto"],
 		)
 		self.assertEqual(data, [])
 
