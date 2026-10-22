@@ -17,6 +17,10 @@ def parse_emitted_xml(xml_string: str | bytes) -> dict:
 		return _parse_retencion(root)
 	if root.tag == "factura":
 		return _parse_factura(root)
+	if root.tag == "notaCredito":
+		return _parse_nota_credito(root)
+	if root.tag == "notaDebito":
+		return _parse_nota_debito(root)
 	raise ValueError(f"Unsupported emitted voucher root '{root.tag}'.")
 
 
@@ -105,6 +109,82 @@ def _parse_factura(root: etree._Element) -> dict:
 		"info_adicional": [
 			{"nombre": field.get("nombre", ""), "valor": (field.text or "").strip()}
 			for field in root.findall("infoAdicional/campoAdicional")
+		],
+	}
+
+
+def _trib_number(trib) -> str:
+	return "-".join([_text(trib.find("estab")), _text(trib.find("ptoEmi")), _text(trib.find("secuencial"))])
+
+
+def _parse_buyer(info) -> dict:
+	return {
+		"buyer_id_type": _text(info.find("tipoIdentificacionComprador")),
+		"buyer_name": _text(info.find("razonSocialComprador")),
+		"buyer_id": _text(info.find("identificacionComprador")),
+	}
+
+
+def _parse_nota_credito(root: etree._Element) -> dict:
+	info = root.find("infoNotaCredito")
+	return {
+		"kind": "nota_credito",
+		"number": _trib_number(root.find("infoTributaria")),
+		"issue_date": _text(info.find("fechaEmision")),
+		**_parse_buyer(info),
+		"modified_doc_code": _text(info.find("codDocModificado")),
+		"modified_doc_number": _text(info.find("numDocModificado")),
+		"sustento_issue_date": _text(info.find("fechaEmisionDocSustento")),
+		"subtotal": float(_text(info.find("totalSinImpuestos")) or 0),
+		"adjustment_value": float(_text(info.find("valorModificacion")) or 0),
+		"reason": _text(info.find("motivo")),
+		"taxes": [
+			{
+				"code": _text(row.find("codigo")),
+				"rate_code": _text(row.find("codigoPorcentaje")),
+				"base": float(_text(row.find("baseImponible")) or 0),
+				"value": float(_text(row.find("valor")) or 0),
+			}
+			for row in info.findall("totalConImpuestos/totalImpuesto")
+		],
+		"lines": [
+			{
+				"code": _text(line.find("codigoInterno")),
+				"description": _text(line.find("descripcion")),
+				"qty": float(_text(line.find("cantidad")) or 0),
+				"unit_price": float(_text(line.find("precioUnitario")) or 0),
+				"discount": float(_text(line.find("descuento")) or 0),
+				"total": float(_text(line.find("precioTotalSinImpuesto")) or 0),
+			}
+			for line in root.findall("detalles/detalle")
+		],
+	}
+
+
+def _parse_nota_debito(root: etree._Element) -> dict:
+	info = root.find("infoNotaDebito")
+	return {
+		"kind": "nota_debito",
+		"number": _trib_number(root.find("infoTributaria")),
+		"issue_date": _text(info.find("fechaEmision")),
+		**_parse_buyer(info),
+		"modified_doc_code": _text(info.find("codDocModificado")),
+		"modified_doc_number": _text(info.find("numDocModificado")),
+		"sustento_issue_date": _text(info.find("fechaEmisionDocSustento")),
+		"subtotal": float(_text(info.find("totalSinImpuestos")) or 0),
+		"total_value": float(_text(info.find("valorTotal")) or 0),
+		"taxes": [
+			{
+				"code": _text(row.find("codigo")),
+				"rate_code": _text(row.find("codigoPorcentaje")),
+				"base": float(_text(row.find("baseImponible")) or 0),
+				"value": float(_text(row.find("valor")) or 0),
+			}
+			for row in info.findall("impuestos/impuesto")
+		],
+		"reasons": [
+			{"reason": _text(row.find("razon")), "value": float(_text(row.find("valor")) or 0)}
+			for row in root.findall("motivos/motivo")
 		],
 	}
 

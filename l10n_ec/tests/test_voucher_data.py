@@ -172,3 +172,74 @@ class TestFacturaRoundTrip(UnitTestCase):
 		self.assertEqual(line["code"], "DEMO-WIDGET")
 		self.assertEqual(line["qty"], 1.0)
 		self.assertEqual(line["total"], 100.0)
+
+
+class TestNotaCreditoDebitoRoundTrip(UnitTestCase):
+	def test_nota_credito_round_trip(self) -> None:
+		from l10n_ec.sri.xml_builder import build_nota_credito_xml
+
+		ctx = dict(CTX)
+		ctx["doc_code"] = "04"
+		xml = build_nota_credito_xml(
+			ctx,
+			{
+				"issue_date": "21/10/2026",
+				"buyer_id_type": "04",
+				"buyer_name": "EMPRESA EJEMPLO SA",
+				"buyer_id": "1790016919001",
+				"modified_doc_code": "01",
+				"modified_doc_number": "001-001-000000001",
+				"sustento_issue_date": "20/10/2026",
+				"subtotal": 100.00,
+				"adjustment_value": 115.00,
+				"tax_totals": [{"code": "2", "rate_code": "4", "base": 100.00, "value": 15.00}],
+				"reason": "Devolucion de mercaderia",
+				"lines": [
+					{
+						"code": "PROD001",
+						"aux_code": "",
+						"description": "Servicio de consultoria",
+						"qty": 1,
+						"unit_price": 100.00,
+						"discount": 0.0,
+						"subtotal": 100.00,
+						"taxes": [
+							{"code": "2", "rate_code": "4", "rate": 15.0, "base": 100.00, "value": 15.00}
+						],
+					}
+				],
+			},
+		)
+		parsed = parse_emitted_xml(xml)
+		self.assertEqual(parsed["kind"], "nota_credito")
+		self.assertEqual(parsed["number"], "001-001-000000001")
+		self.assertEqual(parsed["modified_doc_number"], "001-001-000000001")
+		self.assertEqual(parsed["adjustment_value"], 115.00)
+		self.assertEqual(parsed["lines"][0]["code"], "PROD001")
+
+	def test_nota_debito_round_trip(self) -> None:
+		from l10n_ec.sri.xml_builder import build_nota_debito_xml
+
+		ctx = dict(CTX)
+		ctx["doc_code"] = "05"
+		xml = build_nota_debito_xml(
+			ctx,
+			{
+				"issue_date": "21/10/2026",
+				"buyer_id_type": "04",
+				"buyer_name": "EMPRESA EJEMPLO SA",
+				"buyer_id": "1790016919001",
+				"modified_doc_code": "01",
+				"modified_doc_number": "001-001-000000002",
+				"sustento_issue_date": "20/10/2026",
+				"subtotal": 100.00,
+				"taxes": [{"code": "2", "rate_code": "4", "rate": 15.0, "base": 100.00, "value": 15.00}],
+				"total_value": 115.00,
+				"reasons": [{"reason": "Intereses", "value": 15.00}],
+			},
+		)
+		parsed = parse_emitted_xml(xml)
+		self.assertEqual(parsed["kind"], "nota_debito")
+		self.assertEqual(parsed["number"], "001-001-000000001")
+		self.assertEqual(parsed["total_value"], 115.00)
+		self.assertEqual(parsed["reasons"][0]["reason"], "Intereses")

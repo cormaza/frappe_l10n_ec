@@ -13,7 +13,19 @@ fixtures = [
 	"SRI Tax Support",
 	{
 		"dt": "Print Format",
-		"filters": [["name", "in", ["SRI RIDE", "SRI RIDE Delivery Note", "SRI RIDE Withholding"]]],
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"SRI RIDE",
+					"SRI RIDE Delivery Note",
+					"SRI RIDE Withholding",
+					"SRI RIDE Credit Note",
+					"SRI RIDE Debit Note",
+				],
+			]
+		],
 	},
 	{
 		"dt": "Report",

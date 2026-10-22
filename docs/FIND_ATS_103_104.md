@@ -74,13 +74,23 @@ bench --site demo execute "frappe.get_attr('l10n_ec.ecuador_localization.report.
 
 **Demo octubre:** `401=1060`, `500=330`, `609=150` (IVA recibido del JE `250`), `620` negativo es literal OCA cuando `609 > 601`.
 
-## 4) Triangulación (evidencia de completitud)
+## 4) Triangulación (evidencia de completitud, demo octubre 2026)
 
 **Mismo mes, tres fuentes deben cerrar con granularidad entendida:**
 
-- `ATS montoIva` (ej. `43.00`) ↔ `Form 104` bases/montos + `GL 1010504`
-- `JE 250 (1010501 150 + 1010502 100)` ↔ `104 casillero 609` + `GL`
-- `Voucher 07 (100/2.00)` ↔ `103 casillero 312/362`
+- Ventas `401`: bruto `1235.00`, neto `1220.00`, impuesto `183.00` — la
+  diferencia bruto/neto es la NC del mes (las devoluciones restan solo
+  neto e impuesto, nunca bruto). Total `409`: `1535.00/1520.00/203.00`.
+- Compras `500`: `350.00/330.00/49.50`; total `509`: `650.00/630.00/59.50`.
+- Liquidación: crédito aplicable `564 = 47.76`, causado `601 = 155.24`,
+  retenciones recibidas `609 = 150.00` (del JE de liquidación),
+  subtotal `620` + presuntivo → percepción `699 = 5.24`; retención
+  `799/801 = 4.50`; consolidado `859 = 9.74`.
+- `ATS`: 8 compras, 0 ventas, 0 exportaciones, 0 anulados (solo lo
+  autorizado alimenta el ATS; las ventas demo viajan en `Rejected` por
+  el techo autofirmado).
+- `Voucher 07 (100/2.00)` ↔ `103 casillero 312/362` (voucher stageado
+  como demo-data; el único autorizado del mes).
 
 NC `04` reporta en positivo (tipo lleva el signo), `03` solo si está autorizado, `02`/`06` sustentos ya vienen del campo `SRI Sustento Code`.
 

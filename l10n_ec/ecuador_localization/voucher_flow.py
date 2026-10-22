@@ -939,6 +939,21 @@ def _invoice_line(row) -> dict:
 	}
 
 
+def _abs_row(row):
+	"""Positive-amount view of a return line: SRI 04 carries no minus sign."""
+	from types import SimpleNamespace
+
+	return SimpleNamespace(
+		item_tax_template=getattr(row, "item_tax_template", None),
+		amount=abs(row.amount),
+		item_code=row.item_code,
+		description=row.description,
+		qty=abs(row.qty),
+		rate=row.rate,
+		discount_amount=abs(row.discount_amount or 0.0),
+	)
+
+
 def _invoice_dict(
 	doc,
 	reason=None,
@@ -960,15 +975,18 @@ def _invoice_dict(
 	resolve_payment_method(payment_method)
 	ref = frappe.get_doc(doc.reference_doctype, doc.reference_name)
 	source = frappe.get_doc(source_doctype, source_name) if source_doctype and source_name else ref
+	credit = doc.sri_doc_code == "04"
+	rows = [_abs_row(row) if credit else row for row in source.items]
+	pos = abs if credit else (lambda v: v)
 	base: dict = {
 		"doctype": doc.reference_doctype,
 		"cod_doc": doc.sri_doc_code,
 		"issue_date": source.posting_date.strftime("%d/%m/%Y"),
-		"subtotal": source.total,
-		"discount": source.discount_amount or 0.0,
-		"total": source.grand_total,
-		"payments": [{"method": payment_method, "amount": source.grand_total}],
-		"lines": [_invoice_line(row) for row in source.items],
+		"subtotal": pos(source.total),
+		"discount": pos(source.discount_amount or 0.0),
+		"total": pos(source.grand_total),
+		"payments": [{"method": payment_method, "amount": pos(source.grand_total)}],
+		"lines": [_invoice_line(row) for row in rows],
 	}
 	if doc.sri_doc_code == "06":
 		if guia_data is None:
