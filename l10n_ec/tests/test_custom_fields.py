@@ -36,6 +36,7 @@ EXPECTED_FIELDS = {
 		"sri_received_retencion_auth",
 		"sri_received_retencion_date",
 		"sri_received_retencion_key",
+		"sri_emission_point",
 	},
 	"Supplier": {"sri_identification_type", "sri_related_party"},
 	"POS Profile": {"sri_emission_point"},

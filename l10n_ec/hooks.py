@@ -53,6 +53,7 @@ doc_events = {
 		"before_save": "l10n_ec.ecuador_localization.invoice_hooks.validate_sri_invoice",
 		"validate": [
 			"l10n_ec.ecuador_localization.shop_hooks.inherit_shop_point_invoice",
+			"l10n_ec.ecuador_localization.invoice_hooks.inherit_pos_point_invoice",
 			"l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",
 		],
 	},

@@ -38,6 +38,7 @@ CUSTOM_FIELD_STRINGS = [
 	_("Logical caja: every shop order emits from this point. One shop, one point."),
 	_("Inherited from Webshop Settings for cart quotations (including quotation-only RFQ flow)."),
 	_("Inherited from the shop quotation; drives shop voucher emission."),
+	_("Inherited from the POS Profile for counter sales; drives POS voucher emission."),
 	_("SRI Payment Code"),
 	_("SRI Liquidacion"),
 	_(

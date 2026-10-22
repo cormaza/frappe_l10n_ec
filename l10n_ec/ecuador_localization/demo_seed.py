@@ -587,8 +587,7 @@ def _seed_demo_emission_point(company: str) -> str | None:
 				],
 			}
 		).insert(ignore_permissions=True)
-	if frappe.db.exists("POS Profile", "Demo POS"):
-		frappe.db.set_value("POS Profile", "Demo POS", "sri_emission_point", "001-002")
+	_seed_demo_pos_profile(company)
 	if frappe.db.exists("DocType", "Webshop Settings"):
 		frappe.db.set_single_value("Webshop Settings", "company", company)
 		frappe.db.set_single_value("Webshop Settings", "sri_emission_point", "001-004")
@@ -1145,3 +1144,43 @@ def seed_demo() -> dict:
 	)
 	frappe.db.commit()
 	return report
+
+
+def _seed_demo_pos_profile(company: str) -> str | None:
+	"""Create the demo caja profile bound to the locked POS point (idempotent)."""
+	import frappe
+
+	cash = frappe.db.get_value(
+		"Account", {"company": company, "is_group": 0, "account_type": "Cash"}, "name"
+	)
+	expense = frappe.db.get_value(
+		"Account", {"company": company, "root_type": "Expense", "is_group": 0}, "name"
+	)
+	cost_center = frappe.db.get_value("Company", company, "cost_center")
+	if not frappe.db.exists("Mode of Payment", "Cash"):
+		frappe.get_doc(
+			{"doctype": "Mode of Payment", "mode_of_payment": "Cash", "type": "Cash"}
+		).insert(ignore_permissions=True)
+	mop = frappe.get_doc("Mode of Payment", "Cash")
+	if cash and not any(a.default_account == cash for a in mop.accounts):
+		mop.append("accounts", {"company": company, "default_account": cash})
+		mop.save(ignore_permissions=True)
+	if frappe.db.exists("POS Profile", "Demo POS"):
+		frappe.db.set_value("POS Profile", "Demo POS", "sri_emission_point", "001-002")
+		return "Demo POS"
+	frappe.get_doc(
+		{
+			"doctype": "POS Profile",
+			"name": "Demo POS",
+			"company": company,
+			"warehouse": "Demo Stores - DE",
+			"currency": "USD",
+			"selling_price_list": "Standard Selling",
+			"customer": "Demo Final Consumer",
+			"sri_emission_point": "001-002",
+			"write_off_account": expense,
+			"write_off_cost_center": cost_center,
+			"payments": [{"mode_of_payment": "Cash", "default": 1}],
+		}
+	).insert(ignore_permissions=True)
+	return "Demo POS"

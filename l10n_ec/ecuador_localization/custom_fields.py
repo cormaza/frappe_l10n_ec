@@ -126,6 +126,15 @@ CUSTOM_FIELDS = {
 			"label": "Received Retencion Access Key",
 			"description": "49-digit access key of the customer-issued withholding voucher.",
 		},
+		{
+			"fieldname": "sri_emission_point",
+			"fieldtype": "Link",
+			"insert_after": "pos_profile",
+			"label": "SRI Emission Point",
+			"options": "SRI Emission Point",
+			"read_only": 1,
+			"description": "Inherited from the POS Profile for counter sales; drives POS voucher emission.",
+		},
 	],
 	"Quotation": [
 		{

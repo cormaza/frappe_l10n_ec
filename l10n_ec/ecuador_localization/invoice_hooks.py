@@ -116,10 +116,33 @@ def _resolve_ticket_emission(doc) -> None:
 
 
 def ensure_ticket_point(current: str | None, expected: str, ticket: str) -> None:
-	"""Fail loud when a ticket points at another emission point (pure)."""
+	"""Fail loud when a POS document points at another emission point (pure)."""
 	if current and current != expected:
 		raise ValueError(
-			_("Ticket '{}' points at '{}', but its profile emits from '{}'.").format(
+			_("Document '{}' points at '{}', but its profile emits from '{}'.").format(
 				ticket, current, expected
 			)
 		)
+
+
+def inherit_pos_point_invoice(doc, method=None) -> None:
+	"""Stamp counter sales (POS Sales Invoice mode) with the profile point.
+
+	POS Invoice mode is covered at the ticket; this covers the sibling mode
+	where each sale is a Sales Invoice carrying `pos_profile` (auto-resolved
+	by the core). Desk invoices never carry a profile and skip silently.
+	"""
+	if frappe is None:
+		return
+	if not doc.get("is_pos") or doc.get("is_consolidated"):
+		return
+	if not is_ecuadorian_contact(company_country_code(doc.get("company"))):
+		return
+	profile = doc.get("pos_profile")
+	if not profile:
+		return
+	point = frappe.db.get_value("POS Profile", profile, "sri_emission_point")
+	if not point:
+		frappe.throw(_("POS Profile '{}' needs an SRI Emission Point before selling.").format(profile))
+	ensure_ticket_point(doc.get("sri_emission_point"), point, doc.get("name") or _("(new invoice)"))
+	doc.sri_emission_point = point
