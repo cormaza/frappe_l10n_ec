@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: l10n_ec 16.0.0\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-21 15:56-0719\n"
+"POT-Creation-Date: 2026-10-22 08:06-0719\n"
 "PO-Revision-Date: 2026-10-20 11:05+0000\n"
 "Last-Translator: Ecuador Localization Contributors\n"
 "Language-Team: Ecuador Localization Contributors\n"
@@ -20,8 +20,13 @@ msgstr ""
 msgid "49-digit access key of the customer-issued withholding voucher."
 msgstr "Clave de acceso de 49 dígitos del comprobante de retención emitido por el cliente."
 
+#. Header text in the Ecuador Localization Workspace
+#: l10n_ec/ecuador_localization/workspace/ecuador_localization/ecuador_localization.json
+msgid "<span class=\"h4\">SRI Reports (Ecuador)</span>"
+msgstr "<span class=\"h4\">Reportes SRI (Ecuador)</span>"
+
 #: l10n_ec/ecuador_localization/ats_reader.py:41
-#: l10n_ec/ecuador_localization/validation.py:152
+#: l10n_ec/ecuador_localization/validation.py:155
 msgid "A purchase cannot be a return and a liquidacion at once."
 msgstr "Una compra no puede ser devolución y liquidación a la vez."
 
@@ -89,6 +94,10 @@ msgstr "Año '{}' del período ATS fuera de rango."
 msgid "ATS section '{}' must be a list of rows."
 msgstr "La sección ATS '{}' debe ser una lista de filas."
 
+#: l10n_ec/sri/ats_layout.py:44
+msgid "ATS sections '{}' have no presentation layout."
+msgstr "Las secciones ATS '{}' no tienen presentación definida."
+
 #: l10n_ec/locale/i18n_markers.py:395 l10n_ec/sri/ats_builder.py:428
 msgid "ATS zip needs the built XML string."
 msgstr "El zip ATS necesita el string XML construido."
@@ -144,11 +153,6 @@ msgstr "Activo"
 msgid "Address:"
 msgstr "Dirección:"
 
-#: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.py:30
-#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:34
-msgid "Amount"
-msgstr "Importe"
-
 #. Option for the 'State' (Select) field in DocType 'SRI Electronic Voucher'
 #: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 msgid "Annulled"
@@ -195,6 +199,14 @@ msgstr "Autorretenciones Sociedades Grandes Contribuyentes"
 msgid "Base"
 msgstr "Base"
 
+#: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.py:31
+msgid "Base amount"
+msgstr "Base imponible"
+
+#: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.py:30
+msgid "Base box"
+msgstr "Cas. base"
+
 #: l10n_ec/locale/i18n_markers.py:106
 msgid "Bienes"
 msgstr "Bienes"
@@ -206,6 +218,10 @@ msgstr "Bienes muebles"
 #: l10n_ec/locale/i18n_markers.py:101
 msgid "Botellas PET"
 msgstr "Botellas PET"
+
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:35
+msgid "Boxes"
+msgstr "Casilleros"
 
 #: l10n_ec/locale/i18n_markers.py:121
 msgid "COMPRAS AL COMERCIALIZADOR: de bienes de origen bioacuático, forestal y los descritos  el art.27.1 de LRTI"
@@ -227,8 +243,6 @@ msgstr "No se puede reinstalar el plan contable: la compañía ya tiene movimien
 msgid "Carrier:"
 msgstr "Transportista:"
 
-#: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.py:29
-#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:33
 #: l10n_ec/locale/i18n_markers.py:411
 msgid "Casillero"
 msgstr "Casillero"
@@ -277,6 +291,9 @@ msgstr "Comisiones sociedades"
 #: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 #: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:6
+#: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.js:6
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.js:6
 msgid "Company"
 msgstr "Compañía"
 
@@ -309,6 +326,10 @@ msgstr "Compra de bienes inmuebles"
 msgid "Compraventa de divisas distintas al dólar de los Estados Unidos de América"
 msgstr "Compraventa de divisas distintas al dólar de los Estados Unidos de América"
 
+#: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.py:29
+msgid "Concept"
+msgstr "Concepto"
+
 #: l10n_ec/locale/i18n_markers.py:100
 msgid "Construcción"
 msgstr "Construcción"
@@ -316,6 +337,14 @@ msgstr "Construcción"
 #: l10n_ec/locale/i18n_markers.py:199
 msgid "Contraprestación producida por la enajenación de derechos representativos de capital u otros derechos que permitan la exploración, explotación, concesión o similares de sociedades, no cotizados en bolsa de valores del Ecuador"
 msgstr "Contraprestación producida por la enajenación de derechos representativos de capital u otros derechos que permitan la exploración, explotación, concesión o similares de sociedades, no cotizados en bolsa de valores del Ecuador"
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.py:24
+msgid "Counterparty / Section"
+msgstr "Contraparte / Sección"
+
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:53
+msgid "Credit (602)"
+msgstr "Crédito (602)"
 
 #. Label of the current_sequence (Int) field in DocType 'SRI Emission Sequence'
 #: l10n_ec/ecuador_localization/doctype/sri_emission_sequence/sri_emission_sequence.json
@@ -365,9 +394,14 @@ msgstr "Las guías necesitan guia_data explícito {carrier, transport, docs}."
 msgid "Deportistas"
 msgstr "Deportistas"
 
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:34
 #: l10n_ec/locale/i18n_markers.py:352
 msgid "Description"
 msgstr "Descripción"
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.py:28
+msgid "Detail"
+msgstr "Detalle"
 
 #: l10n_ec/locale/i18n_markers.py:69
 msgid "Dinero electrónico"
@@ -446,6 +480,11 @@ msgstr "Donaciones en dinero -Impuesto a la donaciones"
 msgid "Donaciones en dinero -Impuesto a las donaciones"
 msgstr "Donaciones en dinero -Impuesto a las donaciones"
 
+#. Name of a Workspace
+#: l10n_ec/ecuador_localization/workspace/ecuador_localization/ecuador_localization.json
+msgid "Ecuador Localization"
+msgstr "Localización Ecuador"
+
 #. Label of the emission_point_code (Data) field in DocType 'SRI Emission
 #. Point'
 #: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
@@ -512,6 +551,10 @@ msgstr "Fecha de vencimiento"
 msgid "Fiscal Period:"
 msgstr "Período fiscal:"
 
+#: l10n_ec/sri/form103.py:187
+msgid "Form 103 casillero '{}' belongs to no withholding concepto."
+msgstr "El casillero '{}' del Formulario 103 no pertenece a ningún concepto de retención."
+
 #: l10n_ec/locale/i18n_markers.py:404 l10n_ec/sri/form103.py:93
 msgid "Form 103 collection month '{}' is out of range."
 msgstr "Mes '{}' de recolección Formulario 103 fuera de rango."
@@ -528,6 +571,14 @@ msgstr "La tarifa de deducción IVA '{}' del Formulario 104 no tiene casillero d
 #: l10n_ec/sri/form104.py:313
 msgid "Form 104 VAT rate code '{}' is not a SRI rate."
 msgstr "El código de tarifa IVA '{}' del Formulario 104 no es una tarifa SRI."
+
+#: l10n_ec/sri/form104_layout.py:268
+msgid "Form 104 box '{}' has no SRI label."
+msgstr "El casillero '{}' del Formulario 104 no tiene etiqueta SRI."
+
+#: l10n_ec/sri/form104_layout.py:282
+msgid "Form 104 box '{}' is not writable by the collector."
+msgstr "El casillero '{}' del Formulario 104 no lo llena el recolector."
 
 #: l10n_ec/locale/i18n_markers.py:426 l10n_ec/sri/form104.py:266
 msgid "Form 104 collection month '{}' is out of range."
@@ -562,6 +613,10 @@ msgstr "Generado"
 msgid "Generated XML is malformed: {}. Head: {!r}"
 msgstr "El XML generado está mal formado: {}. Inicio: {!r}"
 
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:36
+msgid "Gross value"
+msgstr "Valor bruto"
+
 #: l10n_ec/locale/i18n_markers.py:108
 msgid "Honorarios"
 msgstr "Honorarios"
@@ -582,7 +637,7 @@ msgstr "La retención de IR necesita un concepto de IR, recibido '{}'."
 msgid "IVA withholding categories cannot be assigned to suppliers: ERPNext cannot compute tax-on-tax withholdings. Purchase-side IVA is computed at emission; sales-side IVA settles via the received-withholding entry."
 msgstr "Las categorías de retención de IVA no pueden asignarse a proveedores: ERPNext no puede calcular retenciones sobre impuestos. El IVA del lado compras se calcula al emitir; el IVA del lado ventas se liquida vía el asiento de retenciones recibidas."
 
-#: l10n_ec/ecuador_localization/validation.py:214
+#: l10n_ec/ecuador_localization/validation.py:257
 #: l10n_ec/ecuador_localization/voucher_flow.py:873
 msgid "IVA withholding needs an IVA concepto, got '{}'."
 msgstr "La retención de IVA necesita un concepto de IVA, recibido '{}'."
@@ -708,7 +763,7 @@ msgstr "Mensajes"
 msgid "Minerales"
 msgstr "Minerales"
 
-#: l10n_ec/ecuador_localization/validation.py:233
+#: l10n_ec/ecuador_localization/validation.py:276
 msgid "Missing IVA withholding account {} for company '{}'."
 msgstr "Falta la cuenta de retención de IVA {} para la compañía '{}'."
 
@@ -724,6 +779,12 @@ msgstr "Falta la cuenta {} para la plantilla de impuestos '{}'."
 msgid "Missing account {} for withholding setup."
 msgstr "Falta la cuenta {} para la configuración de retenciones."
 
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:24
+#: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.js:24
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.js:24
+msgid "Month"
+msgstr "Mes"
+
 #: l10n_ec/ecuador_localization/voucher_flow.py:937
 msgid "Multiple enabled SRI Additional Information records for company '{}'."
 msgstr "Múltiples registros de Información Adicional SRI habilitados para la compañía '{}'."
@@ -737,6 +798,10 @@ msgstr "Nombre"
 #: l10n_ec/locale/i18n_markers.py:343
 msgid "Name:"
 msgstr "Nombre:"
+
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:37
+msgid "Net value"
+msgstr "Valor neto"
 
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.py:83
 msgid "No PKCS#12 signature content attached to SRI Signature document."
@@ -1067,6 +1132,10 @@ msgstr "Pagos y créditos en cuenta efectuados por el BCE y los depósitos centr
 msgid "Pagos y créditos en cuenta efectuados por el BCE y los depósitos centralizados de valores, en calidad de intermediarios, a instituciones del sistema financiero por cuenta de otras personas naturales y sociedades"
 msgstr "Pagos y créditos en cuenta efectuados por el BCE y los depósitos centralizados de valores, en calidad de intermediarios, a instituciones del sistema financiero por cuenta de otras personas naturales y sociedades"
 
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:51
+msgid "Payable (perception 699)"
+msgstr "A pagar (percepción 699)"
+
 #: l10n_ec/locale/i18n_markers.py:348
 msgid "Plate:"
 msgstr "Placa:"
@@ -1280,6 +1349,13 @@ msgstr "Devuelto"
 msgid "Régimen Microempresarial"
 msgstr "Régimen Microempresarial"
 
+#. Name of a report
+#. Label of a shortcut in the Ecuador Localization Workspace
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.json
+#: l10n_ec/ecuador_localization/workspace/ecuador_localization/ecuador_localization.json
+msgid "SRI ATS"
+msgstr "ATS SRI"
+
 #. Name of a DocType
 #: l10n_ec/ecuador_localization/doctype/sri_additional_information/sri_additional_information.json
 msgid "SRI Additional Information"
@@ -1324,12 +1400,16 @@ msgid "SRI Environment"
 msgstr "Ambiente SRI"
 
 #. Name of a report
+#. Label of a shortcut in the Ecuador Localization Workspace
 #: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.json
+#: l10n_ec/ecuador_localization/workspace/ecuador_localization/ecuador_localization.json
 msgid "SRI Form 103"
 msgstr "Formulario SRI 103"
 
 #. Name of a report
+#. Label of a shortcut in the Ecuador Localization Workspace
 #: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.json
+#: l10n_ec/ecuador_localization/workspace/ecuador_localization/ecuador_localization.json
 msgid "SRI Form 104"
 msgstr "Formulario SRI 104"
 
@@ -1345,7 +1425,7 @@ msgstr "Concepto de retención IR SRI retenido por el cliente (p. ej. 303, 312),
 msgid "SRI IVA Concepto"
 msgstr "Concepto IVA SRI"
 
-#: l10n_ec/ecuador_localization/validation.py:223
+#: l10n_ec/ecuador_localization/validation.py:266
 msgid "SRI IVA concepto '{}' is set but the invoice has no IVA taxes."
 msgstr "El concepto IVA SRI '{}' está fijado pero la factura no tiene impuestos IVA."
 
@@ -1353,7 +1433,7 @@ msgstr "El concepto IVA SRI '{}' está fijado pero la factura no tiene impuestos
 msgid "SRI IVA withholding concepto '{}' has no ATS bucket for rate '{}'."
 msgstr "El concepto de retención IVA SRI '{}' no tiene casillero ATS para la tarifa '{}'."
 
-#: l10n_ec/ecuador_localization/validation.py:226
+#: l10n_ec/ecuador_localization/validation.py:269
 msgid "SRI IVA withholding needs exactly one IVA tax row, found {}."
 msgstr "La retención IVA SRI necesita exactamente una fila de impuesto IVA, encontradas {}."
 
@@ -1592,9 +1672,14 @@ msgstr "Tarjeta prepago"
 msgid "Tarjetas"
 msgstr "Tarjetas"
 
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:38
 #: l10n_ec/locale/i18n_markers.py:358
 msgid "Tax"
 msgstr "Impuesto"
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.py:26
+msgid "Taxable base"
+msgstr "Base imponible"
 
 #: l10n_ec/locale/i18n_markers.py:17
 msgid "Test"
@@ -1632,6 +1717,18 @@ msgstr "Título"
 #: l10n_ec/locale/i18n_markers.py:363
 msgid "Total Withheld:"
 msgstr "Total retenido:"
+
+#: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.py:46
+msgid "Total base"
+msgstr "Base total"
+
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:50
+msgid "Total consolidated (859)"
+msgstr "Total consolidado (859)"
+
+#: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.py:48
+msgid "Total withheld"
+msgstr "Total retenido"
 
 #: l10n_ec/locale/i18n_markers.py:357
 msgid "Totals:"
@@ -1683,6 +1780,11 @@ msgstr "XML sin firmar"
 msgid "Unsupported SRI document code '{}'."
 msgstr "Código de documento SRI no soportado '{}'."
 
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.py:27
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.py:53
+msgid "VAT"
+msgstr "IVA"
+
 #: l10n_ec/locale/i18n_markers.py:191
 msgid "Valores entregados por las cooperativas de transporte a sus socios"
 msgstr "Valores entregados por las cooperativas de transporte a sus socios"
@@ -1718,10 +1820,26 @@ msgstr "Motivo de anulación"
 msgid "Void recorded on {}."
 msgstr "Anulación registrada el {}."
 
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.py:25
+msgid "Voucher"
+msgstr "Comprobante"
+
 #: l10n_ec/ecuador_localization/voucher_flow.py:323
 #: l10n_ec/locale/i18n_markers.py:420
 msgid "Voucher '{}' must be Authorized to record a void, found '{}'."
 msgstr "El comprobante '{}' debe estar Autorizado para registrar una anulación, encontrado '{}'."
+
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:52
+msgid "Withheld (retention 801)"
+msgstr "Retenido (retención 801)"
+
+#: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.py:33
+msgid "Withheld amount"
+msgstr "Valor retenido"
+
+#: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.py:32
+msgid "Withheld box"
+msgstr "Cas. retenido"
 
 #: l10n_ec/locale/i18n_markers.py:21
 msgid "Withholding Agent Resolution"
@@ -1752,9 +1870,19 @@ msgstr "Los comprobantes de retención necesitan withholding_codes explícitos {
 msgid "XML does not validate against {}: {}"
 msgstr "El XML no valida contra {}: {}"
 
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:17
+#: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.js:17
+#: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.js:17
+msgid "Year"
+msgstr "Año"
+
 #: l10n_ec/ecuador_localization/voucher_mail.py:113
 msgid "Your electronic voucher was authorized by the SRI."
 msgstr "Su comprobante electrónico fue autorizado por el SRI."
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.py:53
+msgid "base"
+msgstr "base"
 
 #. Option for the 'State' (Select) field in DocType 'SRI Signature'
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json

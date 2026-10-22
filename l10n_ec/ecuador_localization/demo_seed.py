@@ -553,6 +553,111 @@ def party_name(entry: dict) -> str:
 	return doc.get("customer_name") or doc.get("supplier_name")
 
 
+def _seed_demo_withholding_voucher(company: str) -> str | None:
+	"""Stage one Authorized 07 so the SRI Form 103 demo has casilleros to show.
+
+	Demo fiction (like the placeholder supplier auths): the retencion XML is
+	built by the real ``build_retencion_xml`` + XSD path from the seeded
+	``001-001-000000011`` purchase (IR 2% on 100.00, concepto 312), but SRI
+	never authorized it (the demo key is self-signed). Only Form 103 reads it:
+	07 vouchers never feed ATS sections or Form 104.
+	"""
+	import frappe
+
+	voucher_number = "001-001-000000031"
+	if frappe.db.exists("SRI Electronic Voucher", {"sri_number": voucher_number}):
+		return frappe.db.get_value("SRI Electronic Voucher", {"sri_number": voucher_number}, "name")
+	purchase_name = frappe.db.get_value(
+		"Purchase Invoice", {"bill_no": "001-001-000000011", "docstatus": 1}, "name"
+	)
+	if not purchase_name:
+		return None
+	purchase = frappe.get_doc("Purchase Invoice", purchase_name)
+	posting = purchase.posting_date
+	issue = posting.strftime("%d/%m/%Y") if hasattr(posting, "strftime") else str(posting)
+	period = posting.strftime("%m/%Y") if hasattr(posting, "strftime") else "10/2026"
+	auth_date = f"{posting} 12:00:00" if hasattr(posting, "strftime") else f"{posting}"
+
+	from l10n_ec.sri.access_key import generate_access_key
+	from l10n_ec.sri.xml_builder import build_retencion_xml, validate_against_xsd
+
+	ruc = frappe.db.get_value("Company", company, "tax_id") or "1760013210001"
+	access_key = generate_access_key(
+		document_code_sri="07",
+		complete_document_number=voucher_number.replace("-", ""),
+		environment="1",
+		date_document=posting if hasattr(posting, "strftime") else date.today(),
+		ruc=ruc,
+		numeric_code="12345678",
+	)
+	xml = build_retencion_xml(
+		{
+			"environment": "1",
+			"doc_code": "07",
+			"ruc": ruc,
+			"legal_name": company,
+			"head_office_address": "Quito",
+			"establishment": "001",
+			"emission_point": "001",
+			"sequential": "000000031",
+			"access_key": access_key,
+			"branch_address": "Quito",
+			"special_taxpayer": "",
+			"accounting_required": True,
+		},
+		{
+			"issue_date": issue,
+			"subject_id_type": "04",
+			"related_party": "NO",
+			"subject_name": "Demo Supplier RUC",
+			"subject_id": "1710034065001",
+			"fiscal_period": period,
+			"docs": [
+				{
+					"sustento_code": "06",
+					"doc_code": "01",
+					"doc_number": "001-001-000000011",
+					"issue_date": issue,
+					"auth_number": DEMO_SUPPLIER_AUTH,
+					"local_payment": "01",
+					"subtotal": 100.00,
+					"total": 115.00,
+					"doc_taxes": [
+						{"tax_code": "2", "rate_code": "4", "base": 100.00, "rate": 15.0, "tax_value": 15.00}
+					],
+					"withholdings": [
+						{"code": "1", "withholding_code": "312", "base": 100.00, "rate": 2.0, "value": 2.00}
+					],
+					"payments": [{"method": "01", "amount": 115.00}],
+				}
+			],
+		},
+	)
+	if not validate_against_xsd(xml, "retencion"):
+		return None
+	voucher = frappe.get_doc(
+		{
+			"doctype": "SRI Electronic Voucher",
+			"access_key": access_key,
+			"sri_number": voucher_number,
+			"voucher_state": "Authorized",
+			"sri_doc_code": "07",
+			"company": company,
+			"reference_doctype": "Purchase Invoice",
+			"reference_name": purchase_name,
+			"authorization_number": access_key,
+			"authorization_date": auth_date,
+			"unsigned_xml": xml,
+		}
+	)
+	voucher.insert(ignore_permissions=True)
+	from l10n_ec.ecuador_localization.voucher_flow import persist_voucher_xml
+
+	persist_voucher_xml(voucher, "unsigned_xml")
+	voucher.save(ignore_permissions=True)
+	return voucher.name
+
+
 def seed_demo() -> dict:
 	"""Create demo company, parties, and addresses; report validation behavior."""
 	import frappe
@@ -981,6 +1086,7 @@ def seed_demo() -> dict:
 			if frappe.db.exists(doctype, title):
 				frappe.delete_doc(doctype, title, ignore_permissions=True, force=True)
 
+	report["withholding_voucher"] = _seed_demo_withholding_voucher(company)
 	report["accounts"] = {
 		root: frappe.db.count("Account", {"company": company, "root_type": root})
 		for root in ("Asset", "Liability", "Equity", "Income", "Expense")
