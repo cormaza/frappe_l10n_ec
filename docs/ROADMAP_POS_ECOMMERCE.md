@@ -48,30 +48,55 @@ activables por separado.
   pida: multiplica folios y confunde el ATS.
 - Todo tras `sri_pos_enabled` (nuevo settings, default apagado).
 
-## 3. E-commerce (app **opcional** `frappe/webshop`, no existe en el core v16)
+## 3. E-commerce (app **opcional** `frappe/webshop`, no instalada en bench)
 
-Verificado: `erpnext/shopping_cart` es un stub y `modules.txt` no lista
-tienda. La tienda real es app aparte que puede no estar instalada.
+Verificado contra `frappe/webshop` (clon 2026-10-22): `erpnext/shopping_cart`
+es un stub; la tienda vive en la app aparte.
+
+### Respuesta multi-shop: un shop por site
+
+`Webshop Settings` es **Single** con una sola `company`: no hay
+multi-shop nativo. Multi-tienda real = multi-site (cada site, su settings
+y su punto) o customización fuera de este roadmap. Diseño para un shop:
+
+### Flujo verificado (`shopping_cart/cart.py`)
+
+Carrito (`Quotation` tipo Shopping Cart, compañía del settings) →
+`place_order()` → Quotation enviada + `Sales Order` enviada automáticamente.
+`update_party` crea el Customer con solo nombre (persona/empresa): **sin
+cédula, sin validación** — ese es el hueco fiscal exacto.
 
 ### Brechas
 
-- **G4 — contacto invitado.** El checkout crea Customer/Contacto web sin
-  `sri_identification_type`: nuestros `party_hooks` lo dejan pasar (solo
-  actúan si el tipo viene seteado) y el pedido nace sin identidad fiscal.
-- **G5 — el pedido no es factura.** Webshop emite Sales Order primero;
-  nuestros hooks viven en Sales Invoice. La validación llega tarde (al
-  facturar, con el cliente ya creado mal).
+- **G4 — contacto invitado.** Sin `sri_identification_type`, nuestros
+  `party_hooks` lo dejan pasar y el pedido nace sin identidad fiscal.
+- **G5 — el pedido no es factura.** La validación en Sales Invoice llega
+  tarde (al facturar, con el cliente ya creado mal y el pago hecho).
 - **G6 — dependencia opcional.** Nada de `l10n_ec` puede importar `webshop`
   a nivel módulo: si no está instalada, el sitio no debe romperse.
 
-### Módulo propuesto: `E-commerce electrónico` (flag independiente)
+### Diseño: el shop es una caja lógica (mismo modelo que POS-A)
 
-- Validación de contacto **en el checkout** (o en `Customer.validate` vía
-  hook ya existente, extendido a exigir identificación EC cuando la
-  compañía del carrito es ecuatoriana y el monto supera el tope CF):
-  cédula/RUC/pasaporte con dígito verificador antes de pagar.
-- Hooks sobre Sales Order (guardados: solo si el doctype existe) que
-  anticipan el tope CF para fallar antes del pago, no en la factura.
+- **Mapeo**: Custom Field `sri_emission_point` (Link) en `Webshop
+  Settings` —creación guardada (solo si el doctype existe)—. Un shop, un
+  punto, igual que un perfil, un punto. El dato vive en el portal porque
+  el settings es lo que el theme ya lee (compañía, precios, checkout).
+- **Herencia**: `Quotation` (carrito) → `Sales Order` → `Sales Invoice`
+  arrastran `sri_emission_point` (custom fields en doctypes core, siempre
+  seguros). El hook de Sales Order lo resuelve del settings cuando el
+  origen es tienda; la factura lo hereda y el voucher emite desde ahí.
+- **Canal**: nuevo check `shop_only` en el punto (mismo patrón que
+  `pos_only`, sin migrar nada): venta tienda exige punto shop-only,
+  escritorio y POS lo rechazan. Streams separados por canal, como cajas.
+- **Contacto pre-pago**: hook en Sales Order con marca de origen tienda
+  (a confirmar en implementación: el marcador exacto que deja `place_order`)
+  exige identificación EC válida si el total supera el tope CF — falla
+  antes del pago, no en la factura. Más API whitelisted
+  `validate_shopper_id` para que el theme del checkout valide en vivo
+  (el campo en el template lo pone webshop; nosotros exponemos la regla).
+- **Theme**: confirmación de pedido muestra identidad fiscal del shop
+  (RUC + sucursal de Company + punto) con campos existentes; sin
+  sobreescribir templates de webshop desde nuestra app.
 - Todo tras `sri_ecommerce_enabled` (default apagado) + guards
   `frappe.db.exists("DocType", ...)` en cada hook.
 
