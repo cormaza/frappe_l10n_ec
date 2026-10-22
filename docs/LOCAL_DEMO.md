@@ -22,6 +22,7 @@ dev/demo.sh down    # stop containers (volumes keep the data)
 dev/demo.sh assets  # recompile frontend bundles (un styled pages = missing build; if bench build only refreshes translations, run `yarn run build --apps frappe --run-build-command` inside apps/frappe)
 dev/demo.sh sync    # copy working tree into bench (py/json/xsd; locale .po/.pot flow the other way)
 dev/demo.sh worker  # consume RQ queues (without it, jobs pile up -> QueueOverloaded)
+dev/demo.sh validator  # opt-in SRI ATS DIMM sidecar on 127.0.0.1:8080 (needs sibling cormaza/docker_ats_validator + built jar; powers the SRI ATS report staleness badge + Validar en DIMM button)
 ```
 
 `reset` is idempotent: it always drops `demo` first, so re-running it

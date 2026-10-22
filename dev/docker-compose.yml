@@ -35,6 +35,26 @@ services:
     volumes:
       - demo-redis-cache:/data
 
+  # SRI ATS DIMM validator sidecar (opt-in: `dev/demo.sh validator`).
+  # Consumed by the SRI ATS report over HTTP; versioned apart from the app.
+  # Localhost-bound port: bench on the host reaches it, nothing external does.
+  ats-validator:
+    build:
+      context: ${ATS_VALIDATOR_CONTEXT:-../docker_ats_validator}
+    image: ats-validator:1.3.0
+    container_name: l10n-ec-ats-validator
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      ATS_VALIDATOR_TOKEN: ${ATS_VALIDATOR_TOKEN:-}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 90s
+      retries: 3
+
 volumes:
   demo-mariadb-data:
   demo-redis-queue:
