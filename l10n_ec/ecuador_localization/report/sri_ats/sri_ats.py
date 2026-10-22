@@ -13,8 +13,6 @@ except ImportError:  # pragma: no cover
 	def _(message: str) -> str:  # type: ignore[no-redef]
 		return message
 
-from l10n_ec.sri.ats_builder import build_ats_xml
-
 
 def execute(filters=None):
 	"""Return columns, data for SRI ATS preview; empty when filters incomplete."""
@@ -32,7 +30,8 @@ def execute(filters=None):
 		return columns, []
 	# Only Ecuadorian companies have ATS meaning; keep empty otherwise (contextual).
 	company_country = frappe.db.get_value("Company", company, "country")
-	if company_country and frappe.db.get_value("Country", company_country, "code") != "EC":
+	country_code = frappe.db.get_value("Country", company_country, "code") if company_country else None
+	if country_code and str(country_code).strip().upper() != "EC":
 		return columns, []
 	from l10n_ec.ecuador_localization.ats_reader import generate_ats_files
 
@@ -42,11 +41,26 @@ def execute(filters=None):
 		frappe.throw(str(exc))
 	# Preview: counts + first XML snippet
 	data = [
-		{"seccion": "compras", "detalle": f"{result['counts']['compras']} detalleCompras", "valor": result["counts"]["compras"]},
-		{"seccion": "ventas", "detalle": f"{result['counts']['ventas']} detalleVentas", "valor": result["counts"]["ventas"]},
-		{"seccion": "exportaciones", "detalle": f"{result['counts']['exportaciones']} detalleExportaciones", "valor": result["counts"]["exportaciones"]},
-		{"seccion": "anulados", "detalle": f"{result['counts']['anulados']} anulados", "valor": result["counts"]["anulados"]},
+		{
+			"seccion": "compras",
+			"detalle": f"{result['counts']['compras']} detalleCompras",
+			"valor": result["counts"]["compras"],
+		},
+		{
+			"seccion": "ventas",
+			"detalle": f"{result['counts']['ventas']} detalleVentas",
+			"valor": result["counts"]["ventas"],
+		},
+		{
+			"seccion": "exportaciones",
+			"detalle": f"{result['counts']['exportaciones']} detalleExportaciones",
+			"valor": result["counts"]["exportaciones"],
+		},
+		{
+			"seccion": "anulados",
+			"detalle": f"{result['counts']['anulados']} anulados",
+			"valor": result["counts"]["anulados"],
+		},
 	]
-	# Also validate XML so report fails loud if builder broke
-	build_ats_xml({**result, "informante": {"IdInformante": "0000000000000", "razonSocial": "preview"}}, f"{month:02d}{year}")
+	# generate_ats_files already XSD-validates; result["xml"]/result["zip"] are the SRI upload.
 	return columns, data

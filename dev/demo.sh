@@ -90,7 +90,7 @@ cmd_sync() {
 		exit 1
 	fi
 	cd "$REPO_ROOT"
-	find l10n_ec -type f \( -name "*.py" -o -name "*.json" -o -name "*.xsd" \) -not -path "*/__pycache__/*" | while read -r f; do
+	find l10n_ec -type f \( -name "*.py" -o -name "*.js" -o -name "*.json" -o -name "*.xsd" \) -not -path "*/__pycache__/*" | while read -r f; do
 		mkdir -p "$BENCH_DIR/apps/l10n_ec/$(dirname "$f")"
 		cp "$f" "$BENCH_DIR/apps/l10n_ec/$f"
 	done
