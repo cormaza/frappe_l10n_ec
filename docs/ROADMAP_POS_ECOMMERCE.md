@@ -126,6 +126,9 @@ El patrón es:
   `pos_profile` autoresuelto por el core y hereda el punto del perfil;
   el tope ya era por documento). Pendiente de P1: G3 (formaPago del
   ticket) y guardia explícita de mezcla en el merge.
+- G3 + anti-mezcla ✅: el lote resuelve `formaPago` por ticket (verificado
+  `01` en XML), el merge exige identidad fiscal uniforme, y el canal
+  distingue POS/tienda/escritorio sin falsos positivos en consolidadas.
 - **Fase P2 — E-commerce**: ✅ implementado sin la app instalada
   (D3 bloqueado upstream: `payments` v14 colisiona con módulos del core
   v16 y el build frontend de webshop falla en este entorno; reintentar
