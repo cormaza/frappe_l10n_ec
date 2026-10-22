@@ -91,6 +91,21 @@ def _parse_factura(root: etree._Element) -> dict:
 		"total": float(_text(info.find("importeTotal")) or 0),
 		"currency": _text(info.find("moneda")),
 		"taxes": taxes,
+		"lines": [
+			{
+				"code": _text(line.find("codigoPrincipal")),
+				"description": _text(line.find("descripcion")),
+				"qty": float(_text(line.find("cantidad")) or 0),
+				"unit_price": float(_text(line.find("precioUnitario")) or 0),
+				"discount": float(_text(line.find("descuento")) or 0),
+				"total": float(_text(line.find("precioTotalSinImpuesto")) or 0),
+			}
+			for line in root.findall("detalles/detalle")
+		],
+		"info_adicional": [
+			{"nombre": field.get("nombre", ""), "valor": (field.text or "").strip()}
+			for field in root.findall("infoAdicional/campoAdicional")
+		],
 	}
 
 

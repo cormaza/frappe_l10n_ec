@@ -32,6 +32,9 @@ month reach the collector.
 
 Aggregation rules:
 
+* Returns (``is_return`` rows, native negative amounts) reduce only
+  ``net`` and ``tax`` boxes: DIMM reads VALOR NETO as VALOR BRUTO minus
+  credit notes, while VALOR BRUTO is history.
 * VAT bases split by SRI rate code (``tax_codes``): nonzero rates
   (``2``/``3``/``4``) feed ventas ``401``/``411``/``421`` and compras
   ``500``/``510``/``520``; differentiated ``8`` feeds ``425``/``435``/``445``
@@ -279,6 +282,12 @@ def _aggregate_vat(rows: list, splitter) -> dict:
 		base = round(float(row.get("base", 0.0)), 2)
 		value = round(float(row.get("value", 0.0)), 2)
 		gross_box, net_box, tax_box = splitter(rate_code)
+		if row.get("is_return"):
+			# DIMM: VALOR NETO = VALOR BRUTO - N/C. Returns (native
+			# negative amounts) reduce neto and impuesto; bruto is history.
+			boxes[net_box] = round(boxes.get(net_box, 0.0) + base, 2)
+			boxes[tax_box] = round(boxes.get(tax_box, 0.0) + value, 2)
+			continue
 		boxes[gross_box] = round(boxes.get(gross_box, 0.0) + base, 2)
 		boxes[net_box] = round(boxes.get(net_box, 0.0) + base, 2)
 		boxes[tax_box] = round(boxes.get(tax_box, 0.0) + value, 2)

@@ -87,6 +87,7 @@ def _fetch_month_ledger(company: str, year: int, month: int) -> dict:
 		)
 		for name in names:
 			doc = frappe.get_doc(doctype, name)
+			is_return = bool(doc.get("is_return"))
 			for item in doc.items:
 				template = item.get("item_tax_template")
 				if not template:
@@ -99,6 +100,7 @@ def _fetch_month_ledger(company: str, year: int, month: int) -> dict:
 						"rate_code": rate_code,
 						"base": base,
 						"value": round(base * _template_rate(template) / 100, 2),
+						"is_return": is_return,
 					}
 				)
 		return rows

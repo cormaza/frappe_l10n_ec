@@ -168,3 +168,7 @@ class TestFacturaRoundTrip(UnitTestCase):
 		self.assertEqual(parsed["buyer_id"], "9999999999999")
 		self.assertEqual(parsed["total"], 115.00)
 		self.assertEqual(parsed["taxes"], [{"code": "2", "rate_code": "4", "base": 100.0, "value": 15.0}])
+		line = parsed["lines"][0]
+		self.assertEqual(line["code"], "DEMO-WIDGET")
+		self.assertEqual(line["qty"], 1.0)
+		self.assertEqual(line["total"], 100.0)

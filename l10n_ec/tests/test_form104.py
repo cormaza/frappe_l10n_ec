@@ -253,3 +253,39 @@ class TestReportRing1Importable(UnitTestCase):
 
 if __name__ == "__main__":
 	unittest.main()
+
+
+class TestReturnsHitNetOnly(UnitTestCase):
+	"""Credit notes reduce VALOR NETO (bruto - N/C), never VALOR BRUTO (DIMM)."""
+
+	def test_sales_return_reduces_net_and_tax_only(self) -> None:
+		ledger = _ledger(
+			sales_taxes=[
+				{"code": "2", "rate_code": "4", "base": 1000.0, "value": 150.0},
+				{"code": "2", "rate_code": "4", "base": -200.0, "value": -30.0, "is_return": True},
+			],
+			purchase_taxes=[],
+			iva_deduction_rows=[],
+			settlements=[],
+			received_refs=[],
+		)
+		result = collect_104(ledger, 2026, 3)
+		self.assertEqual(result["401"], 1000.0)
+		self.assertEqual(result["411"], 800.0)
+		self.assertEqual(result["421"], 120.0)
+
+	def test_purchase_return_reduces_net_and_tax_only(self) -> None:
+		ledger = _ledger(
+			sales_taxes=[],
+			purchase_taxes=[
+				{"code": "2", "rate_code": "4", "base": 2000.0, "value": 300.0},
+				{"code": "2", "rate_code": "4", "base": -500.0, "value": -75.0, "is_return": True},
+			],
+			iva_deduction_rows=[],
+			settlements=[],
+			received_refs=[],
+		)
+		result = collect_104(ledger, 2026, 3)
+		self.assertEqual(result["500"], 2000.0)
+		self.assertEqual(result["510"], 1500.0)
+		self.assertEqual(result["520"], 225.0)

@@ -1150,17 +1150,15 @@ def _seed_demo_pos_profile(company: str) -> str | None:
 	"""Create the demo caja profile bound to the locked POS point (idempotent)."""
 	import frappe
 
-	cash = frappe.db.get_value(
-		"Account", {"company": company, "is_group": 0, "account_type": "Cash"}, "name"
-	)
+	cash = frappe.db.get_value("Account", {"company": company, "is_group": 0, "account_type": "Cash"}, "name")
 	expense = frappe.db.get_value(
 		"Account", {"company": company, "root_type": "Expense", "is_group": 0}, "name"
 	)
 	cost_center = frappe.db.get_value("Company", company, "cost_center")
 	if not frappe.db.exists("Mode of Payment", "Cash"):
-		frappe.get_doc(
-			{"doctype": "Mode of Payment", "mode_of_payment": "Cash", "type": "Cash"}
-		).insert(ignore_permissions=True)
+		frappe.get_doc({"doctype": "Mode of Payment", "mode_of_payment": "Cash", "type": "Cash"}).insert(
+			ignore_permissions=True
+		)
 	mop = frappe.get_doc("Mode of Payment", "Cash")
 	if cash and not any(a.default_account == cash for a in mop.accounts):
 		mop.append("accounts", {"company": company, "default_account": cash})

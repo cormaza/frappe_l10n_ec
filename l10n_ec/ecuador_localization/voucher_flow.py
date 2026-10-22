@@ -496,9 +496,7 @@ def create_and_process(
 		and bool(getattr(ref, "is_pos", 0) or getattr(ref, "is_consolidated", 0))
 	)
 	is_shop_sale = (
-		reference_doctype == "Sales Invoice"
-		and bool(ref.get("sri_emission_point"))
-		and not is_pos_sale
+		reference_doctype == "Sales Invoice" and bool(ref.get("sri_emission_point")) and not is_pos_sale
 	)
 	validate_point_channel(
 		is_pos_sale,
@@ -725,8 +723,8 @@ def _resolve_emission_point(company: str, cod_doc: str, emission_point: str | No
 		emission = None
 		for name in candidates:
 			candidate = frappe.get_doc("SRI Emission Point", name)
-			if getattr(candidate, "pos_only", 0):
-				continue  # locked caja stream: only explicit selection may use it
+			if getattr(candidate, "pos_only", 0) or getattr(candidate, "shop_only", 0):
+				continue  # locked channel stream: only explicit selection may use it
 			if any(row.document_type == cod_doc for row in (candidate.sequences or [])):
 				emission = candidate
 				break
