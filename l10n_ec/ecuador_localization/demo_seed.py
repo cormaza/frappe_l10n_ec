@@ -563,10 +563,15 @@ def _seed_demo_emission_point(company: str) -> str | None:
 	"""
 	import frappe
 
-	for estab, pto, pos_only in (("001", "001", 0), ("001", "002", 1)):
+	for estab, pto, pos_only, shop_only in (
+		("001", "001", 0, 0),
+		("001", "002", 1, 0),
+		("001", "004", 0, 1),
+	):
 		name = f"{estab}-{pto}"
 		if frappe.db.exists("SRI Emission Point", name):
 			frappe.db.set_value("SRI Emission Point", name, "pos_only", pos_only)
+			frappe.db.set_value("SRI Emission Point", name, "shop_only", shop_only)
 			continue
 		frappe.get_doc(
 			{
@@ -575,6 +580,7 @@ def _seed_demo_emission_point(company: str) -> str | None:
 				"establishment_code": estab,
 				"emission_point_code": pto,
 				"pos_only": pos_only,
+				"shop_only": shop_only,
 				"sequences": [
 					{"document_type": code, "current_sequence": 100}
 					for code in ("01", "04", "05", "06", "07")
@@ -583,6 +589,9 @@ def _seed_demo_emission_point(company: str) -> str | None:
 		).insert(ignore_permissions=True)
 	if frappe.db.exists("POS Profile", "Demo POS"):
 		frappe.db.set_value("POS Profile", "Demo POS", "sri_emission_point", "001-002")
+	if frappe.db.exists("DocType", "Webshop Settings"):
+		frappe.db.set_single_value("Webshop Settings", "company", company)
+		frappe.db.set_single_value("Webshop Settings", "sri_emission_point", "001-004")
 	return "001-001"
 
 

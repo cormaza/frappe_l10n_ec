@@ -55,6 +55,9 @@ cmd_reset() {
 		--no-mariadb-socket
 	bench --site "$SITE" list-apps | grep -q "^erpnext$" || bench --site "$SITE" install-app erpnext
 	bench --site "$SITE" list-apps | grep -q "^l10n_ec$" || bench --site "$SITE" install-app l10n_ec
+	if [ -d "$BENCH_DIR/apps/webshop" ]; then
+		bench --site "$SITE" list-apps | grep -q "^webshop$" || bench --site "$SITE" install-app webshop
+	fi
 	bench --site "$SITE" migrate
 	bench --site "$SITE" set-config allow_tests true
 	bench --site "$SITE" execute "frappe.db.set_single_value('System Settings', 'time_zone', 'America/Guayaquil')"
