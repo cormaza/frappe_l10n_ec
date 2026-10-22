@@ -96,6 +96,9 @@ TAX_DESCRIPTIONS = {
 	"1010502": "TDS IR",
 }
 
+SRI_RATE_LABELS = {"0": "0%", "6": "No Objeto", "7": "Exento", "8": "Diferenciado"}
+
+
 IVA_WH_ACCOUNT_NUMBER = "2010708"
 IVA_DEDUCTION_DESCRIPTION = "SRI IVA withholding"
 
@@ -168,11 +171,12 @@ def validate_sustento_code(doc, method=None) -> None:
 
 
 def sync_tax_row_descriptions(doc, method=None) -> None:
-	"""Make tax row descriptions speak the tax, not just the account.
+	"""Make tax row descriptions follow SRI names, not account heads.
 
 	ERPNext defaults `description = account_head` (e.g. `1010504 - IVA PAGADO...`),
-	so the SRI tax is invisible. This rewrites it to `IVA 15%`, `ICE 5%`, etc.,
-	using the account number + row rate, for presentation only (no GL/ATS impact).
+	so the SRI tax is invisible. This rewrites to SRI pattern like
+	`IVA 15% (4)`, `IVA 0% (0)`, `IVA Exento (7)`, `IVA No Objeto (6)`,
+	`ICE 5% (3072)` for presentation only (no GL/ATS impact).
 	"""
 	for row in doc.get("taxes") or []:
 		if (row.get("description") or "").startswith("SRI IVA withholding"):
@@ -185,12 +189,11 @@ def sync_tax_row_descriptions(doc, method=None) -> None:
 		rate = row.get("rate")
 		try:
 			rate_val = float(rate) if rate not in (None, "") else 0.0
-		except (TypeError, ValueError):
+		except TypeError, ValueError:
 			rate_val = 0.0
-		if not rate_val and label in ("IVA Cobrado", "IVA Pagado", "ICE", "IRBPNR"):
-			# Item Tax Templates leave rate=0 in the taxes table (amount comes
-			# from item-wise details). Infer for display from the first item
-			# template so the Rate column isn't blank.
+		if not rate_val and label in ("IVA Cobrado", "IVA Pagado"):
+			# Item Tax Templates leave rate=0 (amount from item-wise details).
+			# Infer SRI rate_code + tarifa for SRI naming: 0% (0), Exento (7), No Objeto (6), Diferenciado 5%/8% (8).
 			try:
 				import frappe as _frappe2
 			except ImportError:
@@ -201,15 +204,32 @@ def sync_tax_row_descriptions(doc, method=None) -> None:
 					if not tmpl:
 						continue
 					try:
+						from l10n_ec.sri.tax_codes import tax_codes_for_template
+
+						_code, rate_code = tax_codes_for_template(tmpl)
+						if rate_code == "0":
+							row.description = "IVA 0% (0)"
+							row.rate = 0
+							break
+						if rate_code == "6":
+							row.description = "IVA No Objeto (6)"
+							row.rate = 0
+							break
+						if rate_code == "7":
+							row.description = "IVA Exento (7)"
+							row.rate = 0
+							break
 						tdoc = _frappe2.get_doc("Item Tax Template", tmpl)
 						if tdoc.taxes:
 							inferred = float(tdoc.taxes[0].tax_rate)
-							if inferred:
-								rate_val = inferred
-								row.rate = rate_val
-								break
+							row.description = f"IVA {inferred:g}% ({rate_code})"
+							row.rate = inferred
+							break
 					except Exception:
 						continue
+				else:
+					row.description = f"{label} {rate_val:g}%"
+				continue
 		row.description = f"{label} {rate_val:g}%"
 
 
