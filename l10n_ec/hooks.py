@@ -53,6 +53,9 @@ doc_events = {
 		"before_save": "l10n_ec.ecuador_localization.invoice_hooks.validate_sri_invoice",
 		"validate": "l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",
 	},
+	"POS Invoice": {
+		"validate": "l10n_ec.ecuador_localization.invoice_hooks.validate_pos_ticket",
+	},
 	"Purchase Invoice": {
 		"validate": [
 			"l10n_ec.ecuador_localization.validation.enforce_iva_deduction_row",

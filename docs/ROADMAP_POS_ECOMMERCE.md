@@ -92,9 +92,12 @@ El patrón es:
 
 - **Fase P0 — Settings + guards** (base de ambos): settings con flags,
   util `sri_module_enabled(name)`, tests Ring-1 de guards.
-- **Fase P1 — POS**: G1+G3 (tope por ticket, formaPago del ticket,
-  guardia de merge). Criterio: cierre de 10×30 CF pasa; ticket único
-  de 51 CF bloquea con mensaje que pide identificación.
+- **Fase P1 — POS**: ✅ implementado (R1+R2). Tope por ticket en
+  `POS Invoice.validate` + excepción de consolidado en
+  `validate_sri_invoice` (verifica cada ticket vía `consolidated_invoice`,
+  no la suma). Probado en vivo: ticket CF 51 bloquea, cierre 2×40 CF
+  consolida en 80.00 sin bloquear. Pendiente de P1: G3 (formaPago del
+  ticket) y guardia explícita de mezcla en el merge.
 - **Fase P2 — E-commerce**: G4+G5 (contacto validado pre-pago, tope
   anticipado en Sales Order). Criterio: checkout invitado > 50 sin
   cédula válida no llega a pagar; con cédula válida fluye hasta SI.

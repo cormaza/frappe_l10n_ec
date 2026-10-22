@@ -31,3 +31,28 @@ class TestFinalConsumerThreshold(UnitTestCase):
 		validate_final_consumer_amount("07", "9999999999999", 200.00, threshold=200.00)
 		with self.assertRaises(ValueError):
 			validate_final_consumer_amount("07", "9999999999999", 200.01, threshold=200.00)
+
+
+class TestPosTicketThreshold(UnitTestCase):
+	"""Per-ticket CF rule: the POS ticket is the transaction, not the merge."""
+
+	def test_all_tickets_under_threshold_pass(self) -> None:
+		from l10n_ec.ecuador_localization.validation import validate_pos_tickets
+
+		validate_pos_tickets("07", "9999999999999", [30.00, 30.00, 30.00])
+
+	def test_single_ticket_over_threshold_raises(self) -> None:
+		from l10n_ec.ecuador_localization.validation import validate_pos_tickets
+
+		with self.assertRaises(ValueError):
+			validate_pos_tickets("07", "9999999999999", [30.00, 50.01])
+
+	def test_identified_buyers_are_unaffected(self) -> None:
+		from l10n_ec.ecuador_localization.validation import validate_pos_tickets
+
+		validate_pos_tickets("04", "1790016919001", [5000.00])
+
+	def test_empty_merge_passes(self) -> None:
+		from l10n_ec.ecuador_localization.validation import validate_pos_tickets
+
+		validate_pos_tickets("07", "9999999999999", [])

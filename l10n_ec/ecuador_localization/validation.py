@@ -85,6 +85,29 @@ def validate_final_consumer_amount(
 		)
 
 
+def validate_pos_tickets(
+	identification_type_code: str | None,
+	tax_id: str | None,
+	ticket_totals: list,
+	threshold: float = FINAL_CONSUMER_THRESHOLD,
+) -> None:
+	"""Reject any over-threshold POS ticket to the generic final consumer.
+
+	A consolidated Sales Invoice sums N tickets, so the sum is never the
+	transaction: each ticket total is checked instead. Only the generic
+	consumer identity is checked; identified buyers are unaffected.
+	"""
+	if not is_generic_final_consumer(identification_type_code, tax_id):
+		return
+	for ticket_total in ticket_totals or []:
+		if (ticket_total or 0) > threshold:
+			raise ValueError(
+				_(
+					"POS ticket to Consumidor Final above {} is not allowed; register the buyer identification."
+				).format(threshold)
+			)
+
+
 TAX_DESCRIPTIONS = {
 	"1010504": "IVA Pagado",
 	"2010707": "IVA Cobrado",
