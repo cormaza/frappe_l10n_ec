@@ -134,7 +134,8 @@ def validate_month(company: str, year: int, month: int) -> dict:
 	body = response.json()
 	messages = body.get("messages") or []
 	talon_url = ""
-	if body.get("talon_resumen"):
+	talon_html = body.get("talon_resumen") or ""
+	if talon_html:
 		existing = frappe.db.get_value("File", {"file_name": _talon_name(year, month)}, "name")
 		if existing:
 			frappe.delete_doc("File", existing, ignore_permissions=True, force=True)
@@ -142,7 +143,7 @@ def validate_month(company: str, year: int, month: int) -> dict:
 			{
 				"doctype": "File",
 				"file_name": _talon_name(year, month),
-				"content": body["talon_resumen"].encode("utf-8"),
+				"content": talon_html.encode("utf-8"),
 				"is_private": 1,
 			}
 		).insert(ignore_permissions=True)
@@ -159,6 +160,7 @@ def validate_month(company: str, year: int, month: int) -> dict:
 		"versions": status["reported"],
 		"messages": messages,
 		"talon_url": talon_url,
+		"talon_html": talon_html,
 		"counts": result["counts"],
 	}
 

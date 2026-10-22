@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecuador Localization VERSION\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-22 09:09-0641\n"
-"PO-Revision-Date: 2026-10-22 09:09-0641\n"
+"POT-Creation-Date: 2026-10-22 09:45-0641\n"
+"PO-Revision-Date: 2026-10-22 09:45-0641\n"
 "Last-Translator: developers@example.com\n"
 "Language-Team: developers@example.com\n"
 "MIME-Version: 1.0\n"
@@ -66,7 +66,7 @@ msgstr ""
 msgid "ATS download needs an Ecuadorian company, found '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:100
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:115
 msgid "ATS generated"
 msgstr ""
 
@@ -362,7 +362,11 @@ msgstr ""
 msgid "Cánones, derechos de autor,  marcas, patentes y similares de acuerdo  al Código INGENIOS (COESCCI) – pago a personas naturales"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:74
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:77
+msgid "DIMM summary (talón)"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:80
 msgid "DIMM verdict: {0}"
 msgstr ""
 
@@ -479,7 +483,8 @@ msgstr ""
 msgid "Document Type"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:101
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:85
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:116
 msgid "Documents: {0} purchases, {1} sales."
 msgstr ""
 
@@ -491,7 +496,7 @@ msgstr ""
 msgid "Donaciones en dinero -Impuesto a las donaciones"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:80
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:95
 msgid "Download ATS ZIP"
 msgstr ""
 
@@ -632,7 +637,7 @@ msgstr ""
 msgid "Generated XML is malformed: {}. Head: {!r}"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:95
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:110
 msgid "Generating ATS files…"
 msgstr ""
 
@@ -834,6 +839,10 @@ msgstr ""
 msgid "No SRI Emission Point for company '{}' and document '{}'."
 msgstr ""
 
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:75
+msgid "No errors or warnings reported by DIMM."
+msgstr ""
+
 #: l10n_ec/locale/i18n_markers.py:110
 msgid "No procede"
 msgstr ""
@@ -852,10 +861,6 @@ msgstr ""
 
 #: l10n_ec/sri/access_key.py:113
 msgid "Numeric code must be 8 digits (got '{}')."
-msgstr ""
-
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:71
-msgid "Open DIMM summary (talón)"
 msgstr ""
 
 #. Label of the issuer_common_name (Data) field in DocType 'SRI Signature'
@@ -912,7 +917,7 @@ msgstr ""
 msgid "Otros intereses y rendimientos financieros gravados"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:68
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:71
 msgid "Outdated validator"
 msgstr ""
 
@@ -1619,7 +1624,7 @@ msgstr ""
 msgid "Servicios profesionales sociedades"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:83
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:98
 msgid "Set Company, Year and Month before downloading."
 msgstr ""
 
@@ -1845,7 +1850,7 @@ msgid "Validator unavailable"
 msgstr ""
 
 #: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:42
-#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:75
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:85
 msgid "Validator {0}"
 msgstr ""
 
@@ -1985,6 +1990,10 @@ msgstr ""
 
 #: l10n_ec/sri/ats_validator.py:51
 msgid "validator reports no '{}'"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:74
+msgid "{0} findings"
 msgstr ""
 
 #: l10n_ec/ecuador_localization/party_hooks.py:49
