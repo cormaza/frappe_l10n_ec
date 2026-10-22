@@ -123,9 +123,14 @@ El patrón es:
   no la suma). Probado en vivo: ticket CF 51 bloquea, cierre 2×40 CF
   consolida en 80.00 sin bloquear. Pendiente de P1: G3 (formaPago del
   ticket) y guardia explícita de mezcla en el merge.
-- **Fase P2 — E-commerce**: G4+G5 (contacto validado pre-pago, tope
-  anticipado en Sales Order). Criterio: checkout invitado > 50 sin
-  cédula válida no llega a pagar; con cédula válida fluye hasta SI.
+- **Fase P2 — E-commerce**: ✅ implementado sin la app instalada
+  (D3 bloqueado upstream: `payments` v14 colisiona con módulos del core
+  v16 y el build frontend de webshop falla en este entorno; reintentar
+  cuando el upstream v16 esté verde). Punto en settings (guardado),
+  herencia QT→SO→SI, canal `shop_only`, contacto pre-pago en QT/SO
+  submit, API `validate_shopper_id` para el theme. Probado con docs
+  simulados (sin webshop no hay carrito real): pendiente el click-through
+  del checkout cuando D3 se desbloquee.
 - **Fase P3 — Emisión POS**: solo tras decidir P0-abajo; reutiliza
   `create_and_process` sin cambios.
 
