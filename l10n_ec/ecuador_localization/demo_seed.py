@@ -553,6 +553,40 @@ def party_name(entry: dict) -> str:
 	return doc.get("customer_name") or doc.get("supplier_name")
 
 
+def _seed_demo_emission_point(company: str) -> str | None:
+	"""Create the demo caja (001-001) with sequences for every emittable doc.
+
+	Emission points never survived `demo.sh reset` (the seed never created
+	them): without one no voucher can take a sequential. One point is
+	enough for the demo; extra cajas add more points the same way.
+	"""
+	import frappe
+
+	name = "001-001"
+	if frappe.db.exists("SRI Emission Point", name):
+		point = name
+	else:
+		point = (
+			frappe.get_doc(
+				{
+					"doctype": "SRI Emission Point",
+					"company": company,
+					"establishment_code": "001",
+					"emission_point_code": "001",
+					"sequences": [
+						{"document_type": code, "current_sequence": 100}
+						for code in ("01", "04", "05", "06", "07")
+					],
+				}
+			)
+			.insert(ignore_permissions=True)
+			.name
+		)
+	if frappe.db.exists("POS Profile", "Demo POS"):
+		frappe.db.set_value("POS Profile", "Demo POS", "sri_emission_point", point)
+	return point
+
+
 def _seed_demo_withholding_voucher(company: str) -> str | None:
 	"""Stage one Authorized 07 so the SRI Form 103 demo has casilleros to show.
 
@@ -1092,6 +1126,7 @@ def seed_demo() -> dict:
 			if frappe.db.exists(doctype, title):
 				frappe.delete_doc(doctype, title, ignore_permissions=True, force=True)
 
+	report["emission_point"] = _seed_demo_emission_point(company)
 	report["withholding_voucher"] = _seed_demo_withholding_voucher(company)
 	report["accounts"] = {
 		root: frappe.db.count("Account", {"company": company, "root_type": root})

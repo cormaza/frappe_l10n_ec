@@ -562,6 +562,12 @@ def _resolve_emission_point(company: str, cod_doc: str, emission_point: str | No
 		raise SriVoucherError(
 			_("No SRI Emission Point for company '{}' and document '{}'.").format(company, cod_doc)
 		)
+	# Row-level lock: two cajas bumping the same point concurrently must
+	# serialize, otherwise both read the same current_sequence and emit
+	# duplicate sequential numbers (the unique key is the access key, not
+	# the sequential, so nothing else catches it).
+	frappe.db.sql("SELECT `name` FROM `tabSRI Emission Point` WHERE `name` = %s FOR UPDATE", emission.name)
+	emission.reload()
 	for row in emission.sequences:
 		if row.document_type == cod_doc:
 			row.current_sequence = (row.current_sequence or 0) + 1

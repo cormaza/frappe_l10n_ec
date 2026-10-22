@@ -2,8 +2,13 @@
 
 try:
 	import frappe
+	from frappe import _
 except ImportError:  # pragma: no cover
 	frappe = None  # type: ignore[assignment]
+
+	def _(message: str) -> str:  # type: ignore[no-redef]
+		return message
+
 
 from l10n_ec.ecuador_localization.validation import (
 	company_country_code,
@@ -57,11 +62,18 @@ def _validate_consolidated_tickets(doc, identification_type, tax_id) -> None:
 
 
 def validate_pos_ticket(doc, method=None) -> None:
-	"""Enforce the Consumidor Final threshold at POS ticket capture."""
+	"""Enforce the Consumidor Final threshold at POS ticket capture.
+
+	Also stamps the fiscal identity of the sale: the emission point comes
+	from the POS Profile (one profile, one caja) and the session from the
+	cashier's open POS Opening Entry. Both fail loud when missing on an
+	Ecuadorian sale instead of drifting into the wrong sequence.
+	"""
 	if frappe is None:
 		return
 	if not is_ecuadorian_contact(company_country_code(doc.get("company"))):
 		return
+	_resolve_ticket_emission(doc)
 	customer = doc.get("customer")
 	if not customer:
 		return
@@ -73,3 +85,37 @@ def validate_pos_ticket(doc, method=None) -> None:
 		)
 	except ValueError as exc:
 		frappe.throw(str(exc))
+
+
+def _resolve_ticket_emission(doc) -> None:
+	"""Inherit the emission point from the profile; stamp the session."""
+	profile = doc.get("pos_profile")
+	if not profile:
+		return
+	point = frappe.db.get_value("POS Profile", profile, "sri_emission_point")
+	if not point:
+		frappe.throw(_("POS Profile '{}' needs an SRI Emission Point before selling.").format(profile))
+	ensure_ticket_point(doc.get("sri_emission_point"), point, doc.get("name") or _("(new ticket)"))
+	doc.sri_emission_point = point
+	opening = frappe.db.get_value(
+		"POS Opening Entry",
+		{"pos_profile": profile, "status": "Open", "docstatus": 1},
+		"name",
+	)
+	if not opening:
+		frappe.throw(
+			_("No open POS Opening Entry for profile '{}'; open the cashier session before selling.").format(
+				profile
+			)
+		)
+	doc.pos_opening_entry = opening
+
+
+def ensure_ticket_point(current: str | None, expected: str, ticket: str) -> None:
+	"""Fail loud when a ticket points at another emission point (pure)."""
+	if current and current != expected:
+		raise ValueError(
+			_("Ticket '{}' points at '{}', but its profile emits from '{}'.").format(
+				ticket, current, expected
+			)
+		)

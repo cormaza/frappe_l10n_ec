@@ -37,6 +37,8 @@ EXPECTED_FIELDS = {
 		"sri_received_retencion_key",
 	},
 	"Supplier": {"sri_identification_type", "sri_related_party"},
+	"POS Profile": {"sri_emission_point"},
+	"POS Invoice": {"sri_emission_point", "pos_opening_entry"},
 }
 
 

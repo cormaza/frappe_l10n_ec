@@ -1,4 +1,4 @@
-"""Programmatic custom fields for Company, Customer, Supplier, Mode of Payment, and Purchase Invoice."""
+"""Programmatic custom fields for Company, Customer, Supplier, Mode of Payment, Purchase Invoice, POS Profile, and POS Invoice."""
 
 try:
 	import frappe
@@ -213,6 +213,36 @@ CUSTOM_FIELDS = {
 			"fieldtype": "Check",
 			"insert_after": "sri_identification_type",
 			"label": "Related Party",
+		},
+	],
+	"POS Profile": [
+		{
+			"fieldname": "sri_emission_point",
+			"fieldtype": "Link",
+			"insert_after": "warehouse",
+			"label": "SRI Emission Point",
+			"options": "SRI Emission Point",
+			"description": "Caja fiscal: every ticket sold under this profile consumes sequential numbers from this point. One profile, one point.",
+		},
+	],
+	"POS Invoice": [
+		{
+			"fieldname": "sri_emission_point",
+			"fieldtype": "Link",
+			"insert_after": "pos_profile",
+			"label": "SRI Emission Point",
+			"options": "SRI Emission Point",
+			"read_only": 1,
+			"description": "Inherited from the POS Profile at validate; drives per-ticket voucher emission.",
+		},
+		{
+			"fieldname": "pos_opening_entry",
+			"fieldtype": "Link",
+			"insert_after": "sri_emission_point",
+			"label": "POS Opening Entry",
+			"options": "POS Opening Entry",
+			"read_only": 1,
+			"description": "Cashier session this ticket belongs to; stamped at validate for shift-level traceability.",
 		},
 	],
 }

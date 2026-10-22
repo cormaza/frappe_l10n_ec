@@ -56,3 +56,19 @@ class TestPosTicketThreshold(UnitTestCase):
 		from l10n_ec.ecuador_localization.validation import validate_pos_tickets
 
 		validate_pos_tickets("07", "9999999999999", [])
+
+
+class TestTicketEmissionPoint(UnitTestCase):
+	"""A ticket keeps its profile emission point; drift fails loud."""
+
+	def test_matching_or_empty_point_passes(self) -> None:
+		from l10n_ec.ecuador_localization.invoice_hooks import ensure_ticket_point
+
+		ensure_ticket_point(None, " emission-001", "t1")
+		ensure_ticket_point("emission-001", "emission-001", "t1")
+
+	def test_drift_fails_loud(self) -> None:
+		from l10n_ec.ecuador_localization.invoice_hooks import ensure_ticket_point
+
+		with self.assertRaises(ValueError):
+			ensure_ticket_point("emission-002", "emission-001", "t1")

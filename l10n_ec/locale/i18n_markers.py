@@ -25,6 +25,13 @@ CUSTOM_FIELD_STRINGS = [
 	_("Accounting Required"),
 	_("SRI Identification Type"),
 	_("Related Party"),
+	_("SRI Emission Point"),
+	_(
+		"Caja fiscal: every ticket sold under this profile consumes sequential numbers from this point. One profile, one point."
+	),
+	_("Inherited from the POS Profile at validate; drives per-ticket voucher emission."),
+	_("POS Opening Entry"),
+	_("Cashier session this ticket belongs to; stamped at validate for shift-level traceability."),
 	_("SRI Payment Code"),
 	_("SRI Liquidacion"),
 	_(
