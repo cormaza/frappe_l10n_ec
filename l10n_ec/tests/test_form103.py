@@ -190,5 +190,8 @@ class TestForm103ReportRing1(UnitTestCase):
 		from l10n_ec.ecuador_localization.report.sri_form_103.sri_form_103 import execute
 
 		columns, data = execute({"company": "Demo Company", "year": 2026, "month": 3})
-		self.assertEqual([column["fieldname"] for column in columns], ["casillero", "amount"])
+		self.assertEqual(
+			[column["fieldname"] for column in columns],
+			["concepto", "cas_base", "base", "cas_impuesto", "impuesto"],
+		)
 		self.assertEqual(data, [])

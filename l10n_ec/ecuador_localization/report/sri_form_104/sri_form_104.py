@@ -25,13 +25,17 @@ except ImportError:  # pragma: no cover
 
 
 from l10n_ec.sri.form104 import FORM104_BOXES, collect_104
+from l10n_ec.sri.form104_layout import build_104_rows
 
 
 def execute(filters=None):
-	"""Run the SRI Form 104 Script Report; returns ``(columns, data)``."""
+	"""Run the SRI Form 104 Script Report; DIMM-style blocks and labels."""
 	columns = [
-		{"fieldname": "casillero", "label": _("Casillero"), "fieldtype": "Int", "width": 120},
-		{"fieldname": "amount", "label": _("Amount"), "fieldtype": "Currency", "width": 160},
+		{"fieldname": "descripcion", "label": _("Description"), "fieldtype": "Data", "width": 520},
+		{"fieldname": "casilleros", "label": _("Boxes"), "fieldtype": "Data", "width": 130},
+		{"fieldname": "bruto", "label": _("Gross value"), "fieldtype": "Float", "width": 140},
+		{"fieldname": "neto", "label": _("Net value"), "fieldtype": "Float", "width": 140},
+		{"fieldname": "impuesto", "label": _("Tax"), "fieldtype": "Float", "width": 140},
 	]
 	if frappe is None:  # Ring 1: importable, no database.
 		return columns, []
@@ -41,8 +45,14 @@ def execute(filters=None):
 	if not company or not year or not month:
 		return columns, []
 	totals = collect_104(_fetch_month_ledger(company, year, month), year, month)
-	data = [{"casillero": int(box), "amount": value} for box, value in totals.items() if box in FORM104_BOXES]
-	return columns, data
+	data = build_104_rows({box: value for box, value in totals.items() if box in FORM104_BOXES})
+	summary = [
+		{"label": _("Total consolidated (859)"), "value": totals.get("859", 0.0), "indicator": "blue"},
+		{"label": _("Payable (perception 699)"), "value": totals.get("699", 0.0), "indicator": "orange"},
+		{"label": _("Withheld (retention 801)"), "value": totals.get("801", 0.0), "indicator": "green"},
+		{"label": _("Credit (602)"), "value": totals.get("602", 0.0), "indicator": "grey"},
+	]
+	return columns, data, None, None, summary, True
 
 
 def _fetch_month_ledger(company: str, year: int, month: int) -> dict:

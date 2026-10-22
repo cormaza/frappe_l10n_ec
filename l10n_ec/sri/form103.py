@@ -162,3 +162,72 @@ def _accumulate_row(totals: dict, row: dict) -> None:
 	totals[boxes[0]] = round(totals.get(boxes[0], 0.0) + base, 2)
 	if len(boxes) > 1:
 		totals[boxes[1]] = round(totals.get(boxes[1], 0.0) + value, 2)
+
+
+def build_103_rows(totals: dict) -> list:
+	"""Build per-concepto presentation rows from :func:`collect_103` totals.
+
+	Each row carries ``kind`` (``concepto``/``total``/``note``), ``concepto``
+	(SRI code + official description), ``cas_base``, ``base``,
+	``cas_impuesto``, ``impuesto``. Only conceptos with movement render;
+	the exterior section renders as an explicit-empty note (never guessed).
+	A casillero no concepto owns fails loud. Pure Python, no frappe.
+	"""
+	from l10n_ec.sri.withholding_concepts import CONCEPTS
+
+	normalized = {int(box): round(float(value or 0.0), 2) for box, value in (totals or {}).items()}
+	owned: dict = {}
+	for code, (_impuesto, _description, _rate, _valid_from, casilleros) in CONCEPTS.items():
+		if not casilleros:
+			continue
+		for box in casilleros:
+			owned.setdefault(int(box), []).append(code)
+	for box in normalized:
+		if normalized[box] and box not in owned:
+			raise ValueError(_("Form 103 casillero '{}' belongs to no withholding concepto.").format(box))
+	rows: list = []
+	base_total = 0.0
+	tax_total = 0.0
+	for code in sorted(CONCEPTS):
+		_impuesto, description, _rate, _valid_from, casilleros = CONCEPTS[code]
+		if not casilleros or _impuesto != "1":
+			continue
+		base_box = int(casilleros[0])
+		tax_box = int(casilleros[1]) if len(casilleros) > 1 else None
+		base = normalized.get(base_box, 0.0)
+		tax = normalized.get(tax_box, 0.0) if tax_box else 0.0
+		if not base and not tax:
+			continue
+		base_total = round(base_total + base, 2)
+		tax_total = round(tax_total + tax, 2)
+		rows.append(
+			{
+				"kind": "concepto",
+				"concepto": f"{code} — {description}",
+				"cas_base": base_box,
+				"base": base,
+				"cas_impuesto": tax_box,
+				"impuesto": tax if tax_box else None,
+			}
+		)
+	rows.append(
+		{
+			"kind": "total",
+			"concepto": "TOTAL RESIDENTES (presentación; el portal totaliza 349/399/499/500/501)",
+			"cas_base": None,
+			"base": base_total,
+			"cas_impuesto": None,
+			"impuesto": tax_total,
+		}
+	)
+	rows.append(
+		{
+			"kind": "note",
+			"concepto": "EXTERIOR: sin valores (fuera de alcance, se declara vacío)",
+			"cas_base": None,
+			"base": None,
+			"cas_impuesto": None,
+			"impuesto": None,
+		}
+	)
+	return rows

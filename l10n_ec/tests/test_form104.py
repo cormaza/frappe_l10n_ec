@@ -244,7 +244,10 @@ class TestReportRing1Importable(UnitTestCase):
 	def test_report_module_imports_without_frappe(self) -> None:
 		module = _load_report_module()
 		columns, data = module.execute(None)
-		self.assertEqual([column["fieldname"] for column in columns], ["casillero", "amount"])
+		self.assertEqual(
+			[column["fieldname"] for column in columns],
+			["descripcion", "casilleros", "bruto", "neto", "impuesto"],
+		)
 		self.assertEqual(data, [])
 
 

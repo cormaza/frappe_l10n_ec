@@ -2,6 +2,18 @@
 
 Guía rápida para el demo (`demo`) y para producción. Todo está en español en el desk cuando `System Settings.language = es`.
 
+## Presentación (estilo planilla SRI)
+
+Los 3 reportes replican la grilla DIMM: bloques en orden del formulario,
+casilleros con su descripción oficial, columnas Valor bruto / Valor neto /
+Impuesto y subtotales por bloque (el total automático de Frappe está
+desactivado porque sumar casilleros no tiene sentido). 103 muestra una fila
+por concepto de retención (código + descripción oficial + casillero base e
+impuesto); ATS muestra un renglón por documento con contraparte, base e IVA
+más subtotal por sección. Etiquetas fuente: printout DIMM Res.
+NAC-DGERCGC17-00000324 (`l10n_ec/sri/form104_layout.py`), Tabla 20/23 SRI
+(`withholding_concepts.py`).
+
 ## 1) ATS — Anexo Transaccional Simplificado
 
 **Qué genera:** `AT{MMAAAA}.xml` + `AT{MMAAAA}.zip` validados contra `l10n_ec/sri/xsd/ats.xsd` (compras, ventas, exportaciones, anulados). Solo entra lo **autorizado** (compras con número SRI + auth, ventas con voucher `01` autorizado, anulados autorizados-luego-void).
