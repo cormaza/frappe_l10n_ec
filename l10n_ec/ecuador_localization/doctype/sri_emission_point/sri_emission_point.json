@@ -10,6 +10,7 @@
   "company",
   "column_break_setup",
   "pos_only",
+  "shop_only",
   "sequences"
  ],
  "fields": [
@@ -44,6 +45,13 @@
    "label": "POS Only",
    "default": "0",
    "description": "Channel lock: only POS sales (tickets and consolidated invoices) may consume this point; desk emission is rejected and vice versa."
+  },
+  {
+   "fieldname": "shop_only",
+   "fieldtype": "Check",
+   "label": "Shop Only",
+   "default": "0",
+   "description": "Channel lock: only e-commerce shop sales may consume this point; desk and POS emission is rejected and vice versa."
   },
   {
    "fieldname": "sequences",

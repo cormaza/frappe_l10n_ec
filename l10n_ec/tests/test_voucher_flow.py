@@ -621,3 +621,22 @@ class TestPointChannelLock(UnitTestCase):
 		validate_point_channel(False, False, "001-001")
 		with self.assertRaises(SriVoucherError):
 			validate_point_channel(False, True, "001-002")
+
+
+class TestShopChannelLock(UnitTestCase):
+	"""Shop-only points serve e-commerce exclusively (pure rule)."""
+
+	def test_shop_sale_needs_shop_point(self) -> None:
+		from l10n_ec.ecuador_localization.voucher_flow import validate_point_channel
+
+		validate_point_channel(False, False, "001-004", "SO-1", is_shop_sale=True, shop_only=True)
+		with self.assertRaises(SriVoucherError):
+			validate_point_channel(False, False, "001-001", "SO-1", is_shop_sale=True, shop_only=False)
+
+	def test_locked_points_reject_desk(self) -> None:
+		from l10n_ec.ecuador_localization.voucher_flow import validate_point_channel
+
+		with self.assertRaises(SriVoucherError):
+			validate_point_channel(False, False, "001-004", "SI-1", shop_only=True)
+		with self.assertRaises(SriVoucherError):
+			validate_point_channel(True, True, "X", "S", is_shop_sale=True, shop_only=True)

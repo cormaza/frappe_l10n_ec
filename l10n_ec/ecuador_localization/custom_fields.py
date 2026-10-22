@@ -136,6 +136,15 @@ CUSTOM_FIELDS = {
 			"options": "SRI Additional Information Entry",
 			"description": "Per-document infoAdicional rows; flow into order and invoice, then the voucher (transactional rows win over central ones).",
 		},
+		{
+			"fieldname": "sri_emission_point",
+			"fieldtype": "Link",
+			"insert_after": "company",
+			"label": "SRI Emission Point",
+			"options": "SRI Emission Point",
+			"read_only": 1,
+			"description": "Inherited from Webshop Settings for cart quotations (including quotation-only RFQ flow).",
+		},
 	],
 	"Sales Order": [
 		{
@@ -145,6 +154,15 @@ CUSTOM_FIELDS = {
 			"label": "SRI Additional Information",
 			"options": "SRI Additional Information Entry",
 			"description": "Per-document infoAdicional rows; flow into the invoice, then the voucher (transactional rows win over central ones).",
+		},
+		{
+			"fieldname": "sri_emission_point",
+			"fieldtype": "Link",
+			"insert_after": "company",
+			"label": "SRI Emission Point",
+			"options": "SRI Emission Point",
+			"read_only": 1,
+			"description": "Inherited from the shop quotation; drives shop voucher emission.",
 		},
 	],
 	"Purchase Invoice": [
@@ -245,6 +263,16 @@ CUSTOM_FIELDS = {
 			"description": "Cashier session this ticket belongs to; stamped at validate for shift-level traceability.",
 		},
 	],
+	"Webshop Settings": [
+		{
+			"fieldname": "sri_emission_point",
+			"fieldtype": "Link",
+			"insert_after": "company",
+			"label": "SRI Emission Point",
+			"options": "SRI Emission Point",
+			"description": "Logical caja: every shop order emits from this point. One shop, one point.",
+		},
+	],
 }
 
 
@@ -252,7 +280,18 @@ def create_sri_custom_fields() -> None:
 	"""Create or update SRI custom fields idempotently (safe on re-migrate)."""
 	if create_custom_fields is None:  # pragma: no cover
 		raise RuntimeError("frappe is required to create custom fields.")
-	create_custom_fields(CUSTOM_FIELDS, ignore_validate=True, update=True)
+	present = {
+		doctype: fields for doctype, fields in CUSTOM_FIELDS.items() if frappe.db.exists("DocType", doctype)
+	}
+	if present:
+		create_custom_fields(present, ignore_validate=True, update=True)
+
+
+def pending_custom_fields() -> list:
+	"""Doctypes skipped because their app is not installed (e.g. Webshop)."""
+	if frappe is None:  # pragma: no cover
+		raise RuntimeError("frappe is required to list custom fields.")
+	return [doctype for doctype in CUSTOM_FIELDS if not frappe.db.exists("DocType", doctype)]
 
 
 def delete_sri_custom_fields() -> None:

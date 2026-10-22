@@ -89,3 +89,27 @@ def validate_sri_identification(doc, method=None) -> None:
 		raise
 	if frappe is not None and is_generic_final_consumer(identification_type, doc.get("tax_id")):
 		_reject_duplicate_final_consumer(doc)
+
+
+def if_whitelisted():
+	"""``frappe.whitelist`` on bench, identity decorator for Ring-1 imports."""
+	if frappe is None:  # pragma: no cover
+		return lambda fn: fn
+	return frappe.whitelist()
+
+
+@if_whitelisted()
+def validate_shopper_id(identification_type: str | None, tax_id: str | None) -> dict:
+	"""Live checkout validation for the portal theme (Ecuadorian shopper).
+
+	Returns ``{"ok": True}`` or throws with the SRI message the theme shows
+	beside the ID field. Format-only: the ceiling rule lives in the order
+	hooks, not here.
+	"""
+	if frappe is None:  # pragma: no cover
+		raise RuntimeError("frappe is required to validate shopper IDs.")
+	try:
+		validate_contact_tax_id("EC", identification_type, tax_id)
+	except ValueError as exc:
+		frappe.throw(str(exc))
+	return {"ok": True}

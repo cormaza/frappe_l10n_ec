@@ -18,8 +18,9 @@ EXPECTED_FIELDS = {
 	},
 	"Customer": {"sri_identification_type", "sri_related_party"},
 	"Mode of Payment": {"sri_payment_code"},
-	"Quotation": {"sri_info_adicional"},
-	"Sales Order": {"sri_info_adicional"},
+	"Quotation": {"sri_info_adicional", "sri_emission_point"},
+	"Sales Order": {"sri_info_adicional", "sri_emission_point"},
+	"Webshop Settings": {"sri_emission_point"},
 	"Purchase Invoice": {
 		"sri_supplier_auth_number",
 		"sri_sustento_code",

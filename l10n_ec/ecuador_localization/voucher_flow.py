@@ -495,7 +495,15 @@ def create_and_process(
 		reference_doctype == "Sales Invoice"
 		and bool(getattr(ref, "is_pos", 0) or getattr(ref, "is_consolidated", 0))
 	)
-	validate_point_channel(is_pos_sale, bool(getattr(emission, "pos_only", 0)), emission.name, ref.name)
+	is_shop_sale = reference_doctype == "Sales Invoice" and bool(ref.get("sri_emission_point"))
+	validate_point_channel(
+		is_pos_sale,
+		bool(getattr(emission, "pos_only", 0)),
+		emission.name,
+		ref.name,
+		is_shop_sale=is_shop_sale,
+		shop_only=bool(getattr(emission, "shop_only", 0)),
+	)
 	if cod_doc == "01" and getattr(ref, "customer", None):
 		buyer = frappe.db.get_value(
 			"Customer", ref.customer, ["sri_identification_type", "tax_id"], as_dict=True
@@ -629,19 +637,33 @@ def create_and_process_consolidated(
 	return {"ok": all(r.get("ok") for r in results), "vouchers": results}
 
 
-def validate_point_channel(is_pos_sale: bool, pos_only: bool, point: str, sale: str = "") -> None:
+def validate_point_channel(
+	is_pos_sale: bool,
+	pos_only: bool,
+	point: str,
+	sale: str = "",
+	is_shop_sale: bool = False,
+	shop_only: bool = False,
+) -> None:
 	"""Enforce the channel lock of an emission point (pure).
 
-	POS-only points serve tickets and consolidated invoices exclusively;
-	desk points serve everything else. Crossing channels fails loud instead
-	of interleaving sequential streams that auditors cannot separate.
+	POS-only points serve tickets and consolidated invoices exclusively,
+	shop-only points serve e-commerce sales exclusively; desk points serve
+	everything else. Crossing channels fails loud instead of interleaving
+	sequential streams that auditors cannot separate.
 	"""
 	if is_pos_sale and not pos_only:
 		raise SriVoucherError(
 			_("POS sale '{}' must emit from a POS-only point, found '{}'.").format(sale, point)
 		)
-	if not is_pos_sale and pos_only:
-		raise SriVoucherError(_("Desk sale '{}' cannot emit from POS-only point '{}'.").format(sale, point))
+	if is_pos_sale and is_shop_sale:
+		raise SriVoucherError(_("Sale '{}' cannot be POS and shop at once.").format(sale))
+	if is_shop_sale and not shop_only:
+		raise SriVoucherError(
+			_("Shop sale '{}' must emit from a shop-only point, found '{}'.").format(sale, point)
+		)
+	if not is_pos_sale and not is_shop_sale and (pos_only or shop_only):
+		raise SriVoucherError(_("Desk sale '{}' cannot emit from locked point '{}'.").format(sale, point))
 
 
 def _derive_cod_doc(reference_doctype: str, reference_name: str) -> str:

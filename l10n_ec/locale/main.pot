@@ -7,14 +7,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecuador Localization VERSION\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-22 11:38-0641\n"
-"PO-Revision-Date: 2026-10-22 11:38-0641\n"
+"POT-Creation-Date: 2026-10-22 12:11-0641\n"
+"PO-Revision-Date: 2026-10-22 12:11-0641\n"
 "Last-Translator: developers@example.com\n"
 "Language-Team: developers@example.com\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
+
+#: l10n_ec/ecuador_localization/shop_hooks.py:117
+msgid "(new order)"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/shop_hooks.py:70
+msgid "(new quotation)"
+msgstr ""
 
 #: l10n_ec/ecuador_localization/invoice_hooks.py:102
 msgid "(new ticket)"
@@ -283,6 +291,11 @@ msgstr ""
 msgid "Channel lock: only POS sales (tickets and consolidated invoices) may consume this point; desk emission is rejected and vice versa."
 msgstr ""
 
+#. Description of the 'Shop Only' (Check) field in DocType 'SRI Emission Point'
+#: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
+msgid "Channel lock: only e-commerce shop sales may consume this point; desk and POS emission is rejected and vice versa."
+msgstr ""
+
 #. Label of the code (Select) field in DocType 'SRI Document Type'
 #. Label of the code (Select) field in DocType 'SRI Identification Type'
 #. Label of the code (Select) field in DocType 'SRI Payment Method'
@@ -317,12 +330,12 @@ msgstr ""
 msgid "Company"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:712
+#: l10n_ec/ecuador_localization/voucher_flow.py:734
 msgid "Company '{}' has no SRI Signature configured."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:517
-#: l10n_ec/ecuador_localization/voucher_flow.py:820
+#: l10n_ec/ecuador_localization/voucher_flow.py:525
+#: l10n_ec/ecuador_localization/voucher_flow.py:842
 msgid "Company '{}' needs a tax_id (RUC) to emit vouchers."
 msgstr ""
 
@@ -350,7 +363,7 @@ msgstr ""
 msgid "Concept"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:599
+#: l10n_ec/ecuador_localization/voucher_flow.py:607
 msgid "Consolidated invoice '{}' links no submitted POS tickets."
 msgstr ""
 
@@ -400,7 +413,7 @@ msgstr ""
 msgid "Days for Notification"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:981
+#: l10n_ec/ecuador_localization/voucher_flow.py:1003
 msgid "Debit notes need explicit reasons [{reason, value}]."
 msgstr ""
 
@@ -410,15 +423,15 @@ msgstr ""
 msgid "Delivery Note"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:1167
+#: l10n_ec/ecuador_localization/voucher_flow.py:1189
 msgid "Delivery Note '{}' needs a shipping address for the guia recipient."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:1161
+#: l10n_ec/ecuador_localization/voucher_flow.py:1183
 msgid "Delivery notes need exactly one sustento doc in guia_data['docs']."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:926
+#: l10n_ec/ecuador_localization/voucher_flow.py:948
 msgid "Delivery notes need explicit guia_data {carrier, transport, docs}."
 msgstr ""
 
@@ -431,9 +444,12 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:644
 #: l10n_ec/locale/i18n_markers.py:36
 msgid "Desk sale '{}' cannot emit from POS-only point '{}'."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:666
+msgid "Desk sale '{}' cannot emit from locked point '{}'."
 msgstr ""
 
 #: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.py:28
@@ -500,6 +516,10 @@ msgstr ""
 msgid "Dividendos gravados distribuidos en acciones (reinversión de utilidades sin derecho a reducción tarifa IR)"
 msgstr ""
 
+#: l10n_ec/ecuador_localization/shop_hooks.py:49
+msgid "Document '{}' points at '{}', but the shop emits from '{}'."
+msgstr ""
+
 #: l10n_ec/sri/access_key.py:104
 msgid "Document SRI code must be 2 digits (got '{}')."
 msgstr ""
@@ -537,7 +557,7 @@ msgstr ""
 msgid "Emission Point Code"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:697
+#: l10n_ec/ecuador_localization/voucher_flow.py:719
 msgid "Emission point '{}' has no sequence for '{}'."
 msgstr ""
 
@@ -701,7 +721,7 @@ msgid "IVA withholding categories cannot be assigned to suppliers: ERPNext canno
 msgstr ""
 
 #: l10n_ec/ecuador_localization/validation.py:303
-#: l10n_ec/ecuador_localization/voucher_flow.py:1016
+#: l10n_ec/ecuador_localization/voucher_flow.py:1038
 msgid "IVA withholding needs an IVA concepto, got '{}'."
 msgstr ""
 
@@ -852,7 +872,7 @@ msgstr ""
 msgid "Month"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:1080
+#: l10n_ec/ecuador_localization/voucher_flow.py:1102
 msgid "Multiple enabled SRI Additional Information records for company '{}'."
 msgstr ""
 
@@ -874,7 +894,7 @@ msgstr ""
 msgid "No PKCS#12 signature content attached to SRI Signature document."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:684
+#: l10n_ec/ecuador_localization/voucher_flow.py:706
 msgid "No SRI Emission Point for company '{}' and document '{}'."
 msgstr ""
 
@@ -894,7 +914,7 @@ msgstr ""
 msgid "No sujeto"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:1253
+#: l10n_ec/ecuador_localization/voucher_flow.py:1275
 msgid "No voucher found for modified document '{}'."
 msgstr ""
 
@@ -992,7 +1012,7 @@ msgstr ""
 msgid "POS Profile '{}' needs an SRI Emission Point before selling."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:641
+#: l10n_ec/ecuador_localization/voucher_flow.py:657
 #: l10n_ec/locale/i18n_markers.py:35
 msgid "POS sale '{}' must emit from a POS-only point, found '{}'."
 msgstr ""
@@ -1307,7 +1327,7 @@ msgstr ""
 msgid "Purchase Invoice"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:654
+#: l10n_ec/ecuador_localization/voucher_flow.py:676
 msgid "Purchase Invoice '{}' is a supplier-issued document: only liquidations (SRI Liquidacion) emit vouchers."
 msgstr ""
 
@@ -1573,7 +1593,7 @@ msgstr ""
 msgid "SRI Signature"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:717
+#: l10n_ec/ecuador_localization/voucher_flow.py:739
 msgid "SRI Signature '{}' is not usable."
 msgstr ""
 
@@ -1658,17 +1678,21 @@ msgstr ""
 msgid "SRI withholding concepto '{}' is exterior scope and stays out of Form 103 residentes; the exterior section is recorded empty."
 msgstr ""
 
+#: l10n_ec/ecuador_localization/voucher_flow.py:660
+msgid "Sale '{}' cannot be POS and shop at once."
+msgstr ""
+
 #. Option for the 'Reference DocType' (Select) field in DocType 'SRI Electronic
 #. Voucher'
 #: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
 msgid "Sales Invoice"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:589
+#: l10n_ec/ecuador_localization/voucher_flow.py:597
 msgid "Sales Invoice '{}' has an identified buyer; emit it as one voucher."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:578
+#: l10n_ec/ecuador_localization/voucher_flow.py:586
 msgid "Sales Invoice '{}' is not consolidated; emit it as one voucher."
 msgstr ""
 
@@ -1704,6 +1728,19 @@ msgstr ""
 
 #: l10n_ec/ecuador_localization/report/sri_ats/sri_ats.js:51
 msgid "Set Company, Year and Month before validating."
+msgstr ""
+
+#. Label of the shop_only (Check) field in DocType 'SRI Emission Point'
+#: l10n_ec/ecuador_localization/doctype/sri_emission_point/sri_emission_point.json
+msgid "Shop Only"
+msgstr ""
+
+#: l10n_ec/ecuador_localization/shop_hooks.py:41
+msgid "Shop belongs to '{}', cannot sell for '{}'."
+msgstr ""
+
+#: l10n_ec/ecuador_localization/voucher_flow.py:663
+msgid "Shop sale '{}' must emit from a shop-only point, found '{}'."
 msgstr ""
 
 #: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:36
@@ -1756,7 +1793,7 @@ msgstr ""
 msgid "Subject:"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:947
+#: l10n_ec/ecuador_localization/voucher_flow.py:969
 msgid "Supplier '{}' needs an identification type and tax ID to emit vouchers."
 msgstr ""
 
@@ -1831,7 +1868,7 @@ msgstr ""
 msgid "Ticket '{}' points at '{}', but its profile emits from '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:606
+#: l10n_ec/ecuador_localization/voucher_flow.py:614
 msgid "Ticket totals {} do not match consolidated '{}' ({}); emission refused."
 msgstr ""
 
@@ -1980,6 +2017,10 @@ msgstr ""
 msgid "Voucher '{}' must be Authorized to record a void, found '{}'."
 msgstr ""
 
+#: l10n_ec/ecuador_localization/shop_hooks.py:68
+msgid "Webshop Settings needs an SRI Emission Point before selling."
+msgstr ""
+
 #: l10n_ec/ecuador_localization/report/sri_form_104/sri_form_104.py:53
 msgid "Withheld (retention 801)"
 msgstr ""
@@ -2004,7 +2045,7 @@ msgstr ""
 msgid "Withholding categories cannot be assigned to customers: received withholdings settle via the payment-time entry (invoice stays gross, native rows inflate it and mis-side the liability). Leave the category empty and record the customer conceptos on the invoice."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:748
+#: l10n_ec/ecuador_localization/voucher_flow.py:770
 #: l10n_ec/sri/withholding_concepts.py:1248
 msgid "Withholding category '{}' has no SRI code mapping."
 msgstr ""
@@ -2013,7 +2054,7 @@ msgstr ""
 msgid "Withholding category '{}' maps impuesto '{}' but concepto '{}' is impuesto '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:986
+#: l10n_ec/ecuador_localization/voucher_flow.py:1008
 msgid "Withholding vouchers need explicit withholding_codes {category: (impuesto, codigo)}."
 msgstr ""
 
@@ -2040,7 +2081,7 @@ msgstr ""
 msgid "expired"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/voucher_flow.py:1158
+#: l10n_ec/ecuador_localization/voucher_flow.py:1180
 msgid "guia_data is missing keys: {}."
 msgstr ""
 

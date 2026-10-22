@@ -51,7 +51,18 @@ doc_events = {
 	},
 	"Sales Invoice": {
 		"before_save": "l10n_ec.ecuador_localization.invoice_hooks.validate_sri_invoice",
-		"validate": "l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",
+		"validate": [
+			"l10n_ec.ecuador_localization.shop_hooks.inherit_shop_point_invoice",
+			"l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",
+		],
+	},
+	"Quotation": {
+		"validate": "l10n_ec.ecuador_localization.shop_hooks.inherit_shop_point_quotation",
+		"on_submit": "l10n_ec.ecuador_localization.shop_hooks.check_shop_contact",
+	},
+	"Sales Order": {
+		"validate": "l10n_ec.ecuador_localization.shop_hooks.inherit_shop_point_order",
+		"on_submit": "l10n_ec.ecuador_localization.shop_hooks.check_shop_contact",
 	},
 	"POS Invoice": {
 		"validate": "l10n_ec.ecuador_localization.invoice_hooks.validate_pos_ticket",

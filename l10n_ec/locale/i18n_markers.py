@@ -35,6 +35,9 @@ CUSTOM_FIELD_STRINGS = [
 	_("POS sale '{}' must emit from a POS-only point, found '{}'."),
 	_("Desk sale '{}' cannot emit from POS-only point '{}'."),
 	_("Emission point '{}' is not POS-only; POS tickets need a locked POS point."),
+	_("Logical caja: every shop order emits from this point. One shop, one point."),
+	_("Inherited from Webshop Settings for cart quotations (including quotation-only RFQ flow)."),
+	_("Inherited from the shop quotation; drives shop voucher emission."),
 	_("SRI Payment Code"),
 	_("SRI Liquidacion"),
 	_(
