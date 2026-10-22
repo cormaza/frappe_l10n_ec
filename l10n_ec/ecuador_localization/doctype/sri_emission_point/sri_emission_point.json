@@ -9,6 +9,7 @@
   "emission_point_code",
   "company",
   "column_break_setup",
+  "pos_only",
   "sequences"
  ],
  "fields": [
@@ -36,6 +37,13 @@
   {
    "fieldname": "column_break_setup",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pos_only",
+   "fieldtype": "Check",
+   "label": "POS Only",
+   "default": "0",
+   "description": "Channel lock: only POS sales (tickets and consolidated invoices) may consume this point; desk emission is rejected and vice versa."
   },
   {
    "fieldname": "sequences",

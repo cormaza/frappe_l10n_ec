@@ -32,6 +32,9 @@ CUSTOM_FIELD_STRINGS = [
 	_("Inherited from the POS Profile at validate; drives per-ticket voucher emission."),
 	_("POS Opening Entry"),
 	_("Cashier session this ticket belongs to; stamped at validate for shift-level traceability."),
+	_("POS sale '{}' must emit from a POS-only point, found '{}'."),
+	_("Desk sale '{}' cannot emit from POS-only point '{}'."),
+	_("Emission point '{}' is not POS-only; POS tickets need a locked POS point."),
 	_("SRI Payment Code"),
 	_("SRI Liquidacion"),
 	_(

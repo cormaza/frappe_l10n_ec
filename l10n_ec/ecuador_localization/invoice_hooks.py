@@ -95,6 +95,10 @@ def _resolve_ticket_emission(doc) -> None:
 	point = frappe.db.get_value("POS Profile", profile, "sri_emission_point")
 	if not point:
 		frappe.throw(_("POS Profile '{}' needs an SRI Emission Point before selling.").format(profile))
+	if not frappe.db.get_value("SRI Emission Point", point, "pos_only"):
+		frappe.throw(
+			_("Emission point '{}' is not POS-only; POS tickets need a locked POS point.").format(point)
+		)
 	ensure_ticket_point(doc.get("sri_emission_point"), point, doc.get("name") or _("(new ticket)"))
 	doc.sri_emission_point = point
 	opening = frappe.db.get_value(

@@ -603,3 +603,21 @@ class TestPayloadCtxCarriesTaxpayerFlags(UnitTestCase):
 		payload = build_voucher_payload(INVOICE, EMITTER, SEQUENCE)
 		self.assertFalse(payload["ctx"]["withholding_agent"])
 		self.assertFalse(payload["ctx"]["rimpe_regime"])
+
+
+class TestPointChannelLock(UnitTestCase):
+	"""Emission points never serve both channels (pure rule)."""
+
+	def test_pos_sale_needs_pos_point(self) -> None:
+		from l10n_ec.ecuador_localization.voucher_flow import validate_point_channel
+
+		validate_point_channel(True, True, "001-002")
+		with self.assertRaises(SriVoucherError):
+			validate_point_channel(True, False, "001-001")
+
+	def test_desk_sale_rejected_from_pos_point(self) -> None:
+		from l10n_ec.ecuador_localization.voucher_flow import validate_point_channel
+
+		validate_point_channel(False, False, "001-001")
+		with self.assertRaises(SriVoucherError):
+			validate_point_channel(False, True, "001-002")

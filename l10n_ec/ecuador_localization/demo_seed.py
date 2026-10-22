@@ -554,37 +554,36 @@ def party_name(entry: dict) -> str:
 
 
 def _seed_demo_emission_point(company: str) -> str | None:
-	"""Create the demo caja (001-001) with sequences for every emittable doc.
+	"""Create the demo points: 001-001 desk, 001-002 locked POS caja.
 
 	Emission points never survived `demo.sh reset` (the seed never created
-	them): without one no voucher can take a sequential. One point is
-	enough for the demo; extra cajas add more points the same way.
+	them): without one no voucher can take a sequential. Channel separation
+	is seeded too: 001-002 carries `pos_only`, so desk emission can never
+	consume the caja stream and vice versa.
 	"""
 	import frappe
 
-	name = "001-001"
-	if frappe.db.exists("SRI Emission Point", name):
-		point = name
-	else:
-		point = (
-			frappe.get_doc(
-				{
-					"doctype": "SRI Emission Point",
-					"company": company,
-					"establishment_code": "001",
-					"emission_point_code": "001",
-					"sequences": [
-						{"document_type": code, "current_sequence": 100}
-						for code in ("01", "04", "05", "06", "07")
-					],
-				}
-			)
-			.insert(ignore_permissions=True)
-			.name
-		)
+	for estab, pto, pos_only in (("001", "001", 0), ("001", "002", 1)):
+		name = f"{estab}-{pto}"
+		if frappe.db.exists("SRI Emission Point", name):
+			frappe.db.set_value("SRI Emission Point", name, "pos_only", pos_only)
+			continue
+		frappe.get_doc(
+			{
+				"doctype": "SRI Emission Point",
+				"company": company,
+				"establishment_code": estab,
+				"emission_point_code": pto,
+				"pos_only": pos_only,
+				"sequences": [
+					{"document_type": code, "current_sequence": 100}
+					for code in ("01", "04", "05", "06", "07")
+				],
+			}
+		).insert(ignore_permissions=True)
 	if frappe.db.exists("POS Profile", "Demo POS"):
-		frappe.db.set_value("POS Profile", "Demo POS", "sri_emission_point", point)
-	return point
+		frappe.db.set_value("POS Profile", "Demo POS", "sri_emission_point", "001-002")
+	return "001-001"
 
 
 def _seed_demo_withholding_voucher(company: str) -> str | None:

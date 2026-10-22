@@ -484,6 +484,11 @@ def create_and_process(
 	ref = frappe.get_doc(reference_doctype, reference_name)
 	cod_doc = sri_doc_code or _derive_cod_doc(reference_doctype, reference_name)
 	emission, sequential = _resolve_emission_point(ref.company, cod_doc, emission_point)
+	is_pos_sale = reference_doctype == "POS Invoice" or (
+		reference_doctype == "Sales Invoice"
+		and bool(getattr(ref, "is_pos", 0) or getattr(ref, "is_consolidated", 0))
+	)
+	validate_point_channel(is_pos_sale, bool(getattr(emission, "pos_only", 0)), emission.name, ref.name)
 	env = _resolve_environment(ref.company)
 	number15 = f"{emission.establishment_code}{emission.emission_point_code}{sequential}"
 	company_tax_id = frappe.db.get_value("Company", ref.company, "tax_id")
@@ -525,6 +530,21 @@ def create_and_process(
 	return {"ok": True, "voucher": voucher.name, "queued": True}
 
 
+def validate_point_channel(is_pos_sale: bool, pos_only: bool, point: str, sale: str = "") -> None:
+	"""Enforce the channel lock of an emission point (pure).
+
+	POS-only points serve tickets and consolidated invoices exclusively;
+	desk points serve everything else. Crossing channels fails loud instead
+	of interleaving sequential streams that auditors cannot separate.
+	"""
+	if is_pos_sale and not pos_only:
+		raise SriVoucherError(
+			_("POS sale '{}' must emit from a POS-only point, found '{}'.").format(sale, point)
+		)
+	if not is_pos_sale and pos_only:
+		raise SriVoucherError(_("Desk sale '{}' cannot emit from POS-only point '{}'.").format(sale, point))
+
+
 def _derive_cod_doc(reference_doctype: str, reference_name: str) -> str:
 	"""Derive the SRI document code from the referenced invoice."""
 	if reference_doctype == "Purchase Invoice":
@@ -555,6 +575,8 @@ def _resolve_emission_point(company: str, cod_doc: str, emission_point: str | No
 		emission = None
 		for name in candidates:
 			candidate = frappe.get_doc("SRI Emission Point", name)
+			if getattr(candidate, "pos_only", 0):
+				continue  # locked caja stream: only explicit selection may use it
 			if any(row.document_type == cod_doc for row in (candidate.sequences or [])):
 				emission = candidate
 				break
