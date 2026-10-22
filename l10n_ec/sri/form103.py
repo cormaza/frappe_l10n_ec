@@ -64,6 +64,13 @@ def collect_103(vouchers: list, year: int, month: int) -> dict:
 	"""
 	_validate_period(year, month)
 	totals: dict = {}
+	for concepto, base, value in _iter_ir_rows(vouchers, year, month):
+		_accumulate_concepto(totals, concepto, base, value)
+	return dict(sorted(totals.items()))
+
+
+def _iter_ir_rows(vouchers: list, year: int, month: int):
+	"""Yield ``(concepto, base, value)`` IR rows of the month, validated."""
 	for voucher in vouchers or []:
 		if voucher.get("voucher_state") != AUTHORIZED_STATE:
 			continue
@@ -81,8 +88,49 @@ def collect_103(vouchers: list, year: int, month: int) -> dict:
 			continue
 		for doc in body.get("docs", []):
 			for row in doc.get("withholdings", []):
-				_accumulate_row(totals, row)
-	return dict(sorted(totals.items()))
+				yield (
+					row.get("withholding_code", ""),
+					round(float(row.get("base", 0.0)), 2),
+					round(float(row.get("value", 0.0)), 2),
+				)
+
+
+def _accumulate_concepto(totals: dict, concepto: str, base: float, value: float) -> None:
+	"""Add one IR row to its concepto casilleros."""
+	impuesto, _rate, _description = resolve_concepto(concepto)
+	if impuesto in NON_EMITTABLE_IMPUESTOS:
+		raise SriVoucherError(
+			_(
+				"SRI withholding concepto '{}' is exterior scope and stays out of Form 103 residentes; the exterior section is recorded empty."
+			).format(concepto)
+		)
+	if impuesto != "1":
+		return
+	boxes = casilleros_for(concepto)
+	if not boxes:
+		raise SriVoucherError(
+			_("SRI withholding concepto '{}' has no Form 103 casilleros; cannot collect.").format(concepto)
+		)
+	totals[boxes[0]] = round(totals.get(boxes[0], 0.0) + base, 2)
+	if len(boxes) > 1:
+		totals[boxes[1]] = round(totals.get(boxes[1], 0.0) + value, 2)
+
+
+def collect_103_by_concepto(vouchers: list, year: int, month: int) -> dict:
+	"""Aggregate one month into ``{concepto_code: {base, value}}`` (pure).
+
+	Companion to :func:`collect_103` for presentation: casillero totals
+	cannot tell sibling conceptos apart when they share boxes (e.g. every
+	``332*`` writes box 332), so rows render from fired conceptos, never
+	from a blind box-to-concepto inversion.
+	"""
+	_validate_period(year, month)
+	by_concepto: dict = {}
+	for concepto, base, value in _iter_ir_rows(vouchers, year, month):
+		entry = by_concepto.setdefault(concepto, {"base": 0.0, "value": 0.0})
+		entry["base"] = round(entry["base"] + base, 2)
+		entry["value"] = round(entry["value"] + value, 2)
+	return by_concepto
 
 
 def _validate_period(year: int, month: int) -> None:
@@ -142,36 +190,26 @@ def _fiscal_month(fiscal_period: str) -> tuple | None:
 
 def _accumulate_row(totals: dict, row: dict) -> None:
 	"""Add one parsed retencion row to its concepto casilleros."""
-	concepto = row.get("withholding_code", "")
-	impuesto, _rate, _description = resolve_concepto(concepto)
-	if impuesto in NON_EMITTABLE_IMPUESTOS:
-		raise SriVoucherError(
-			_(
-				"SRI withholding concepto '{}' is exterior scope and stays out of Form 103 residentes; the exterior section is recorded empty."
-			).format(concepto)
-		)
-	if impuesto != "1":
-		return
-	boxes = casilleros_for(concepto)
-	if not boxes:
-		raise SriVoucherError(
-			_("SRI withholding concepto '{}' has no Form 103 casilleros; cannot collect.").format(concepto)
-		)
-	base = round(float(row.get("base", 0.0)), 2)
-	value = round(float(row.get("value", 0.0)), 2)
-	totals[boxes[0]] = round(totals.get(boxes[0], 0.0) + base, 2)
-	if len(boxes) > 1:
-		totals[boxes[1]] = round(totals.get(boxes[1], 0.0) + value, 2)
+	_accumulate_concepto(
+		totals,
+		row.get("withholding_code", ""),
+		round(float(row.get("base", 0.0)), 2),
+		round(float(row.get("value", 0.0)), 2),
+	)
 
 
-def build_103_rows(totals: dict) -> list:
-	"""Build per-concepto presentation rows from :func:`collect_103` totals.
+def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
+	"""Build per-concepto presentation rows from fired conceptos.
 
-	Each row carries ``kind`` (``concepto``/``total``/``note``), ``concepto``
-	(SRI code + official description), ``cas_base``, ``base``,
-	``cas_impuesto``, ``impuesto``. Only conceptos with movement render;
-	the exterior section renders as an explicit-empty note (never guessed).
-	A casillero no concepto owns fails loud. Pure Python, no frappe.
+	``totals`` comes from :func:`collect_103`; ``by_concepto`` from
+	:func:`collect_103_by_concepto`. Rows render from fired conceptos, never
+	from a blind box-to-concepto inversion (sibling codes share boxes: every
+	``332*`` writes box 332). Each row carries ``kind``
+	(``concepto``/``total``/``note``), ``concepto`` (SRI code + official
+	description), ``cas_base``, ``base``, ``cas_impuesto``, ``impuesto``.
+	Only conceptos with movement render; the exterior section renders as an
+	explicit-empty note (never guessed). A casillero no rendered concepto
+	owns fails loud. Pure Python, no frappe.
 	"""
 	from l10n_ec.sri.withholding_concepts import CONCEPTS
 
@@ -183,28 +221,37 @@ def build_103_rows(totals: dict) -> list:
 					box, value
 				)
 			)
-	owned: dict = {}
-	for code, (_impuesto, _description, _rate, _valid_from, casilleros) in CONCEPTS.items():
-		if not casilleros:
-			continue
-		for box in casilleros:
-			owned.setdefault(int(box), []).append(code)
-	for box in normalized:
-		if normalized[box] and box not in owned:
-			raise ValueError(_("Form 103 casillero '{}' belongs to no withholding concepto.").format(box))
+	if by_concepto is None:
+		raise ValueError(
+			_("Form 103 rows need per-concepto detail; totals alone cannot tell sibling conceptos apart.")
+		)
 	rows: list = []
 	base_total = 0.0
 	tax_total = 0.0
-	for code in sorted(CONCEPTS):
-		_impuesto, description, _rate, _valid_from, casilleros = CONCEPTS[code]
-		if not casilleros or _impuesto != "1":
-			continue
-		base_box = int(casilleros[0])
-		tax_box = int(casilleros[1]) if len(casilleros) > 1 else None
-		base = normalized.get(base_box, 0.0)
-		tax = normalized.get(tax_box, 0.0) if tax_box else 0.0
+	owned: set = set()
+	for code in sorted(by_concepto):
+		entry = by_concepto[code] or {}
+		base = round(float(entry.get("base", 0.0)), 2)
+		tax = round(float(entry.get("value", 0.0)), 2)
 		if not base and not tax:
 			continue
+		try:
+			_impuesto, description, _rate, _valid_from, casilleros = CONCEPTS[code]
+		except KeyError:
+			raise ValueError(
+				_("SRI withholding concepto '{}' is not a known concepto.").format(code)
+			) from None
+		if _impuesto != "1":
+			continue
+		if not casilleros:
+			raise ValueError(
+				_("SRI withholding concepto '{}' has no Form 103 casilleros; cannot present.").format(code)
+			)
+		base_box = int(casilleros[0])
+		tax_box = int(casilleros[1]) if len(casilleros) > 1 else None
+		owned.add(base_box)
+		if tax_box:
+			owned.add(tax_box)
 		base_total = round(base_total + base, 2)
 		tax_total = round(tax_total + tax, 2)
 		rows.append(
@@ -217,6 +264,9 @@ def build_103_rows(totals: dict) -> list:
 				"impuesto": tax if tax_box else None,
 			}
 		)
+	for box in normalized:
+		if normalized[box] and box not in owned:
+			raise ValueError(_("Form 103 casillero '{}' belongs to no rendered concepto.").format(box))
 	rows.append(
 		{
 			"kind": "total",

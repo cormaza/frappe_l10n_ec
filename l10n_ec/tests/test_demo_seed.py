@@ -48,6 +48,7 @@ class TestDemoSeed(UnitTestCase):
 		self.assertRegex(DEMO_TODAY, r"^\d{4}-\d{2}-\d{2}$")
 		self.assertEqual(DEMO_TIMEZONE, "America/Guayaquil")
 		self.assertEqual(DEMO_COMPANY["default_currency"], "USD")
+		self.assertEqual(DEMO_COMPANY_CO["default_currency"], "USD")
 		self.assertEqual(DEMO_ADDRESS_TEMPLATE["country"], "Ecuador")
 		self.assertTrue(DEMO_COMPANY["website"])
 		self.assertTrue(DEMO_COMPANY["phone_no"])

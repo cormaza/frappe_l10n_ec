@@ -89,8 +89,10 @@ bench --site demo execute "frappe.get_attr('l10n_ec.ecuador_localization.report.
 - `ATS`: 8 compras, 0 ventas, 0 exportaciones, 0 anulados (solo lo
   autorizado alimenta el ATS; las ventas demo viajan en `Rejected` por
   el techo autofirmado).
-- `Voucher 07 (100/2.00)` ↔ `103 casillero 312/362` (voucher stageado
-  como demo-data; el único autorizado del mes).
+- `103`: tres 07 stageados como demo-data — `031`: 312/100 + 362/2.00;
+  `032`: 303/1000 + 353/100.00 y 307/500 + 357/15.00; `033`: 3400/2000 +
+  3900/60.00 y 332/500 (base sola). Total residentes: base `4100.00`,
+  retenido `177.00`; exterior explícitamente vacío.
 
 NC `04` reporta en positivo (tipo lleva el signo), `03` solo si está autorizado, `02`/`06` sustentos ya vienen del campo `SRI Sustento Code`.
 

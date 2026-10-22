@@ -49,7 +49,7 @@ class TestForm104Layout(UnitTestCase):
 
 class TestForm103Rows(UnitTestCase):
 	def test_concepto_row_shows_code_description_and_boxes(self) -> None:
-		rows = build_103_rows({312: 100.0, 362: 2.0})
+		rows = build_103_rows({312: 100.0, 362: 2.0}, {"312": {"base": 100.0, "value": 2.0}})
 		concepto = next(r for r in rows if r["kind"] == "concepto")
 		self.assertIn("312", concepto["concepto"])
 		self.assertIn("Bienes", concepto["concepto"])
@@ -59,14 +59,27 @@ class TestForm103Rows(UnitTestCase):
 		self.assertEqual(concepto["impuesto"], 2.0)
 
 	def test_total_row_sums_residentes(self) -> None:
-		rows = build_103_rows({312: 100.0, 362: 2.0, 303: 50.0, 353: 5.0})
+		rows = build_103_rows(
+			{312: 100.0, 362: 2.0, 303: 50.0, 353: 5.0},
+			{"312": {"base": 100.0, "value": 2.0}, "303": {"base": 50.0, "value": 5.0}},
+		)
 		total = next(r for r in rows if r["kind"] == "total")
 		self.assertEqual(total["base"], 150.0)
 		self.assertEqual(total["impuesto"], 7.0)
 
 	def test_unattributable_casillero_fails_loud(self) -> None:
 		with self.assertRaises(ValueError):
-			build_103_rows({99999: 1.0})
+			build_103_rows({99999: 1.0}, {})
+
+	def test_shared_box_renders_fired_concepto_once(self) -> None:
+		rows = build_103_rows({332: 500.0}, {"332": {"base": 500.0, "value": 0.0}})
+		conceptos = [r for r in rows if r["kind"] == "concepto"]
+		self.assertEqual(len(conceptos), 1)
+		self.assertTrue(conceptos[0]["concepto"].startswith("332 —"))
+
+	def test_totals_without_detail_fail_loud(self) -> None:
+		with self.assertRaises(ValueError):
+			build_103_rows({312: 100.0, 362: 2.0})
 
 	def test_negative_value_fails_loud(self) -> None:
 		with self.assertRaises(ValueError):

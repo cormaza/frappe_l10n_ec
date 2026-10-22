@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover
 		return message
 
 
-from l10n_ec.sri.form103 import build_103_rows, collect_103
+from l10n_ec.sri.form103 import build_103_rows, collect_103, collect_103_by_concepto
 
 
 def execute(filters=None):
@@ -39,8 +39,9 @@ def execute(filters=None):
 	company = filters.get("company") if filters else None
 	if not company or not year or not month:
 		return columns, []
-	totals = collect_103(_fetch_authorized_vouchers(company, year, month), year, month)
-	data = build_103_rows(totals)
+	vouchers = _fetch_authorized_vouchers(company, year, month)
+	totals = collect_103(vouchers, year, month)
+	data = build_103_rows(totals, collect_103_by_concepto(vouchers, year, month))
 	total_row = next((r for r in data if r["kind"] == "total"), None)
 	summary = [
 		{"label": _("Total base"), "value": (total_row or {}).get("base") or 0.0, "indicator": "blue"},

@@ -594,25 +594,18 @@ def _seed_demo_emission_point(company: str) -> str | None:
 	return "001-001"
 
 
-def _seed_demo_withholding_voucher(company: str) -> str | None:
-	"""Stage one Authorized 07 so the SRI Form 103 demo has casilleros to show.
+def _stage_demo_retencion(company: str, voucher_number: str, purchase_name: str, specs: list) -> str | None:
+	"""Build one Authorized-staged 07 from ``[(concepto, base, rate)]`` specs.
 
-	Demo fiction (like the placeholder supplier auths): the retencion XML is
-	built by the real ``build_retencion_xml`` + XSD path from the seeded
-	``001-001-000000011`` purchase (IR 2% on 100.00, concepto 312), but SRI
-	never authorized it (the demo key is self-signed). Only Form 103 reads it:
-	07 vouchers never feed ATS sections or Form 104.
+	Demo fiction (like the placeholder supplier auths): real
+	``build_retencion_xml`` + XSD validation, but SRI never authorized it
+	(the demo key is self-signed). Only Form 103 reads 07 vouchers.
+	Idempotent: an existing voucher number is returned untouched.
 	"""
 	import frappe
 
-	voucher_number = "001-001-000000031"
 	if frappe.db.exists("SRI Electronic Voucher", {"sri_number": voucher_number}):
 		return frappe.db.get_value("SRI Electronic Voucher", {"sri_number": voucher_number}, "name")
-	purchase_name = frappe.db.get_value(
-		"Purchase Invoice", {"bill_no": "001-001-000000011", "docstatus": 1}, "name"
-	)
-	if not purchase_name:
-		return None
 	purchase = frappe.get_doc("Purchase Invoice", purchase_name)
 	posting = purchase.posting_date
 	issue = posting.strftime("%d/%m/%Y") if hasattr(posting, "strftime") else str(posting)
@@ -637,6 +630,35 @@ def _seed_demo_withholding_voucher(company: str) -> str | None:
 		ruc=ruc,
 		numeric_code="12345678",
 	)
+	sequential = voucher_number.split("-")[-1]
+
+	def _doc(concepto: str, base: float, rate: float) -> dict:
+		value = round(base * rate / 100, 2)
+		total = round(base * 1.15, 2)
+		return {
+			"sustento_code": "06",
+			"doc_code": "01",
+			"doc_number": "001-001-000000011",
+			"issue_date": issue,
+			"auth_number": DEMO_SUPPLIER_AUTH,
+			"local_payment": "01",
+			"subtotal": base,
+			"total": total,
+			"doc_taxes": [
+				{
+					"tax_code": "2",
+					"rate_code": "4",
+					"base": base,
+					"rate": 15.0,
+					"tax_value": round(base * 0.15, 2),
+				}
+			],
+			"withholdings": [
+				{"code": "1", "withholding_code": concepto, "base": base, "rate": rate, "value": value}
+			],
+			"payments": [{"method": "01", "amount": total}],
+		}
+
 	xml = build_retencion_xml(
 		{
 			"environment": "1",
@@ -646,7 +668,7 @@ def _seed_demo_withholding_voucher(company: str) -> str | None:
 			"head_office_address": "Quito",
 			"establishment": "001",
 			"emission_point": "001",
-			"sequential": "000000031",
+			"sequential": sequential,
 			"access_key": access_key,
 			"branch_address": "Quito",
 			"special_taxpayer": "",
@@ -659,25 +681,7 @@ def _seed_demo_withholding_voucher(company: str) -> str | None:
 			"subject_name": "Demo Supplier RUC",
 			"subject_id": "1710034065001",
 			"fiscal_period": period,
-			"docs": [
-				{
-					"sustento_code": "06",
-					"doc_code": "01",
-					"doc_number": "001-001-000000011",
-					"issue_date": issue,
-					"auth_number": DEMO_SUPPLIER_AUTH,
-					"local_payment": "01",
-					"subtotal": 100.00,
-					"total": 115.00,
-					"doc_taxes": [
-						{"tax_code": "2", "rate_code": "4", "base": 100.00, "rate": 15.0, "tax_value": 15.00}
-					],
-					"withholdings": [
-						{"code": "1", "withholding_code": "312", "base": 100.00, "rate": 2.0, "value": 2.00}
-					],
-					"payments": [{"method": "01", "amount": 115.00}],
-				}
-			],
+			"docs": [_doc(concepto, base, rate) for concepto, base, rate in specs],
 		},
 	)
 	if not validate_against_xsd(xml, "retencion"):
@@ -702,6 +706,95 @@ def _seed_demo_withholding_voucher(company: str) -> str | None:
 
 	persist_voucher_xml(voucher, "unsigned_xml")
 	voucher.save(ignore_permissions=True)
+	return voucher.name
+
+
+def _seed_demo_withholding_voucher(company: str) -> list:
+	"""Stage the demo 07 set so Form 103 shows a spread of casilleros.
+
+	031 keeps its history (312 IR 2% on 100.00); 032 adds 303 honorarios
+	10% on 1000.00 + 307 mano de obra 3% on 500.00; 033 adds 340 3% on
+	2000.00 (casilleros 3400/3900) + 332 no-sujeto base-only on 500.00.
+	"""
+	import frappe
+
+	purchase_name = frappe.db.get_value(
+		"Purchase Invoice", {"bill_no": "001-001-000000011", "docstatus": 1}, "name"
+	)
+	if not purchase_name:
+		return None
+	names = [
+		_stage_demo_retencion(company, "001-001-000000031", purchase_name, [("312", 100.00, 2.0)]),
+		_stage_demo_retencion(
+			company, "001-001-000000032", purchase_name, [("303", 1000.00, 10.0), ("307", 500.00, 3.0)]
+		),
+		_stage_demo_retencion(
+			company, "001-001-000000033", purchase_name, [("340", 2000.00, 3.0), ("332", 500.00, 0.0)]
+		),
+	]
+	return [name for name in names if name]
+
+
+def _stage_demo_factura_xml(company: str, sales_name: str | None) -> str | None:
+	"""Leave one Generated factura with real XML so the 01 RIDE shows emitted truth.
+
+	No SRI round-trip happens here (Generated = honestly EN TRÁMITE): the
+	XML is built by the real ``_assemble_payload`` + XSD path and attached
+	as a File. Idempotent: an existing 01 voucher for the invoice wins.
+	"""
+	import frappe
+
+	if not sales_name or not frappe.db.exists("Sales Invoice", sales_name):
+		return None
+	existing = frappe.db.get_value(
+		"SRI Electronic Voucher",
+		{"reference_doctype": "Sales Invoice", "reference_name": sales_name, "sri_doc_code": "01"},
+		"name",
+	)
+	if existing:
+		return existing
+	from l10n_ec.ecuador_localization.voucher_flow import (
+		_assemble_payload,
+		_resolve_emission_point,
+		generate_voucher_xml_doc,
+		persist_voucher_xml,
+		save_voucher,
+	)
+	from l10n_ec.sri.access_key import generate_access_key
+
+	si = frappe.get_doc("Sales Invoice", sales_name)
+	emission, sequential = _resolve_emission_point(company, "01", "001-001")
+	number15 = f"{emission.establishment_code}{emission.emission_point_code}{sequential}"
+	issue = si.posting_date
+	access_key = generate_access_key(
+		document_code_sri="01",
+		complete_document_number=number15,
+		environment="1",
+		date_document=issue if hasattr(issue, "strftime") else date.today(),
+		ruc=frappe.db.get_value("Company", company, "tax_id") or "1760013210001",
+		numeric_code="12345678",
+	)
+	voucher = frappe.get_doc(
+		{
+			"doctype": "SRI Electronic Voucher",
+			"access_key": access_key,
+			"sri_number": f"{emission.establishment_code}-{emission.emission_point_code}-{sequential}",
+			"voucher_state": "Generated",
+			"sri_doc_code": "01",
+			"company": company,
+			"reference_doctype": "Sales Invoice",
+			"reference_name": sales_name,
+			"unsigned_xml": "",
+		}
+	)
+	voucher.insert(ignore_permissions=True)
+	payload = _assemble_payload(voucher)
+	generated = generate_voucher_xml_doc(voucher, payload)
+	if not generated["ok"]:
+		frappe.delete_doc("SRI Electronic Voucher", voucher.name, ignore_permissions=True, force=True)
+		return None
+	persist_voucher_xml(voucher, "unsigned_xml")
+	save_voucher(voucher)
 	return voucher.name
 
 
@@ -732,6 +825,9 @@ def seed_demo() -> dict:
 
 	if frappe.db.get_single_value("Global Defaults", "default_currency") != "USD":
 		frappe.db.set_single_value("Global Defaults", "default_currency", "USD")
+	for _company in (DEMO_COMPANY["company_name"], DEMO_COMPANY_CO["company_name"]):
+		if frappe.db.exists("Company", _company):
+			frappe.db.set_value("Company", _company, "default_currency", "USD")
 
 	for group in DEMO_GROUPS:
 		if not frappe.db.exists(group["doctype"], group_key(group)):
@@ -1134,7 +1230,10 @@ def seed_demo() -> dict:
 				frappe.delete_doc(doctype, title, ignore_permissions=True, force=True)
 
 	report["emission_point"] = _seed_demo_emission_point(company)
-	report["withholding_voucher"] = _seed_demo_withholding_voucher(company)
+	vouchers_07 = _seed_demo_withholding_voucher(company)
+	report["withholding_voucher"] = vouchers_07[0] if vouchers_07 else None
+	report["withholding_vouchers"] = vouchers_07
+	report["factura_xml_voucher"] = _stage_demo_factura_xml(company, sales_name)
 	report["accounts"] = {
 		root: frappe.db.count("Account", {"company": company, "root_type": root})
 		for root in ("Asset", "Liability", "Equity", "Income", "Expense")
