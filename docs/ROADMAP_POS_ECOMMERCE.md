@@ -121,7 +121,10 @@ El patrón es:
   `POS Invoice.validate` + excepción de consolidado en
   `validate_sri_invoice` (verifica cada ticket vía `consolidated_invoice`,
   no la suma). Probado en vivo: ticket CF 51 bloquea, cierre 2×40 CF
-  consolida en 80.00 sin bloquear. Pendiente de P1: G3 (formaPago del
+  consolida en 80.00 sin bloquear. Ambos modos POS con la misma regla:
+  modo Ticket (R1+R2+lote) y modo Sales Invoice (cada SI trae
+  `pos_profile` autoresuelto por el core y hereda el punto del perfil;
+  el tope ya era por documento). Pendiente de P1: G3 (formaPago del
   ticket) y guardia explícita de mezcla en el merge.
 - **Fase P2 — E-commerce**: ✅ implementado sin la app instalada
   (D3 bloqueado upstream: `payments` v14 colisiona con módulos del core
