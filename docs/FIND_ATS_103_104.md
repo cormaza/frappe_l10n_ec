@@ -91,15 +91,15 @@ bench --site demo execute "frappe.get_attr('l10n_ec.ecuador_localization.report.
   el techo autofirmado).
 - `103` residentes: tres 07 stageados — `031`: 312/100 + 362/2.00;
   `032`: 303/1000 + 353/100.00 y 307/500 + 357/15.00; `033`: 3400/2000 +
-  3900/60.00 y 332/500 (base sola). Total residentes: base `4100.00`,
-  retenido `177.00`.
+  3900/60.00 y 332/500 (base sola). Subtotal `349/4100.00` + `399/177.00`.
 - `103` exterior (tasas fundadas, régimen declarado): `034` España
   regalías 501A 10% con convenio → 410/1000 + 460/100.00; `035` USA
   servicios 501 25% sin convenio → 422/2000 + 472/500.00; `036` Panamá
   regalías 501A 37% paraíso → 431/500 + 481/185.00. Subtotal exterior
-  497/3500.00 + 498/785.00. El exterior vive solo en el 103 + GL: sin
-  sección ATS y sin tocar el 104 (las compras EXT no tienen plantilla
-  IVA y sus bill_no no-SRI se excluyen del ATS).
+  497/3500.00 + 498/785.00; total impuesto `499 = 399 + 498 = 962.00`
+  (fórmula impresa en la plantilla oficial). El exterior vive solo en
+  el 103 + GL: sin sección ATS y sin tocar el 104 (las compras EXT no
+  tienen plantilla IVA y sus bill_no no-SRI se excluyen del ATS).
 
 NC `04` reporta en positivo (tipo lleva el signo), `03` solo si está autorizado, `02`/`06` sustentos ya vienen del campo `SRI Sustento Code`.
 

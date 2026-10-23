@@ -60,13 +60,35 @@ def collect_103(vouchers: list, year: int, month: int) -> dict:
 	"""Aggregate one month of AUTHORIZED 07 IR blocks into casillero totals.
 
 	Returns ``{casillero: value}`` sorted by casillero; a month with no
-	Authorized 07 vouchers returns ``{}``. The exterior section is always
-	absent (explicit-empty, never guessed).
+	Authorized 07 vouchers returns ``{}``. Portal subtotals travel with
+	the data: 349/399 sum the residentes section, 497/498 the exterior
+	section, and 499 = 399 + 498 (template formula, SRI RF ago-2026
+	template). Boxes 500/501 need the external compensación input and
+	stay portal-side, documented.
 	"""
 	_validate_period(year, month)
 	totals: dict = {}
 	for concepto, base, value, regime in _iter_ir_rows(vouchers, year, month):
 		_accumulate_concepto(totals, concepto, base, value, regime)
+	if not totals:
+		return {}
+	from l10n_ec.sri.withholding_concepts import CONCEPTS
+
+	res_base: set = set()
+	res_tax: set = set()
+	for _impuesto, _description, _rate, _valid_from, casilleros in CONCEPTS.values():
+		if _impuesto != "1" or not casilleros:
+			continue
+		res_base.add(int(casilleros[0]))
+		if len(casilleros) > 1:
+			res_tax.add(int(casilleros[1]))
+	ext_base = {pair[0] for pair in EXTERIOR_BOXES.values()}
+	ext_tax = {pair[1] for pair in EXTERIOR_BOXES.values()}
+	totals[349] = round(sum(v for box, v in totals.items() if box in res_base), 2)
+	totals[399] = round(sum(v for box, v in totals.items() if box in res_tax), 2)
+	totals[497] = round(sum(v for box, v in totals.items() if box in ext_base), 2)
+	totals[498] = round(sum(v for box, v in totals.items() if box in ext_tax), 2)
+	totals[499] = round(totals[399] + totals[498], 2)
 	return dict(sorted(totals.items()))
 
 
@@ -110,7 +132,12 @@ EXTERIOR_BOXES = {
 	("501A", "con"): (410, 460),
 	("501A", "sin"): (421, 471),
 	("501A", "paraiso"): (431, 481),
+	("501", "con"): (411, 461),
 	("501", "sin"): (422, 472),
+	("501", "paraiso"): (432, 482),
+	("500", "con"): (411, 461),
+	("500", "sin"): (422, 472),
+	("500", "paraiso"): (432, 482),
 }
 
 #: Regime labels for presentation.
@@ -333,15 +360,17 @@ def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
 			}
 		)
 	for box in normalized:
+		if box in (349, 399, 497, 498, 499):
+			continue  # computed portal boxes, rendered below from collected values
 		if normalized[box] and box not in owned:
 			raise ValueError(_("Form 103 casillero '{}' belongs to no rendered concepto.").format(box))
-	ext_base = round(sum(r["base"] for r in rows if r.get("kind") == "exterior"), 2)
-	ext_tax = round(sum(r["impuesto"] or 0.0 for r in rows if r.get("kind") == "exterior"), 2)
+	ext_base = normalized.get(497, 0.0)
+	ext_tax = normalized.get(498, 0.0)
 	if ext_base or ext_tax:
 		rows.append(
 			{
 				"kind": "subtotal",
-				"concepto": "SUBTOTAL EXTERIOR (presentación; casilleros 497/498)",
+				"concepto": "SUBTOTAL EXTERIOR (casilleros 497/498)",
 				"cas_base": 497,
 				"base": ext_base,
 				"cas_impuesto": 498,
@@ -361,12 +390,32 @@ def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
 		)
 	rows.append(
 		{
+			"kind": "subtotal",
+			"concepto": "SUBTOTAL RESIDENTES (casilleros 349/399)",
+			"cas_base": 349,
+			"base": normalized.get(349, 0.0),
+			"cas_impuesto": 399,
+			"impuesto": normalized.get(399, 0.0),
+		}
+	)
+	rows.append(
+		{
 			"kind": "total",
 			"concepto": "TOTAL RESIDENTES (presentación; el portal totaliza 349/399/499/500/501)",
 			"cas_base": None,
 			"base": base_total,
 			"cas_impuesto": None,
 			"impuesto": tax_total,
+		}
+	)
+	rows.append(
+		{
+			"kind": "total",
+			"concepto": "TOTAL IMPUESTO A PAGAR (399 + 498; casillero 499)",
+			"cas_base": None,
+			"base": None,
+			"cas_impuesto": 499,
+			"impuesto": normalized.get(499, 0.0),
 		}
 	)
 	return rows

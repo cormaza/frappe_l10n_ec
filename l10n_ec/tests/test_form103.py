@@ -91,7 +91,19 @@ class TestCollect103(UnitTestCase):
 		)
 		self.assertEqual(
 			collect_103([voucher], 2026, 3),
-			{303: 1000.0, 353: 100.0, 312: 500.0, 362: 10.0, 3400: 2000.0, 3900: 60.0},
+			{
+				303: 1000.0,
+				312: 500.0,
+				349: 3500.0,
+				353: 100.0,
+				362: 10.0,
+				399: 170.0,
+				497: 0.0,
+				498: 0.0,
+				499: 170.0,
+				3400: 2000.0,
+				3900: 60.0,
+			},
 		)
 
 	def test_totals_sum_across_vouchers(self) -> None:
@@ -99,14 +111,20 @@ class TestCollect103(UnitTestCase):
 			_voucher([_row("303", 1000.0, 10.0, 100.0)], sri_number="001-001-000000007"),
 			_voucher([_row("303", 400.0, 10.0, 40.0)], sri_number="001-001-000000008"),
 		]
-		self.assertEqual(collect_103(vouchers, 2026, 3), {303: 1400.0, 353: 140.0})
+		self.assertEqual(
+			collect_103(vouchers, 2026, 3),
+			{303: 1400.0, 349: 1400.0, 353: 140.0, 399: 140.0, 497: 0.0, 498: 0.0, 499: 140.0},
+		)
 
 	def test_rejected_voucher_excluded(self) -> None:
 		vouchers = [
 			_voucher([_row("303", 1000.0, 10.0, 100.0)]),
 			_voucher([_row("303", 500.0, 10.0, 50.0)], voucher_state="Rejected"),
 		]
-		self.assertEqual(collect_103(vouchers, 2026, 3), {303: 1000.0, 353: 100.0})
+		self.assertEqual(
+			collect_103(vouchers, 2026, 3),
+			{303: 1000.0, 349: 1000.0, 353: 100.0, 399: 100.0, 497: 0.0, 498: 0.0, 499: 100.0},
+		)
 
 	def test_non_07_and_other_month_vouchers_excluded(self) -> None:
 		vouchers = [
@@ -114,19 +132,30 @@ class TestCollect103(UnitTestCase):
 			_voucher([_row("303", 500.0, 10.0, 50.0)], sri_doc_code="01"),
 			_voucher([_row("303", 700.0, 10.0, 70.0)], authorization_date="2026-02-20 10:00:00"),
 		]
-		self.assertEqual(collect_103(vouchers, 2026, 3), {303: 1000.0, 353: 100.0})
+		self.assertEqual(
+			collect_103(vouchers, 2026, 3),
+			{303: 1000.0, 349: 1000.0, 353: 100.0, 399: 100.0, 497: 0.0, 498: 0.0, 499: 100.0},
+		)
 
 	def test_iva_rows_are_skipped(self) -> None:
 		voucher = _voucher([_row("303", 1000.0, 10.0, 100.0), _row("2", 150.0, 70.0, 105.0, code="2")])
-		self.assertEqual(collect_103([voucher], 2026, 3), {303: 1000.0, 353: 100.0})
+		self.assertEqual(
+			collect_103([voucher], 2026, 3),
+			{303: 1000.0, 349: 1000.0, 353: 100.0, 399: 100.0, 497: 0.0, 498: 0.0, 499: 100.0},
+		)
 
 	def test_single_box_concepto_records_base_only(self) -> None:
 		voucher = _voucher([_row("309", 1000.0, 3.0, 30.0), _row("332", 500.0, 0.0, 0.0)])
-		self.assertEqual(collect_103([voucher], 2026, 3), {309: 1000.0, 332: 500.0})
+		self.assertEqual(
+			collect_103([voucher], 2026, 3),
+			{309: 1000.0, 332: 500.0, 349: 1500.0, 399: 0.0, 497: 0.0, 498: 0.0, 499: 0.0},
+		)
 
 	def test_no_4xx_exterior_casillero_ever_emitted(self) -> None:
 		voucher = _voucher([_row("303", 1000.0, 10.0, 100.0), _row("340", 2000.0, 3.0, 60.0)])
 		for box in collect_103([voucher], 2026, 3):
+			if box in (497, 498, 499):
+				continue  # computed portal boxes, always present
 			self.assertFalse(400 <= box <= 499, f"exterior box {box} must never be guessed")
 
 	def test_unknown_concepto_raises(self) -> None:
@@ -164,7 +193,10 @@ class TestCollect103(UnitTestCase):
 			authorization_date=None,
 			unsigned_xml=_retencion_xml([_row("303", 1000.0, 10.0, 100.0)], fiscal_period="03/2026"),
 		)
-		self.assertEqual(collect_103([voucher], 2026, 3), {303: 1000.0, 353: 100.0})
+		self.assertEqual(
+			collect_103([voucher], 2026, 3),
+			{303: 1000.0, 349: 1000.0, 353: 100.0, 399: 100.0, 497: 0.0, 498: 0.0, 499: 100.0},
+		)
 		self.assertEqual(collect_103([voucher], 2026, 4), {})
 
 	def test_voucher_without_any_date_raises(self) -> None:
@@ -204,19 +236,28 @@ class TestCollect103Exterior(UnitTestCase):
 		from l10n_ec.sri.form103 import collect_103
 
 		voucher = _voucher([_row("501A", 1000.0, 10.0, 100.0, code="9")], sri_exterior_regime="con")
-		self.assertEqual(collect_103([voucher], 2026, 3), {410: 1000.0, 460: 100.0})
+		self.assertEqual(
+			collect_103([voucher], 2026, 3),
+			{349: 0.0, 399: 0.0, 410: 1000.0, 460: 100.0, 497: 1000.0, 498: 100.0, 499: 100.0},
+		)
 
 	def test_exterior_sin_convenio_collects(self) -> None:
 		from l10n_ec.sri.form103 import collect_103
 
 		voucher = _voucher([_row("501", 2000.0, 25.0, 500.0, code="9")], sri_exterior_regime="sin")
-		self.assertEqual(collect_103([voucher], 2026, 3), {422: 2000.0, 472: 500.0})
+		self.assertEqual(
+			collect_103([voucher], 2026, 3),
+			{349: 0.0, 399: 0.0, 422: 2000.0, 472: 500.0, 497: 2000.0, 498: 500.0, 499: 500.0},
+		)
 
 	def test_exterior_paraiso_collects(self) -> None:
 		from l10n_ec.sri.form103 import collect_103
 
 		voucher = _voucher([_row("501A", 500.0, 37.0, 185.0, code="9")], sri_exterior_regime="paraiso")
-		self.assertEqual(collect_103([voucher], 2026, 3), {431: 500.0, 481: 185.0})
+		self.assertEqual(
+			collect_103([voucher], 2026, 3),
+			{349: 0.0, 399: 0.0, 431: 500.0, 481: 185.0, 497: 500.0, 498: 185.0, 499: 185.0},
+		)
 
 	def test_exterior_without_regime_fails_loud(self) -> None:
 		from l10n_ec.sri.form103 import collect_103
@@ -252,10 +293,57 @@ class TestCollect103ExteriorRegimes(UnitTestCase):
 			),
 		]
 		totals = collect_103(vouchers, 2026, 3)
-		self.assertEqual(totals, {410: 1000.0, 460: 100.0, 431: 500.0, 481: 185.0})
+		self.assertEqual(
+			totals,
+			{
+				349: 0.0,
+				399: 0.0,
+				410: 1000.0,
+				431: 500.0,
+				460: 100.0,
+				481: 185.0,
+				497: 1500.0,
+				498: 285.0,
+				499: 285.0,
+			},
+		)
 		rows = build_103_rows(totals, collect_103_by_concepto(vouchers, 2026, 3))
 		conceptos = [r for r in rows if r["kind"] == "exterior"]
 		self.assertEqual(len(conceptos), 2)
 		self.assertEqual({(r["cas_base"], r["impuesto"]) for r in conceptos}, {(410, 100.0), (431, 185.0)})
 		subtotal = next(r for r in rows if r["kind"] == "subtotal")
 		self.assertEqual((subtotal["base"], subtotal["impuesto"]), (1500.0, 285.0))
+
+
+class TestCollect103Subtotals(UnitTestCase):
+	"""Portal subtotals computed from collected boxes (template formula)."""
+
+	def test_residentes_subtotals(self) -> None:
+		from l10n_ec.sri.form103 import collect_103
+
+		totals = collect_103(
+			[_voucher([_row("303", 1000.0, 10.0, 100.0), _row("309", 500.0, 3.0, 30.0)])],
+			2026,
+			3,
+		)
+		self.assertEqual(totals[349], 1500.0)
+		self.assertEqual(totals[399], 100.0)
+
+	def test_total_499_sums_399_plus_498(self) -> None:
+		from l10n_ec.sri.form103 import collect_103
+
+		totals = collect_103(
+			[
+				_voucher([_row("303", 1000.0, 10.0, 100.0)]),
+				_voucher(
+					[_row("501A", 1000.0, 10.0, 100.0, code="9")],
+					sri_number="001-001-000000008",
+					sri_exterior_regime="con",
+				),
+			],
+			2026,
+			3,
+		)
+		self.assertEqual(totals[497], 1000.0)
+		self.assertEqual(totals[498], 100.0)
+		self.assertEqual(totals[499], 200.0)

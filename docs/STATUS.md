@@ -113,9 +113,11 @@ webshop wiring when present. USD everywhere.
   restrictions trigger only on proven EC (`classify_country`), unknown
   never restricts, emission refuses proven foreign. No flag needed
   unless a company must opt out with EC proven.
-- **Portal 349/399/499/103-subtotals, ICE-input account, exterior
-  104 IVA.** No ledger input distinguishes them; computing would
-  misstate. Reopen with distinguishing inputs.
+- **Portal 500/501 (compensación), ICE-input account, exterior
+  104 IVA.** 349/399/497/498/499 now compute from collected boxes
+  (template formula `499 = 399 + 498`); 500/501 need the external
+  compensación input. No ledger input distinguishes the rest;
+  computing would misstate. Reopen with distinguishing inputs.
 - **`Odoo-style auto_install`.** Doesn't exist in Frappe; flags +
   guards are the pattern. Nothing to reopen.
 - **Per-ticket default emission.** Only CF-over-50 consolidations
