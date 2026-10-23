@@ -29,6 +29,22 @@ def is_ecuadorian_contact(country_code: str | None) -> bool:
 	return (country_code or "").strip().upper() == ECUADOR_COUNTRY_CODE
 
 
+def classify_country(country_code: str | None) -> str:
+	"""Tri-state fiscal nationality: ``EC``, ``foreign`` or ``unknown``.
+
+	Doctrine: restrictions trigger only on proven ``EC``; ``unknown`` (no
+	country resolvable from the record) never restricts and is never
+	foreign. Affirmative SRI acts (emission) refuse proven ``foreign`` and
+	let ``unknown`` through for SRI itself to judge.
+	"""
+	code = (country_code or "").strip().upper()
+	if code == ECUADOR_COUNTRY_CODE:
+		return "EC"
+	if code:
+		return "foreign"
+	return "unknown"
+
+
 def is_foreign_contact(country_code: str | None) -> bool:
 	"""Whether the contact is identifiably foreign (resolved non-EC ISO code).
 
@@ -280,8 +296,11 @@ def sync_tax_row_descriptions(doc, method=None) -> None:
 	ERPNext defaults `description = account_head` (e.g. `1010504 - IVA PAGADO...`),
 	so the SRI tax is invisible. This rewrites to SRI pattern like
 	`IVA 15% (4)`, `IVA 0% (0)`, `IVA Exento (7)`, `IVA No Objeto (6)`,
-	`ICE 5% (3072)` for presentation only (no GL/ATS impact).
+	`ICE 5% (3072)` for presentation only (no GL/ATS impact). Proven
+	non-EC companies keep their native descriptions (tri-state doctrine).
 	"""
+	if classify_country(company_country_code(doc.get("company"))) != "EC":
+		return
 	for row in doc.get("taxes") or []:
 		if (row.get("description") or "").startswith("SRI IVA withholding"):
 			continue

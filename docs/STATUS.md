@@ -109,8 +109,10 @@ webshop wiring when present. USD everywhere.
 - **Native validator port.** The DIMM engine stays a sidecar; only
   deterministic single rules get ported with sources. Reopen on proven
   per-rule parity.
-- **P0 settings flags.** Everything ships direct like the rest of the
-  app. Reopen for mixed companies needing per-company toggles.
+- **P0 settings flags.** Superseded by the country-evidence doctrine:
+  restrictions trigger only on proven EC (`classify_country`), unknown
+  never restricts, emission refuses proven foreign. No flag needed
+  unless a company must opt out with EC proven.
 - **Portal 349/399/499/103-subtotals, ICE-input account, exterior
   104 IVA.** No ledger input distinguishes them; computing would
   misstate. Reopen with distinguishing inputs.

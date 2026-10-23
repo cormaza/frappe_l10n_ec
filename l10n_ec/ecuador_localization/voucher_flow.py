@@ -489,6 +489,12 @@ def create_and_process(
 	if frappe is None:  # pragma: no cover
 		raise RuntimeError("frappe is required to create vouchers.")
 	ref = frappe.get_doc(reference_doctype, reference_name)
+	from l10n_ec.ecuador_localization.validation import classify_country, company_country_code
+
+	if classify_country(company_country_code(ref.get("company"))) == "foreign":
+		raise SriVoucherError(
+			_("Cannot emit SRI vouchers for non-Ecuadorian company '{}'.").format(ref.get("company"))
+		)
 	cod_doc = sri_doc_code or _derive_cod_doc(reference_doctype, reference_name)
 	emission, sequential = _resolve_emission_point(ref.company, cod_doc, emission_point)
 	is_pos_sale = reference_doctype == "POS Invoice" or (

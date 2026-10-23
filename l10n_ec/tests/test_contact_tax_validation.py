@@ -53,3 +53,23 @@ class TestContactTaxValidation(UnitTestCase):
 		self.assertTrue(is_generic_final_consumer("04", "9999999999999"))
 		self.assertFalse(is_generic_final_consumer("04", "1790016919001"))
 		self.assertFalse(is_generic_final_consumer(None, None))
+
+
+class TestCountryTriState(UnitTestCase):
+	"""Restrictions need proven EC; unknown is unknown, never foreign."""
+
+	def test_classify_country(self) -> None:
+		from l10n_ec.ecuador_localization.validation import classify_country
+
+		self.assertEqual(classify_country("EC"), "EC")
+		self.assertEqual(classify_country("ec"), "EC")
+		self.assertEqual(classify_country("CO"), "foreign")
+		self.assertEqual(classify_country(None), "unknown")
+		self.assertEqual(classify_country(""), "unknown")
+
+	def test_unknown_is_not_foreign(self) -> None:
+		from l10n_ec.ecuador_localization.validation import is_foreign_contact
+
+		self.assertFalse(is_foreign_contact(None))
+		self.assertFalse(is_foreign_contact(""))
+		self.assertTrue(is_foreign_contact("CO"))
