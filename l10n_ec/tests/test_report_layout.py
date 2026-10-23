@@ -36,7 +36,7 @@ class TestForm104Layout(UnitTestCase):
 
 	def test_unexpected_nonzero_box_fails_loud(self) -> None:
 		with self.assertRaises(ValueError):
-			build_104_rows({"410": 10.0})
+			build_104_rows({"486": 10.0})
 
 	def test_signo_marks_minus_and_total_boxes(self) -> None:
 		rows = build_104_rows({"424": 5.0, "409": 1.0, "419": 1.0, "429": 1.0, "620": -2.0})

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: l10n_ec 16.0.0\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-23 08:42-0719\n"
+"POT-Creation-Date: 2026-10-23 09:09-0719\n"
 "PO-Revision-Date: 2026-10-20 11:05+0000\n"
 "Last-Translator: Ecuador Localization Contributors\n"
 "Language-Team: Ecuador Localization Contributors\n"
@@ -639,15 +639,15 @@ msgstr "Cada fila de secuencia de emisión SRI requiere un tipo de comprobante."
 msgid "Expiration Date"
 msgstr "Fecha de vencimiento"
 
-#: l10n_ec/sri/form103.py:214
+#: l10n_ec/sri/form103.py:241
 msgid "Exterior concepto '{}' needs an explicit regime (con/sin/paraiso); refusing to place it."
 msgstr "El concepto exterior '{}' necesita régimen explícito (con/sin/paraiso); no se coloca."
 
-#: l10n_ec/sri/form103.py:221
+#: l10n_ec/sri/form103.py:248
 msgid "Exterior pair ('{}', '{}') has no guide-sighted boxes; cannot collect."
 msgstr "El par exterior ('{}', '{}') no tiene casilleros avistados; no se recolecta."
 
-#: l10n_ec/sri/form103.py:245
+#: l10n_ec/sri/form103.py:272
 msgid "Exterior pair ('{}', '{}') has no guide-sighted boxes; cannot present."
 msgstr "El par exterior ('{}', '{}') no tiene casilleros avistados; no se presenta."
 
@@ -665,60 +665,68 @@ msgstr "La factura a Consumidor Final sobre {} necesita identificación; un solo
 msgid "Fiscal Period:"
 msgstr "Período fiscal:"
 
-#: l10n_ec/sri/form103.py:337
+#: l10n_ec/sri/form103.py:366
 msgid "Form 103 casillero '{}' belongs to no rendered concepto."
 msgstr "El casillero '{}' del 103 no pertenece a ningún concepto presentado."
 
-#: l10n_ec/sri/form103.py:282
+#: l10n_ec/sri/form103.py:309
 msgid "Form 103 casillero '{}' carries a negative value '{}'; retentions never subtract."
 msgstr "El casillero '{}' del 103 trae valor negativo '{}'; las retenciones nunca restan."
 
-#: l10n_ec/locale/i18n_markers.py:422 l10n_ec/sri/form103.py:160
+#: l10n_ec/locale/i18n_markers.py:422 l10n_ec/sri/form103.py:187
 msgid "Form 103 collection month '{}' is out of range."
 msgstr "Mes '{}' de recolección Formulario 103 fuera de rango."
 
-#: l10n_ec/locale/i18n_markers.py:421 l10n_ec/sri/form103.py:158
+#: l10n_ec/locale/i18n_markers.py:421 l10n_ec/sri/form103.py:185
 msgid "Form 103 collection year '{}' is out of range."
 msgstr "Año '{}' de recolección Formulario 103 fuera de rango."
 
-#: l10n_ec/sri/form103.py:288
+#: l10n_ec/sri/form103.py:315
 msgid "Form 103 rows need per-concepto detail; totals alone cannot tell sibling conceptos apart."
 msgstr "Las filas del 103 necesitan detalle por concepto; los totales solos no distinguen conceptos hermanos."
 
-#: l10n_ec/locale/i18n_markers.py:448 l10n_ec/sri/form104.py:429
+#: l10n_ec/locale/i18n_markers.py:448 l10n_ec/sri/form104.py:449
 msgid "Form 104 IVA deduction rate '{}' has no retention box."
 msgstr "La tarifa de deducción IVA '{}' del Formulario 104 no tiene casillero de retención."
 
-#: l10n_ec/locale/i18n_markers.py:446 l10n_ec/sri/form104.py:307
-#: l10n_ec/sri/form104.py:322
+#: l10n_ec/locale/i18n_markers.py:446 l10n_ec/sri/form104.py:320
+#: l10n_ec/sri/form104.py:341
 msgid "Form 104 VAT rate code '{}' is not a SRI rate."
 msgstr "El código de tarifa IVA '{}' del Formulario 104 no es una tarifa SRI."
 
-#: l10n_ec/sri/form104_layout.py:288
+#: l10n_ec/sri/form104_layout.py:303
 msgid "Form 104 box '{}' has no SRI label."
 msgstr "El casillero '{}' del Formulario 104 no tiene etiqueta SRI."
 
-#: l10n_ec/sri/form104_layout.py:304
+#: l10n_ec/sri/form104_layout.py:319
 msgid "Form 104 box '{}' is not writable by the collector."
 msgstr "El casillero '{}' del Formulario 104 no lo llena el recolector."
 
-#: l10n_ec/locale/i18n_markers.py:444 l10n_ec/sri/form104.py:269
+#: l10n_ec/locale/i18n_markers.py:444 l10n_ec/sri/form104.py:271
 msgid "Form 104 collection month '{}' is out of range."
 msgstr "Mes '{}' de recolección Formulario 104 fuera de rango."
 
-#: l10n_ec/locale/i18n_markers.py:443 l10n_ec/sri/form104.py:267
+#: l10n_ec/locale/i18n_markers.py:443 l10n_ec/sri/form104.py:269
 msgid "Form 104 collection year '{}' is out of range."
 msgstr "Año '{}' de recolección Formulario 104 fuera de rango."
 
-#: l10n_ec/locale/i18n_markers.py:449 l10n_ec/sri/form104.py:441
+#: l10n_ec/sri/form104.py:311
+msgid "Form 104 rate code '8' needs its tarifa to place (425 fixed 5% vs 410 variable)."
+msgstr "El código 8 del 104 necesita su tarifa para ubicarse (425 fija 5% vs 410 variable)."
+
+#: l10n_ec/sri/form104.py:330
+msgid "Form 104 rate code '8' needs its tarifa to place (540 fixed 5% vs 530 variable)."
+msgstr "El código 8 del 104 necesita su tarifa para ubicarse (540 fija 5% vs 530 variable)."
+
+#: l10n_ec/locale/i18n_markers.py:449 l10n_ec/sri/form104.py:461
 msgid "Form 104 received reference needs a document number."
 msgstr "La referencia recibida del Formulario 104 necesita un número de documento."
 
-#: l10n_ec/locale/i18n_markers.py:447 l10n_ec/sri/form104.py:413
+#: l10n_ec/locale/i18n_markers.py:447 l10n_ec/sri/form104.py:433
 msgid "Form 104 settlement account '{}' is not a received-withholding asset."
 msgstr "La cuenta de liquidación '{}' del Formulario 104 no es un activo de retención recibida."
 
-#: l10n_ec/locale/i18n_markers.py:445 l10n_ec/sri/form104.py:281
+#: l10n_ec/locale/i18n_markers.py:445 l10n_ec/sri/form104.py:283
 msgid "Form 104 tax code '{}' is not a SRI impuesto."
 msgstr "El código de impuesto '{}' del Formulario 104 no es un impuesto SRI."
 
@@ -1722,11 +1730,11 @@ msgstr "La secuencia SRI {} debe estar entre 0 y {}."
 msgid "SRI sustento code '{}' is not in Tabla 5 (01-15)."
 msgstr "El código de sustento SRI '{}' no está en la Tabla 5 (01-15)."
 
-#: l10n_ec/locale/i18n_markers.py:424 l10n_ec/sri/form103.py:170
+#: l10n_ec/locale/i18n_markers.py:424 l10n_ec/sri/form103.py:197
 msgid "SRI voucher '{}' carries no usable authorization date or fiscal period."
 msgstr "El comprobante SRI '{}' no trae fecha de autorización ni período fiscal utilizable."
 
-#: l10n_ec/locale/i18n_markers.py:423 l10n_ec/sri/form103.py:87
+#: l10n_ec/locale/i18n_markers.py:423 l10n_ec/sri/form103.py:109
 msgid "SRI voucher '{}' has no withholding XML to collect."
 msgstr "El comprobante SRI '{}' no tiene XML de retención para recolectar."
 
@@ -1734,11 +1742,11 @@ msgstr "El comprobante SRI '{}' no tiene XML de retención para recolectar."
 msgid "SRI withholding concepto '{}' carries rate '{}' but the official rate is '{}'."
 msgstr "El concepto de retención SRI '{}' trae tarifa '{}' pero la oficial es '{}'."
 
-#: l10n_ec/locale/i18n_markers.py:428 l10n_ec/sri/form103.py:130
+#: l10n_ec/locale/i18n_markers.py:428 l10n_ec/sri/form103.py:157
 msgid "SRI withholding concepto '{}' has no Form 103 casilleros; cannot collect."
 msgstr "El concepto de retención SRI '{}' no tiene casilleros de Formulario 103; no se puede recolectar."
 
-#: l10n_ec/sri/form103.py:316
+#: l10n_ec/sri/form103.py:343
 msgid "SRI withholding concepto '{}' has no Form 103 casilleros; cannot present."
 msgstr "El concepto '{}' no tiene casilleros de 103; no se puede presentar."
 
@@ -1758,7 +1766,7 @@ msgstr "El concepto de retención SRI '{}' es de alcance ATS y no tiene fila de 
 msgid "SRI withholding concepto '{}' is exterior scope and stays out of Form 103 residentes; the exterior section is recorded empty."
 msgstr "El concepto de retención SRI '{}' es de alcance exterior y queda fuera de residentes del Formulario 103; la sección exterior se registra vacía."
 
-#: l10n_ec/sri/form103.py:307
+#: l10n_ec/sri/form103.py:334
 msgid "SRI withholding concepto '{}' is not a known concepto."
 msgstr "El concepto '{}' no es un concepto conocido."
 

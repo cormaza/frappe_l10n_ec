@@ -94,12 +94,14 @@ def _fetch_month_ledger(company: str, year: int, month: int) -> dict:
 					continue
 				code, rate_code = tax_codes_for_template(template)
 				base = item.get("net_amount") or item.get("amount") or 0.0
+				tarifa = _template_rate(template)
 				rows.append(
 					{
 						"code": code,
 						"rate_code": rate_code,
+						"tarifa": tarifa,
 						"base": base,
-						"value": round(base * _template_rate(template) / 100, 2),
+						"value": round(base * tarifa / 100, 2),
 						"is_return": is_return,
 					}
 				)

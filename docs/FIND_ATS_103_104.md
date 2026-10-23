@@ -81,11 +81,16 @@ bench --site demo execute "frappe.get_attr('l10n_ec.ecuador_localization.report.
 - Ventas `401`: bruto `1075.00`, neto `1060.00`, impuesto `159.00` — la
   diferencia bruto/neto es la NC del mes (las devoluciones restan solo
   neto e impuesto, nunca bruto). Total `409`: `1675.00/1660.00/199.00`.
+  Tarifa variable `410`: `400.00/400.00/32.00` (turismo 8% por decreto);
+  tarifa fija 5% `425`: `160.00/160.00/8.00` (cemento). Un 5% decretado
+  sería indistinguible del fijo: cae en 425 (documentado).
 - Compras `500`: `350.00/330.00/49.50`; total `509`: `650.00/630.00/59.50`.
-- Liquidación: factor `563 = 0.64`, crédito aplicable `564 = 37.99`,
-  causado `601 = 161.01`, retenciones recibidas `609 = 150.00` (del JE
-  de liquidación), subtotal `620 = 11.01` → percepción `699 = 11.01`;
-  retención `799/801 = 4.50`; consolidado `859 = 15.51`.
+- Liquidación: factor `563 = 0.98` (fórmula literal de la plantilla:
+  411+412+420+435+415+416+417+418 sobre 419), crédito `564 = 58.07`,
+  causado `601 = 140.93`, retenciones recibidas `609 = 150.00` (del JE
+  de liquidación), subtotal `620 = -9.07` → percepción `699 = -9.07`;
+  retención `799/801 = 4.50` (fórmula `801 = 799-800-802`; 800/802 sin
+  insumo, en cero); consolidado `859 = -4.57` (posición a favor, válida).
 - `ATS`: 8 compras, 0 ventas, 0 exportaciones, 0 anulados (solo lo
   autorizado alimenta el ATS; las ventas demo viajan en `Rejected` por
   el techo autofirmado).

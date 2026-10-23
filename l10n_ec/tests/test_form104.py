@@ -113,8 +113,8 @@ class TestCollect104MonthMix(UnitTestCase):
 	def test_differentiated_5pct_boxes(self) -> None:
 		result = collect_104(
 			_ledger(
-				sales_taxes=[{"code": "2", "rate_code": "8", "base": 400.0, "value": 20.0}],
-				purchase_taxes=[{"code": "2", "rate_code": "8", "base": 600.0, "value": 30.0}],
+				sales_taxes=[{"code": "2", "rate_code": "8", "tarifa": 5.0, "base": 400.0, "value": 20.0}],
+				purchase_taxes=[{"code": "2", "rate_code": "8", "tarifa": 5.0, "base": 600.0, "value": 30.0}],
 				iva_deduction_rows=[],
 				settlements=[],
 				received_refs=[],
@@ -130,8 +130,9 @@ class TestCollect104MonthMix(UnitTestCase):
 		self.assertEqual(result["550"], 600.0)
 		self.assertEqual(result["560"], 30.0)
 		self.assertEqual(result["529"], 30.0)
-		self.assertEqual(result["563"], 0.0)
-		self.assertEqual(result["564"], 0.0)
+		# 563 counts 435 net: (411+412+420+435+415+416+417+418)/419 = 400/400
+		self.assertEqual(result["563"], 1.0)
+		self.assertEqual(result["564"], 30.0)
 
 	def test_zero_amount_deduction_rows_are_skipped(self) -> None:
 		result = collect_104(
@@ -289,3 +290,51 @@ class TestReturnsHitNetOnly(UnitTestCase):
 		self.assertEqual(result["500"], 2000.0)
 		self.assertEqual(result["510"], 1500.0)
 		self.assertEqual(result["520"], 225.0)
+
+
+class TestVariableRateBoxes(UnitTestCase):
+	"""Tarifa-variable (decreed) rates route to 410/420/430 + 530/533/534."""
+
+	def test_holiday_8pct_routes_variable(self) -> None:
+		result = collect_104(
+			_ledger(
+				sales_taxes=[{"code": "2", "rate_code": "8", "tarifa": 8.0, "base": 100.0, "value": 8.0}],
+				purchase_taxes=[],
+				iva_deduction_rows=[],
+				settlements=[],
+				received_refs=[],
+			),
+			2026,
+			3,
+		)
+		self.assertEqual(result["410"], 100.0)
+		self.assertEqual(result["420"], 100.0)
+		self.assertEqual(result["425"], 0.0)
+		self.assertEqual(result["435"], 0.0)
+
+	def test_variable_rate_without_tarifa_fails_loud(self) -> None:
+		with self.assertRaises(SriVoucherError):
+			collect_104(
+				_ledger(sales_taxes=[{"code": "2", "rate_code": "8", "base": 100.0, "value": 8.0}]),
+				2026,
+				3,
+			)
+
+	def test_factor_563_counts_variable_and_5pct_net(self) -> None:
+		result = collect_104(
+			_ledger(
+				sales_taxes=[
+					{"code": "2", "rate_code": "4", "base": 1000.0, "value": 150.0},
+					{"code": "2", "rate_code": "8", "tarifa": 5.0, "base": 200.0, "value": 10.0},
+				],
+				purchase_taxes=[],
+				iva_deduction_rows=[],
+				settlements=[],
+				received_refs=[],
+			),
+			2026,
+			3,
+		)
+		# (411 + 435) / 419 = (1000 + 200) / 1200
+		self.assertEqual(result["563"], 1.0)
+		self.assertEqual(result["419"], 1200.0)

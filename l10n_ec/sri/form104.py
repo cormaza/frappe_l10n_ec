@@ -228,7 +228,9 @@ _BOX_ORDER = (
 	"729",
 	"731",
 	"799",
+	"800",
 	"801",
+	"802",
 	"859",
 )
 
@@ -281,7 +283,7 @@ def _aggregate_vat(rows: list, splitter) -> dict:
 			raise SriVoucherError(_("Form 104 tax code '{}' is not a SRI impuesto.").format(code))
 		base = round(float(row.get("base", 0.0)), 2)
 		value = round(float(row.get("value", 0.0)), 2)
-		gross_box, net_box, tax_box = splitter(rate_code)
+		gross_box, net_box, tax_box = splitter(rate_code, row.get("tarifa"))
 		if row.get("is_return"):
 			# DIMM: VALOR NETO = VALOR BRUTO - N/C. Returns (native
 			# negative amounts) reduce neto and impuesto; bruto is history.
@@ -294,12 +296,23 @@ def _aggregate_vat(rows: list, splitter) -> dict:
 	return boxes
 
 
-def _sales_boxes(rate_code: str) -> tuple:
-	"""Map a VAT rate code to its ventas ``(gross, net, tax)`` boxes."""
+def _sales_boxes(rate_code: str, tarifa=None) -> tuple:
+	"""Map a VAT rate code to its ventas ``(gross, net, tax)`` boxes.
+
+	Rate code ``8`` (diferenciado) splits by tarifa: standing 5% feeds the
+	fixed 425 row, decreed rates (holiday 8%, ...) feed the variable 410
+	row (template + guía). Without tarifa the row is unplaceable: fail loud.
+	"""
 	if rate_code in NONZERO_RATE_CODES:
 		return ("401", "411", "421")
 	if rate_code == "8":
-		return ("425", "435", "445")
+		if tarifa is None:
+			raise SriVoucherError(
+				_("Form 104 rate code '8' needs its tarifa to place (425 fixed 5% vs 410 variable).")
+			)
+		if round(float(tarifa), 2) == 5.0:
+			return ("425", "435", "445")
+		return ("410", "420", "430")
 	if rate_code == "0":
 		return ("403", "413", "421")
 	if rate_code in ("6", "7"):
@@ -307,12 +320,18 @@ def _sales_boxes(rate_code: str) -> tuple:
 	raise SriVoucherError(_("Form 104 VAT rate code '{}' is not a SRI rate.").format(rate_code))
 
 
-def _purchase_boxes(rate_code: str) -> tuple:
+def _purchase_boxes(rate_code: str, tarifa=None) -> tuple:
 	"""Map a VAT rate code to its compras ``(gross, net, tax)`` boxes."""
 	if rate_code in NONZERO_RATE_CODES:
 		return ("500", "510", "520")
 	if rate_code == "8":
-		return ("540", "550", "560")
+		if tarifa is None:
+			raise SriVoucherError(
+				_("Form 104 rate code '8' needs its tarifa to place (540 fixed 5% vs 530 variable).")
+			)
+		if round(float(tarifa), 2) == 5.0:
+			return ("540", "550", "560")
+		return ("530", "533", "534")
 	if rate_code == "0":
 		return ("507", "517", "520")
 	if rate_code == "6":
@@ -357,7 +376,8 @@ def _settle(sales: dict, purchases: dict, ledger: dict) -> dict:
 	total_net = boxes["419"]
 	if total_net:
 		boxes["563"] = (
-			sum(sales.get(box, 0.0) for box in ("411", "412", "420", "415", "416", "417", "418")) / total_net
+			sum(sales.get(box, 0.0) for box in ("411", "412", "420", "435", "415", "416", "417", "418"))
+			/ total_net
 		)
 	else:
 		boxes["563"] = 1.0
