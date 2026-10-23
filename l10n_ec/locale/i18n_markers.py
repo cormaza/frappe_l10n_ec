@@ -46,6 +46,10 @@ CUSTOM_FIELD_STRINGS = [
 	_("SRI Invoicing"),
 	_("Ecuadorian SRI data: withholdings, received slips and emission point."),
 	_("Tax details"),
+	_("SRI Assumed Withholding"),
+	_(
+		"The agent absorbs the withholding: the payable stays intact and the withheld total posts as non-deductible expense (520230). Emission and reports are unchanged."
+	),
 	_("SRI Received Withholding"),
 	_(
 		"Customer-side batch: one slip covering many invoices. When linked, its allocations settle on submit instead of per-invoice fields."

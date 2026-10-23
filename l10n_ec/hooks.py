@@ -84,6 +84,8 @@ doc_events = {
 		"validate": "l10n_ec.ecuador_localization.invoice_hooks.validate_merge_identity",
 	},
 	"Purchase Invoice": {
+		"on_submit": "l10n_ec.ecuador_localization.assumed_withholding.settle_assumed_withholding",
+		"on_cancel": "l10n_ec.ecuador_localization.assumed_withholding.cancel_assumed_withholding",
 		"validate": [
 			"l10n_ec.ecuador_localization.validation.enforce_iva_deduction_row",
 			"l10n_ec.ecuador_localization.validation.validate_sustento_code",

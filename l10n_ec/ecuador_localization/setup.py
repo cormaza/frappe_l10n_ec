@@ -91,6 +91,19 @@ def after_migrate() -> None:
 	create_sri_custom_fields()
 	setup_collapsible_tax_sections()
 	setup_tax_grid_widths()
+	_sync_existing_charts()
+
+
+def _sync_existing_charts() -> None:
+	"""Additive chart sync for pre-existing EC companies (bench only)."""
+	try:
+		import frappe
+	except ImportError:  # pragma: no cover
+		return
+	from l10n_ec.ecuador_localization.chart_setup import sync_missing_chart_accounts
+
+	for name in frappe.get_all("Company", pluck="name"):
+		sync_missing_chart_accounts(name)
 
 
 def before_uninstall() -> None:

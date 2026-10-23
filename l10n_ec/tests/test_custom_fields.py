@@ -28,6 +28,7 @@ EXPECTED_FIELDS = {
 		"sri_is_liquidacion",
 		"sri_is_supplier_debit_note",
 		"sri_iva_concepto",
+		"sri_assumed_withholding",
 	},
 	"Sales Invoice": {
 		"sri_section",

@@ -232,6 +232,14 @@ CUSTOM_FIELDS = {
 			"description": "SRI authorization number printed on the supplier invoice; feeds ATS compras.",
 		},
 		{
+			"fieldname": "sri_assumed_withholding",
+			"fieldtype": "Check",
+			"insert_after": "taxes_and_charges",
+			"label": "SRI Assumed Withholding",
+			"default": "0",
+			"description": "The agent absorbs the withholding: the payable stays intact and the withheld total posts as non-deductible expense (520230). Emission and reports are unchanged.",
+		},
+		{
 			"fieldname": "sri_iva_concepto",
 			"fieldtype": "Select",
 			"insert_after": "taxes_and_charges",

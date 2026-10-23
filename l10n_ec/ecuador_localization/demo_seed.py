@@ -369,6 +369,22 @@ DEMO_EXTRA_PURCHASES = [
 		"payment": 108.50,
 	},
 	{
+		"bill_no": "001-001-000000019",
+		"sri_sustento_code": "06",
+		"supplier": "Demo Supplier RUC",
+		"apply_tds": 1,
+		"sri_assumed_withholding": 1,
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET",
+				"qty": 10,
+				"rate": 10.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
+			}
+		],
+	},
+	{
 		"bill_no": "001-001-000000013",
 		"sri_sustento_code": "06",
 		"supplier": "Demo Supplier RUC",
@@ -1149,6 +1165,7 @@ def seed_demo() -> dict:
 			"sri_is_liquidacion",
 			"sri_is_supplier_debit_note",
 			"sri_sustento_code",
+			"sri_assumed_withholding",
 		):
 			if spec.get(key) is not None:
 				doc[key] = spec[key]

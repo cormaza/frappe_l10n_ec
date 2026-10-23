@@ -47,6 +47,67 @@ def find_account_path(tree: dict, account_number: str, path=()) -> tuple | None:
 	return None
 
 
+def flatten_chart_accounts(tree: dict, parent_number: str | None = None) -> list:
+	"""Flatten the template tree into ``(number, title, parent_number)`` rows.
+
+	Pure: every numbered node appears exactly once, so additive syncs can
+	diff by number without touching existing accounts.
+	"""
+	rows = []
+	for title, child in (tree or {}).items():
+		if not isinstance(child, dict) or "account_number" not in child:
+			continue
+		number = child["account_number"]
+		rows.append((number, title, parent_number))
+		rows.extend(
+			flatten_chart_accounts(
+				{key: value for key, value in child.items() if isinstance(value, dict)},
+				number,
+			)
+		)
+	return rows
+
+
+def sync_missing_chart_accounts(company: str) -> list:
+	"""Create template accounts absent from an existing company chart.
+
+	Additive only: never renames, moves, or deletes. New leaves arrive as
+	groups-disabled ledgers under their template parent, so features that
+	add accounts (e.g. assumed withholdings) work on companies created
+	before the account existed. Returns created account names.
+	"""
+	if frappe is None:  # pragma: no cover
+		raise RuntimeError("frappe is required to sync the chart of accounts.")
+	if (
+		frappe.db.get_value("Country", frappe.db.get_value("Company", company, "country"), "code") or ""
+	).upper() != "EC":
+		return []
+	created = []
+	for number, title, parent_number in flatten_chart_accounts(get_ec_chart_tree()):
+		if frappe.db.exists("Account", {"company": company, "account_number": number}):
+			continue
+		parent = (
+			frappe.db.get_value("Account", {"company": company, "account_number": parent_number}, "name")
+			if parent_number
+			else None
+		)
+		if parent_number and not parent:
+			continue
+		doc = frappe.get_doc(
+			{
+				"doctype": "Account",
+				"account_name": title,
+				"account_number": number,
+				"company": company,
+				"parent_account": parent,
+				"is_group": 0,
+			}
+		)
+		doc.insert(ignore_permissions=True)
+		created.append(doc.name)
+	return created
+
+
 def install_ecuadorian_chart(company: str) -> None:
 	"""Install the NIIF chart into a company that has no accounts yet."""
 	if frappe is None:  # pragma: no cover
@@ -85,6 +146,7 @@ def setup_company_chart(doc, method=None) -> None:
 	if (frappe.db.get_value("Country", doc.get("country"), "code") or "").upper() != "EC":
 		return
 	if frappe.db.count("Account", {"company": doc.name}):
+		sync_missing_chart_accounts(doc.name)
 		return
 	install_ecuadorian_chart(doc.name)
 	if setup_ecuadorian_taxes is not None:

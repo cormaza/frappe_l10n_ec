@@ -949,6 +949,9 @@
     },
     "OTROS GASTOS": {
      "account_number": "520228"
+    },
+    "GASTOS NO DEDUCIBLES - RETENCIONES ASUMIDAS": {
+     "account_number": "520230"
     }
    },
    "GASTOS FINANCIEROS": {

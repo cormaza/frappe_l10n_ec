@@ -74,6 +74,17 @@ bench --site demo execute "frappe.get_attr('l10n_ec.ecuador_localization.report.
   y `ACC-SINV-2026-00004` (IR 8). Sus JEs alimentan `609` y `received_refs`
   del 104; al ATS no entra sección de retenciones (el ATS informa
   compras/ventas, no slips).
+- **Asumidas (lado proveedor, nosotros absorbemos):** precio pactado neto
+  con el proveedor: la retención se emite igual (regla fiscal, 07/103 sin
+  cambios), pero el por pagar queda intacto. Flag
+  `sri_assumed_withholding` en la Purchase Invoice: al enviar, un JE
+  compensa Dr `520230 - GASTOS NO DEDUCIBLES - RETENCIONES ASUMIDAS` /
+  Cr por pagar por el total retenido; al cancelar se reversa. Cubre
+  facturas y liquidaciones de compras por igual (mismas filas nativas).
+  Demo: PI `001-001-000000019` (113.00 intactos, IR 2.00 a la 520230).
+  La cuenta 520230 llega a empresas existentes vía sync aditivo del plan
+  en `after_migrate` (nunca renombra/mueve/borra). El display de saldos
+  se refresca en Payment Reconciliation, como en el flujo recibido.
 
 ## 3) Formulario 104 — Declaración de IVA
 

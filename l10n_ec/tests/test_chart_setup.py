@@ -44,3 +44,23 @@ class TestChartSetup(UnitTestCase):
 		tree = get_ec_chart_tree()
 		for number in (RECEIVABLE_ACCOUNT_NUMBER, PAYABLE_ACCOUNT_NUMBER):
 			self.assertIsNotNone(find_account_path(tree, number))
+
+
+class TestFlattenChartAccounts(UnitTestCase):
+	"""Additive chart sync plans from the template tree (pure)."""
+
+	def test_flatten_lists_every_numbered_node_once(self) -> None:
+		from l10n_ec.ecuador_localization.chart_setup import flatten_chart_accounts, get_ec_chart_tree
+
+		flat = flatten_chart_accounts(get_ec_chart_tree())
+		numbers = [number for number, _title, _parent in flat]
+		self.assertIn("520230", numbers)
+		self.assertIn("2010708", numbers)
+		self.assertEqual(len(numbers), len(set(numbers)))
+
+	def test_new_account_reports_parent_number(self) -> None:
+		from l10n_ec.ecuador_localization.chart_setup import flatten_chart_accounts, get_ec_chart_tree
+
+		parents = {number: parent for number, _title, parent in flatten_chart_accounts(get_ec_chart_tree())}
+		self.assertEqual(parents["520230"], "5202")
+		self.assertEqual(parents["520228"], "5202")
