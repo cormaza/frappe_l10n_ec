@@ -189,7 +189,7 @@ class TestDemoSeedExtension(UnitTestCase):
 		self.assertIn("001-001-000000016", bills)
 		self.assertIn(None, bills)
 		by_bill = {spec.get("bill_no"): spec for spec in DEMO_EXTRA_PURCHASES}
-		self.assertEqual(by_bill["001-001-000000012"]["sri_iva_concepto"], "1")
+		self.assertEqual(by_bill["001-001-000000012"]["sri_iva_concepto"], "1 - Bienes 30%")
 		self.assertEqual(by_bill["001-001-000000016"]["return_against_bill"], "001-001-000000011")
 		liquidations = [spec for spec in DEMO_EXTRA_PURCHASES if spec.get("sri_is_liquidacion")]
 		self.assertEqual(len(liquidations), 1)
@@ -197,7 +197,7 @@ class TestDemoSeedExtension(UnitTestCase):
 
 	def test_extra_sales_cover_received_cycle(self) -> None:
 		conceptos = [(spec.get("sri_ir_concepto"), spec.get("sri_iva_concepto")) for spec in DEMO_EXTRA_SALES]
-		self.assertIn(("303", "3"), conceptos)
+		self.assertIn(("303", "3 - Honorarios 100%"), conceptos)
 		self.assertEqual(DEMO_EXTRA_SALES[0]["payment"], 900.0)
 		self.assertEqual(DEMO_EXTRA_SALES[0]["sri_received_retencion_number"], "001-001-000000101")
 
@@ -212,8 +212,8 @@ class TestDemoSeedExtension(UnitTestCase):
 	def test_extra_purchases_cover_debit_and_sustento(self) -> None:
 		by_bill = {spec.get("bill_no"): spec for spec in DEMO_EXTRA_PURCHASES}
 		self.assertTrue(by_bill["001-001-000000017"]["sri_is_supplier_debit_note"])
-		self.assertEqual(by_bill["001-001-000000011"]["sri_sustento_code"], "06")
-		self.assertEqual(by_bill["001-001-000000014"]["sri_sustento_code"], "02")
+		self.assertEqual(by_bill["001-001-000000011"]["sri_sustento_code"], "06 - Inventario con crédito")
+		self.assertEqual(by_bill["001-001-000000014"]["sri_sustento_code"], "02 - Sin crédito tributario")
 		self.assertEqual(by_bill["001-001-000000018"]["supplier"], "Demo Rustic Seller")
 		ice = by_bill["001-001-000000015"]
 		self.assertEqual(ice["items"][0]["item_tax_template"], "Ecuador ICE 5% - Purchases - DE")

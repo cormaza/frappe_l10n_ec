@@ -9,6 +9,8 @@ the invoice IVA taxes through the caller-chosen concepto. Purchase-side
 emission (`voucher_flow`) is untouched.
 """
 
+from l10n_ec.sri.codes import sri_code
+
 try:
 	import frappe
 except ImportError:  # pragma: no cover
@@ -132,7 +134,7 @@ def build_settlement_for_si(si_doc, resolve_asset=None, cost_center_resolver=Non
 			raise ValueError(_("IR withholding needs an IR concepto, got '{}'.").format(ir_concepto))
 		ir_amount = round(float(si_doc.get("net_total") or 0) * rate / 100, 2)
 	iva_amount = 0.0
-	iva_concepto = (si_doc.get("sri_iva_concepto") or "").strip()
+	iva_concepto = sri_code(si_doc.get("sri_iva_concepto"))
 	if iva_concepto:
 		mapped = [map_line_taxes(line) for line in base_lines(si_doc)]
 		synthesized = synthesize_iva_row(mapped, iva_concepto)

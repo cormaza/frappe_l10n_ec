@@ -337,7 +337,7 @@ DEMO_SUPPLIER_AUTH = "1234567890"
 DEMO_EXTRA_PURCHASES = [
 	{
 		"bill_no": "001-001-000000011",
-		"sri_sustento_code": "06",
+		"sri_sustento_code": "06 - Inventario con crédito",
 		"supplier": "Demo Supplier RUC",
 		"apply_tds": 1,
 		"items": [
@@ -353,10 +353,10 @@ DEMO_EXTRA_PURCHASES = [
 	},
 	{
 		"bill_no": "001-001-000000012",
-		"sri_sustento_code": "06",
+		"sri_sustento_code": "06 - Inventario con crédito",
 		"supplier": "Demo Supplier RUC",
 		"apply_tds": 1,
-		"sri_iva_concepto": "1",
+		"sri_iva_concepto": "1 - Bienes 30%",
 		"items": [
 			{
 				"item_code": "DEMO-WIDGET",
@@ -370,7 +370,7 @@ DEMO_EXTRA_PURCHASES = [
 	},
 	{
 		"bill_no": "001-001-000000019",
-		"sri_sustento_code": "06",
+		"sri_sustento_code": "06 - Inventario con crédito",
 		"supplier": "Demo Supplier RUC",
 		"apply_tds": 1,
 		"sri_assumed_withholding": 1,
@@ -386,7 +386,7 @@ DEMO_EXTRA_PURCHASES = [
 	},
 	{
 		"bill_no": "001-001-000000013",
-		"sri_sustento_code": "06",
+		"sri_sustento_code": "06 - Inventario con crédito",
 		"supplier": "Demo Supplier RUC",
 		"items": [
 			{
@@ -400,7 +400,7 @@ DEMO_EXTRA_PURCHASES = [
 	},
 	{
 		"bill_no": "001-001-000000014",
-		"sri_sustento_code": "02",
+		"sri_sustento_code": "02 - Sin crédito tributario",
 		"supplier": "Demo Supplier RUC",
 		"items": [
 			{
@@ -415,7 +415,7 @@ DEMO_EXTRA_PURCHASES = [
 	{
 		"bill_no": "001-001-000000018",
 		"supplier": "Demo Rustic Seller",
-		"sri_sustento_code": "06",
+		"sri_sustento_code": "06 - Inventario con crédito",
 		"items": [
 			{
 				"item_code": "DEMO-WIDGET",
@@ -428,7 +428,7 @@ DEMO_EXTRA_PURCHASES = [
 	},
 	{
 		"bill_no": "001-001-000000015",
-		"sri_sustento_code": "06",
+		"sri_sustento_code": "06 - Inventario con crédito",
 		"supplier": "Demo Supplier RUC",
 		"items": [
 			{
@@ -442,7 +442,7 @@ DEMO_EXTRA_PURCHASES = [
 	},
 	{
 		"bill_no": "001-001-000000016",
-		"sri_sustento_code": "06",
+		"sri_sustento_code": "06 - Inventario con crédito",
 		"supplier": "Demo Supplier RUC",
 		"is_return": 1,
 		"return_against_bill": "001-001-000000011",
@@ -490,7 +490,7 @@ DEMO_EXTRA_SALES = [
 	{
 		"customer": "Demo Customer RUC",
 		"sri_ir_concepto": "303",
-		"sri_iva_concepto": "3",
+		"sri_iva_concepto": "3 - Honorarios 100%",
 		"sri_received_retencion_number": "001-001-000000101",
 		"sri_received_retencion_auth": "2110202607112345678901234567890123456789012",
 		"sri_received_retencion_date": DEMO_TODAY,
@@ -912,7 +912,7 @@ def _seed_demo_exterior(company: str, company_address: str) -> list:
 				"bill_date": DEMO_TODAY,
 				"posting_date": DEMO_TODAY,
 				"update_stock": 0,
-				"sri_sustento_code": "02",
+				"sri_sustento_code": "02 - Sin crédito tributario",
 				"sri_supplier_auth_number": f"99000000{bill_no[-2:]}",
 				"items": [{"item_code": "DEMO-WIDGET", "qty": 1, "rate": base}],
 			}

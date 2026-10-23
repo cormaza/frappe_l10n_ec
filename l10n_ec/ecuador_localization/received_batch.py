@@ -11,6 +11,8 @@ Pure core (`check_allocation`) runs on plain data (Ring 1); bench wrappers
 be capped by each invoice's own maxima — never trusted from input alone.
 """
 
+from l10n_ec.sri.codes import sri_code
+
 try:
 	from frappe import _
 except ImportError:  # pragma: no cover
@@ -119,7 +121,7 @@ def _invoice_context(si_name: str) -> dict | None:
 		"net_total": si.get("net_total"),
 		"iva_paid": iva_paid,
 		"ir_concepto": si.get("sri_ir_concepto"),
-		"iva_concepto": si.get("sri_iva_concepto"),
+		"iva_concepto": sri_code(si.get("sri_iva_concepto")),
 		"settled": _existing_settlement(si_name) is not None,
 		"referenced": bool(si.get("sri_received_retencion_number")),
 	}

@@ -14,6 +14,8 @@ fiscally existed, unlike never-authorized cancels which stay excluded.
 
 import re
 
+from l10n_ec.sri.codes import sri_code
+
 try:
 	import frappe
 except ImportError:  # pragma: no cover
@@ -59,7 +61,7 @@ def purchase_row(pi: dict, supplier: dict, voucher: dict | None, doc_code: str =
 		"supplier_id_type": supplier.get("sri_identification_type", ""),
 		"supplier_id": supplier.get("tax_id", ""),
 		"supplier_name": supplier.get("supplier_name", ""),
-		"sustento_code": pi.get("sri_sustento_code", "02"),
+		"sustento_code": sri_code(pi.get("sri_sustento_code")) or "02",
 		"doc_code": doc_code,
 		"sri_number": number,
 		"issue_date": pi.get("bill_date", ""),
@@ -292,7 +294,7 @@ def read_month(company: str, year: int, month: int) -> dict:
 					"posting_date": _iso_to_sri(pi.get("posting_date")),
 					"grand_total": pi.get("grand_total"),
 					"sri_supplier_auth_number": pi.get("sri_supplier_auth_number") or "",
-					"sri_sustento_code": pi.get("sri_sustento_code") or "02",
+					"sri_sustento_code": sri_code(pi.get("sri_sustento_code")) or "02",
 					"taxes": [
 						{
 							"code": tax["code"],

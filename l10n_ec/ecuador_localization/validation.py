@@ -6,6 +6,7 @@ ISO code (`EC`), resolved from the contact address by the caller, so this
 module stays free of `frappe` imports and testable in Ring 1.
 """
 
+from l10n_ec.sri.codes import sri_code
 from l10n_ec.sri.identification import (
 	FINAL_CONSUMER_ID,
 	validate_identification,
@@ -259,7 +260,7 @@ def validate_sustento_code(doc, method=None) -> None:
 	except ImportError:
 		_frappe = None  # type: ignore[assignment]
 
-	code = (doc.get("sri_sustento_code") or "").strip() or "02"
+	code = sri_code(doc.get("sri_sustento_code")) or "02"
 	tp = (
 		(doc.get("sri_identification_type") or "")
 		or (
@@ -404,7 +405,7 @@ def enforce_iva_deduction_row(doc, method=None, resolve_account=None, company_co
 	code = company_code if company_code is not None else company_country_code(doc.get("company"))
 	if not is_ecuadorian_contact(code):
 		return
-	concepto = (doc.get("sri_iva_concepto") or "").strip()
+	concepto = sri_code(doc.get("sri_iva_concepto"))
 	if not concepto:
 		return
 	from l10n_ec.sri.withholding_concepts import resolve_concepto

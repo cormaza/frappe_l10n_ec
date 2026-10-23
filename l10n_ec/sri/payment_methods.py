@@ -33,7 +33,9 @@ def resolve_payment_method(code: str) -> str:
 
 	Raises `SriVoucherError` for unknown codes instead of guessing.
 	"""
+	from l10n_ec.sri.codes import sri_code
+
 	try:
-		return TABLA_24[code]
+		return TABLA_24[sri_code(code)]
 	except KeyError:
 		raise SriVoucherError(_("Unknown SRI payment method code '{}'.").format(code)) from None

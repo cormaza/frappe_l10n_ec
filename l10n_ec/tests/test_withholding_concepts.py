@@ -143,7 +143,7 @@ class TestWithholdingConcepts(UnitTestCase):
 				self.assertEqual(CONCEPTS[code][3], "2026-03-01")
 
 	def test_unknown_code_raises(self) -> None:
-		for bad in ("999", "303B", "", "1 ", "344C"):
+		for bad in ("999", "303B", "", "9X", "344C"):
 			with self.subTest(code=bad):
 				with self.assertRaises(SriVoucherError):
 					resolve_concepto(bad)

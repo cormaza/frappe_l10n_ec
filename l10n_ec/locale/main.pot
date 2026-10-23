@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecuador Localization VERSION\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-23 16:26-0641\n"
-"PO-Revision-Date: 2026-10-23 16:26-0641\n"
+"POT-Creation-Date: 2026-10-23 17:02-0641\n"
+"PO-Revision-Date: 2026-10-23 17:02-0641\n"
 "Last-Translator: developers@example.com\n"
 "Language-Team: developers@example.com\n"
 "MIME-Version: 1.0\n"
@@ -51,12 +51,12 @@ msgstr ""
 msgid "<span class=\"h4\">SRI Reports (Ecuador)</span>"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/ats_reader.py:41
-#: l10n_ec/ecuador_localization/validation.py:275
+#: l10n_ec/ecuador_localization/ats_reader.py:43
+#: l10n_ec/ecuador_localization/validation.py:276
 msgid "A purchase cannot be a return and a liquidacion at once."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:136
+#: l10n_ec/ecuador_localization/received_batch.py:138
 msgid "A received batch needs at least one allocation."
 msgstr ""
 
@@ -192,16 +192,16 @@ msgstr ""
 msgid "Address:"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:46
+#: l10n_ec/ecuador_localization/received_batch.py:48
 msgid "Allocation for '{}' carries negative values."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:48
+#: l10n_ec/ecuador_localization/received_batch.py:50
 msgid "Allocation for '{}' withholds nothing."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:42
-#: l10n_ec/ecuador_localization/received_batch.py:142
+#: l10n_ec/ecuador_localization/received_batch.py:44
+#: l10n_ec/ecuador_localization/received_batch.py:144
 msgid "Allocation references unknown invoice '{}'."
 msgstr ""
 
@@ -210,19 +210,19 @@ msgstr ""
 msgid "Allocations"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:91
+#: l10n_ec/ecuador_localization/received_batch.py:93
 msgid "Allocations mix companies {}; one slip, one company."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:89
+#: l10n_ec/ecuador_localization/received_batch.py:91
 msgid "Allocations mix customers {}; one slip, one customer."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:166
+#: l10n_ec/ecuador_localization/received_batch.py:168
 msgid "Allocations must belong to the batch company '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:160
+#: l10n_ec/ecuador_localization/received_batch.py:162
 msgid "Allocations must belong to the batch customer '{}'."
 msgstr ""
 
@@ -723,7 +723,7 @@ msgstr ""
 msgid "Exterior regime for withholding vouchers (con/sin convenio, paraíso fiscal); empty when not exterior. Drives 103 exterior boxes."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/validation.py:179
+#: l10n_ec/ecuador_localization/validation.py:180
 msgid "Factura to Consumidor Final above {} needs buyer identification; a single voucher cannot carry it."
 msgstr ""
 
@@ -834,12 +834,12 @@ msgstr ""
 msgid "IR Value"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:61
-#: l10n_ec/ecuador_localization/received_settlement.py:132
+#: l10n_ec/ecuador_localization/received_batch.py:63
+#: l10n_ec/ecuador_localization/received_settlement.py:134
 msgid "IR withholding needs an IR concepto, got '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:65
+#: l10n_ec/ecuador_localization/received_batch.py:67
 msgid "IR {} on '{}' exceeds its base {} x {}%."
 msgstr ""
 
@@ -852,12 +852,12 @@ msgstr ""
 msgid "IVA withholding categories cannot be assigned to suppliers: ERPNext cannot compute tax-on-tax withholdings. Purchase-side IVA is computed at emission; sales-side IVA settles via the received-withholding entry."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/validation.py:414
+#: l10n_ec/ecuador_localization/validation.py:415
 #: l10n_ec/ecuador_localization/voucher_flow.py:1089
 msgid "IVA withholding needs an IVA concepto, got '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:75
+#: l10n_ec/ecuador_localization/received_batch.py:77
 msgid "IVA {} on '{}' exceeds its paid IVA {}."
 msgstr ""
 
@@ -937,9 +937,9 @@ msgstr ""
 msgid "Invalid Ecuadorian document number '{}'. Expected format '001-001-000000001'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/validation.py:80
-#: l10n_ec/ecuador_localization/validation.py:112
-#: l10n_ec/ecuador_localization/validation.py:137
+#: l10n_ec/ecuador_localization/validation.py:81
+#: l10n_ec/ecuador_localization/validation.py:113
+#: l10n_ec/ecuador_localization/validation.py:138
 msgid "Invalid tax identification '{}' for type '{}'."
 msgstr ""
 
@@ -951,23 +951,23 @@ msgstr ""
 msgid "Inversiones entre instituciones del sistema financiero y entidades economía popular y solidaria"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:54
+#: l10n_ec/ecuador_localization/received_batch.py:56
 msgid "Invoice '{}' already carries another slip's references."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:51
+#: l10n_ec/ecuador_localization/received_batch.py:53
 msgid "Invoice '{}' already has a settlement entry; refusing a second slip."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_settlement.py:254
+#: l10n_ec/ecuador_localization/received_settlement.py:256
 msgid "Invoice '{}' already settled; its slip references stay."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:58
+#: l10n_ec/ecuador_localization/received_batch.py:60
 msgid "Invoice '{}' needs an IR concepto before withholding IR."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_batch.py:72
+#: l10n_ec/ecuador_localization/received_batch.py:74
 msgid "Invoice '{}' needs an IVA concepto before withholding IVA."
 msgstr ""
 
@@ -1028,11 +1028,11 @@ msgstr ""
 msgid "Minerales"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/validation.py:433
+#: l10n_ec/ecuador_localization/validation.py:434
 msgid "Missing IVA withholding account {} for company '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_settlement.py:159
+#: l10n_ec/ecuador_localization/received_settlement.py:161
 msgid "Missing TDS credit accounts for company '{}'."
 msgstr ""
 
@@ -1208,7 +1208,7 @@ msgstr ""
 msgid "POS sale '{}' must emit from a POS-only point, found '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/validation.py:202
+#: l10n_ec/ecuador_localization/validation.py:203
 msgid "POS ticket to Consumidor Final above {} is not allowed; register the buyer identification."
 msgstr ""
 
@@ -1787,7 +1787,7 @@ msgstr ""
 msgid "SRI IVA Concepto"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/validation.py:423
+#: l10n_ec/ecuador_localization/validation.py:424
 msgid "SRI IVA concepto '{}' is set but the invoice has no IVA taxes."
 msgstr ""
 
@@ -1795,7 +1795,7 @@ msgstr ""
 msgid "SRI IVA withholding concepto '{}' has no ATS bucket for rate '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/validation.py:426
+#: l10n_ec/ecuador_localization/validation.py:427
 msgid "SRI IVA withholding needs exactly one IVA tax row, found {}."
 msgstr ""
 
@@ -1885,7 +1885,7 @@ msgstr ""
 msgid "SRI environment must be '1' (test) or '2' (production), got '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/received_settlement.py:53
+#: l10n_ec/ecuador_localization/received_settlement.py:55
 msgid "SRI received withholdings {}"
 msgstr ""
 
@@ -1893,7 +1893,7 @@ msgstr ""
 msgid "SRI sequence {} must be between 0 and {}."
 msgstr ""
 
-#: l10n_ec/sri/sustentos.py:40
+#: l10n_ec/sri/sustentos.py:42
 msgid "SRI sustento code '{}' is not in Tabla 5 (01-15)."
 msgstr ""
 
@@ -1917,11 +1917,11 @@ msgstr ""
 msgid "SRI withholding concepto '{}' has no Form 103 casilleros; cannot present."
 msgstr ""
 
-#: l10n_ec/sri/withholding_concepts.py:1233
+#: l10n_ec/sri/withholding_concepts.py:1236
 msgid "SRI withholding concepto '{}' has no official rate for the current vigencia."
 msgstr ""
 
-#: l10n_ec/sri/withholding_concepts.py:1252
+#: l10n_ec/sri/withholding_concepts.py:1255
 msgid "SRI withholding concepto '{}' is ATS scope and cannot be used as an XML codigoRetencion."
 msgstr ""
 
@@ -1957,7 +1957,7 @@ msgstr ""
 msgid "Sales Invoice '{}' is not consolidated; emit it as one voucher."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/validation.py:156
+#: l10n_ec/ecuador_localization/validation.py:157
 msgid "Sales to Consumidor Final above {} are not allowed; register the buyer identification."
 msgstr ""
 
@@ -2114,7 +2114,7 @@ msgstr ""
 msgid "Tax details"
 msgstr ""
 
-#: l10n_ec/ecuador_localization/validation.py:130
+#: l10n_ec/ecuador_localization/validation.py:131
 msgid "Tax identification '{}' failed the checksum and the SRI registry could not be reached to confirm it; check the connection or set 'Skip SRI ID Validation' on the contact with the number verified at the SRI portal."
 msgstr ""
 
@@ -2199,7 +2199,7 @@ msgstr ""
 msgid "Unknown SRI document code '{}'."
 msgstr ""
 
-#: l10n_ec/sri/payment_methods.py:39
+#: l10n_ec/sri/payment_methods.py:41
 msgid "Unknown SRI payment method code '{}'."
 msgstr ""
 
@@ -2207,8 +2207,8 @@ msgstr ""
 msgid "Unknown SRI service type: {}"
 msgstr ""
 
-#: l10n_ec/sri/withholding_concepts.py:1207
-#: l10n_ec/sri/withholding_concepts.py:1220
+#: l10n_ec/sri/withholding_concepts.py:1210
+#: l10n_ec/sri/withholding_concepts.py:1223
 msgid "Unknown SRI withholding concepto code '{}'."
 msgstr ""
 
@@ -2332,11 +2332,11 @@ msgid "Withholding categories cannot be assigned to customers: received withhold
 msgstr ""
 
 #: l10n_ec/ecuador_localization/voucher_flow.py:803
-#: l10n_ec/sri/withholding_concepts.py:1248
+#: l10n_ec/sri/withholding_concepts.py:1251
 msgid "Withholding category '{}' has no SRI code mapping."
 msgstr ""
 
-#: l10n_ec/sri/withholding_concepts.py:1258
+#: l10n_ec/sri/withholding_concepts.py:1261
 msgid "Withholding category '{}' maps impuesto '{}' but concepto '{}' is impuesto '{}'."
 msgstr ""
 

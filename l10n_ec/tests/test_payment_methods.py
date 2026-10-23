@@ -78,7 +78,7 @@ class TestPaymentMethods(UnitTestCase):
 				self.assertEqual(resolve_payment_method(code), description)
 
 	def test_unknown_code_raises(self) -> None:
-		for bad in ("00", "02", "99", "", "01 "):
+		for bad in ("00", "02", "99", "", "99 "):
 			with self.subTest(code=bad):
 				with self.assertRaises(SriVoucherError):
 					resolve_payment_method(bad)
@@ -126,10 +126,13 @@ class TestPaymentMethodCustomField(UnitTestCase):
 		field = fields["sri_payment_code"]
 		self.assertEqual(field["label"], "SRI Payment Code")
 		self.assertEqual(field["fieldtype"], "Select")
-		self.assertEqual(field["default"], "01")
-		self.assertEqual(field["options"], "01\n15\n16\n17\n18\n19\n20\n21")
+		self.assertEqual(field["default"], "01 - Sin utilización del sistema financiero")
+		self.assertEqual({opt.split(" - ", 1)[0] for opt in field["options"].split("\n")}, set(TABLA_24))
 		self.assertIn("Phase 9A", field["description"])
 
 	def test_select_covers_all_tabla_24_codes(self) -> None:
 		field = next(f for f in CUSTOM_FIELDS["Mode of Payment"] if f["fieldname"] == "sri_payment_code")
-		self.assertEqual(set(field["options"].split("\n")), set(TABLA_24))
+		options = field["options"].split("\n")
+		self.assertEqual({opt.split(" - ", 1)[0] for opt in options}, set(TABLA_24))
+		for opt in options:
+			self.assertIn(" - ", opt)

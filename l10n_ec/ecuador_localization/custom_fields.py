@@ -121,7 +121,7 @@ CUSTOM_FIELDS = {
 			"insert_after": "sri_col_break_2",
 			"label": "SRI IVA Concepto",
 			"default": "",
-			"options": "\n1\n2\n3\n7\n8\n9\n10\n11",
+			"options": "\n1 - Bienes 30%\n2 - Servicios 70%\n3 - Honorarios 100%\n7 - Retención cero\n8 - No procede\n9 - Especial 10%\n10 - Especial 20%\n11 - Especial 50%",
 			"description": "SRI Tabla 23 IVA withholding concepto withheld by the customer; feeds the received-withholding settlement entry (1 bienes 30%, 2 servicios 70%, 3 honorarios 100%); leave empty when no IVA withholding applies.",
 		},
 		{
@@ -207,7 +207,7 @@ CUSTOM_FIELDS = {
 			"insert_after": "bill_no",
 			"label": "SRI Sustento Code",
 			"default": "02",
-			"options": "01\n02\n03\n04\n05\n06\n07\n08\n09\n10\n11\n12\n13\n14\n15",
+			"options": "01 - Con crédito tributario\n02 - Sin crédito tributario\n03 - Activos fijos con crédito\n04 - Activos fijos sin crédito\n05 - Gastos de viaje\n06 - Inventario con crédito\n07 - Inventario sin crédito\n08 - Reembolso (intermediario)\n09 - Gastos médicos\n10 - Dividendos\n11 - Débito bancario\n12 - Editores/combustibles\n13 - Sector público\n14 - Transporte (socios)\n15 - Servicios digitales",
 			"description": "SRI Tabla 5 sustento for ATS (01 credit goods, 02 no-credit, 03/04 fixed assets, 06/07 inventory...); drives ATS classification.",
 		},
 		{
@@ -245,7 +245,7 @@ CUSTOM_FIELDS = {
 			"insert_after": "taxes_and_charges",
 			"label": "SRI IVA Concepto",
 			"default": "",
-			"options": "\n1\n2\n3\n7\n8\n9\n10\n11",
+			"options": "\n1 - Bienes 30%\n2 - Servicios 70%\n3 - Honorarios 100%\n7 - Retención cero\n8 - No procede\n9 - Especial 10%\n10 - Especial 20%\n11 - Especial 50%",
 			"description": "SRI Tabla 23 IVA withholding concepto driving the automatic deduction row and the voucher (1 bienes 30%, 2 servicios 70%, 3 honorarios 100%); leave empty when no IVA withholding applies.",
 		},
 	],
@@ -261,12 +261,12 @@ CUSTOM_FIELDS = {
 	],
 	"Mode of Payment": [
 		{
-			"default": "01",
+			"default": "01 - Sin utilización del sistema financiero",
 			"fieldname": "sri_payment_code",
 			"fieldtype": "Select",
 			"insert_after": "mode_of_payment",
 			"label": "SRI Payment Code",
-			"options": "01\n15\n16\n17\n18\n19\n20\n21",
+			"options": "01 - Sin utilización del sistema financiero\n15 - Compensación de deudas\n16 - Tarjeta de débito\n17 - Dinero electrónico\n18 - Tarjeta prepago\n19 - Tarjeta de crédito\n20 - Otros con utilización del sistema financiero\n21 - Endoso de títulos",
 			"description": "SRI Tabla 24 payment code. Forward-placed mapping point POS and ATS readers will use in Phase 9A; vouchers still emit the default until wired.",
 		},
 	],

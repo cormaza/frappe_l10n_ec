@@ -35,7 +35,9 @@ ALLOWED_SUSTENTOS = set(SUSTENTOS)
 
 def validate_sustento(sustento_code: str, doc_code: str = "01", tp_id_prov: str = "04") -> None:
 	"""Fail loud if sustento is outside Tabla 5 or not offered."""
-	code = (sustento_code or "").strip()
+	from l10n_ec.sri.codes import sri_code
+
+	code = sri_code(sustento_code)
 	if code not in ALLOWED_SUSTENTOS:
 		raise ValueError(_("SRI sustento code '{}' is not in Tabla 5 (01-15).").format(code))
 	# Future: check (doc_code, tp_id_prov, code) against vendored cross-table.

@@ -1201,6 +1201,9 @@ def resolve_concepto(code: str) -> tuple:
 
 	Raises `SriVoucherError` for unknown codes instead of guessing.
 	"""
+	from l10n_ec.sri.codes import sri_code
+
+	code = sri_code(code)
 	try:
 		impuesto, description, rate, _valid_from, _casilleros = CONCEPTS[code]
 	except KeyError:
