@@ -29,6 +29,9 @@ EXPECTED_FIELDS = {
 		"sri_iva_concepto",
 	},
 	"Sales Invoice": {
+		"sri_section",
+		"sri_section_2",
+		"sri_col_break_2",
 		"sri_info_adicional",
 		"sri_ir_concepto",
 		"sri_iva_concepto",
@@ -60,7 +63,8 @@ class TestSRICustomFields(UnitTestCase):
 		for doctype, fields in CUSTOM_FIELDS.items():
 			for field in fields:
 				self.assertTrue(field["fieldname"], f"Missing fieldname on {doctype}")
-				self.assertTrue(field["label"], f"Missing label on {doctype}")
+				if field["fieldtype"] not in ("Section Break", "Column Break"):
+					self.assertTrue(field["label"], f"Missing label on {doctype}")
 				self.assertTrue(field["fieldtype"], f"Missing fieldtype on {doctype}")
 				self.assertTrue(field["insert_after"], f"Missing insert_after on {doctype}")
 				if field["fieldtype"] == "Select":
