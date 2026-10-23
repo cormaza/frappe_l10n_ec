@@ -115,3 +115,29 @@ class TestAtsLayout(UnitTestCase):
 		subtotal = next(r for r in rows if r["kind"] == "subtotal")
 		self.assertEqual(subtotal["base"], 200.0)
 		self.assertEqual(subtotal["iva"], 30.0)
+
+
+class TestTreeIndent(UnitTestCase):
+	"""Section rows collapse their blocks (native treeView)."""
+
+	def test_104_sections_collapse_blocks(self) -> None:
+		rows = build_104_rows({"401": 1.0, "411": 1.0, "421": 1.0})
+		sections = [r for r in rows if r["kind"] == "section"]
+		self.assertTrue(sections)
+		self.assertTrue(all(r["indent"] == 0 for r in sections))
+		kids = [r for r in rows if r["kind"] == "triplet"]
+		self.assertTrue(kids)
+		self.assertTrue(all(r["indent"] == 1 for r in kids))
+
+	def test_103_sections_collapse_blocks(self) -> None:
+		rows = build_103_rows({312: 100.0, 362: 2.0}, {"312": {"base": 100.0, "value": 2.0}})
+		sections = [r for r in rows if r["kind"] == "section"]
+		self.assertEqual([r["concepto"] for r in sections], ["RESIDENTES", "EXTERIOR"])
+		self.assertTrue(all(r["indent"] == 0 for r in sections))
+		self.assertTrue(all(r["indent"] == 1 for r in rows if r["kind"] in ("concepto", "total", "note")))
+
+	def test_ats_sections_collapse_blocks(self) -> None:
+		rows = build_ats_rows({"compras": [], "ventas": [], "exportaciones": [], "anulados": []})
+		sections = [r for r in rows if r["kind"] == "section"]
+		self.assertEqual(len(sections), 4)
+		self.assertTrue(all(r["indent"] == 0 for r in sections))

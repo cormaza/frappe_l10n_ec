@@ -263,7 +263,7 @@ def _accumulate_row(totals: dict, row: dict) -> None:
 	)
 
 
-def _append_exterior_row(rows: list, code: str, description: str, entry: dict, owned: set) -> None:
+def _append_exterior_row(target: list, code: str, description: str, entry: dict, owned: set) -> None:
 	"""Render one exterior concepto row from its declared regime (pure)."""
 	regime = entry.get("regime") or ""
 	pair = EXTERIOR_BOXES.get((code, regime))
@@ -275,7 +275,7 @@ def _append_exterior_row(rows: list, code: str, description: str, entry: dict, o
 	tax = round(float(entry.get("value", 0.0)), 2)
 	owned.add(pair[0])
 	owned.add(pair[1])
-	rows.append(
+	target.append(
 		{
 			"kind": "exterior",
 			"concepto": f"{code} — {description} (exterior: {REGIME_LABELS.get(regime, regime)})",
@@ -314,7 +314,8 @@ def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
 		raise ValueError(
 			_("Form 103 rows need per-concepto detail; totals alone cannot tell sibling conceptos apart.")
 		)
-	rows: list = []
+	residentes: list = []
+	exterior: list = []
 	base_total = 0.0
 	tax_total = 0.0
 	owned: set = set()
@@ -334,7 +335,7 @@ def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
 				_("SRI withholding concepto '{}' is not a known concepto.").format(code)
 			) from None
 		if _impuesto == "9":
-			_append_exterior_row(rows, code, description, entry, owned)
+			_append_exterior_row(exterior, code, description, entry, owned)
 			continue
 		if _impuesto != "1":
 			continue
@@ -349,7 +350,7 @@ def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
 			owned.add(tax_box)
 		base_total = round(base_total + base, 2)
 		tax_total = round(tax_total + tax, 2)
-		rows.append(
+		residentes.append(
 			{
 				"kind": "concepto",
 				"concepto": f"{code} — {description}",
@@ -366,6 +367,42 @@ def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
 			raise ValueError(_("Form 103 casillero '{}' belongs to no rendered concepto.").format(box))
 	ext_base = normalized.get(497, 0.0)
 	ext_tax = normalized.get(498, 0.0)
+	rows = [
+		{
+			"kind": "section",
+			"concepto": "RESIDENTES",
+			"cas_base": "",
+			"base": None,
+			"cas_impuesto": "",
+			"impuesto": None,
+		},
+		*residentes,
+		{
+			"kind": "subtotal",
+			"concepto": "SUBTOTAL RESIDENTES (casilleros 349/399)",
+			"cas_base": 349,
+			"base": normalized.get(349, 0.0),
+			"cas_impuesto": 399,
+			"impuesto": normalized.get(399, 0.0),
+		},
+		{
+			"kind": "total",
+			"concepto": "TOTAL RESIDENTES (presentación; el portal totaliza 349/399/499/500/501)",
+			"cas_base": None,
+			"base": base_total,
+			"cas_impuesto": None,
+			"impuesto": tax_total,
+		},
+		{
+			"kind": "section",
+			"concepto": "EXTERIOR",
+			"cas_base": "",
+			"base": None,
+			"cas_impuesto": "",
+			"impuesto": None,
+		},
+		*exterior,
+	]
 	if ext_base or ext_tax:
 		rows.append(
 			{
@@ -390,26 +427,6 @@ def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
 		)
 	rows.append(
 		{
-			"kind": "subtotal",
-			"concepto": "SUBTOTAL RESIDENTES (casilleros 349/399)",
-			"cas_base": 349,
-			"base": normalized.get(349, 0.0),
-			"cas_impuesto": 399,
-			"impuesto": normalized.get(399, 0.0),
-		}
-	)
-	rows.append(
-		{
-			"kind": "total",
-			"concepto": "TOTAL RESIDENTES (presentación; el portal totaliza 349/399/499/500/501)",
-			"cas_base": None,
-			"base": base_total,
-			"cas_impuesto": None,
-			"impuesto": tax_total,
-		}
-	)
-	rows.append(
-		{
 			"kind": "total",
 			"concepto": "TOTAL IMPUESTO A PAGAR (399 + 498; casillero 499)",
 			"cas_base": None,
@@ -418,4 +435,6 @@ def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
 			"impuesto": normalized.get(499, 0.0),
 		}
 	)
+	for row in rows:
+		row.setdefault("indent", 0 if row.get("kind") == "section" else 1)
 	return rows

@@ -437,4 +437,8 @@ def build_104_rows(totals: dict) -> list:
 						"impuesto": None,
 					}
 				)
+	for row in rows:
+		row.setdefault(
+			"indent", 2 if row.get("kind") == "child" else (0 if row.get("kind") == "section" else 1)
+		)
 	return rows

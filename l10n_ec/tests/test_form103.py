@@ -311,7 +311,7 @@ class TestCollect103ExteriorRegimes(UnitTestCase):
 		conceptos = [r for r in rows if r["kind"] == "exterior"]
 		self.assertEqual(len(conceptos), 2)
 		self.assertEqual({(r["cas_base"], r["impuesto"]) for r in conceptos}, {(410, 100.0), (431, 185.0)})
-		subtotal = next(r for r in rows if r["kind"] == "subtotal")
+		subtotal = next(r for r in rows if r["kind"] == "subtotal" and r["cas_base"] == 497)
 		self.assertEqual((subtotal["base"], subtotal["impuesto"]), (1500.0, 285.0))
 
 

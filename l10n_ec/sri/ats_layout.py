@@ -84,6 +84,8 @@ def build_ats_rows(collected: dict) -> list:
 				"detalle": "",
 			}
 		)
+	for row in rows:
+		row.setdefault("indent", 0 if row.get("kind") == "section" else 1)
 	return rows
 
 
