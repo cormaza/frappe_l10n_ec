@@ -290,7 +290,34 @@ def validate_sustento_code(doc, method=None) -> None:
 		raise
 
 
-def sync_tax_row_descriptions(doc, method=None) -> None:
+#: Withholding labels whose native rate column arrives 0 with the amount set.
+WITHHOLDING_LABELS = frozenset({"Ret. IR", "Ret. IVA", "TDS IVA", "TDS IR"})
+
+
+def _category_withholding_rate(category: str | None, resolve_category_rate=None) -> float | None:
+	"""Single rate from a Tax Withholding Category, or None when ambiguous.
+
+	`resolve_category_rate` maps a category name to its single rate (bench
+	default reads the category's rates table); anything but exactly one
+	rate is ambiguity, never a guess.
+	"""
+	if not category:
+		return None
+	if resolve_category_rate is not None:
+		return resolve_category_rate(category)
+	try:
+		import frappe as _frappe3
+	except ImportError:  # pragma: no cover
+		return None
+	rates = _frappe3.get_all(
+		"Tax Withholding Rate", filters={"parent": category}, pluck="tax_withholding_rate"
+	)
+	if len(rates) != 1:
+		return None
+	return float(rates[0])
+
+
+def sync_tax_row_descriptions(doc, method=None, resolve_category_rate=None, company_code=None) -> None:
 	"""Make tax row descriptions follow SRI names, not account heads.
 
 	ERPNext defaults `description = account_head` (e.g. `1010504 - IVA PAGADO...`),
@@ -299,8 +326,10 @@ def sync_tax_row_descriptions(doc, method=None) -> None:
 	`ICE 5% (3072)` for presentation only (no GL/ATS impact). Proven
 	non-EC companies keep their native descriptions (tri-state doctrine).
 	"""
-	if classify_country(company_country_code(doc.get("company"))) != "EC":
+	code = company_code if company_code is not None else company_country_code(doc.get("company"))
+	if classify_country(code) != "EC":
 		return
+	category_rate = _category_withholding_rate(doc.get("tax_withholding_category"), resolve_category_rate)
 	for row in doc.get("taxes") or []:
 		if (row.get("description") or "").startswith("SRI IVA withholding"):
 			continue
@@ -352,6 +381,11 @@ def sync_tax_row_descriptions(doc, method=None) -> None:
 						continue
 				else:
 					row.description = f"{label} {rate_val:g}%"
+				continue
+		if not rate_val and label in WITHHOLDING_LABELS and row.get("tax_amount"):
+			fallback = category_rate
+			if fallback:
+				row.description = f"{label} {fallback:g}%"
 				continue
 		row.description = f"{label} {rate_val:g}%"
 

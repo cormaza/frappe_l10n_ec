@@ -48,7 +48,7 @@ CUSTOM_FIELD_STRINGS = [
 	_("Tax details"),
 	_("SRI Assumed Withholding"),
 	_(
-		"The agent absorbs the withholding: the payable stays intact and the withheld total posts as non-deductible expense (520230). Emission and reports are unchanged."
+		"The agent absorbs the withholding: payable intact, withheld total to non-deductible expense (520230)."
 	),
 	_("SRI Received Withholding"),
 	_(
@@ -56,13 +56,9 @@ CUSTOM_FIELD_STRINGS = [
 	),
 	_("SRI Payment Code"),
 	_("SRI Liquidacion"),
-	_(
-		"This purchase has no supplier invoice: we emit the Liquidacion de Compra (03). Drives voucher emission and ATS classification."
-	),
+	_("No supplier invoice: we emit the Liquidacion de Compra (03)."),
 	_("SRI Supplier Debit Note"),
-	_(
-		"This supplier document is a Nota de Debito (ATS classification only; their emission, no voucher from us)."
-	),
+	_("Supplier Nota de Debito: ATS classification only, no voucher from us."),
 	_("SRI IR Concepto"),
 	_(
 		"SRI IR withholding concepto withheld by the customer (e.g. 303, 312), validated against the concepto table; feeds the received-withholding settlement entry; leave empty when no IR withholding applies."

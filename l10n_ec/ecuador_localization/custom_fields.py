@@ -215,14 +215,14 @@ CUSTOM_FIELDS = {
 			"fieldtype": "Check",
 			"insert_after": "bill_no",
 			"label": "SRI Liquidacion",
-			"description": "This purchase has no supplier invoice: we emit the Liquidacion de Compra (03). Drives voucher emission and ATS classification.",
+			"description": "No supplier invoice: we emit the Liquidacion de Compra (03).",
 		},
 		{
 			"fieldname": "sri_is_supplier_debit_note",
 			"fieldtype": "Check",
 			"insert_after": "sri_is_liquidacion",
 			"label": "SRI Supplier Debit Note",
-			"description": "This supplier document is a Nota de Debito (ATS classification only; their emission, no voucher from us).",
+			"description": "Supplier Nota de Debito: ATS classification only, no voucher from us.",
 		},
 		{
 			"fieldname": "sri_supplier_auth_number",
@@ -237,7 +237,7 @@ CUSTOM_FIELDS = {
 			"insert_after": "taxes_and_charges",
 			"label": "SRI Assumed Withholding",
 			"default": "0",
-			"description": "The agent absorbs the withholding: the payable stays intact and the withheld total posts as non-deductible expense (520230). Emission and reports are unchanged.",
+			"description": "The agent absorbs the withholding: payable intact, withheld total to non-deductible expense (520230).",
 		},
 		{
 			"fieldname": "sri_iva_concepto",

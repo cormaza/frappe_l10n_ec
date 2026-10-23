@@ -996,6 +996,10 @@ def seed_demo() -> dict:
 
 	if frappe.db.get_single_value("Global Defaults", "default_currency") != "USD":
 		frappe.db.set_single_value("Global Defaults", "default_currency", "USD")
+	if frappe.db.get_single_value("Global Defaults", "default_company") != DEMO_COMPANY["company_name"]:
+		frappe.db.set_single_value("Global Defaults", "default_company", DEMO_COMPANY["company_name"])
+	if frappe.db.get_value("User", "Administrator", "time_zone") != DEMO_TIMEZONE:
+		frappe.db.set_value("User", "Administrator", "time_zone", DEMO_TIMEZONE)
 	for _company in (DEMO_COMPANY["company_name"], DEMO_COMPANY_CO["company_name"]):
 		if frappe.db.exists("Company", _company):
 			frappe.db.set_value("Company", _company, "default_currency", "USD")
