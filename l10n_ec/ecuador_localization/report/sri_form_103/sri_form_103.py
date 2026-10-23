@@ -81,6 +81,7 @@ def _fetch_authorized_vouchers(company: str, year: int, month: int) -> list:
 				"authorization_number": doc.get("authorization_number"),
 				"authorization_date": doc.get("authorization_date"),
 				"unsigned_xml": read_voucher_xml(doc, "unsigned_xml"),
+				"sri_exterior_regime": doc.get("sri_exterior_regime") or "",
 			}
 		)
 	return vouchers

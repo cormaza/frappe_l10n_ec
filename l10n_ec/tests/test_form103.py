@@ -195,3 +195,67 @@ class TestForm103ReportRing1(UnitTestCase):
 			["concepto", "cas_base", "base", "cas_impuesto", "impuesto"],
 		)
 		self.assertEqual(data, [])
+
+
+class TestCollect103Exterior(UnitTestCase):
+	"""Exterior rows collect into their regime boxes (sourced, never guessed)."""
+
+	def test_exterior_conVENio_collects(self) -> None:
+		from l10n_ec.sri.form103 import collect_103
+
+		voucher = _voucher([_row("501A", 1000.0, 10.0, 100.0, code="9")], sri_exterior_regime="con")
+		self.assertEqual(collect_103([voucher], 2026, 3), {410: 1000.0, 460: 100.0})
+
+	def test_exterior_sin_convenio_collects(self) -> None:
+		from l10n_ec.sri.form103 import collect_103
+
+		voucher = _voucher([_row("501", 2000.0, 25.0, 500.0, code="9")], sri_exterior_regime="sin")
+		self.assertEqual(collect_103([voucher], 2026, 3), {422: 2000.0, 472: 500.0})
+
+	def test_exterior_paraiso_collects(self) -> None:
+		from l10n_ec.sri.form103 import collect_103
+
+		voucher = _voucher([_row("501A", 500.0, 37.0, 185.0, code="9")], sri_exterior_regime="paraiso")
+		self.assertEqual(collect_103([voucher], 2026, 3), {431: 500.0, 481: 185.0})
+
+	def test_exterior_without_regime_fails_loud(self) -> None:
+		from l10n_ec.sri.form103 import collect_103
+
+		with self.assertRaises(SriVoucherError) as ctx:
+			collect_103([_voucher([_row("501A", 1000.0, 10.0, 100.0, code="9")])], 2026, 3)
+		self.assertIn("regime", str(ctx.exception).lower())
+
+	def test_exterior_unsighted_pair_fails_loud(self) -> None:
+		from l10n_ec.sri.form103 import collect_103
+
+		with self.assertRaises(SriVoucherError) as ctx:
+			collect_103(
+				[_voucher([_row("502", 1000.0, 25.0, 250.0, code="9")], sri_exterior_regime="sin")],
+				2026,
+				3,
+			)
+		self.assertIn("502", str(ctx.exception))
+
+
+class TestCollect103ExteriorRegimes(UnitTestCase):
+	"""Same concepto in two regimes renders two rows (never merged)."""
+
+	def test_same_concepto_two_regimes(self) -> None:
+		from l10n_ec.sri.form103 import build_103_rows, collect_103, collect_103_by_concepto
+
+		vouchers = [
+			_voucher([_row("501A", 1000.0, 10.0, 100.0, code="9")], sri_exterior_regime="con"),
+			_voucher(
+				[_row("501A", 500.0, 37.0, 185.0, code="9")],
+				sri_number="001-001-000000008",
+				sri_exterior_regime="paraiso",
+			),
+		]
+		totals = collect_103(vouchers, 2026, 3)
+		self.assertEqual(totals, {410: 1000.0, 460: 100.0, 431: 500.0, 481: 185.0})
+		rows = build_103_rows(totals, collect_103_by_concepto(vouchers, 2026, 3))
+		conceptos = [r for r in rows if r["kind"] == "exterior"]
+		self.assertEqual(len(conceptos), 2)
+		self.assertEqual({(r["cas_base"], r["impuesto"]) for r in conceptos}, {(410, 100.0), (431, 185.0)})
+		subtotal = next(r for r in rows if r["kind"] == "subtotal")
+		self.assertEqual((subtotal["base"], subtotal["impuesto"]), (1500.0, 285.0))

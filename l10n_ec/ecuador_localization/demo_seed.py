@@ -257,6 +257,43 @@ DEMO_RUSTIC_SUPPLIER = {
 	"tax_id": "1710034065",
 }
 
+DEMO_EXTERIOR_SUPPLIERS = [
+	{
+		"doctype": "Supplier",
+		"supplier_name": "Demo Spain Co",
+		"supplier_type": "Company",
+		"supplier_group": "Demo Suppliers",
+		"country": "Spain",
+		"sri_identification_type": "06",
+		"tax_id": "ESP123456",
+	},
+	{
+		"doctype": "Supplier",
+		"supplier_name": "Demo USA Co",
+		"supplier_type": "Company",
+		"supplier_group": "Demo Suppliers",
+		"country": "United States",
+		"sri_identification_type": "06",
+		"tax_id": "USA123456",
+	},
+	{
+		"doctype": "Supplier",
+		"supplier_name": "Demo Panama Co",
+		"supplier_type": "Company",
+		"supplier_group": "Demo Suppliers",
+		"country": "Panama",
+		"sri_identification_type": "06",
+		"tax_id": "PAN123456",
+	},
+]
+
+#: (supplier, bill_no, base) exterior purchases (services, no stock, no VAT).
+DEMO_EXTERIOR_PURCHASES = [
+	("Demo Spain Co", "990001000000001", 1000.00),
+	("Demo USA Co", "990001000000002", 2000.00),
+	("Demo Panama Co", "990001000000003", 500.00),
+]
+
 DEMO_PURCHASE = {
 	"bill_date": DEMO_TODAY,
 	"bill_no": "DEMO-BILL-001",
@@ -594,7 +631,17 @@ def _seed_demo_emission_point(company: str) -> str | None:
 	return "001-001"
 
 
-def _stage_demo_retencion(company: str, voucher_number: str, purchase_name: str, specs: list) -> str | None:
+def _stage_demo_retencion(
+	company: str,
+	voucher_number: str,
+	purchase_name: str,
+	specs: list,
+	subject: dict | None = None,
+	regime: str | None = None,
+	doc_number: str | None = None,
+	sustento: str | None = None,
+	auth: str | None = None,
+) -> str | None:
 	"""Build one Authorized-staged 07 from ``[(concepto, base, rate)]`` specs.
 
 	Demo fiction (like the placeholder supplier auths): real
@@ -631,16 +678,28 @@ def _stage_demo_retencion(company: str, voucher_number: str, purchase_name: str,
 		numeric_code="12345678",
 	)
 	sequential = voucher_number.split("-")[-1]
+	subject = subject or {
+		"id_type": "04",
+		"name": "Demo Supplier RUC",
+		"tax_id": "1710034065001",
+	}
 
-	def _doc(concepto: str, base: float, rate: float) -> dict:
+	def _doc(
+		concepto: str,
+		base: float,
+		rate: float,
+		doc_number: str = "001-001-000000011",
+		sustento: str = "06",
+		auth: str = DEMO_SUPPLIER_AUTH,
+	) -> dict:
 		value = round(base * rate / 100, 2)
 		total = round(base * 1.15, 2)
 		return {
-			"sustento_code": "06",
+			"sustento_code": sustento,
 			"doc_code": "01",
-			"doc_number": "001-001-000000011",
+			"doc_number": doc_number,
 			"issue_date": issue,
-			"auth_number": DEMO_SUPPLIER_AUTH,
+			"auth_number": auth,
 			"local_payment": "01",
 			"subtotal": base,
 			"total": total,
@@ -676,12 +735,22 @@ def _stage_demo_retencion(company: str, voucher_number: str, purchase_name: str,
 		},
 		{
 			"issue_date": issue,
-			"subject_id_type": "04",
+			"subject_id_type": subject["id_type"],
 			"related_party": "NO",
-			"subject_name": "Demo Supplier RUC",
-			"subject_id": "1710034065001",
+			"subject_name": subject["name"],
+			"subject_id": subject["tax_id"],
 			"fiscal_period": period,
-			"docs": [_doc(concepto, base, rate) for concepto, base, rate in specs],
+			"docs": [
+				_doc(
+					concepto,
+					base,
+					rate,
+					doc_number=doc_number or "001-001-000000011",
+					sustento=sustento or "06",
+					auth=auth or DEMO_SUPPLIER_AUTH,
+				)
+				for concepto, base, rate in specs
+			],
 		},
 	)
 	if not validate_against_xsd(xml, "retencion"):
@@ -694,6 +763,7 @@ def _stage_demo_retencion(company: str, voucher_number: str, purchase_name: str,
 			"voucher_state": "Authorized",
 			"sri_doc_code": "07",
 			"company": company,
+			"sri_exterior_regime": regime or "",
 			"reference_doctype": "Purchase Invoice",
 			"reference_name": purchase_name,
 			"authorization_number": access_key,
@@ -796,6 +866,91 @@ def _stage_demo_factura_xml(company: str, sales_name: str | None) -> str | None:
 	persist_voucher_xml(voucher, "unsigned_xml")
 	save_voucher(voucher)
 	return voucher.name
+
+
+def _seed_demo_exterior(company: str, company_address: str) -> list:
+	"""Seed exterior suppliers, purchases and staged 07s (ES/US/PA).
+
+	Rates are sourced, never invented (see ``l10n_ec.sri.treaties``):
+	Spain regalías 501A 10% con convenio (CDI BOE art. 12.2), USA servicios
+	501 25% sin convenio (NAC-DGERCGC26-00000009 art. 4), Panama regalías
+	501A 37% paraíso (LRTI art. 39 + NAC-DGERCGC25-00000043). Regime is
+	declared per voucher; the collector refuses unsighted pairs.
+	"""
+	import frappe
+
+	for spec in DEMO_EXTERIOR_SUPPLIERS:
+		if not frappe.db.exists("Supplier", spec["supplier_name"]):
+			frappe.get_doc(spec).insert(ignore_permissions=True)
+	for supplier, bill_no, base in DEMO_EXTERIOR_PURCHASES:
+		if frappe.db.exists("Purchase Invoice", {"supplier": supplier, "bill_no": bill_no, "docstatus": 1}):
+			continue
+		purchase = frappe.get_doc(
+			{
+				"doctype": "Purchase Invoice",
+				"supplier": supplier,
+				"company": company,
+				"billing_address": company_address,
+				"currency": "USD",
+				"bill_no": bill_no,
+				"bill_date": DEMO_TODAY,
+				"posting_date": DEMO_TODAY,
+				"update_stock": 0,
+				"sri_sustento_code": "02",
+				"sri_supplier_auth_number": f"99000000{bill_no[-2:]}",
+				"items": [{"item_code": "DEMO-WIDGET", "qty": 1, "rate": base}],
+			}
+		)
+		purchase.insert(ignore_permissions=True)
+		purchase.submit()
+	specs = [
+		# (voucher, supplier, bill_no, subject, regime, [(concepto, base, rate)])
+		(
+			"001-001-000000034",
+			"Demo Spain Co",
+			"990001000000001",
+			{"id_type": "06", "name": "Demo Spain Co", "tax_id": "ESP123456"},
+			"con",
+			[("501A", 1000.00, 10.0)],
+		),
+		(
+			"001-001-000000035",
+			"Demo USA Co",
+			"990001000000002",
+			{"id_type": "06", "name": "Demo USA Co", "tax_id": "USA123456"},
+			"sin",
+			[("501", 2000.00, 25.0)],
+		),
+		(
+			"001-001-000000036",
+			"Demo Panama Co",
+			"990001000000003",
+			{"id_type": "06", "name": "Demo Panama Co", "tax_id": "PAN123456"},
+			"paraiso",
+			[("501A", 500.00, 37.0)],
+		),
+	]
+	names = []
+	for voucher_number, supplier, bill_no, subject, regime, rows in specs:
+		purchase_name = frappe.db.get_value(
+			"Purchase Invoice", {"supplier": supplier, "bill_no": bill_no, "docstatus": 1}, "name"
+		)
+		if not purchase_name:
+			continue
+		name = _stage_demo_retencion(
+			company,
+			voucher_number,
+			purchase_name,
+			rows,
+			subject=subject,
+			regime=regime,
+			doc_number=bill_no,
+			sustento="02",
+			auth=f"99000000{bill_no[-2:]}",
+		)
+		if name:
+			names.append(name)
+	return names
 
 
 def seed_demo() -> dict:
@@ -1233,6 +1388,7 @@ def seed_demo() -> dict:
 	vouchers_07 = _seed_demo_withholding_voucher(company)
 	report["withholding_voucher"] = vouchers_07[0] if vouchers_07 else None
 	report["withholding_vouchers"] = vouchers_07
+	report["exterior_vouchers"] = _seed_demo_exterior(company, company_address)
 	report["factura_xml_voucher"] = _stage_demo_factura_xml(company, sales_name)
 	report["accounts"] = {
 		root: frappe.db.count("Account", {"company": company, "root_type": root})

@@ -31,12 +31,13 @@ Collection rules:
   casillero, the withheld value the second; single-box codes (309, 332,
   ...) record the base only.
 * IVA rows (impuesto ``2``) are skipped: they belong to Form 104.
-* Exterior rows (impuesto ``9``) fail loud as out of scope: the exterior
-  section is recorded explicit-empty by the report, never guessed from
-  resident rows.
+* Exterior rows (impuesto ``9``) collect into their regime boxes from
+  the voucher's explicit ``sri_exterior_regime`` (``con``/``sin``/``paraiso``)
+  through guide-sighted pairs only; a missing regime or an unsighted pair
+  fails loud. Without exterior rows the section stays explicit-empty.
 * Totals sum per casillero across the month's vouchers. Portal-level
-  subtotals/totals (349/399, 499/500/501) are not computed here: with the
-  exterior section out of scope any such total would misstate the return.
+  subtotals/totals (349/399, 499/500/501) are not computed here: the
+  presentation subtotal (497/498) is informational only.
 """
 
 try:
@@ -64,13 +65,17 @@ def collect_103(vouchers: list, year: int, month: int) -> dict:
 	"""
 	_validate_period(year, month)
 	totals: dict = {}
-	for concepto, base, value in _iter_ir_rows(vouchers, year, month):
-		_accumulate_concepto(totals, concepto, base, value)
+	for concepto, base, value, regime in _iter_ir_rows(vouchers, year, month):
+		_accumulate_concepto(totals, concepto, base, value, regime)
 	return dict(sorted(totals.items()))
 
 
 def _iter_ir_rows(vouchers: list, year: int, month: int):
-	"""Yield ``(concepto, base, value)`` IR rows of the month, validated."""
+	"""Yield ``(concepto, base, value, regime)`` IR rows of the month, validated.
+
+	``regime`` comes from the voucher (``con``/``sin``/``paraiso``); resident
+	rows carry ``None``.
+	"""
 	for voucher in vouchers or []:
 		if voucher.get("voucher_state") != AUTHORIZED_STATE:
 			continue
@@ -86,24 +91,37 @@ def _iter_ir_rows(vouchers: list, year: int, month: int):
 			continue
 		if _voucher_month(voucher, body) != (year, month):
 			continue
+		regime = voucher.get("sri_exterior_regime")
 		for doc in body.get("docs", []):
 			for row in doc.get("withholdings", []):
 				yield (
 					row.get("withholding_code", ""),
 					round(float(row.get("base", 0.0)), 2),
 					round(float(row.get("value", 0.0)), 2),
+					regime,
 				)
 
 
-def _accumulate_concepto(totals: dict, concepto: str, base: float, value: float) -> None:
+#: {(concepto, regime): (base_box, tax_box)} — guide-sighted pairs only.
+#: Triplets in the concepto table read con/sin/paraiso; impuesto boxes do
+#: NOT follow +50 universally (4050->4550), so every pair below was read
+#: off the guide row, never arithmetized.
+EXTERIOR_BOXES = {
+	("501A", "con"): (410, 460),
+	("501A", "sin"): (421, 471),
+	("501A", "paraiso"): (431, 481),
+	("501", "sin"): (422, 472),
+}
+
+#: Regime labels for presentation.
+REGIME_LABELS = {"con": "con convenio", "sin": "sin convenio", "paraiso": "paraíso fiscal"}
+
+
+def _accumulate_concepto(totals: dict, concepto: str, base: float, value: float, regime=None) -> None:
 	"""Add one IR row to its concepto casilleros."""
 	impuesto, _rate, _description = resolve_concepto(concepto)
 	if impuesto in NON_EMITTABLE_IMPUESTOS:
-		raise SriVoucherError(
-			_(
-				"SRI withholding concepto '{}' is exterior scope and stays out of Form 103 residentes; the exterior section is recorded empty."
-			).format(concepto)
-		)
+		return _accumulate_exterior(totals, concepto, base, value, regime)
 	if impuesto != "1":
 		return
 	boxes = casilleros_for(concepto)
@@ -126,8 +144,9 @@ def collect_103_by_concepto(vouchers: list, year: int, month: int) -> dict:
 	"""
 	_validate_period(year, month)
 	by_concepto: dict = {}
-	for concepto, base, value in _iter_ir_rows(vouchers, year, month):
-		entry = by_concepto.setdefault(concepto, {"base": 0.0, "value": 0.0})
+	for concepto, base, value, regime in _iter_ir_rows(vouchers, year, month):
+		key = (concepto, regime) if regime else concepto
+		entry = by_concepto.setdefault(key, {"base": 0.0, "value": 0.0, "regime": regime})
 		entry["base"] = round(entry["base"] + base, 2)
 		entry["value"] = round(entry["value"] + value, 2)
 	return by_concepto
@@ -188,6 +207,25 @@ def _fiscal_month(fiscal_period: str) -> tuple | None:
 		return None
 
 
+def _accumulate_exterior(totals: dict, concepto: str, base: float, value: float, regime) -> None:
+	"""Add one exterior row to its regime boxes (sourced pairs only)."""
+	if regime not in ("con", "sin", "paraiso"):
+		raise SriVoucherError(
+			_(
+				"Exterior concepto '{}' needs an explicit regime (con/sin/paraiso); refusing to place it."
+			).format(concepto)
+		)
+	pair = EXTERIOR_BOXES.get((concepto, regime))
+	if pair is None:
+		raise SriVoucherError(
+			_("Exterior pair ('{}', '{}') has no guide-sighted boxes; cannot collect.").format(
+				concepto, regime
+			)
+		)
+	totals[pair[0]] = round(totals.get(pair[0], 0.0) + base, 2)
+	totals[pair[1]] = round(totals.get(pair[1], 0.0) + value, 2)
+
+
 def _accumulate_row(totals: dict, row: dict) -> None:
 	"""Add one parsed retencion row to its concepto casilleros."""
 	_accumulate_concepto(
@@ -195,6 +233,30 @@ def _accumulate_row(totals: dict, row: dict) -> None:
 		row.get("withholding_code", ""),
 		round(float(row.get("base", 0.0)), 2),
 		round(float(row.get("value", 0.0)), 2),
+	)
+
+
+def _append_exterior_row(rows: list, code: str, description: str, entry: dict, owned: set) -> None:
+	"""Render one exterior concepto row from its declared regime (pure)."""
+	regime = entry.get("regime") or ""
+	pair = EXTERIOR_BOXES.get((code, regime))
+	if pair is None:
+		raise ValueError(
+			_("Exterior pair ('{}', '{}') has no guide-sighted boxes; cannot present.").format(code, regime)
+		)
+	base = round(float(entry.get("base", 0.0)), 2)
+	tax = round(float(entry.get("value", 0.0)), 2)
+	owned.add(pair[0])
+	owned.add(pair[1])
+	rows.append(
+		{
+			"kind": "exterior",
+			"concepto": f"{code} — {description} (exterior: {REGIME_LABELS.get(regime, regime)})",
+			"cas_base": pair[0],
+			"base": base,
+			"cas_impuesto": pair[1],
+			"impuesto": tax,
+		}
 	)
 
 
@@ -229,8 +291,11 @@ def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
 	base_total = 0.0
 	tax_total = 0.0
 	owned: set = set()
-	for code in sorted(by_concepto):
-		entry = by_concepto[code] or {}
+	for key in sorted(by_concepto, key=str):
+		entry = by_concepto[key] or {}
+		code, entry_regime = key if isinstance(key, tuple) else (key, entry.get("regime"))
+		if isinstance(key, tuple):
+			entry = dict(entry, regime=entry_regime)
 		base = round(float(entry.get("base", 0.0)), 2)
 		tax = round(float(entry.get("value", 0.0)), 2)
 		if not base and not tax:
@@ -241,6 +306,9 @@ def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
 			raise ValueError(
 				_("SRI withholding concepto '{}' is not a known concepto.").format(code)
 			) from None
+		if _impuesto == "9":
+			_append_exterior_row(rows, code, description, entry, owned)
+			continue
 		if _impuesto != "1":
 			continue
 		if not casilleros:
@@ -267,6 +335,30 @@ def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
 	for box in normalized:
 		if normalized[box] and box not in owned:
 			raise ValueError(_("Form 103 casillero '{}' belongs to no rendered concepto.").format(box))
+	ext_base = round(sum(r["base"] for r in rows if r.get("kind") == "exterior"), 2)
+	ext_tax = round(sum(r["impuesto"] or 0.0 for r in rows if r.get("kind") == "exterior"), 2)
+	if ext_base or ext_tax:
+		rows.append(
+			{
+				"kind": "subtotal",
+				"concepto": "SUBTOTAL EXTERIOR (presentación; casilleros 497/498)",
+				"cas_base": 497,
+				"base": ext_base,
+				"cas_impuesto": 498,
+				"impuesto": ext_tax,
+			}
+		)
+	else:
+		rows.append(
+			{
+				"kind": "note",
+				"concepto": "EXTERIOR: sin valores (se declara vacío)",
+				"cas_base": None,
+				"base": None,
+				"cas_impuesto": None,
+				"impuesto": None,
+			}
+		)
 	rows.append(
 		{
 			"kind": "total",
@@ -275,16 +367,6 @@ def build_103_rows(totals: dict, by_concepto: dict | None = None) -> list:
 			"base": base_total,
 			"cas_impuesto": None,
 			"impuesto": tax_total,
-		}
-	)
-	rows.append(
-		{
-			"kind": "note",
-			"concepto": "EXTERIOR: sin valores (fuera de alcance, se declara vacío)",
-			"cas_base": None,
-			"base": None,
-			"cas_impuesto": None,
-			"impuesto": None,
 		}
 	)
 	return rows

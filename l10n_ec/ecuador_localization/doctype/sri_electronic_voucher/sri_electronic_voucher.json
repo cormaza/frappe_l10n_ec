@@ -9,6 +9,7 @@
   "sri_number",
   "voucher_state",
   "sri_doc_code",
+  "sri_exterior_regime",
   "company",
   "column_break_reference",
   "reference_doctype",
@@ -56,6 +57,14 @@
    "label": "SRI Document Code",
    "options": "01\n03\n04\n05\n06\n07",
    "reqd": 1
+  },
+  {
+   "fieldname": "sri_exterior_regime",
+   "fieldtype": "Select",
+   "label": "SRI Exterior Regime",
+   "options": "\ncon\nsin\nparaiso",
+   "default": "",
+   "description": "Exterior regime for withholding vouchers (con/sin convenio, paraíso fiscal); empty when not exterior. Drives 103 exterior boxes."
   },
   {
    "fieldname": "company",

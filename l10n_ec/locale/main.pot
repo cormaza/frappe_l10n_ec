@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecuador Localization VERSION\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-22 17:44-0641\n"
-"PO-Revision-Date: 2026-10-22 17:44-0641\n"
+"POT-Creation-Date: 2026-10-22 18:47-0641\n"
+"PO-Revision-Date: 2026-10-22 18:47-0641\n"
 "Last-Translator: developers@example.com\n"
 "Language-Team: developers@example.com\n"
 "MIME-Version: 1.0\n"
@@ -630,6 +630,24 @@ msgstr ""
 msgid "Expiration Date"
 msgstr ""
 
+#: l10n_ec/sri/form103.py:214
+msgid "Exterior concepto '{}' needs an explicit regime (con/sin/paraiso); refusing to place it."
+msgstr ""
+
+#: l10n_ec/sri/form103.py:221
+msgid "Exterior pair ('{}', '{}') has no guide-sighted boxes; cannot collect."
+msgstr ""
+
+#: l10n_ec/sri/form103.py:245
+msgid "Exterior pair ('{}', '{}') has no guide-sighted boxes; cannot present."
+msgstr ""
+
+#. Description of the 'SRI Exterior Regime' (Select) field in DocType 'SRI
+#. Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "Exterior regime for withholding vouchers (con/sin convenio, paraíso fiscal); empty when not exterior. Drives 103 exterior boxes."
+msgstr ""
+
 #: l10n_ec/ecuador_localization/validation.py:105
 msgid "Factura to Consumidor Final above {} needs buyer identification; a single voucher cannot carry it."
 msgstr ""
@@ -638,23 +656,23 @@ msgstr ""
 msgid "Fiscal Period:"
 msgstr ""
 
-#: l10n_ec/sri/form103.py:269
+#: l10n_ec/sri/form103.py:337
 msgid "Form 103 casillero '{}' belongs to no rendered concepto."
 msgstr ""
 
-#: l10n_ec/sri/form103.py:220
+#: l10n_ec/sri/form103.py:282
 msgid "Form 103 casillero '{}' carries a negative value '{}'; retentions never subtract."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:418 l10n_ec/sri/form103.py:141
+#: l10n_ec/locale/i18n_markers.py:418 l10n_ec/sri/form103.py:160
 msgid "Form 103 collection month '{}' is out of range."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:417 l10n_ec/sri/form103.py:139
+#: l10n_ec/locale/i18n_markers.py:417 l10n_ec/sri/form103.py:158
 msgid "Form 103 collection year '{}' is out of range."
 msgstr ""
 
-#: l10n_ec/sri/form103.py:226
+#: l10n_ec/sri/form103.py:288
 msgid "Form 103 rows need per-concepto detail; totals alone cannot tell sibling conceptos apart."
 msgstr ""
 
@@ -944,6 +962,10 @@ msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:124
 msgid "No procede"
+msgstr ""
+
+#: l10n_ec/sri/treaties.py:52
+msgid "No sourced treaty rate for '{}' in '{}'; add it with its CDI article."
 msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:111
@@ -1562,6 +1584,12 @@ msgstr ""
 msgid "SRI Environment"
 msgstr ""
 
+#. Label of the sri_exterior_regime (Select) field in DocType 'SRI Electronic
+#. Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "SRI Exterior Regime"
+msgstr ""
+
 #. Name of a report
 #. Label of a shortcut in the Ecuador Localization Workspace
 #: l10n_ec/ecuador_localization/report/sri_form_103/sri_form_103.json
@@ -1683,11 +1711,11 @@ msgstr ""
 msgid "SRI sustento code '{}' is not in Tabla 5 (01-15)."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:420 l10n_ec/sri/form103.py:151
+#: l10n_ec/locale/i18n_markers.py:420 l10n_ec/sri/form103.py:170
 msgid "SRI voucher '{}' carries no usable authorization date or fiscal period."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:419 l10n_ec/sri/form103.py:82
+#: l10n_ec/locale/i18n_markers.py:419 l10n_ec/sri/form103.py:87
 msgid "SRI voucher '{}' has no withholding XML to collect."
 msgstr ""
 
@@ -1695,11 +1723,11 @@ msgstr ""
 msgid "SRI withholding concepto '{}' carries rate '{}' but the official rate is '{}'."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:424 l10n_ec/sri/form103.py:112
+#: l10n_ec/locale/i18n_markers.py:424 l10n_ec/sri/form103.py:130
 msgid "SRI withholding concepto '{}' has no Form 103 casilleros; cannot collect."
 msgstr ""
 
-#: l10n_ec/sri/form103.py:248
+#: l10n_ec/sri/form103.py:316
 msgid "SRI withholding concepto '{}' has no Form 103 casilleros; cannot present."
 msgstr ""
 
@@ -1715,11 +1743,11 @@ msgstr ""
 msgid "SRI withholding concepto '{}' is ATS scope and has no XML retention row."
 msgstr ""
 
-#: l10n_ec/locale/i18n_markers.py:421 l10n_ec/sri/form103.py:103
+#: l10n_ec/locale/i18n_markers.py:421
 msgid "SRI withholding concepto '{}' is exterior scope and stays out of Form 103 residentes; the exterior section is recorded empty."
 msgstr ""
 
-#: l10n_ec/sri/form103.py:242
+#: l10n_ec/sri/form103.py:307
 msgid "SRI withholding concepto '{}' is not a known concepto."
 msgstr ""
 
@@ -2117,6 +2145,12 @@ msgstr ""
 msgid "base"
 msgstr ""
 
+#. Option for the 'SRI Exterior Regime' (Select) field in DocType 'SRI
+#. Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "con"
+msgstr ""
+
 #. Option for the 'State' (Select) field in DocType 'SRI Signature'
 #: l10n_ec/ecuador_localization/doctype/sri_signature/sri_signature.json
 msgid "expired"
@@ -2130,8 +2164,20 @@ msgstr ""
 msgid "infoAdicional supports at most 15 rows, got {}."
 msgstr ""
 
+#. Option for the 'SRI Exterior Regime' (Select) field in DocType 'SRI
+#. Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "paraiso"
+msgstr ""
+
 #: l10n_ec/locale/i18n_markers.py:355
 msgid "pending SRI authorization."
+msgstr ""
+
+#. Option for the 'SRI Exterior Regime' (Select) field in DocType 'SRI
+#. Electronic Voucher'
+#: l10n_ec/ecuador_localization/doctype/sri_electronic_voucher/sri_electronic_voucher.json
+msgid "sin"
 msgstr ""
 
 #. Option for the 'State' (Select) field in DocType 'SRI Signature'

@@ -78,21 +78,28 @@ bench --site demo execute "frappe.get_attr('l10n_ec.ecuador_localization.report.
 
 **Mismo mes, tres fuentes deben cerrar con granularidad entendida:**
 
-- Ventas `401`: bruto `1235.00`, neto `1220.00`, impuesto `183.00` — la
+- Ventas `401`: bruto `1075.00`, neto `1060.00`, impuesto `159.00` — la
   diferencia bruto/neto es la NC del mes (las devoluciones restan solo
-  neto e impuesto, nunca bruto). Total `409`: `1535.00/1520.00/203.00`.
+  neto e impuesto, nunca bruto). Total `409`: `1675.00/1660.00/199.00`.
 - Compras `500`: `350.00/330.00/49.50`; total `509`: `650.00/630.00/59.50`.
-- Liquidación: crédito aplicable `564 = 47.76`, causado `601 = 155.24`,
-  retenciones recibidas `609 = 150.00` (del JE de liquidación),
-  subtotal `620` + presuntivo → percepción `699 = 5.24`; retención
-  `799/801 = 4.50`; consolidado `859 = 9.74`.
+- Liquidación: factor `563 = 0.64`, crédito aplicable `564 = 37.99`,
+  causado `601 = 161.01`, retenciones recibidas `609 = 150.00` (del JE
+  de liquidación), subtotal `620 = 11.01` → percepción `699 = 11.01`;
+  retención `799/801 = 4.50`; consolidado `859 = 15.51`.
 - `ATS`: 8 compras, 0 ventas, 0 exportaciones, 0 anulados (solo lo
   autorizado alimenta el ATS; las ventas demo viajan en `Rejected` por
   el techo autofirmado).
-- `103`: tres 07 stageados como demo-data — `031`: 312/100 + 362/2.00;
+- `103` residentes: tres 07 stageados — `031`: 312/100 + 362/2.00;
   `032`: 303/1000 + 353/100.00 y 307/500 + 357/15.00; `033`: 3400/2000 +
   3900/60.00 y 332/500 (base sola). Total residentes: base `4100.00`,
-  retenido `177.00`; exterior explícitamente vacío.
+  retenido `177.00`.
+- `103` exterior (tasas fundadas, régimen declarado): `034` España
+  regalías 501A 10% con convenio → 410/1000 + 460/100.00; `035` USA
+  servicios 501 25% sin convenio → 422/2000 + 472/500.00; `036` Panamá
+  regalías 501A 37% paraíso → 431/500 + 481/185.00. Subtotal exterior
+  497/3500.00 + 498/785.00. El exterior vive solo en el 103 + GL: sin
+  sección ATS y sin tocar el 104 (las compras EXT no tienen plantilla
+  IVA y sus bill_no no-SRI se excluyen del ATS).
 
 NC `04` reporta en positivo (tipo lleva el signo), `03` solo si está autorizado, `02`/`06` sustentos ya vienen del campo `SRI Sustento Code`.
 
