@@ -45,5 +45,6 @@ uv run pytest -v --cov=l10n_ec/sri --cov-report=term-missing -W error
 ## Documentation & Roadmap
 
 - **[`docs/ROADMAP.md`](docs/ROADMAP.md)**: Complete 5-phase implementation roadmap porting `odoo/addons/l10n_ec` and `OCA/l10n-ecuador` (PRs #101–#109) into Frappe / ERPNext v16.
+- **[`docs/wiki/HOME.md`](docs/wiki/HOME.md)**: Functional wiki (in Spanish) with demo screenshots: Ecuador workspace, purchase/sale invoices, electronic vouchers, ATS / Form 103 / Form 104 reports.
 - **[`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)**: Step-by-step instructions for local TDD (`uv` + `pytest`), **Frappe-Manager (`fm`)** / `frappe_docker` containers, and running manual CI via `gh workflow run ci.yml` or `act`.
 - **[`AGENTS.md`](AGENTS.md)**: Architecture, Frappe v16 `UnitTestCase` discovery rules, Gettext `locale/es.po` translation conventions, and installed `.agents/skills/`.
