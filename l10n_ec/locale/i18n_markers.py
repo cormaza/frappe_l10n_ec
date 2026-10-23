@@ -43,6 +43,7 @@ CUSTOM_FIELD_STRINGS = [
 	_("Inherited from Webshop Settings for cart quotations (including quotation-only RFQ flow)."),
 	_("Inherited from the shop quotation; drives shop voucher emission."),
 	_("Inherited from the POS Profile for counter sales; drives POS voucher emission."),
+	_("Tax details"),
 	_("SRI Payment Code"),
 	_("SRI Liquidacion"),
 	_(
