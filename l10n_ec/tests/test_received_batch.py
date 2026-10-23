@@ -39,9 +39,7 @@ def _invoices(**overrides):
 
 class TestAllocationGuards(UnitTestCase):
 	def test_valid_split_passes(self) -> None:
-		check_allocation(
-			{"sales_invoice": "SI-001", "ir_value": 100.0, "iva_value": 45.0}, _invoices()
-		)
+		check_allocation({"sales_invoice": "SI-001", "ir_value": 100.0, "iva_value": 45.0}, _invoices())
 		check_allocation({"sales_invoice": "SI-002", "ir_value": 50.0, "iva_value": 0.0}, _invoices())
 
 	def test_unknown_invoice_fails(self) -> None:
@@ -90,9 +88,7 @@ class TestSiblingUniformity(UnitTestCase):
 		invoices = _invoices()
 		invoices["SI-002"]["customer"] = "Other Customer"
 		with self.assertRaises(ValueError):
-			check_siblings(
-				[{"sales_invoice": "SI-001"}, {"sales_invoice": "SI-002"}], invoices
-			)
+			check_siblings([{"sales_invoice": "SI-001"}, {"sales_invoice": "SI-002"}], invoices)
 
 	def test_uniform_passes(self) -> None:
 		check_siblings([{"sales_invoice": "SI-001"}, {"sales_invoice": "SI-002"}], _invoices())

@@ -124,7 +124,6 @@ def build_settlement_for_si(si_doc, resolve_asset=None, cost_center_resolver=Non
 
 	party = {"party_type": "Customer", "party": si_doc.get("customer")}
 	resolver = resolve_asset or _asset_account
-	company = si_doc.get("company")
 	ir_amount = 0.0
 	ir_concepto = (si_doc.get("sri_ir_concepto") or "").strip()
 	if ir_concepto:

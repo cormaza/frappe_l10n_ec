@@ -51,34 +51,28 @@ def check_allocation(allocation: dict, invoices: dict) -> None:
 			_("Invoice '{}' already has a settlement entry; refusing a second slip.").format(si_name)
 		)
 	if invoice.get("referenced"):
-		raise ValueError(
-			_("Invoice '{}' already carries another slip's references.").format(si_name)
-		)
+		raise ValueError(_("Invoice '{}' already carries another slip's references.").format(si_name))
 	if ir_value:
 		concepto = (invoice.get("ir_concepto") or "").strip()
 		if not concepto:
-			raise ValueError(
-				_("Invoice '{}' needs an IR concepto before withholding IR.").format(si_name)
-			)
+			raise ValueError(_("Invoice '{}' needs an IR concepto before withholding IR.").format(si_name))
 		impuesto, rate, _description = resolve_concepto(concepto)
 		if impuesto != "1":
 			raise ValueError(_("IR withholding needs an IR concepto, got '{}'.").format(concepto))
 		top = round(float(invoice.get("net_total") or 0.0) * rate / 100, 2)
 		if ir_value - top > 0.005:
 			raise ValueError(
-				_("IR {} on '{}' exceeds its base {} x {}%.").format(ir_value, si_name, invoice.get("net_total"), rate)
+				_("IR {} on '{}' exceeds its base {} x {}%.").format(
+					ir_value, si_name, invoice.get("net_total"), rate
+				)
 			)
 	if iva_value:
 		iva_concepto = (invoice.get("iva_concepto") or "").strip()
 		if not iva_concepto:
-			raise ValueError(
-				_("Invoice '{}' needs an IVA concepto before withholding IVA.").format(si_name)
-			)
+			raise ValueError(_("Invoice '{}' needs an IVA concepto before withholding IVA.").format(si_name))
 		top = round(float(invoice.get("iva_paid") or 0.0), 2)
 		if iva_value - top > 0.005:
-			raise ValueError(
-				_("IVA {} on '{}' exceeds its paid IVA {}.").format(iva_value, si_name, top)
-			)
+			raise ValueError(_("IVA {} on '{}' exceeds its paid IVA {}.").format(iva_value, si_name, top))
 
 
 def check_siblings(allocations: list, invoices: dict) -> None:
@@ -111,7 +105,12 @@ def _invoice_context(si_name: str) -> dict | None:
 
 	mapped = [map_line_taxes(line) for line in base_lines(si)]
 	iva_paid = round(
-		sum(tax.get("value", 0.0) for line in mapped for tax in line.get("taxes", []) if tax.get("code") == "2"),
+		sum(
+			tax.get("value", 0.0)
+			for line in mapped
+			for tax in line.get("taxes", [])
+			if tax.get("code") == "2"
+		),
 		2,
 	)
 	return {
@@ -157,11 +156,15 @@ def validate_allocations(doc) -> None:
 		if doc.get("customer") and any(
 			(entry or {}).get("customer") != doc.get("customer") for entry in invoices.values()
 		):
-			raise ValueError(_("Allocations must belong to the batch customer '{}'.").format(doc.get("customer")))
+			raise ValueError(
+				_("Allocations must belong to the batch customer '{}'.").format(doc.get("customer"))
+			)
 		if doc.get("company") and any(
 			(entry or {}).get("company") != doc.get("company") for entry in invoices.values()
 		):
-			raise ValueError(_("Allocations must belong to the batch company '{}'.").format(doc.get("company")))
+			raise ValueError(
+				_("Allocations must belong to the batch company '{}'.").format(doc.get("company"))
+			)
 	except ValueError as exc:
 		frappe.throw(str(exc))
 		raise
