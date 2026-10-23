@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecuador Localization VERSION\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-23 14:03-0641\n"
-"PO-Revision-Date: 2026-10-23 14:03-0641\n"
+"POT-Creation-Date: 2026-10-23 16:03-0641\n"
+"PO-Revision-Date: 2026-10-23 16:03-0641\n"
 "Last-Translator: developers@example.com\n"
 "Language-Team: developers@example.com\n"
 "MIME-Version: 1.0\n"
@@ -1036,7 +1036,7 @@ msgstr ""
 msgid "Missing TDS credit accounts for company '{}'."
 msgstr ""
 
-#: l10n_ec/ecuador_localization/assumed_withholding.py:87
+#: l10n_ec/ecuador_localization/assumed_withholding.py:92
 msgid "Missing account {} for assumed withholdings."
 msgstr ""
 
@@ -1867,10 +1867,6 @@ msgstr ""
 
 #: l10n_ec/sri/barcode.py:21
 msgid "SRI access key must be 49 numeric digits (got '{}')."
-msgstr ""
-
-#: l10n_ec/ecuador_localization/assumed_withholding.py:33
-msgid "SRI assumed withholdings {}"
 msgstr ""
 
 #: l10n_ec/locale/i18n_markers.py:80

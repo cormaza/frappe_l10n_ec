@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: l10n_ec 16.0.0\n"
 "Report-Msgid-Bugs-To: developers@example.com\n"
-"POT-Creation-Date: 2026-10-23 14:03-0719\n"
+"POT-Creation-Date: 2026-10-23 16:03-0719\n"
 "PO-Revision-Date: 2026-10-20 11:05+0000\n"
 "Last-Translator: Ecuador Localization Contributors\n"
 "Language-Team: Ecuador Localization Contributors\n"
@@ -1041,7 +1041,7 @@ msgstr "Falta la cuenta de retención de IVA {} para la compañía '{}'."
 msgid "Missing TDS credit accounts for company '{}'."
 msgstr "Faltan las cuentas de crédito TDS para la compañía '{}'."
 
-#: l10n_ec/ecuador_localization/assumed_withholding.py:87
+#: l10n_ec/ecuador_localization/assumed_withholding.py:92
 msgid "Missing account {} for assumed withholdings."
 msgstr "Falta la cuenta {} para retenciones asumidas."
 
@@ -1873,10 +1873,6 @@ msgstr "Sustento tributario SRI"
 #: l10n_ec/sri/barcode.py:21
 msgid "SRI access key must be 49 numeric digits (got '{}')."
 msgstr "La clave de acceso SRI debe tener 49 dígitos numéricos (recibido '{}')."
-
-#: l10n_ec/ecuador_localization/assumed_withholding.py:33
-msgid "SRI assumed withholdings {}"
-msgstr "Retenciones SRI asumidas {}"
 
 #: l10n_ec/locale/i18n_markers.py:80
 msgid "SRI authorization number of the customer-issued withholding voucher."

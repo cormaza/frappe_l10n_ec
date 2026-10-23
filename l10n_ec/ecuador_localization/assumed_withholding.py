@@ -29,8 +29,13 @@ WITHHOLDING_LIABILITY_NUMBERS = frozenset({"2010708", "2010709"})
 
 
 def assumed_remark(purchase_invoice: str) -> str:
-	"""Idempotency marker shared by the compensation entry and its lookup."""
-	return _("SRI assumed withholdings {}").format(purchase_invoice)
+	"""Idempotency marker shared by the compensation entry and its lookup.
+
+	Deliberately NOT translated: the marker must be byte-identical in every
+	locale, otherwise the lookup misses entries posted in another language
+	and the compensation posts twice.
+	"""
+	return f"SRI-ASSUMED-WH {purchase_invoice}"
 
 
 def assumed_total(tax_rows: list) -> float:
