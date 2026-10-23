@@ -26,11 +26,11 @@ from l10n_ec.sri.form103 import build_103_rows, collect_103, collect_103_by_conc
 def execute(filters=None):
 	"""Run the SRI Form 103 Script Report; one row per withholding concepto."""
 	columns = [
-		{"fieldname": "concepto", "label": _("Concept"), "fieldtype": "Data", "width": 380},
-		{"fieldname": "cas_base", "label": _("Base box"), "fieldtype": "Int", "width": 100},
-		{"fieldname": "base", "label": _("Base amount"), "fieldtype": "Float", "width": 150},
-		{"fieldname": "cas_impuesto", "label": _("Withheld box"), "fieldtype": "Int", "width": 110},
-		{"fieldname": "impuesto", "label": _("Withheld amount"), "fieldtype": "Float", "width": 150},
+		{"fieldname": "concepto", "label": _("Concept"), "fieldtype": "Data", "width": 420},
+		{"fieldname": "cas_base", "label": _("Base box"), "fieldtype": "Int", "width": 85},
+		{"fieldname": "base", "label": _("Base amount"), "fieldtype": "Float", "width": 125},
+		{"fieldname": "cas_impuesto", "label": _("Withheld box"), "fieldtype": "Int", "width": 95},
+		{"fieldname": "impuesto", "label": _("Withheld amount"), "fieldtype": "Float", "width": 125},
 	]
 	if frappe is None:  # Ring 1: importable, no database.
 		return columns, []
