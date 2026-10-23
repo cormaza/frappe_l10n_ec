@@ -16,7 +16,7 @@ EXPECTED_FIELDS = {
 		"rimpe_regime",
 		"accounting_required",
 	},
-	"Customer": {"sri_identification_type", "sri_related_party"},
+	"Customer": {"sri_identification_type", "sri_related_party", "sri_skip_id_validation"},
 	"Mode of Payment": {"sri_payment_code"},
 	"Quotation": {"sri_info_adicional", "sri_emission_point"},
 	"Sales Order": {"sri_info_adicional", "sri_emission_point"},
@@ -38,7 +38,7 @@ EXPECTED_FIELDS = {
 		"sri_received_retencion_key",
 		"sri_emission_point",
 	},
-	"Supplier": {"sri_identification_type", "sri_related_party"},
+	"Supplier": {"sri_identification_type", "sri_related_party", "sri_skip_id_validation"},
 	"POS Profile": {"sri_emission_point"},
 	"POS Invoice": {"sri_emission_point", "pos_opening_entry"},
 }

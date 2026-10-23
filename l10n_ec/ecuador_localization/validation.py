@@ -6,7 +6,11 @@ ISO code (`EC`), resolved from the contact address by the caller, so this
 module stays free of `frappe` imports and testable in Ring 1.
 """
 
-from l10n_ec.sri.identification import FINAL_CONSUMER_ID, validate_identification
+from l10n_ec.sri.identification import (
+	FINAL_CONSUMER_ID,
+	validate_identification,
+	validate_identification_with_fallback,
+)
 
 try:
 	from frappe import _
@@ -61,6 +65,60 @@ def validate_contact_tax_id(
 				(tax_id or "").strip(), (identification_type_code or "").strip()
 			)
 		)
+
+
+#: Days an SRI-confirmed RUC stays cached (registry data is stable).
+SRI_LOOKUP_CACHE_DAYS = 7
+
+
+def validate_contact_tax_id_with_fallback(
+	country_code: str | None,
+	identification_type_code: str | None,
+	tax_id: str | None,
+	fetch=None,
+	cache=None,
+) -> str:
+	"""Validate a contact tax ID with the SRI registry as soft fallback.
+
+	Returns the path taken: ``skipped`` (non-EC), ``stdnum`` (checksum),
+	or ``sri`` (registry knows it). Raises `ValueError` on rejection or
+	unverifiable registry answers, with the cause and the override hint.
+	``fetch``/``cache`` are injectable (Ring-1 tests); bench passes the
+	default network fetch plus ``frappe.cache`` (positives only).
+	"""
+	if not is_ecuadorian_contact(country_code):
+		return "skipped"
+	type_code = (identification_type_code or "").strip()
+	cleaned = (tax_id or "").strip()
+	if validate_identification(type_code, cleaned):
+		return "stdnum"
+	if type_code != "04" or not cleaned:
+		raise ValueError(_("Invalid tax identification '{}' for type '{}'.").format(cleaned, type_code))
+	cache_key = f"sri-ruc:{cleaned}"
+	if cache is not None:
+		try:
+			if cache.get(cache_key) == "sri":
+				return "sri"
+		except Exception:
+			pass
+	ok, path = validate_identification_with_fallback(type_code, cleaned, fetch=fetch)
+	if ok:
+		if cache is not None:
+			try:
+				cache.set(cache_key, "sri", expires_in_days=SRI_LOOKUP_CACHE_DAYS)
+			except Exception:
+				pass
+		return path
+	if path == "unverifiable":
+		raise ValueError(
+			_(
+				"Tax identification '{}' failed the checksum and the SRI registry "
+				"could not be reached to confirm it; check the connection or set "
+				"'Skip SRI ID Validation' on the contact with the number verified "
+				"at the SRI portal."
+			).format(cleaned)
+		)
+	raise ValueError(_("Invalid tax identification '{}' for type '{}'.").format(cleaned, type_code))
 
 
 def validate_final_consumer_amount(

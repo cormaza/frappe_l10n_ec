@@ -72,6 +72,14 @@ CUSTOM_FIELDS = {
 			"insert_after": "sri_identification_type",
 			"label": "Related Party",
 		},
+		{
+			"default": "0",
+			"fieldname": "sri_skip_id_validation",
+			"fieldtype": "Check",
+			"insert_after": "sri_related_party",
+			"label": "Skip SRI ID Validation",
+			"description": "The SRI issues RUCs without check-digit validation; set this only with the number verified at the SRI portal, to unblock a real taxpayer the checksum rejects.",
+		},
 	],
 	"Sales Invoice": [
 		{
@@ -240,6 +248,14 @@ CUSTOM_FIELDS = {
 			"fieldtype": "Check",
 			"insert_after": "sri_identification_type",
 			"label": "Related Party",
+		},
+		{
+			"default": "0",
+			"fieldname": "sri_skip_id_validation",
+			"fieldtype": "Check",
+			"insert_after": "sri_related_party",
+			"label": "Skip SRI ID Validation",
+			"description": "The SRI issues RUCs without check-digit validation; set this only with the number verified at the SRI portal, to unblock a real taxpayer the checksum rejects.",
 		},
 	],
 	"POS Profile": [

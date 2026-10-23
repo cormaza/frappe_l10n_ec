@@ -25,6 +25,10 @@ CUSTOM_FIELD_STRINGS = [
 	_("Accounting Required"),
 	_("SRI Identification Type"),
 	_("Related Party"),
+	_("Skip SRI ID Validation"),
+	_(
+		"The SRI issues RUCs without check-digit validation; set this only with the number verified at the SRI portal, to unblock a real taxpayer the checksum rejects."
+	),
 	_("SRI Emission Point"),
 	_(
 		"Caja fiscal: every ticket sold under this profile consumes sequential numbers from this point. One profile, one point."

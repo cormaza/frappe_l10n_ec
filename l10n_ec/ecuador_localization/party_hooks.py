@@ -16,6 +16,7 @@ except ImportError:  # pragma: no cover
 from l10n_ec.ecuador_localization.validation import (
 	is_generic_final_consumer,
 	validate_contact_tax_id,
+	validate_contact_tax_id_with_fallback,
 )
 
 
@@ -74,14 +75,18 @@ def validate_sri_identification(doc, method=None) -> None:
 		if frappe:
 			frappe.throw(str(exc))
 		raise
+	if doc.get("sri_skip_id_validation"):
+		return
 	identification_type = doc.get("sri_identification_type")
 	if not identification_type:
 		return
 	try:
-		validate_contact_tax_id(
+		cache = frappe.cache() if frappe else None
+		validate_contact_tax_id_with_fallback(
 			_resolve_country_code(doc),
 			identification_type,
 			doc.get("tax_id"),
+			cache=cache,
 		)
 	except ValueError as exc:
 		if frappe:
@@ -109,7 +114,7 @@ def validate_shopper_id(identification_type: str | None, tax_id: str | None) -> 
 	if frappe is None:  # pragma: no cover
 		raise RuntimeError("frappe is required to validate shopper IDs.")
 	try:
-		validate_contact_tax_id("EC", identification_type, tax_id)
+		path = validate_contact_tax_id_with_fallback("EC", identification_type, tax_id)
 	except ValueError as exc:
 		frappe.throw(str(exc))
-	return {"ok": True}
+	return {"ok": True, "path": path}

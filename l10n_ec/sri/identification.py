@@ -38,3 +38,28 @@ def validate_identification(type_code: str, value: str) -> bool:
 	if code == "07":
 		return cleaned_value == FINAL_CONSUMER_ID
 	return False
+
+
+def validate_identification_with_fallback(type_code: str, value: str, fetch=None) -> tuple:
+	"""Validate with the SRI registry as soft fallback (pure, no frappe).
+
+	Returns ``(ok, path)`` where path is ``stdnum`` (checksum passed, the
+	network is never touched), ``sri`` (checksum failed but the registry
+	knows the number), ``rejected`` (registry answers unknown) or
+	``unverifiable`` (registry unreachable or unusable). Only RUC (`04`)
+	queries the registry: every other type keeps its current verdict.
+	"""
+	from l10n_ec.sri.ruc_lookup import lookup_ruc
+
+	cleaned_value = (value or "").strip()
+	code = (type_code or "").strip()
+	if validate_identification(code, cleaned_value):
+		return (True, "stdnum")
+	if code != "04" or not cleaned_value:
+		return (False, "rejected")
+	verdict = lookup_ruc(cleaned_value, fetch=fetch)
+	if verdict["known"] is True:
+		return (True, "sri")
+	if verdict["known"] is False:
+		return (False, "rejected")
+	return (False, "unverifiable")
