@@ -241,6 +241,16 @@ CUSTOM_FIELDS = {
 			"description": "SRI Tabla 23 IVA withholding concepto driving the automatic deduction row and the voucher (1 bienes 30%, 2 servicios 70%, 3 honorarios 100%); leave empty when no IVA withholding applies.",
 		},
 	],
+	"Payment Entry": [
+		{
+			"fieldname": "sri_received_withholding",
+			"fieldtype": "Link",
+			"insert_after": "reference_no",
+			"label": "SRI Received Withholding",
+			"options": "SRI Received Withholding",
+			"description": "Customer-side batch: one slip covering many invoices. When linked, its allocations settle on submit instead of per-invoice fields.",
+		},
+	],
 	"Mode of Payment": [
 		{
 			"default": "01",

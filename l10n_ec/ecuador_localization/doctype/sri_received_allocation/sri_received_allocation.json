@@ -1,0 +1,55 @@
+{
+ "creation": "2026-10-23 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sales_invoice",
+  "ir_value",
+  "iva_value"
+ ],
+ "fields": [
+  {
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sales Invoice",
+   "options": "Sales Invoice",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ir_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "IR Value",
+   "description": "Withheld IR agreed for this invoice; capped by its concepto-derived base."
+  },
+  {
+   "fieldname": "iva_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "IVA Value",
+   "description": "Withheld IVA agreed for this invoice; capped by its IVA paid."
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-23 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Ecuador Localization",
+ "name": "SRI Received Allocation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  }
+ ]
+}

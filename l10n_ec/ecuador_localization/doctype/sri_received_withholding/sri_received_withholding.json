@@ -1,0 +1,98 @@
+{
+ "autoname": "SRI-RW-.YYYY.-.#####",
+ "creation": "2026-10-23 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "customer",
+  "company",
+  "retencion_number",
+  "authorization",
+  "retencion_date",
+  "access_key",
+  "payment_entry",
+  "allocations"
+ ],
+ "fields": [
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "retencion_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Retencion Number",
+   "reqd": 1,
+   "description": "Customer-issued withholding slip number (e.g. 001-002-000000009); one slip covers many invoices."
+  },
+  {
+   "fieldname": "authorization",
+   "fieldtype": "Data",
+   "label": "Retencion Authorization"
+  },
+  {
+   "fieldname": "retencion_date",
+   "fieldtype": "Date",
+   "label": "Retencion Date"
+  },
+  {
+   "fieldname": "access_key",
+   "fieldtype": "Data",
+   "label": "Retencion Access Key",
+   "description": "49-digit access key of the customer-issued slip, when shared."
+  },
+  {
+   "fieldname": "payment_entry",
+   "fieldtype": "Link",
+   "label": "Payment Entry",
+   "options": "Payment Entry",
+   "description": "Receipt that settles these allocations; settlement posts on its submit."
+  },
+  {
+   "fieldname": "allocations",
+   "fieldtype": "Table",
+   "label": "Allocations",
+   "options": "SRI Received Allocation",
+   "reqd": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-10-23 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Ecuador Localization",
+ "name": "SRI Received Withholding",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Accounts Manager",
+   "write": 1,
+   "submit": 1,
+   "cancel": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Accounts User",
+   "write": 1,
+   "submit": 1,
+   "cancel": 1
+  }
+ ]
+}

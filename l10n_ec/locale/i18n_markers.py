@@ -46,6 +46,10 @@ CUSTOM_FIELD_STRINGS = [
 	_("SRI Invoicing"),
 	_("Ecuadorian SRI data: withholdings, received slips and emission point."),
 	_("Tax details"),
+	_("SRI Received Withholding"),
+	_(
+		"Customer-side batch: one slip covering many invoices. When linked, its allocations settle on submit instead of per-invoice fields."
+	),
 	_("SRI Payment Code"),
 	_("SRI Liquidacion"),
 	_(

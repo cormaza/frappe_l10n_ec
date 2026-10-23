@@ -46,7 +46,7 @@ implícito.
 
 ## 2) Formulario 103 — Retenciones en la Fuente
 
-**Qué hace:** agrega voucher `07` **autorizados** IR por casillero (`303/353`, `312/362`, `340/3900`...). Exterior con `impuesto 9` queda **vacío explícito** (no se inventa).
+**Qué hace:** agrega voucher `07` **autorizados** IR por casillero (`303/353`, `312/362`, `340/3900`...) en bloques residentes, más sección exterior por régimen (`con`/`sin`/`paraíso`) con subtotal `497/498` y total `499 = 399 + 498`. Sin filas exterior, la sección declara vacío explícito.
 
 **Dónde abrirlo:** Desk → **Contabilidad** → **Informes** → busca **SRI Form 103** (tipo *Script Report*, `ref` Purchase Invoice).
 
@@ -58,6 +58,22 @@ bench --site demo execute "frappe.get_attr('l10n_ec.ecuador_localization.report.
 ```
 
 **Demo:** el voucher `07` de `001-001-000000011` (`312` IR 2% sobre 100 → `2.00`) cae en `312/362`; está en `Rejected` demo (techo autofirmado) — para verlo en 103, ponlo transitoriamente en `Authorized` (ver triangulación).
+
+## 2b) Retenciones: emitidas vs recibidas (no mezclar)
+
+- **Emitidas (lado proveedor, nosotros retenemos):** vouchers `07` que
+  emitimos sobre compras. Alimentan el 103 de arriba. Flujo en
+  `voucher_flow.py`; nada de esta sección los lee.
+- **Recibidas (lado cliente, nos retienen):** el cliente nos paga neto y
+  nos entrega UN comprobante que cubre MUCHAS facturas nuestras.
+  DocType `SRI Received Withholding` (cabecera del slip + tabla de
+  asignaciones por factura con topes por base) enlazado al Payment Entry:
+  al cobrar se valida (sin duplicidad, topes IR/IVA, mismo cliente) y se
+  contabiliza un JE por factura; al cancelar el cobro se reversa. Demo:
+  slip `001-002-000000201` sobre `ACC-SINV-2026-00005` (IR 20 + IVA 16)
+  y `ACC-SINV-2026-00004` (IR 8). Sus JEs alimentan `609` y `received_refs`
+  del 104; al ATS no entra sección de retenciones (el ATS informa
+  compras/ventas, no slips).
 
 ## 3) Formulario 104 — Declaración de IVA
 

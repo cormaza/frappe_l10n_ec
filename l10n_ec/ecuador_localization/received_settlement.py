@@ -139,6 +139,12 @@ def build_settlement_for_si(si_doc, resolve_asset=None, cost_center_resolver=Non
 		synthesized = synthesize_iva_row(mapped, iva_concepto)
 		if synthesized is not None:
 			iva_amount = synthesized["amount"]
+	return _settlement_je(si_doc, ir_amount, iva_amount, resolver, cost_center_resolver, party)
+
+
+def _settlement_je(si_doc, ir_amount, iva_amount, resolver, cost_center_resolver, party) -> dict | None:
+	"""Assemble the settlement JE dict from resolved amounts (shared core)."""
+	company = si_doc.get("company")
 	accounts = {
 		"ir_asset": resolver(company, IR_CREDIT_ACCOUNT_NUMBER),
 		"iva_asset": resolver(company, IVA_CREDIT_ACCOUNT_NUMBER),
@@ -160,6 +166,27 @@ def build_settlement_for_si(si_doc, resolve_asset=None, cost_center_resolver=Non
 	}
 
 
+def build_settlement_for_allocation(si_name: str, ir_value, iva_value) -> dict | None:
+	"""Settle one batch allocation with its agreed (capped) amounts.
+
+	Customer-side: unlike `build_settlement_for_si` (which recomputes from
+	the invoice conceptos), the slip amounts were agreed with the customer
+	and validated by `received_batch`; they are booked as stated.
+	"""
+	if frappe is None:  # pragma: no cover
+		return None
+	si_doc = frappe.get_doc("Sales Invoice", si_name)
+	party = {"party_type": "Customer", "party": si_doc.get("customer")}
+	return _settlement_je(
+		si_doc,
+		round(float(ir_value or 0.0), 2),
+		round(float(iva_value or 0.0), 2),
+		_asset_account,
+		None,
+		party,
+	)
+
+
 def _existing_settlement(sales_invoice: str):
 	"""Submitted settlement JE for an invoice, if any (idempotency)."""
 	if frappe is None:  # pragma: no cover
@@ -178,6 +205,10 @@ def settle_received_withholdings(doc, method=None) -> None:
 		return
 	if doc.get("payment_type") != "Receive" or doc.get("party_type") != "Customer":
 		return
+	linked = doc.get("sri_received_withholding")
+	if linked and frappe.db.exists("SRI Received Withholding", linked):
+		settle_batch_withholdings(linked)
+		return
 	for reference in doc.get("references") or []:
 		if reference.get("reference_doctype") != "Sales Invoice":
 			continue
@@ -193,6 +224,59 @@ def settle_received_withholdings(doc, method=None) -> None:
 		je.submit()
 		# Outstanding display refreshes in Payment Reconciliation (standard
 		# tool for adjustment entries); the books balance at submit.
+
+
+def stamp_slip_references(batch_name: str, stamp: bool) -> None:
+	"""Write (or clear) the shared slip refs onto allocated invoices.
+
+	Downstream readers (ATS, 104 received refs) keep working unchanged:
+	they read the SI fields this stamps. Clearing only blanks refs that
+	still point at this slip; a posted settlement JE blocks unclearing.
+	"""
+	if frappe is None:  # pragma: no cover
+		return
+	batch = frappe.get_doc("SRI Received Withholding", batch_name)
+	refs = {
+		"sri_received_retencion_number": batch.get("retencion_number") or "",
+		"sri_received_retencion_auth": batch.get("authorization") or "",
+		"sri_received_retencion_date": batch.get("retencion_date"),
+		"sri_received_retencion_key": batch.get("access_key") or "",
+	}
+	for row in batch.get("allocations") or []:
+		si_name = row.get("sales_invoice")
+		if not si_name or not frappe.db.exists("Sales Invoice", si_name):
+			continue
+		if stamp:
+			for field, value in refs.items():
+				if value:
+					frappe.db.set_value("Sales Invoice", si_name, field, value)
+		else:
+			if _existing_settlement(si_name) is not None:
+				raise ValueError(_("Invoice '{}' already settled; its slip references stay.").format(si_name))
+			current = frappe.db.get_value("Sales Invoice", si_name, "sri_received_retencion_number")
+			if current == refs["sri_received_retencion_number"]:
+				for field in refs:
+					frappe.db.set_value("Sales Invoice", si_name, field, None)
+
+
+def settle_batch_withholdings(batch_name: str) -> list:
+	"""Post one settlement JE per allocation of a received batch."""
+	if frappe is None:  # pragma: no cover
+		return []
+	batch = frappe.get_doc("SRI Received Withholding", batch_name)
+	posted = []
+	for row in batch.get("allocations") or []:
+		si_name = row.get("sales_invoice")
+		if not si_name or _existing_settlement(si_name) is not None:
+			continue
+		settlement = build_settlement_for_allocation(si_name, row.get("ir_value"), row.get("iva_value"))
+		if settlement is None:
+			continue
+		je = frappe.get_doc({"doctype": "Journal Entry", **settlement})
+		je.insert(ignore_permissions=True)
+		je.submit()
+		posted.append(je.name)
+	return posted
 
 
 def cancel_received_settlements(doc, method=None) -> None:

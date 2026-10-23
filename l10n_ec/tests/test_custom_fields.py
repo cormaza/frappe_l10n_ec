@@ -18,6 +18,7 @@ EXPECTED_FIELDS = {
 	},
 	"Customer": {"sri_identification_type", "sri_related_party", "sri_skip_id_validation"},
 	"Mode of Payment": {"sri_payment_code"},
+	"Payment Entry": {"sri_received_withholding"},
 	"Quotation": {"sri_info_adicional", "sri_emission_point"},
 	"Sales Order": {"sri_info_adicional", "sri_emission_point"},
 	"Webshop Settings": {"sri_emission_point"},
