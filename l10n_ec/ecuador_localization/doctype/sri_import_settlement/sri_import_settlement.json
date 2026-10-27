@@ -16,7 +16,24 @@
   "insurance_invoice",
   "section_break_customs",
   "dai_number",
-  "dai_date"
+  "dai_date",
+  "section_break_settlement",
+  "ad_valorem_rate",
+  "fodinfa_rate",
+  "iva_rate",
+  "ice_amount",
+  "other_duties",
+  "section_break_declaration",
+  "dai_ad_valorem",
+  "dai_fodinfa",
+  "dai_iva",
+  "dai_total",
+  "section_break_totals",
+  "cif_total",
+  "ad_valorem_amount",
+  "fodinfa_amount",
+  "iva_base",
+  "iva_amount"
  ],
  "fields": [
   {
@@ -107,6 +124,107 @@
    "fieldtype": "Date",
    "label": "DAI Date",
    "description": "Date of the customs declaration."
+  },
+  {
+   "fieldname": "section_break_settlement",
+   "fieldtype": "Section Break",
+   "label": "Tax Settlement"
+  },
+  {
+   "fieldname": "ad_valorem_rate",
+   "fieldtype": "Percent",
+   "label": "Ad Valorem Rate",
+   "description": "Tariff percentage from the DAI; never assumed."
+  },
+  {
+   "fieldname": "fodinfa_rate",
+   "fieldtype": "Percent",
+   "label": "FODINFA Rate",
+   "description": "FODINFA percentage from the DAI; never assumed."
+  },
+  {
+   "fieldname": "iva_rate",
+   "fieldtype": "Percent",
+   "label": "IVA Rate",
+   "description": "IVA percentage from the DAI (e.g. 15)."
+  },
+  {
+   "fieldname": "ice_amount",
+   "fieldtype": "Currency",
+   "label": "ICE Amount",
+   "description": "ICE from the DAI, when the goods carry it."
+  },
+  {
+   "fieldname": "other_duties",
+   "fieldtype": "Currency",
+   "label": "Other Duties",
+   "description": "Remaining duties from the DAI (tasas, recargos)."
+  },
+  {
+   "fieldname": "section_break_declaration",
+   "fieldtype": "Section Break",
+   "label": "DAI Declared Values"
+  },
+  {
+   "fieldname": "dai_ad_valorem",
+   "fieldtype": "Currency",
+   "label": "DAI Ad Valorem",
+   "description": "Ad Valorem amount declared on the DAI; crosschecked."
+  },
+  {
+   "fieldname": "dai_fodinfa",
+   "fieldtype": "Currency",
+   "label": "DAI FODINFA",
+   "description": "FODINFA amount declared on the DAI; crosschecked."
+  },
+  {
+   "fieldname": "dai_iva",
+   "fieldtype": "Currency",
+   "label": "DAI IVA",
+   "description": "IVA amount declared on the DAI; crosschecked."
+  },
+  {
+   "fieldname": "dai_total",
+   "fieldtype": "Currency",
+   "label": "DAI Total",
+   "description": "Total duties declared on the DAI; crosschecked."
+  },
+  {
+   "fieldname": "section_break_totals",
+   "fieldtype": "Section Break",
+   "label": "Computed Totals"
+  },
+  {
+   "fieldname": "cif_total",
+   "fieldtype": "Currency",
+   "label": "CIF Total",
+   "read_only": 1,
+   "description": "Recomputed customs value (FOB + freight + insurance)."
+  },
+  {
+   "fieldname": "ad_valorem_amount",
+   "fieldtype": "Currency",
+   "label": "Ad Valorem Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "fodinfa_amount",
+   "fieldtype": "Currency",
+   "label": "FODINFA Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "iva_base",
+   "fieldtype": "Currency",
+   "label": "IVA Base",
+   "read_only": 1,
+   "description": "LRTI Art. 59 base: customs value plus duties."
+  },
+  {
+   "fieldname": "iva_amount",
+   "fieldtype": "Currency",
+   "label": "IVA Amount",
+   "read_only": 1
   }
  ],
  "istable": 0,

@@ -13,9 +13,7 @@ from l10n_ec.sri.import_links import GOODS_ROLES, LINK_DOCTYPES, validate_settle
 def _links(**kwargs):
 	base = {"purchase_order": None, "purchase_receipt": None, "purchase_invoice": None}
 	base.update(kwargs)
-	return {
-		role: ((LINK_DOCTYPES[role], name) if name else None) for role, name in base.items()
-	}
+	return {role: ((LINK_DOCTYPES[role], name) if name else None) for role, name in base.items()}
 
 
 class TestSettlementLinkSet(UnitTestCase):

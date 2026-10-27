@@ -21,7 +21,9 @@ def _amount(value: float | None, name: str) -> float:
 		raise ValueError(_("Import settlement amount '{}' is required.").format(name))
 	amount = float(value)
 	if amount < 0:
-		raise ValueError(_("Import settlement amount '{}' cannot be negative (got '{}').").format(name, amount))
+		raise ValueError(
+			_("Import settlement amount '{}' cannot be negative (got '{}').").format(name, amount)
+		)
 	return amount
 
 
