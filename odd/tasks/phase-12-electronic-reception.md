@@ -124,4 +124,4 @@ never a promise.
   (clearly-named 'Imported Suppliers' group, type from ID length,
   name-clash guard, review note) instead of forcing a manual
   round-trip; the no-template error now lists available company
-  templates with rates. Live proof on fresh seeded site for both.
+  templates with rates. Live proof on fresh seeded site for both. T4 live proof 2026-10-28: batch SRI-RW-2026-00001 auto-linked to its SI (ir=100), duplicate rejected, cleaned; gate unaffected.
