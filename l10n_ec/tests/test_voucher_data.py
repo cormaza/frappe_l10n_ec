@@ -243,3 +243,209 @@ class TestNotaCreditoDebitoRoundTrip(UnitTestCase):
 		self.assertEqual(parsed["number"], "001-001-000000001")
 		self.assertEqual(parsed["total_value"], 115.00)
 		self.assertEqual(parsed["reasons"][0]["reason"], "Intereses")
+
+
+class TestReembolsoRoundTrip(UnitTestCase):
+	def test_factura_reembolsos_round_trip(self) -> None:
+		from l10n_ec.sri.xml_builder import build_factura_xml
+
+		ctx = dict(CTX)
+		ctx["doc_code"] = "01"
+		reembolso = {
+			"doc_code": "01",
+			"supplier_id_type": "04",
+			"supplier_id": "1790016919001",
+			"supplier_country": "593",
+			"sri_number": "001-001-000000001",
+			"issue_date": "20/10/2026",
+			"auth_number": "1234567890",
+			"taxes": [
+				{
+					"codigo": "2",
+					"codigoPorcentaje": "4",
+					"tarifa": 15.0,
+					"baseImponible": 100.00,
+					"valor": 15.00,
+				},
+			],
+		}
+		xml = build_factura_xml(
+			ctx,
+			{
+				"issue_date": "20/10/2026",
+				"buyer_id_type": "04",
+				"buyer_name": "INTERMEDIARIO EJEMPLO SA",
+				"buyer_id": "1790016919001",
+				"buyer_address": "",
+				"subtotal": 200.00,
+				"discount": 0.0,
+				"tax_totals": [{"code": "2", "rate_code": "4", "base": 200.00, "value": 30.00}],
+				"tip": 0.0,
+				"total": 230.00,
+				"payments": [{"method": "01", "amount": 230.00}],
+				"lines": [
+					{
+						"code": "SERV-INT",
+						"description": "Intermediation service",
+						"qty": 1.0,
+						"unit_price": 200.00,
+						"discount": 0.0,
+						"subtotal": 200.00,
+						"total": 200.00,
+						"taxes": [],
+					}
+				],
+				"reembolsos": [reembolso],
+			},
+		)
+		parsed = parse_emitted_xml(xml)
+		self.assertEqual(parsed["kind"], "factura")
+		self.assertIn("reembolsos", parsed)
+		self.assertEqual(len(parsed["reembolsos"]), 1)
+		entry = parsed["reembolsos"][0]
+		self.assertEqual(entry["doc_code"], "01")
+		self.assertEqual(entry["supplier_id_type"], "04")
+		self.assertEqual(entry["supplier_id"], "1790016919001")
+		self.assertEqual(entry["supplier_country"], "593")
+		self.assertEqual(entry["sri_number"], "001-001-000000001")
+		self.assertEqual(entry["issue_date"], "20/10/2026")
+		self.assertEqual(entry["auth_number"], "1234567890")
+		self.assertEqual(
+			entry["taxes"],
+			[{"codigo": "2", "codigoPorcentaje": "4", "tarifa": 15.0, "baseImponible": 100.0, "valor": 15.0}],
+		)
+
+	def test_factura_without_reembolsos_parses_without_key(self) -> None:
+		from l10n_ec.sri.xml_builder import build_factura_xml
+
+		ctx = dict(CTX)
+		ctx["doc_code"] = "01"
+		xml = build_factura_xml(
+			ctx,
+			{
+				"issue_date": "20/10/2026",
+				"buyer_id_type": "07",
+				"buyer_name": "CONSUMIDOR FINAL",
+				"buyer_id": "9999999999999",
+				"buyer_address": "",
+				"subtotal": 100.00,
+				"discount": 0.0,
+				"tax_totals": [{"code": "2", "rate_code": "4", "base": 100.00, "value": 15.00}],
+				"tip": 0.0,
+				"total": 115.00,
+				"payments": [{"method": "01", "amount": 115.00}],
+				"lines": [
+					{
+						"code": "DEMO-WIDGET",
+						"description": "Demo widget",
+						"qty": 1.0,
+						"unit_price": 100.00,
+						"discount": 0.0,
+						"subtotal": 100.00,
+						"total": 100.00,
+						"taxes": [],
+					}
+				],
+			},
+		)
+		parsed = parse_emitted_xml(xml)
+		self.assertEqual(parsed["kind"], "factura")
+		self.assertNotIn("reembolsos", parsed)
+
+	def test_liquidacion_reembolsos_round_trip(self) -> None:
+		from l10n_ec.sri.xml_builder import build_liquidacion_compra_xml
+
+		ctx = dict(CTX)
+		ctx["doc_code"] = "03"
+		reembolso = {
+			"doc_code": "01",
+			"supplier_id_type": "04",
+			"supplier_id": "1790016919001",
+			"sri_number": "001-001-000000001",
+			"issue_date": "20/10/2026",
+			"auth_number": "1234567890",
+			"taxes": [
+				{
+					"codigo": "2",
+					"codigoPorcentaje": "4",
+					"tarifa": 15.0,
+					"baseImponible": 100.00,
+					"valor": 15.00,
+				},
+			],
+		}
+		xml = build_liquidacion_compra_xml(
+			ctx,
+			{
+				"issue_date": "21/10/2026",
+				"supplier_id_type": "05",
+				"supplier_name": "JUAN PEREZ",
+				"supplier_id": "1710034065",
+				"supplier_address": "",
+				"subtotal": 100.00,
+				"discount": 0.0,
+				"tax_totals": [{"code": "2", "rate_code": "4", "base": 100.00, "value": 15.00}],
+				"total": 115.00,
+				"payments": [{"method": "01", "amount": 115.00}],
+				"lines": [
+					{
+						"code": "SERV-RURAL",
+						"description": "Rural service",
+						"qty": 1.0,
+						"unit_price": 100.00,
+						"discount": 0.0,
+						"subtotal": 100.00,
+						"total": 100.00,
+						"taxes": [],
+					}
+				],
+				"reembolsos": [reembolso],
+			},
+		)
+		parsed = parse_emitted_xml(xml)
+		self.assertEqual(parsed["kind"], "liquidacion_compra")
+		self.assertEqual(parsed["number"], "001-001-000000001")
+		self.assertEqual(parsed["supplier_name"], "JUAN PEREZ")
+		self.assertEqual(parsed["total"], 115.00)
+		self.assertEqual(len(parsed["reembolsos"]), 1)
+		entry = parsed["reembolsos"][0]
+		self.assertEqual(entry["doc_code"], "01")
+		self.assertEqual(entry["sri_number"], "001-001-000000001")
+		self.assertEqual(entry["taxes"][0]["baseImponible"], 100.0)
+		self.assertEqual(entry["taxes"][0]["valor"], 15.0)
+
+	def test_liquidacion_without_reembolsos_parses_without_key(self) -> None:
+		from l10n_ec.sri.xml_builder import build_liquidacion_compra_xml
+
+		ctx = dict(CTX)
+		ctx["doc_code"] = "03"
+		xml = build_liquidacion_compra_xml(
+			ctx,
+			{
+				"issue_date": "21/10/2026",
+				"supplier_id_type": "05",
+				"supplier_name": "JUAN PEREZ",
+				"supplier_id": "1710034065",
+				"supplier_address": "",
+				"subtotal": 100.00,
+				"discount": 0.0,
+				"tax_totals": [{"code": "2", "rate_code": "4", "base": 100.00, "value": 15.00}],
+				"total": 115.00,
+				"payments": [{"method": "01", "amount": 115.00}],
+				"lines": [
+					{
+						"code": "SERV-RURAL",
+						"description": "Rural service",
+						"qty": 1.0,
+						"unit_price": 100.00,
+						"discount": 0.0,
+						"subtotal": 100.00,
+						"total": 100.00,
+						"taxes": [],
+					}
+				],
+			},
+		)
+		parsed = parse_emitted_xml(xml)
+		self.assertEqual(parsed["kind"], "liquidacion_compra")
+		self.assertNotIn("reembolsos", parsed)

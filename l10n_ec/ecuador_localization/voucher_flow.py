@@ -30,6 +30,7 @@ from l10n_ec.ecuador_localization.validation import validate_factura_cf_total
 from l10n_ec.sri import xml_builder
 from l10n_ec.sri.access_key import generate_access_key
 from l10n_ec.sri.payment_methods import resolve_payment_method
+from l10n_ec.sri.reimbursement import resolve_reimbursement_total
 from l10n_ec.sri.signer import sign_xml_xades_bes
 from l10n_ec.sri.soap_client import (
 	SriSoapClient,
@@ -102,6 +103,149 @@ def map_tax_totals(totals: list) -> list:
 	return _map_taxes(totals)
 
 
+#: IVA rate to SRI `codigoPorcentaje` for derived reimbursement breakdowns.
+#: Any non-standard rate travels as `8` (diferenciado, distinguished by `tarifa`).
+REEMBOLSO_RATE_CODES = {0.0: "0", 12.0: "2", 14.0: "3", 15.0: "4"}
+
+
+def _detail_field(detail, field: str, default=None):
+	"""Read a reimbursement row from a dict or a Frappe document."""
+	if isinstance(detail, dict):
+		return detail.get(field, default)
+	return getattr(detail, field, default)
+
+
+def _reembolso_iva_rate_code(tarifa: float) -> str:
+	"""SRI `codigoPorcentaje` for a derived IVA rate (unknown rates map to `8`)."""
+	return REEMBOLSO_RATE_CODES.get(round(float(tarifa), 2), "8")
+
+
+def _map_reembolso_tax(tax: dict, index: int) -> dict:
+	"""Validate one explicit detalleImpuestos row of a reimbursement entry."""
+	if not isinstance(tax, dict):
+		raise SriVoucherError(_("Reimbursement row {} tax must be a dict of tax fields.").format(index))
+	for field in ("codigo", "codigoPorcentaje", "tarifa", "baseImponible", "valor"):
+		if _detail_field(tax, field) in (None, ""):
+			raise SriVoucherError(_("Reimbursement row {} tax needs '{}'.").format(index, field))
+	return {
+		"codigo": str(_detail_field(tax, "codigo")),
+		"codigoPorcentaje": str(_detail_field(tax, "codigoPorcentaje")),
+		"tarifa": round(float(_detail_field(tax, "tarifa")), 2),
+		"baseImponible": round(float(_detail_field(tax, "baseImponible")), 2),
+		"valor": round(float(_detail_field(tax, "valor")), 2),
+	}
+
+
+def _derive_reembolso_taxes(detail, index: int) -> list:
+	"""Derive detalleImpuestos rows from reimbursement aggregates.
+
+	Gravada/no-object/exempt bases map to their documented SRI buckets;
+	ICE tariffs are product-specific and never inferred, so an ICE amount
+	without an explicit breakdown fails loud.
+	"""
+	taxed = round(float(_detail_field(detail, "taxed_base") or 0.0), 2)
+	iva = round(float(_detail_field(detail, "iva_amount") or 0.0), 2)
+	no_tax = round(float(_detail_field(detail, "no_tax_base") or 0.0), 2)
+	exempt = round(float(_detail_field(detail, "exempt_base") or 0.0), 2)
+	ice = round(float(_detail_field(detail, "ice_amount") or 0.0), 2)
+	if ice:
+		raise SriVoucherError(
+			_("Reimbursement row {} with ICE needs an explicit tax breakdown.").format(index)
+		)
+	taxes = []
+	if taxed:
+		tarifa = round(iva * 100 / taxed, 2)
+		taxes.append(
+			{
+				"codigo": "2",
+				"codigoPorcentaje": _reembolso_iva_rate_code(tarifa),
+				"tarifa": tarifa,
+				"baseImponible": taxed,
+				"valor": iva,
+			}
+		)
+	if no_tax:
+		taxes.append(
+			{
+				"codigo": "2",
+				"codigoPorcentaje": "6",
+				"tarifa": 0.0,
+				"baseImponible": no_tax,
+				"valor": 0.0,
+			}
+		)
+	if exempt:
+		taxes.append(
+			{
+				"codigo": "2",
+				"codigoPorcentaje": "7",
+				"tarifa": 0.0,
+				"baseImponible": exempt,
+				"valor": 0.0,
+			}
+		)
+	if not taxes:
+		raise SriVoucherError(_("Reimbursement row {} carries no amounts to emit.").format(index))
+	return taxes
+
+
+def _map_reimbursement_detail(detail, index: int) -> dict:
+	"""Map one reimbursement row to its emission dict (fail loud when partial)."""
+	for field in (
+		"doc_code",
+		"supplier_id_type",
+		"supplier_id",
+		"sri_number",
+		"issue_date",
+		"auth_number",
+	):
+		if _detail_field(detail, field) in (None, ""):
+			raise SriVoucherError(_("Reimbursement row {} needs '{}'.").format(index, field))
+	explicit_taxes = _detail_field(detail, "taxes")
+	if explicit_taxes:
+		taxes = [_map_reembolso_tax(tax, index) for tax in explicit_taxes]
+	else:
+		taxes = _derive_reembolso_taxes(detail, index)
+	tax_base = round(sum(tax["baseImponible"] for tax in taxes), 2)
+	base = _detail_field(detail, "base_amount")
+	if base in (None, ""):
+		base = tax_base
+	elif explicit_taxes and abs(round(float(base), 2) - tax_base) > 0.01:
+		raise SriVoucherError(
+			_("Reimbursement row {} base '{}' does not match its tax breakdown.").format(index, base)
+		)
+	return {
+		"doc_code": str(_detail_field(detail, "doc_code")),
+		"supplier_id_type": str(_detail_field(detail, "supplier_id_type")),
+		"supplier_id": str(_detail_field(detail, "supplier_id")),
+		"supplier_type": str(_detail_field(detail, "supplier_type") or "01"),
+		"supplier_country": str(_detail_field(detail, "supplier_country") or ""),
+		"sri_number": str(_detail_field(detail, "sri_number")),
+		"issue_date": _detail_field(detail, "issue_date"),
+		"auth_number": str(_detail_field(detail, "auth_number")),
+		"taxes": taxes,
+		"base_amount": round(float(base), 2),
+	}
+
+
+def map_reimbursement_details(
+	details: list | tuple | None, override_value=None, allow_override: bool = False
+) -> list:
+	"""Map reimbursement rows to emission `reembolsos` dicts.
+
+	Empty input keeps the default path (no block). The calculated total is
+	resolved for opt-in discipline: a forced value without explicit opt-in
+	fails loud instead of silently diverging. Partial rows fail loud.
+	"""
+	if not details:
+		return []
+	rows = [_map_reimbursement_detail(detail, index) for index, detail in enumerate(details, start=1)]
+	resolve_reimbursement_total(
+		[{"base_amount": row["base_amount"]} for row in rows], override_value, allow_override
+	)
+	return rows
+
+
 def build_voucher_payload(invoice: dict, emitter: dict, sequence: dict) -> dict:
 	"""Assemble `(builder, ctx, data)` for the voucher builders from plain dicts.
 
@@ -129,6 +273,11 @@ def build_voucher_payload(invoice: dict, emitter: dict, sequence: dict) -> dict:
 	}
 	lines = [map_line_taxes(line) for line in invoice.get("lines", [])]
 	totals = map_tax_totals(invoice.get("tax_totals", []))
+	reembolsos = map_reimbursement_details(
+		invoice.get("sri_reimbursement_details"),
+		invoice.get("sri_reimbursement_override_value"),
+		invoice.get("sri_allow_reimbursement_override"),
+	)
 	data: dict = {"issue_date": invoice.get("issue_date", ""), "subtotal": invoice.get("subtotal", 0.0)}
 	if cod_doc == "01":
 		data.update(
@@ -146,6 +295,8 @@ def build_voucher_payload(invoice: dict, emitter: dict, sequence: dict) -> dict:
 				"lines": lines,
 			}
 		)
+		if reembolsos:
+			data["reembolsos"] = reembolsos
 	elif cod_doc == "03":
 		data.update(
 			{
@@ -160,6 +311,8 @@ def build_voucher_payload(invoice: dict, emitter: dict, sequence: dict) -> dict:
 				"lines": lines,
 			}
 		)
+		if reembolsos:
+			data["reembolsos"] = reembolsos
 	elif cod_doc == "04":
 		data.update(
 			{
@@ -960,6 +1113,23 @@ def _abs_row(row):
 	)
 
 
+def _reimbursement_invoice_fields(ref) -> dict:
+	"""Reimbursement lines for the payload (empty when none: default path unchanged).
+
+	Reads the intermediary Sales Invoice (`sri_is_reimbursement` context) or
+	the liquidacion Purchase Invoice reimbursement details; the payload
+	builders carry them only when lines exist.
+	"""
+	details = list(ref.get("sri_reimbursement_details") or [])
+	if not details:
+		return {}
+	return {
+		"sri_reimbursement_details": details,
+		"sri_reimbursement_override_value": ref.get("sri_reimbursement_override_value"),
+		"sri_allow_reimbursement_override": ref.get("sri_allow_reimbursement_override"),
+	}
+
+
 def _invoice_dict(
 	doc,
 	reason=None,
@@ -1030,6 +1200,8 @@ def _invoice_dict(
 			}
 		)
 	base["tax_totals"] = aggregate_raw_totals(base["lines"])
+	if doc.sri_doc_code in ("01", "03"):
+		base.update(_reimbursement_invoice_fields(ref))
 	if doc.sri_doc_code == "01":
 		try:
 			validate_factura_cf_total(base.get("buyer_id_type"), base.get("buyer_id"), base.get("total"))
