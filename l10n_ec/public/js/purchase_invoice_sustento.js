@@ -31,3 +31,43 @@ function filter_sustento(frm) {
    frm.set_value("sri_sustento_code", defval);
  }
 }
+
+function add_supplier_xml_button(frm) {
+ if (!frm.is_new()) return;
+ frm.add_custom_button(__("Import Supplier XML"), () => {
+  const dialog = new frappe.ui.Dialog({
+   title: __("Import Supplier XML"),
+   fields: [
+    {fieldname: "company", fieldtype: "Link", options: "Company", reqd: 1, default: frappe.defaults.get_user_default("Company")},
+    {fieldname: "item_code", fieldtype: "Link", options: "Item", reqd: 1, description: __("Applied to every XML line; the row keeps the XML description.")},
+    {fieldname: "sustento", fieldtype: "Select", options: ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"].join("\n"), reqd: 1, default: "02"},
+    {fieldname: "xml_file", fieldtype: "Attach", reqd: 1, description: __("Signed supplier factura XML (.xml).")},
+   ],
+   primary_action_label: __("Import as Draft"),
+   primary_action(values) {
+    dialog.disable_primary_action();
+    const reader = new FileReader();
+    const input = dialog.fields_dict.xml_file.$input[0].files[0];
+    if (!input) { frappe.msgprint(__("Select an XML file first.")); dialog.enable_primary_action(); return; }
+    reader.onload = function() {
+     frappe.call({
+      method: "l10n_ec.ecuador_localization.received_xml.import_supplier_xml",
+      args: {xml_text: reader.result, company: values.company, item_code: values.item_code, sustento: values.sustento},
+      freeze: true,
+      freeze_message: __("Importing supplier XML..."),
+      callback(r) {
+       dialog.hide();
+       if (r.message) frappe.set_route("Form", "Purchase Invoice", r.message);
+      },
+      error() { dialog.enable_primary_action(); },
+     });
+    };
+    reader.readAsText(input);
+   },
+  });
+  dialog.show();
+}
+
+frappe.ui.form.on("Purchase Invoice", {
+ refresh(frm) { add_supplier_xml_button(frm); },
+});

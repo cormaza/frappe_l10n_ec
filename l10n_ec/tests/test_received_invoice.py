@@ -7,7 +7,11 @@ try:
 except ImportError:  # pragma: no cover
 	UnitTestCase = unittest.TestCase  # type: ignore[misc,assignment]
 
-from l10n_ec.sri.received_invoice import map_received_factura
+from l10n_ec.sri.received_invoice import (
+	assemble_purchase_invoice,
+	map_received_factura,
+	resolve_purchase_templates,
+)
 from l10n_ec.sri.voucher_data import parse_emitted_xml
 
 
@@ -70,7 +74,9 @@ TEMPLATES = [
 class TestParseEmisorAndLines(UnitTestCase):
 	def test_emisor_and_clave_extracted(self) -> None:
 		parsed = parse_emitted_xml(
-			_factura_xml(_line("Widget A", "10", "100.00", "1000.00", _tax("2", "4", "15", "1000.00", "150.00")))
+			_factura_xml(
+				_line("Widget A", "10", "100.00", "1000.00", _tax("2", "4", "15", "1000.00", "150.00"))
+			)
 		)
 		self.assertEqual(parsed["emisor_ruc"], "1790016919001")
 		self.assertEqual(parsed["emisor_name"], "PROVEEDOR EJEMPLO SA")
@@ -78,7 +84,9 @@ class TestParseEmisorAndLines(UnitTestCase):
 
 	def test_per_line_taxes_extracted(self) -> None:
 		parsed = parse_emitted_xml(
-			_factura_xml(_line("Widget A", "10", "100.00", "1000.00", _tax("2", "4", "15", "1000.00", "150.00")))
+			_factura_xml(
+				_line("Widget A", "10", "100.00", "1000.00", _tax("2", "4", "15", "1000.00", "150.00"))
+			)
 		)
 		self.assertEqual(len(parsed["lines"]), 1)
 		self.assertEqual(parsed["lines"][0]["taxes"][0]["rate_code"], "4")
@@ -102,7 +110,9 @@ class TestMapReceivedFactura(UnitTestCase):
 		self.assertEqual(mapped["supplier_name"], "PROVEEDOR EJEMPLO SA")
 		self.assertEqual(mapped["bill_no"], "001-001-000000001")
 		self.assertEqual(mapped["bill_date"], "2026-10-20")
-		self.assertEqual(mapped["sri_supplier_auth_number"], "2110202601179001691900110010010000000011234567818")
+		self.assertEqual(
+			mapped["sri_supplier_auth_number"], "2110202601179001691900110010010000000011234567818"
+		)
 
 	def test_lines_carry_rate_matched_templates(self) -> None:
 		mapped = map_received_factura(self._parsed_two_rates(), **self._doc_kwargs())
@@ -118,7 +128,7 @@ class TestMapReceivedFactura(UnitTestCase):
 		self.assertIn("0", str(ctx.exception))
 
 	def test_ambiguous_templates_fail(self) -> None:
-		dupes = TEMPLATES + [{"title": "Other VAT 15%", "rate": 15.0}]
+		dupes = [*TEMPLATES, {"title": "Other VAT 15%", "rate": 15.0}]
 		with self.assertRaises(ValueError):
 			map_received_factura(self._parsed_two_rates(), **self._doc_kwargs(templates=dupes))
 
@@ -143,3 +153,59 @@ class TestMapReceivedFactura(UnitTestCase):
 		parsed["currency"] = "EUROS"
 		with self.assertRaises(ValueError):
 			map_received_factura(parsed, **self._doc_kwargs())
+
+
+class TestResolvePurchaseTemplates(UnitTestCase):
+	def test_asset_templates_kept_liability_dropped(self) -> None:
+		catalog = [
+			{"title": "VAT 15% In", "rate": 15.0, "account_root_type": "Asset"},
+			{"title": "VAT 15% Out", "rate": 15.0, "account_root_type": "Liability"},
+			{"title": "No Rate", "rate": None, "account_root_type": "Asset"},
+		]
+		self.assertEqual(
+			resolve_purchase_templates(catalog),
+			[{"title": "VAT 15% In", "rate": 15.0}],
+		)
+
+	def test_empty_catalog_yields_empty(self) -> None:
+		self.assertEqual(resolve_purchase_templates([]), [])
+		self.assertEqual(resolve_purchase_templates(None), [])
+
+
+class TestAssemblePurchaseInvoice(UnitTestCase):
+	def _mapped(self):
+		return {
+			"kind": "factura",
+			"supplier_tax_id": "1790016919001",
+			"supplier_name": "PROVEEDOR EJEMPLO SA",
+			"bill_no": "001-001-000000001",
+			"bill_date": "2026-10-20",
+			"posting_date": "2026-10-20",
+			"currency": "USD",
+			"sri_sustento_code": "01 - Con crédito tributario",
+			"sri_supplier_auth_number": "2110202601179001691900110010010000000011234567817",
+			"update_stock": 0,
+			"items": [
+				{
+					"item_code": "DEMO-WIDGET",
+					"description": "Widget A",
+					"qty": 10.0,
+					"rate": 100.0,
+					"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
+				}
+			],
+		}
+
+	def test_assembles_draft_with_supplier_and_company(self) -> None:
+		doc = assemble_purchase_invoice(self._mapped(), supplier="Demo Supplier", company="Demo Ecuador")
+		self.assertEqual(doc["doctype"], "Purchase Invoice")
+		self.assertEqual(doc["supplier"], "Demo Supplier")
+		self.assertEqual(doc["company"], "Demo Ecuador")
+		self.assertEqual(doc["bill_no"], "001-001-000000001")
+		self.assertNotIn("supplier_tax_id", doc)
+
+	def test_missing_supplier_or_company_fails(self) -> None:
+		with self.assertRaises(ValueError):
+			assemble_purchase_invoice(self._mapped(), supplier="", company="Demo Ecuador")
+		with self.assertRaises(ValueError):
+			assemble_purchase_invoice(self._mapped(), supplier="Demo Supplier", company=None)

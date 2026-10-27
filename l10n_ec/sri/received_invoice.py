@@ -46,9 +46,7 @@ def _resolve_template(rate: float, templates: list) -> str:
 			_("No company tax template matches VAT rate '{}' from the supplier XML.").format(rate)
 		)
 	if len(matches) > 1:
-		raise ValueError(
-			_("Ambiguous tax templates for VAT rate '{}': {}.").format(rate, ", ".join(matches))
-		)
+		raise ValueError(_("Ambiguous tax templates for VAT rate '{}': {}.").format(rate, ", ".join(matches)))
 	return matches[0]
 
 
@@ -67,7 +65,9 @@ def map_received_factura(
 	voucher; `templates` are the company's own `{"title", "rate"}` rows.
 	"""
 	if (parsed or {}).get("kind") != "factura":
-		raise ValueError(_("Received mapper only handles facturas, got '{}'.").format((parsed or {}).get("kind")))
+		raise ValueError(
+			_("Received mapper only handles facturas, got '{}'.").format((parsed or {}).get("kind"))
+		)
 	if parsed.get("reembolsos"):
 		raise ValueError(_("Received facturas with reembolsos need the manual path."))
 	emisor_ruc = (parsed.get("emisor_ruc") or "").strip()
@@ -83,7 +83,11 @@ def map_received_factura(
 	for position, line in enumerate(parsed.get("lines") or [], start=1):
 		line_taxes = [tax for tax in (line.get("taxes") or []) if str(tax.get("code")) == "2"]
 		if not (line.get("taxes") or []):
-			raise ValueError(_("Received XML line {} ('{}') has no impuestos block.").format(position, line.get("description", "")))
+			raise ValueError(
+				_("Received XML line {} ('{}') has no impuestos block.").format(
+					position, line.get("description", "")
+				)
+			)
 		if not line_taxes:
 			template = None
 		else:
@@ -119,3 +123,41 @@ def map_received_factura(
 		"update_stock": 0,
 		"items": rows,
 	}
+
+
+def resolve_purchase_templates(catalog: list | tuple | None) -> list:
+	"""Keep debit-side templates as VAT candidates for received invoices.
+
+	`catalog` rows carry ``title``, ``rate`` and ``account_root_type``.
+	Only Asset-rooted templates can hold input VAT (a sales template
+	books to a liability and must never price a purchase row). Rows
+	without a rate are skipped: the matcher needs one rate per template.
+	"""
+	kept = []
+	for entry in catalog or []:
+		if (entry.get("account_root_type") or "").strip() != "Asset":
+			continue
+		if entry.get("rate") is None:
+			continue
+		kept.append({"title": entry.get("title"), "rate": float(entry.get("rate"))})
+	return kept
+
+
+def assemble_purchase_invoice(mapped: dict, *, supplier: str, company: str) -> dict:
+	"""Turn mapper output into a `frappe.get_doc`-ready Purchase Invoice.
+
+	The document stays a draft: the user reviews taxes, sustento and
+	stock behavior before submitting. Supplier and company travel in
+	here because the XML cannot carry them.
+	"""
+	if not supplier:
+		raise ValueError(_("A supplier is required to file the received invoice."))
+	if not company:
+		raise ValueError(_("A company is required to file the received invoice."))
+	doc = dict(mapped or {})
+	doc["doctype"] = "Purchase Invoice"
+	doc["supplier"] = supplier
+	doc["company"] = company
+	doc.pop("supplier_tax_id", None)
+	doc.pop("supplier_name", None)
+	return doc

@@ -37,6 +37,11 @@ asiento de retención fiscal.
   app lo exige (falla si traen IVA). El crédito nace de la liquidación de
   aduana (DAI), que se acumula en el documento **SRI Import Settlement**,
   no de la factura del proveedor.
+- **Importar XML del proveedor** — en una factura nueva, el botón
+  *Import Supplier XML* lee el XML firmado, prellena proveedor, número,
+  fechas, autorización e ítems con su plantilla de IVA (matcheada por
+  tarifa exacta), y crea el borrador para tu revisión. Duplicados
+  (mismo proveedor + número) se rechazan nombrando el documento existente.
 
 ## Grilla de impuestos y cargos
 

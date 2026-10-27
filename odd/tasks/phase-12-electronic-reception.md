@@ -12,6 +12,8 @@ Invoices for review. Evaluation only; implementation not yet authorized.
   validar, segun mi entender es 30 dias, pero las guias que he visto
   indican menos tiempo)".
 - S3: "evaluemos cual es el mejor approach para este tema".
+- S4 (customer mirror): importar comprobantes de retención de clientes
+  (XML 07 donde somos sujeto retenido), no solo facturas de proveedores.
 
 ## Tasks
 
@@ -19,10 +21,15 @@ Invoices for review. Evaluation only; implementation not yet authorized.
   (emisor + per-line taxes parse, template-by-rate resolution,
   fail-loud mapping). Route: unit. Commit: -
 - T2 (S1, desk): bench glue + upload button (whitelisted file intake,
-  supplier resolve-or-fail, draft PI). Route: integration. Commit: -
+  supplier resolve-or-fail, duplicate guard, template match by rate on
+  debit-side accounts, draft PI). Route: integration. Commit: -
 - T3 (S2, desk+SOAP): fetch by clave through the SRI endpoint reusing
   the T1 core (extract `comprobante`, ~10-day practical window as UX
   note, never promised). Route: integration. Commit: -
+- T4 (S4, desk): customer withholding import (07 XML where we are the
+  subject). Reuses A1 patterns + B fetch; target is the existing
+  `SRI Received Withholding` batch + auto-allocation. Route:
+  integration. Commit: -
 
 ## Findings (verified, with sources)
 
@@ -92,3 +99,17 @@ never a promise.
 - L2 (evaluation 2026-10-28): F1–F6 above. Recommendation: A then B
   over shared core C. Reopen E never (house rule on scraping +
   credentials).
+- L3 (customer mirror, user question): retenciones de clientes (07 donde
+  somos sujeto retenido) were NOT in the first scope; evaluated now.
+  Parser `_parse_retencion`+`_parse_sustento` already exist (subject,
+  fiscal period, per-doc numbers/auths, concepto base/rate/value); missing
+  only emisor+clave (same additive extension as facturas). Target is the
+  EXISTING `SRI Received Withholding` batch + allocations + stamp +
+  settlement JE flow (nothing new downstream): mapper resolves customer
+  by emisor RUC (fail loud: create first), auto-links SIs on exact
+  (customer, number) match else leaves manual allocation, splits IR/IVA
+  per impuesto with official-rate validation, rejects duplicates by
+  (customer, number+auth). No template problem (07s carry conceptos,
+  not templates), no sustento validation our-side (informational).
+  Offline auth number = clave; online-scheme auth dates come from the B
+  path. Added as T4 (after B, reuses both).
