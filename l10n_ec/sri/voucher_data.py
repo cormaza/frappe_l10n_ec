@@ -303,8 +303,19 @@ def _parse_nota_debito(root: etree._Element) -> dict:
 
 def _parse_retencion(root: etree._Element) -> dict:
 	info = root.find("infoCompRetencion")
+	trib = root.find("infoTributaria")
+	number_parts = [
+		_text(trib.find("estab")) if trib is not None else "",
+		_text(trib.find("ptoEmi")) if trib is not None else "",
+		_text(trib.find("secuencial")) if trib is not None else "",
+	]
 	return {
 		"kind": "retencion",
+		"emisor_ruc": _text(trib.find("ruc")) if trib is not None else "",
+		"emisor_name": _text(trib.find("razonSocial")) if trib is not None else "",
+		"clave_acceso": _text(trib.find("claveAcceso")) if trib is not None else "",
+		"number": "-".join(number_parts),
+		"retencion_date": _text(info.find("fechaEmision")),
 		"subject_id_type": _text(info.find("tipoIdentificacionSujetoRetenido")),
 		"subject_name": _text(info.find("razonSocialSujetoRetenido")),
 		"subject_id": _text(info.find("identificacionSujetoRetenido")),
