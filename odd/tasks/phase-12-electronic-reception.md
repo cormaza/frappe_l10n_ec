@@ -22,10 +22,10 @@ Invoices for review. Evaluation only; implementation not yet authorized.
   fail-loud mapping). Route: unit. Commit: -
 - T2 (S1, desk): bench glue + upload button (whitelisted file intake,
   supplier resolve-or-fail, duplicate guard, template match by rate on
-  debit-side accounts, draft PI). Route: integration. Commit: -
+  debit-side accounts, draft PI). Route: integration. Commit: 997d132
 - T3 (S2, desk+SOAP): fetch by clave through the SRI endpoint reusing
   the T1 core (extract `comprobante`, ~10-day practical window as UX
-  note, never promised). Route: integration. Commit: -
+  note, never promised). Route: integration. Commit: d37c221
 - T4 (S4, desk): customer withholding import (07 XML where we are the
   subject). Reuses A1 patterns + B fetch; target is the existing
   `SRI Received Withholding` batch + auto-allocation. Route:
