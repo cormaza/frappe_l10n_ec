@@ -193,10 +193,11 @@ jobs:
               gate["verdict"], gate["messages"]
           )
           # Deterministic seed: all demo purchases post today, so the current
-          # month always carries the same 14 compras: 11 local (reembolsos
-          # included) + 3 exterior services (9900... runs, T5b). If the seed
-          # changes, update this floor consciously.
-          assert gate["counts"]["compras"] == 14, "unexpected compras: {}".format(
+          # month always carries the same 17 compras: 11 local (reembolsos
+          # included) + 3 exterior services (9900... runs, T5b) + 3 import-case
+          # legs (exterior goods 01, freight/insurance as local 01s, T6).
+          # If the seed changes, update this floor consciously.
+          assert gate["counts"]["compras"] == 17, "unexpected compras: {}".format(
               gate["counts"]
           )
           print("ATS DIMM gate valid:", gate["counts"])

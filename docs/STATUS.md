@@ -95,8 +95,9 @@ dead `payments` dep.
 **Demo (`dev/demo.sh`).** Idempotent seed: 2 companies (EC/CO), 4+ parties,
 9 PIs, 4+ SIs, DN, payments/JEs, 3 staged resident 07s + 3 exterior 07s
 (ES/US/PA), 1 Generated 01, mandante 41 + intermediario 08 reembolso pair,
-emission points (desk/POS/shop), POS profile,
-webshop wiring when present. USD everywhere.
+import case (exterior goods PI 990001000000004 + freight/insurance PIs +
+`SRI Import Settlement` + native LCV), emission points (desk/POS/shop),
+POS profile, webshop wiring when present. USD everywhere.
 
 ## 2. Known issues (all with evidence, none silent)
 

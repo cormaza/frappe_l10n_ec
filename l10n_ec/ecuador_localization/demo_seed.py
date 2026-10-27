@@ -1021,6 +1021,114 @@ def _seed_demo_exterior(company: str, company_address: str) -> list:
 	return names
 
 
+def _seed_demo_import_case(company: str, company_address: str) -> dict:
+	"""Seed one goods import: exterior PI + freight/insurance + settlement + LCV."""
+	import frappe
+
+	result: dict = {"settlement": None, "landed_cost_voucher": None}
+	goods_bill_no = "990001000000004"
+	goods_name = frappe.db.exists(
+		"Purchase Invoice", {"supplier": "Demo Spain Co", "bill_no": goods_bill_no, "docstatus": 1}
+	)
+	if not goods_name:
+		goods = frappe.get_doc(
+			{
+				"doctype": "Purchase Invoice",
+				"supplier": "Demo Spain Co",
+				"company": company,
+				"billing_address": company_address,
+				"currency": "USD",
+				"bill_no": goods_bill_no,
+				"bill_date": DEMO_TODAY,
+				"posting_date": DEMO_TODAY,
+				"update_stock": 1,
+				"sri_sustento_code": "06 - Inventario con crédito",
+				"sri_supplier_auth_number": "9900000004",
+				"items": [
+					{
+						"item_code": "DEMO-WIDGET",
+						"qty": 10,
+						"rate": 100.0,
+						"warehouse": "Demo Stores - DE",
+						"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
+					}
+				],
+			}
+		)
+		goods.insert(ignore_permissions=True)
+		goods.submit()
+		goods_name = goods.name
+	leg_names = {}
+	for field, bill_no, rate in (
+		("freight_invoice", "001-001-000000022", 200.0),
+		("insurance_invoice", "001-001-000000023", 50.0),
+	):
+		existing = frappe.db.exists(
+			"Purchase Invoice", {"supplier": "Demo Supplier RUC", "bill_no": bill_no, "docstatus": 1}
+		)
+		if existing:
+			leg_names[field] = existing
+			continue
+		leg = frappe.get_doc(
+			{
+				"doctype": "Purchase Invoice",
+				"supplier": "Demo Supplier RUC",
+				"company": company,
+				"billing_address": company_address,
+				"currency": "USD",
+				"bill_no": bill_no,
+				"bill_date": DEMO_TODAY,
+				"posting_date": DEMO_TODAY,
+				"update_stock": 0,
+				"sri_sustento_code": "02 - Sin crédito tributario",
+				"sri_supplier_auth_number": DEMO_SUPPLIER_AUTH,
+				"items": [
+					{
+						"item_code": "DEMO-WIDGET",
+						"qty": 1,
+						"rate": rate,
+						"warehouse": "Demo Stores - DE",
+						"item_tax_template": "Ecuador VAT 0% - Purchases - DE",
+					}
+				],
+			}
+		)
+		leg.insert(ignore_permissions=True)
+		leg.submit()
+		leg_names[field] = leg.name
+	dai_number = "123-2026-10-000002"
+	settlement_name = frappe.db.get_value("SRI Import Settlement", {"dai_number": dai_number}, "name")
+	if not settlement_name:
+		settlement = frappe.get_doc(
+			{
+				"doctype": "SRI Import Settlement",
+				"company": company,
+				"supplier": "Demo Spain Co",
+				"purchase_invoice": goods_name,
+				"freight_invoice": leg_names.get("freight_invoice"),
+				"insurance_invoice": leg_names.get("insurance_invoice"),
+				"dai_number": dai_number,
+				"dai_date": DEMO_TODAY,
+				"ad_valorem_rate": 10.0,
+				"fodinfa_rate": 0.5,
+				"iva_rate": 15.0,
+				"dai_ad_valorem": 125.0,
+				"dai_fodinfa": 6.25,
+				"dai_iva": 207.19,
+				"dai_total": 338.44,
+			}
+		)
+		settlement.insert(ignore_permissions=True)
+		settlement_name = settlement.name
+	result["settlement"] = settlement_name
+	settlement = frappe.get_doc("SRI Import Settlement", settlement_name)
+	if not settlement.get("landed_cost_voucher"):
+		result["landed_cost_voucher"] = settlement.make_landed_cost_voucher()
+	else:
+		result["landed_cost_voucher"] = settlement.get("landed_cost_voucher")
+	return result
+
+
 def seed_demo() -> dict:
 	"""Create demo company, parties, and addresses; report validation behavior."""
 	import frappe
@@ -1464,6 +1572,9 @@ def seed_demo() -> dict:
 	report["withholding_voucher"] = vouchers_07[0] if vouchers_07 else None
 	report["withholding_vouchers"] = vouchers_07
 	report["exterior_vouchers"] = _seed_demo_exterior(company, company_address)
+	import_case = _seed_demo_import_case(company, company_address)
+	report["import_settlement"] = import_case.get("settlement")
+	report["import_lcv"] = import_case.get("landed_cost_voucher")
 	report["factura_xml_voucher"] = _stage_demo_factura_xml(company, sales_name)
 	report["accounts"] = {
 		root: frappe.db.count("Account", {"company": company, "root_type": root})
