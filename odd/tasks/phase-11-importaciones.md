@@ -42,6 +42,9 @@ settlement + recosteo together.
   Route: integration. Commit: 80d5e02
 - T5 (S3, reports): dedicated 104 import boxes + ATS import marking.
   Route: reports. Commit: c670ad1
+- T5b (S3, reports): exterior purchases report in ATS (no distinct
+  sustento; 15-digit split; 103-only withholdings). DIMM-proven.
+  Route: collector+reader. Commit: 598f9ca
 - T6 (S8, demo/CI): seed import case + keep DIMM gate green. Route: demo.
   Commit: -
 
@@ -72,3 +75,9 @@ settlement + recosteo together.
   purchase-tax Valuation categories (docs.frappe.io). → S7.
 - L4 (decisions): DAI "2 como primario y 1 como capacidad manual"; scope
   "Liquidación + recosteo juntos" (phase 1 = T1–T6).
+- L5 (T5b evidence): no distinct SRI sustento for imports (Tabla 5 is
+  nature-based, verified vs Ficha Técnica Tabla 5 + XSD); XSD compras has
+  no import marker except optional tipoProv (omitted, DIMM-valid without
+  it). Sidecar probe 4/4 valid incl. plain exterior 01. Seeded month
+  validates `valid` with 14 compras (11+3 exterior). Fresh seed without a
+  worker piles ~650 jobs → QueueOverloaded; CI now drains first.
