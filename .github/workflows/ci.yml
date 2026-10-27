@@ -84,6 +84,10 @@ jobs:
           --health-interval=5s
           --health-timeout=2s
           --health-retries=5
+      ats-validator:
+        image: cormaza/ats-validator:1.3.0
+        ports:
+          - 8080:8080
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -131,3 +135,28 @@ jobs:
           else
             bench --site test_site run-tests --app l10n_ec
           fi
+
+      - name: Wait for ATS validator sidecar
+        run: |
+          for i in $(seq 1 36); do
+            if curl -sf --max-time 5 http://127.0.0.1:8080/version > /tmp/ats_version.json 2>/dev/null; then
+              break
+            fi
+            sleep 5
+          done
+          cat /tmp/ats_version.json; echo
+
+      - name: Validate ATS sidecar against repo contract (live)
+        env:
+          ATS_VALIDATOR_URL: http://127.0.0.1:8080
+        run: |
+          cd ~/frappe-bench
+          bench --site test_site set-config ats_validator_url "${ATS_VALIDATOR_URL}"
+          bench --site test_site execute "frappe.get_attr('l10n_ec.sri.ats_validator.validator_status')()" | tee /tmp/validator_status.json
+          python - <<'EOF'
+          import json
+          status = json.load(open("/tmp/validator_status.json"))
+          assert status["reachable"], "ATS sidecar unreachable: {}".format(status["reason"])
+          assert not status["stale"], "ATS sidecar stale: {}".format(status["reason"])
+          print("ATS sidecar live:", status["reported"])
+          EOF
