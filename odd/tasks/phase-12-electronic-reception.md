@@ -31,6 +31,13 @@ Invoices for review. Evaluation only; implementation not yet authorized.
   `SRI Received Withholding` batch + auto-allocation. Route:
   integration. Commit: 77a684f
 
+Real-file findings (6 production XMLs, Oct-2026): supplier files arrive
+inside the SRI <autorizacion> envelope (CDATA, incl. v2.1.0 docs) --
+parser unwraps it and prefers numeroAutorizacion; moneda variants like
+"DOLAR US" normalize to USD; mixed-rate multi-line facturas map
+per-line; NCs are rejected (facturas only, v1); 6-digit secuenciales
+like Banco's split naturally as 027-002-000131800.
+
 ## Findings (verified, with sources)
 
 - F1: SRI SOAP `autorizacionComprobante({claveAccesoComprobante})`
