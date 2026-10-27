@@ -37,7 +37,7 @@ settlement + recosteo together.
 - T2 (S2/S4, DocType layer): `SRI Import Settlement` DocType + links to
   PO/PR/PI sources. Route: doctype+controller. Commit: cf90182
 - T3 (S6, settlement): DAI file import primary + manual fallback with
-  arithmetic cross-check. Route: controller. Commit: -
+  arithmetic cross-check. Route: controller. Commit: b97b906
 - T4 (S7, settlement→LCV): prefill + submit native LCV from settlement.
   Route: integration. Commit: -
 - T5 (S3, reports): dedicated 104 import boxes + ATS import marking.
