@@ -47,6 +47,8 @@ settlement + recosteo together.
   Route: collector+reader. Commit: 598f9ca
 - T6 (S8, demo/CI): seed import case + keep DIMM gate green. Route: demo.
   Commit: 282c41b
+- T6b (S3 review catch): forbid local VAT on exterior purchases (guard +
+  hook + seed fix + wiki). Route: validation. Commit: 0964d48
 
 ## Log
 
@@ -87,3 +89,6 @@ settlement + recosteo together.
   Invoice validate hook (bench), fail-loud naming the template; seed
   import case fixed accordingly (no template on the exterior goods PI).
   104 import boxes read 0 until the DAI tax document exists (T7).
+- L7 (arancel catalog evaluation, 2026-10-27): NO national catalog
+  vendored. DAI stays the authority; rates always travel in with the
+  declaration. Reopen only with versioned demand (see closing message).
