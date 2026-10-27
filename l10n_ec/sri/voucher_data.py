@@ -90,6 +90,9 @@ def _parse_factura(root: etree._Element) -> dict:
 	result = {
 		"kind": "factura",
 		"number": number,
+		"emisor_ruc": _text(trib.find("ruc")),
+		"emisor_name": _text(trib.find("razonSocial")),
+		"clave_acceso": _text(trib.find("claveAcceso")),
 		"issue_date": _text(info.find("fechaEmision")),
 		"buyer_id_type": _text(info.find("tipoIdentificacionComprador")),
 		"buyer_name": _text(info.find("razonSocialComprador")),
@@ -105,6 +108,16 @@ def _parse_factura(root: etree._Element) -> dict:
 				"unit_price": float(_text(line.find("precioUnitario")) or 0),
 				"discount": float(_text(line.find("descuento")) or 0),
 				"total": float(_text(line.find("precioTotalSinImpuesto")) or 0),
+				"taxes": [
+					{
+						"code": _text(tax.find("codigo")),
+						"rate_code": _text(tax.find("codigoPorcentaje")),
+						"rate": float(_text(tax.find("tarifa")) or 0),
+						"base": float(_text(tax.find("baseImponible")) or 0),
+						"value": float(_text(tax.find("valor")) or 0),
+					}
+					for tax in line.findall("impuestos/impuesto")
+				],
 			}
 			for line in root.findall("detalles/detalle")
 		],
