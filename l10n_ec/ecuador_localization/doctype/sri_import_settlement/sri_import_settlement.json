@@ -1,0 +1,145 @@
+{
+ "autoname": "naming_series:",
+ "creation": "2026-10-27 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "company",
+  "supplier",
+  "section_break_goods",
+  "purchase_order",
+  "purchase_receipt",
+  "purchase_invoice",
+  "section_break_costs",
+  "freight_invoice",
+  "insurance_invoice",
+  "section_break_customs",
+  "dai_number",
+  "dai_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "SRI-IMP-.YYYY.-",
+   "default": "SRI-IMP-.YYYY.-",
+   "reqd": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier",
+   "reqd": 1,
+   "description": "Exterior supplier of the imported goods (FOB source)."
+  },
+  {
+   "fieldname": "section_break_goods",
+   "fieldtype": "Section Break",
+   "label": "Goods Source"
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "Purchase Order",
+   "options": "Purchase Order",
+   "description": "Exterior purchase order, when the goods were ordered through one."
+  },
+  {
+   "fieldname": "purchase_receipt",
+   "fieldtype": "Link",
+   "label": "Purchase Receipt",
+   "options": "Purchase Receipt",
+   "description": "Goods receipt of the import; the Landed Cost Voucher attaches here (T4)."
+  },
+  {
+   "fieldname": "purchase_invoice",
+   "fieldtype": "Link",
+   "label": "Purchase Invoice",
+   "options": "Purchase Invoice",
+   "description": "Exterior supplier invoice carrying the FOB value."
+  },
+  {
+   "fieldname": "section_break_costs",
+   "fieldtype": "Section Break",
+   "label": "Cost Sources"
+  },
+  {
+   "fieldname": "freight_invoice",
+   "fieldtype": "Link",
+   "label": "Freight Invoice",
+   "options": "Purchase Invoice",
+   "description": "Forwarder invoice carrying the freight leg of the CIF."
+  },
+  {
+   "fieldname": "insurance_invoice",
+   "fieldtype": "Link",
+   "label": "Insurance Invoice",
+   "options": "Purchase Invoice",
+   "description": "Insurer invoice carrying the insurance leg of the CIF."
+  },
+  {
+   "fieldname": "section_break_customs",
+   "fieldtype": "Section Break",
+   "label": "Customs Declaration"
+  },
+  {
+   "fieldname": "dai_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "DAI Number",
+   "description": "Customs declaration number from ECUAPASS (T3 fills or verifies it)."
+  },
+  {
+   "fieldname": "dai_date",
+   "fieldtype": "Date",
+   "label": "DAI Date",
+   "description": "Date of the customs declaration."
+  }
+ ],
+ "istable": 0,
+ "links": [],
+ "modified": "2026-10-27 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Ecuador Localization",
+ "name": "SRI Import Settlement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  }
+ ]
+}
