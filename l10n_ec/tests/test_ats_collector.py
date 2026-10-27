@@ -301,6 +301,121 @@ if __name__ == "__main__":
 	unittest.main()
 
 
+class TestCollectPurchaseReembolso(UnitTestCase):
+	"""T3 (S2,S5): reembolsos normalize to reembolsoType, total resolves, own bases stay."""
+
+	def _reembolso(self, **overrides):
+		entry = {
+			"doc_code": "01",
+			"supplier_id_type": "04",
+			"supplier_id": "1790016919001",
+			"sri_number": "001-001-000000010",
+			"issue_date": "15/03/2026",
+			"auth_number": "1234567890",
+			"base_amount": 100.0,
+			"taxed_base": 50.0,
+			"no_tax_base": 10.0,
+			"exempt_base": 5.0,
+			"ice_amount": 1.0,
+			"iva_amount": 7.5,
+		}
+		entry.update(overrides)
+		return entry
+
+	def test_reembolso_normalizes_and_totals(self) -> None:
+		from l10n_ec.sri.ats_collector import collect_purchase
+
+		row = collect_purchase(
+			_purchase(
+				sustento_code="01",
+				doc_code="41",
+				reembolsos=[self._reembolso(), self._reembolso(base_amount=50.0)],
+			)
+		)
+		self.assertEqual(row["totbasesImpReemb"], 150.0)
+		self.assertEqual(len(row["reembolsos"]), 2)
+		first = row["reembolsos"][0]
+		self.assertEqual(first["tipoComprobanteReemb"], "01")
+		self.assertEqual(first["tpIdProvReemb"], "04")
+		self.assertEqual(first["idProvReemb"], "1790016919001")
+		self.assertEqual(first["establecimientoReemb"], "001")
+		self.assertEqual(first["puntoEmisionReemb"], "001")
+		self.assertEqual(first["secuencialReemb"], "000000010")
+		self.assertEqual(first["fechaEmisionReemb"], "15/03/2026")
+		self.assertEqual(first["autorizacionReemb"], "1234567890")
+		self.assertEqual(first["baseImponibleReemb"], 100.0)
+		self.assertEqual(first["baseImpGravReemb"], 50.0)
+		self.assertEqual(first["baseNoGraIvaReemb"], 10.0)
+		self.assertEqual(first["baseImpExeReemb"], 5.0)
+		self.assertEqual(first["montoIceRemb"], 1.0)
+		self.assertEqual(first["montoIvaRemb"], 7.5)
+
+	def test_own_bases_exclude_reembolso(self) -> None:
+		from l10n_ec.sri.ats_collector import collect_purchase
+
+		row = collect_purchase(_purchase(sustento_code="01", doc_code="41", reembolsos=[self._reembolso()]))
+		self.assertEqual(row["baseImpGrav"], 1000.0)
+		self.assertEqual(row["montoIva"], 150.0)
+
+	def test_override_without_optin_fails(self) -> None:
+		from l10n_ec.sri.ats_collector import collect_purchase
+
+		with self.assertRaises(ValueError):
+			collect_purchase(
+				_purchase(
+					sustento_code="01",
+					doc_code="41",
+					reembolsos=[self._reembolso()],
+					reembolso_override=10.0,
+				)
+			)
+
+	def test_override_with_optin_wins(self) -> None:
+		from l10n_ec.sri.ats_collector import collect_purchase
+
+		row = collect_purchase(
+			_purchase(
+				sustento_code="01",
+				doc_code="41",
+				reembolsos=[self._reembolso()],
+				reembolso_override=10.0,
+				reembolso_allow_override=True,
+			)
+		)
+		self.assertEqual(row["totbasesImpReemb"], 10.0)
+
+	def test_bad_sustento_for_doc_fails(self) -> None:
+		from l10n_ec.sri.ats_collector import collect_purchase
+
+		with self.assertRaises(ValueError):
+			collect_purchase(_purchase(sustento_code="08", doc_code="41", reembolsos=[self._reembolso()]))
+
+	def test_partial_reembolso_fails_loud(self) -> None:
+		from l10n_ec.sri.ats_collector import collect_purchase
+
+		bad = self._reembolso()
+		del bad["auth_number"]
+		with self.assertRaises(ValueError):
+			collect_purchase(_purchase(sustento_code="01", doc_code="41", reembolsos=[bad]))
+
+	def test_04_abs_applies_to_reembolso_money(self) -> None:
+		from l10n_ec.sri.ats_collector import collect_purchase
+
+		row = collect_purchase(
+			_purchase(
+				sustento_code="02",
+				doc_code="04",
+				taxes=[{"code": "2", "rate_code": "4", "base": -20.0, "value": -3.0}],
+				withholdings=[],
+				retencion={},
+				reembolsos=[self._reembolso(base_amount=-100.0, iva_amount=-7.5)],
+			)
+		)
+		self.assertEqual(row["totbasesImpReemb"], 100.0)
+		self.assertEqual(row["reembolsos"][0]["baseImponibleReemb"], 100.0)
+		self.assertEqual(row["reembolsos"][0]["montoIvaRemb"], 7.5)
+
+
 class TestCreditNoteAbsValues(UnitTestCase):
 	def test_04_amounts_report_positive(self) -> None:
 		from l10n_ec.sri.ats_collector import collect_purchase

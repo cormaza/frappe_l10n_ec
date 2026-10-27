@@ -292,6 +292,36 @@ class TestReturnsHitNetOnly(UnitTestCase):
 		self.assertEqual(result["520"], 225.0)
 
 
+class TestCollect104ReembolsoRegression(UnitTestCase):
+	"""T3 (S2): collect_104 purchase_taxes exclude reembolso bases.
+
+	Assumption: reembolso IVA stays out of the 500s/401s boxes; the ATS
+	own bases (split_iva_bases) are the single source and T4 accounting
+	owns the reimbursement IVA treatment.
+	"""
+
+	def test_split_iva_bases_ignores_reembolso_totals(self) -> None:
+		from l10n_ec.sri.ats_collector import split_iva_bases
+
+		own_taxes = [{"code": "2", "rate_code": "4", "base": 2000.0, "value": 300.0}]
+		bases = split_iva_bases(own_taxes)
+		self.assertEqual(bases["baseImpGrav"], 2000.0)
+		self.assertEqual(bases["montoIva"], 300.0)
+
+	def test_collect_104_excludes_reembolso_iva(self) -> None:
+		result = collect_104(
+			_ledger(
+				purchase_taxes=[{"code": "2", "rate_code": "4", "base": 2000.0, "value": 300.0}],
+			),
+			2026,
+			3,
+		)
+		# Own bases only: 50.0 taxed_base + 7.5 iva_amount from the reembolso
+		# leg never reach the 500s boxes.
+		self.assertEqual(result["500"], 2000.0)
+		self.assertEqual(result["520"], 300.0)
+
+
 class TestVariableRateBoxes(UnitTestCase):
 	"""Tarifa-variable (decreed) rates route to 410/420/430 + 530/533/534."""
 

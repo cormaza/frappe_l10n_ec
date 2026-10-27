@@ -37,10 +37,16 @@ def is_sri_number(value: str | None) -> bool:
 	return bool(value and SRI_NUMBER_PATTERN.match(value.strip()))
 
 
-def classify_purchase(is_return: bool, is_liquidacion: bool, is_debit_note: bool) -> str:
+def classify_purchase(
+	is_return: bool, is_liquidacion: bool, is_debit_note: bool, is_reimbursement: bool = False
+) -> str:
 	"""ATS document code for a purchase (fail loud on contradictory states)."""
 	if is_return and is_liquidacion:
 		raise ValueError(_("A purchase cannot be a return and a liquidacion at once."))
+	if is_reimbursement and (is_return or is_liquidacion or is_debit_note):
+		raise ValueError(_("A reimbursement purchase cannot be a return, liquidacion or debit note at once."))
+	if is_reimbursement:
+		return "41"
 	if is_return:
 		return "04"
 	if is_debit_note:
@@ -48,6 +54,31 @@ def classify_purchase(is_return: bool, is_liquidacion: bool, is_debit_note: bool
 	if is_liquidacion:
 		return "03"
 	return "01"
+
+
+def _detail_value(detail, field: str, default=None):
+	"""Read a reimbursement detail from a dict or a Frappe doc."""
+	if isinstance(detail, dict):
+		return detail.get(field, default)
+	return getattr(detail, field, default)
+
+
+def _shape_reembolso(detail) -> dict:
+	"""Shape one SRI Reimbursement Detail into the collector entry."""
+	return {
+		"doc_code": _detail_value(detail, "doc_code", ""),
+		"supplier_id_type": _detail_value(detail, "supplier_id_type", ""),
+		"supplier_id": _detail_value(detail, "supplier_id", ""),
+		"sri_number": _detail_value(detail, "sri_number", ""),
+		"issue_date": _detail_value(detail, "issue_date", ""),
+		"auth_number": _detail_value(detail, "auth_number", ""),
+		"base_amount": _detail_value(detail, "base_amount", 0.0),
+		"taxed_base": _detail_value(detail, "taxed_base", 0.0),
+		"no_tax_base": _detail_value(detail, "no_tax_base", 0.0),
+		"exempt_base": _detail_value(detail, "exempt_base", 0.0),
+		"ice_amount": _detail_value(detail, "ice_amount", 0.0),
+		"iva_amount": _detail_value(detail, "iva_amount", 0.0),
+	}
 
 
 def purchase_row(pi: dict, supplier: dict, voucher: dict | None, doc_code: str = "01") -> dict:
@@ -88,6 +119,14 @@ def purchase_row(pi: dict, supplier: dict, voucher: dict | None, doc_code: str =
 			"authorization": voucher.get("authorization_number", ""),
 			"date": _iso_to_sri(voucher.get("authorization_date", "")),
 		}
+	details = pi.get("sri_reimbursement_details") or []
+	if details:
+		row["reembolsos"] = [_shape_reembolso(detail) for detail in details]
+	override = pi.get("sri_reimbursement_override_value")
+	if override not in (None, ""):
+		row["reembolso_override"] = override
+	if pi.get("sri_allow_reimbursement_override"):
+		row["reembolso_allow_override"] = True
 	return row
 
 
@@ -278,6 +317,7 @@ def read_month(company: str, year: int, month: int) -> dict:
 			bool(pi.get("is_return")),
 			bool(pi.get("sri_is_liquidacion")),
 			bool(pi.get("sri_is_supplier_debit_note")),
+			bool(pi.get("sri_is_reimbursement")),
 		)
 		if doc_code == "01" and not is_sri_number(pi.get("bill_no")):
 			continue
@@ -295,6 +335,25 @@ def read_month(company: str, year: int, month: int) -> dict:
 					"grand_total": pi.get("grand_total"),
 					"sri_supplier_auth_number": pi.get("sri_supplier_auth_number") or "",
 					"sri_sustento_code": sri_code(pi.get("sri_sustento_code")) or "02",
+					"sri_reimbursement_details": [
+						{
+							"doc_code": line.get("doc_code"),
+							"supplier_id_type": line.get("supplier_id_type"),
+							"supplier_id": line.get("supplier_id"),
+							"sri_number": line.get("sri_number"),
+							"issue_date": line.get("issue_date"),
+							"auth_number": line.get("auth_number"),
+							"base_amount": line.get("base_amount"),
+							"taxed_base": line.get("taxed_base"),
+							"no_tax_base": line.get("no_tax_base"),
+							"exempt_base": line.get("exempt_base"),
+							"ice_amount": line.get("ice_amount"),
+							"iva_amount": line.get("iva_amount"),
+						}
+						for line in (pi.get("sri_reimbursement_details") or [])
+					],
+					"sri_reimbursement_override_value": pi.get("sri_reimbursement_override_value"),
+					"sri_allow_reimbursement_override": pi.get("sri_allow_reimbursement_override"),
 					"taxes": [
 						{
 							"code": tax["code"],

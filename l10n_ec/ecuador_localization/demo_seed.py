@@ -471,6 +471,58 @@ DEMO_EXTRA_PURCHASES = [
 		],
 	},
 	{
+		"bill_no": "001-001-000000020",
+		"sri_sustento_code": "01 - Con crédito tributario",
+		"supplier": "Demo Supplier RUC",
+		"sri_is_reimbursement": 1,
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET",
+				"qty": 1,
+				"rate": 100.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
+			}
+		],
+		"sri_reimbursement_details": [
+			{
+				"doc_code": "01",
+				"supplier_id_type": "04",
+				"supplier_id": "1790016919001",
+				"sri_number": "001-002-000000031",
+				"issue_date": DEMO_TODAY,
+				"auth_number": DEMO_SUPPLIER_AUTH,
+				"base_amount": 200.0,
+				"taxed_base": 200.0,
+				"iva_amount": 30.0,
+			},
+			{
+				"doc_code": "01",
+				"supplier_id_type": "04",
+				"supplier_id": "1790016919001",
+				"sri_number": "001-002-000000032",
+				"issue_date": DEMO_TODAY,
+				"auth_number": DEMO_SUPPLIER_AUTH,
+				"base_amount": 50.0,
+				"no_tax_base": 50.0,
+			},
+		],
+	},
+	{
+		"bill_no": "001-001-000000021",
+		"sri_sustento_code": "08 - Reembolso (intermediario)",
+		"supplier": "Demo Supplier RUC",
+		"items": [
+			{
+				"item_code": "DEMO-WIDGET",
+				"qty": 2,
+				"rate": 10.0,
+				"warehouse": "Demo Stores - DE",
+				"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
+			}
+		],
+	},
+	{
 		"bill_no": None,
 		"supplier": "Demo Rustic Seller",
 		"sri_is_liquidacion": 1,
@@ -1170,6 +1222,8 @@ def seed_demo() -> dict:
 			"sri_is_supplier_debit_note",
 			"sri_sustento_code",
 			"sri_assumed_withholding",
+			"sri_is_reimbursement",
+			"sri_reimbursement_details",
 		):
 			if spec.get(key) is not None:
 				doc[key] = spec[key]

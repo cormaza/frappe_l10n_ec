@@ -315,6 +315,36 @@ class TestCollect103ExteriorRegimes(UnitTestCase):
 		self.assertEqual((subtotal["base"], subtotal["impuesto"]), (1500.0, 285.0))
 
 
+class TestCollect103ReembolsoRegression(UnitTestCase):
+	"""T3 (S2): collect_103 flow unchanged by reimbursements.
+
+	Assumption: reimbursement IVA stays out of Form 103; withholdings own
+	the credit and T4 accounting owns the reimbursement IVA treatment.
+	"""
+
+	def test_reembolso_context_leaves_103_totals_unchanged(self) -> None:
+		from l10n_ec.sri.form103 import collect_103
+
+		voucher = _voucher(
+			[
+				_row("303", 1000.0, 10.0, 100.0),
+				_row("312", 500.0, 2.0, 10.0),
+			]
+		)
+		expected = {
+			303: 1000.0,
+			312: 500.0,
+			349: 1500.0,
+			353: 100.0,
+			362: 10.0,
+			399: 110.0,
+			497: 0.0,
+			498: 0.0,
+			499: 110.0,
+		}
+		self.assertEqual(collect_103([voucher], 2026, 3), expected)
+
+
 class TestCollect103Subtotals(UnitTestCase):
 	"""Portal subtotals computed from collected boxes (template formula)."""
 

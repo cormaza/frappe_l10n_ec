@@ -38,7 +38,7 @@ talón resumen como archivo. Requiere el sidecar corriendo y, opcionalmente en
 `site_config.json`: `ats_validator_url` (default `http://127.0.0.1:8080`) y
 `ats_validator_token`. Sin sidecar el reporte dice "no validado" — jamás verde
 implícito.
-  El mes demo de referencia es **10/2026** (octubre): trae 8 compras con `codSustento` mixtos (`02`/`06`), `tpIdProv 04/05`, `montoIce 2.50` en `001-001-000000015`, y tipos `01/04/05`.
+  El mes demo de referencia es **10/2026** (octubre): trae 11 compras con `codSustento` mixtos (`01`/`02`/`06`/`08`), `tpIdProv 04/05`, `montoIce 2.50` en `001-001-000000015`, y tipos `01/04/05/41` — incluyendo `001-001-000000020` (mandante: `41` con 2 reembolsos, `totbasesImpReemb 250.00`) y `001-001-000000021` (intermediario: sustento `08`).
 
 - **Código:** `l10n_ec/sri/ats_collector.py` (agrega) + `l10n_ec/sri/ats_builder.py` (render + XSD) + `l10n_ec/ecuador_localization/ats_reader.py` (lee mes posteado).
 
@@ -118,9 +118,13 @@ bench --site demo execute "frappe.get_attr('l10n_ec.ecuador_localization.report.
   de liquidación), subtotal `620 = -9.07` → percepción `699 = -9.07`;
   retención `799/801 = 4.50` (fórmula `801 = 799-800-802`; 800/802 sin
   insumo, en cero); consolidado `859 = -4.57` (posición a favor, válida).
-- `ATS`: 8 compras, 0 ventas, 0 exportaciones, 0 anulados (solo lo
+- `ATS`: 11 compras, 0 ventas, 0 exportaciones, 0 anulados (solo lo
   autorizado alimenta el ATS; las ventas demo viajan en `Rejected` por
-  el techo autofirmado).
+  el techo autofirmado). La `41` de `001-001-000000020` informa bases propias
+  (`100.00` gravada + IVA) más `<reembolsos>` con `totbasesImpReemb 250.00`;
+  lo reembolsado no suma a `baseImpGrav`/`montoIva` ni entra al 104 (el ledger
+  del 104 lee solo `item_tax_template` por ítem; los detalles de reembolso son
+  informativos y nunca postean al mayor).
 - `103` residentes: tres 07 stageados — `031`: 312/100 + 362/2.00;
   `032`: 303/1000 + 353/100.00 y 307/500 + 357/15.00; `033`: 3400/2000 +
   3900/60.00 y 332/500 (base sola). Subtotal `349/4100.00` + `399/177.00`.
