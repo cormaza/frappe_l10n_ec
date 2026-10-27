@@ -66,6 +66,7 @@ doc_events = {
 		"validate": [
 			"l10n_ec.ecuador_localization.shop_hooks.inherit_shop_point_invoice",
 			"l10n_ec.ecuador_localization.invoice_hooks.inherit_pos_point_invoice",
+			"l10n_ec.ecuador_localization.validation.validate_reimbursement_details",
 			"l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",
 		],
 	},
@@ -89,6 +90,7 @@ doc_events = {
 		"validate": [
 			"l10n_ec.ecuador_localization.validation.enforce_iva_deduction_row",
 			"l10n_ec.ecuador_localization.validation.validate_sustento_code",
+			"l10n_ec.ecuador_localization.validation.validate_reimbursement_details",
 			"l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",
 		],
 		"before_save": "l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",

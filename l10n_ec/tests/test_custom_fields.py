@@ -27,6 +27,11 @@ EXPECTED_FIELDS = {
 		"sri_sustento_code",
 		"sri_is_liquidacion",
 		"sri_is_supplier_debit_note",
+		"sri_is_reimbursement",
+		"sri_reimbursement_details",
+		"sri_reimbursement_total",
+		"sri_allow_reimbursement_override",
+		"sri_reimbursement_override_value",
 		"sri_iva_concepto",
 		"sri_assumed_withholding",
 	},
@@ -37,6 +42,11 @@ EXPECTED_FIELDS = {
 		"sri_info_adicional",
 		"sri_ir_concepto",
 		"sri_iva_concepto",
+		"sri_is_reimbursement",
+		"sri_reimbursement_details",
+		"sri_reimbursement_total",
+		"sri_allow_reimbursement_override",
+		"sri_reimbursement_override_value",
 		"sri_received_retencion_number",
 		"sri_received_retencion_auth",
 		"sri_received_retencion_date",
@@ -78,6 +88,20 @@ class TestSRICustomFields(UnitTestCase):
 		for doctype in ("Customer", "Supplier"):
 			link = next(f for f in CUSTOM_FIELDS[doctype] if f["fieldname"] == "sri_identification_type")
 			self.assertEqual(link["options"], "SRI Identification Type")
+
+	def test_select_defaults_belong_to_options(self) -> None:
+		for doctype, fields in CUSTOM_FIELDS.items():
+			for field in fields:
+				if field["fieldtype"] != "Select":
+					continue
+				default = field.get("default") or ""
+				if not default:
+					continue
+				self.assertIn(
+					default,
+					(field.get("options") or "").split("\n"),
+					f"Illegal default on {doctype}.{field['fieldname']}",
+				)
 
 	def test_company_fields_hide_outside_ecuador(self) -> None:
 		for field in CUSTOM_FIELDS["Company"]:
