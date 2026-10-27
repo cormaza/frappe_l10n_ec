@@ -29,7 +29,7 @@ Invoices for review. Evaluation only; implementation not yet authorized.
 - T4 (S4, desk): customer withholding import (07 XML where we are the
   subject). Reuses A1 patterns + B fetch; target is the existing
   `SRI Received Withholding` batch + auto-allocation. Route:
-  integration. Commit: -
+  integration. Commit: 77a684f
 
 ## Findings (verified, with sources)
 
