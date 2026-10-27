@@ -39,7 +39,7 @@ settlement + recosteo together.
 - T3 (S6, settlement): DAI file import primary + manual fallback with
   arithmetic cross-check. Route: controller. Commit: b97b906
 - T4 (S7, settlement→LCV): prefill + submit native LCV from settlement.
-  Route: integration. Commit: -
+  Route: integration. Commit: 80d5e02
 - T5 (S3, reports): dedicated 104 import boxes + ATS import marking.
   Route: reports. Commit: -
 - T6 (S8, demo/CI): seed import case + keep DIMM gate green. Route: demo.
