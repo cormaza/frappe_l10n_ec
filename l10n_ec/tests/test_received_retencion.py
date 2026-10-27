@@ -76,14 +76,21 @@ class TestMapReceivedRetencion(UnitTestCase):
 			map_received_retencion(parsed)
 
 	def test_rate_mismatch_fails_naming_concepto(self) -> None:
-		parsed = parse_emitted_xml(COMPROBANTE_XML.replace("<porcentajeRetener>10</porcentajeRetener>", "<porcentajeRetener>8</porcentajeRetener>"))
+		parsed = parse_emitted_xml(
+			COMPROBANTE_XML.replace(
+				"<porcentajeRetener>10</porcentajeRetener>", "<porcentajeRetener>8</porcentajeRetener>"
+			)
+		)
 		with self.assertRaises(ValueError) as ctx:
 			map_received_retencion(parsed)
 		self.assertIn("303", str(ctx.exception))
 
 	def test_exterior_concepto_fails_loud(self) -> None:
 		parsed = parse_emitted_xml(
-			COMPROBANTE_XML.replace("<codigo>303</codigo><codigoRetencion>303</codigoRetencion>", "<codigo>1</codigo><codigoRetencion>501A</codigoRetencion>")
+			COMPROBANTE_XML.replace(
+				"<codigo>303</codigo><codigoRetencion>303</codigoRetencion>",
+				"<codigo>1</codigo><codigoRetencion>501A</codigoRetencion>",
+			)
 		)
 		with self.assertRaises(ValueError):
 			map_received_retencion(parsed)

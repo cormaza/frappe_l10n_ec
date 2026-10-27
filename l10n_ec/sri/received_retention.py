@@ -74,13 +74,17 @@ def map_received_retencion(parsed: dict) -> dict:
 	"""
 	parsed = parsed or {}
 	if parsed.get("kind") != "retencion":
-		raise ValueError(_("Received withholding mapper got '{}', not a retencion.").format(parsed.get("kind")))
+		raise ValueError(
+			_("Received withholding mapper got '{}', not a retencion.").format(parsed.get("kind"))
+		)
 	emisor_ruc = (parsed.get("emisor_ruc") or "").strip()
 	if not emisor_ruc:
 		raise ValueError(_("Received withholding carries no emisor RUC."))
 	clave = (parsed.get("clave_acceso") or "").strip()
 	if not clave:
-		raise ValueError(_("Received withholding carries no clave de acceso (offline doubles as authorization)."))
+		raise ValueError(
+			_("Received withholding carries no clave de acceso (offline doubles as authorization).")
+		)
 	allocations = []
 	for doc in parsed.get("docs") or []:
 		doc_number = (doc.get("doc_number") or "").strip()

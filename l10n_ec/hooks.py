@@ -43,6 +43,7 @@ before_uninstall = "l10n_ec.ecuador_localization.setup.before_uninstall"
 
 doctype_js = {
 	"Purchase Invoice": "public/js/purchase_invoice_sustento.js",
+	"SRI Received Withholding": "public/js/sri_received_withholding.js",
 }
 
 jinja = {
