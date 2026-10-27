@@ -113,3 +113,8 @@ never a promise.
   not templates), no sustento validation our-side (informational).
   Offline auth number = clave; online-scheme auth dates come from the B
   path. Added as T4 (after B, reuses both).
+- L4 (user refinement, reception): unknown supplier is auto-created
+  (clearly-named 'Imported Suppliers' group, type from ID length,
+  name-clash guard, review note) instead of forcing a manual
+  round-trip; the no-template error now lists available company
+  templates with rates. Live proof on fresh seeded site for both.
