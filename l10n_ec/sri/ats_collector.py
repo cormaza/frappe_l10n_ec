@@ -104,6 +104,8 @@ Aggregation rules:
   buckets by rate (10/20/30/50/70/100).
 """
 
+import re
+
 try:
 	from frappe import _
 except ImportError:  # pragma: no cover
@@ -174,9 +176,21 @@ def _is_posted(doc: dict) -> bool:
 	return status == 1
 
 
+def is_exterior_number(value: str | None) -> bool:
+	"""Whether a document number is an exterior 15-digit run (``990001000000001``).
+
+	Exterior invoices carry no SRI dashes; the run splits 3-3-9 preserving
+	every digit (DIMM-validated shape, T5b). Anything else is not exterior.
+	"""
+	return bool(value and re.fullmatch(r"\d{15}", value.strip()))
+
+
 def split_sri_number(sri_number: str) -> tuple:
-	"""Split ``001-001-000000123`` into establishment/point/sequential."""
-	parts = (sri_number or "").split("-")
+	"""Split ``001-001-000000123`` (or a 15-digit exterior run) into establishment/point/sequential."""
+	text = (sri_number or "").strip()
+	if is_exterior_number(text):
+		return (text[0:3], text[3:6], text[6:15])
+	parts = text.split("-")
 	if len(parts) != 3 or not all(part.isdigit() for part in parts):
 		raise SriVoucherError(_("ATS document number '{}' is not a SRI number.").format(sri_number))
 	return (parts[0], parts[1], parts[2])
@@ -353,13 +367,34 @@ def normalize_reembolso(entry: dict) -> dict:
 	}
 
 
+def _partition_exterior_withholdings(withholdings: list | None) -> tuple:
+	"""Split withholdings into ATS-emittable vs exterior-scope (impuesto 9).
+
+	Exterior-scope withholdings (500-series pagos al exterior) ride Form
+	103 plus the 07 voucher, never as ATS retention rows; resolving each
+	concepto keeps unknown codes fail-loud instead of silently dropped.
+	"""
+	ats_rows: list = []
+	exterior_rows: list = []
+	for entry in withholdings or []:
+		impuesto, _rate, _description = resolve_concepto(entry.get("concepto"))
+		(exterior_rows if impuesto in NON_EMITTABLE_IMPUESTOS else ats_rows).append(entry)
+	return (ats_rows, exterior_rows)
+
+
 def collect_purchase(doc: dict) -> dict:
-	"""Aggregate one submitted Purchase Invoice into a ``compras`` row."""
+	"""Aggregate one submitted Purchase Invoice into a ``compras`` row.
+
+	Exterior-scope withholdings never reach the ATS retention block (see
+	_partition_exterior_withholdings); the retencion reference drops
+	with them instead of dangling. Local behavior is untouched.
+	"""
 	sri_number = doc.get("sri_number", "")
 	establishment, point, sequential = split_sri_number(sri_number)
 	taxes = resolve_taxes(doc.get("taxes"))
 	bases = split_iva_bases(taxes)
-	air, iva_buckets = split_withholdings(doc.get("withholdings"))
+	ats_withholdings, _exterior_withholdings = _partition_exterior_withholdings(doc.get("withholdings"))
+	air, iva_buckets = split_withholdings(ats_withholdings)
 	payments = resolve_payment_codes(doc.get("payments"), sri_number)
 	row = {
 		"codSustento": doc.get("sustento_code", DEFAULT_SUSTENTO_CODE),
@@ -381,7 +416,7 @@ def collect_purchase(doc: dict) -> dict:
 		"air": air,
 	}
 	retencion = doc.get("retencion") or {}
-	if retencion.get("number"):
+	if retencion.get("number") and (air or any(iva_buckets.values())):
 		estab, pto, sec = split_sri_number(retencion["number"])
 		row.update(
 			{

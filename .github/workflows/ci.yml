@@ -168,6 +168,18 @@ jobs:
           bench --site test_site execute "frappe.get_attr('l10n_ec.ecuador_localization.demo_seed.seed_demo')()" > /tmp/ats_seed.json
           tail -c 400 /tmp/ats_seed.json; echo
 
+      # Submits enqueue background jobs with no worker around (mail,
+      # notifications): a full queue raises QueueOverloaded on the next
+      # execute. Drain first; skip fast when there is nothing pending.
+      - name: Drain background queues before the DIMM gate
+        run: |
+          PENDING=$(redis-cli -p 6379 --scan --pattern 'rq:queue:*' | while read -r k; do redis-cli -p 6379 llen "$k"; done | awk '{s+=$1} END {print s+0}')
+          echo "pending jobs: ${PENDING}"
+          if [ "${PENDING}" -gt 0 ]; then
+            cd ~/frappe-bench
+            timeout 150 bench --site test_site worker --queue short,default,long || true
+          fi
+
       - name: Validate seeded ATS month through sidecar (live DIMM gate)
         run: |
           cd ~/frappe-bench
@@ -181,9 +193,10 @@ jobs:
               gate["verdict"], gate["messages"]
           )
           # Deterministic seed: all demo purchases post today, so the current
-          # month always carries the same 11 compras (reembolsos + exterior
-          # included). If the seed changes, update this floor consciously.
-          assert gate["counts"]["compras"] == 11, "unexpected compras: {}".format(
+          # month always carries the same 14 compras: 11 local (reembolsos
+          # included) + 3 exterior services (9900... runs, T5b). If the seed
+          # changes, update this floor consciously.
+          assert gate["counts"]["compras"] == 14, "unexpected compras: {}".format(
               gate["counts"]
           )
           print("ATS DIMM gate valid:", gate["counts"])

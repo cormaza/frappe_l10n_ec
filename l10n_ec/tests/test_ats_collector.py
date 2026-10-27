@@ -8,6 +8,7 @@ from l10n_ec.sri.ats_collector import (
 	collect_month,
 	collect_purchase,
 	collect_sale,
+	is_exterior_number,
 	split_iva_bases,
 	split_sri_number,
 )
@@ -185,11 +186,24 @@ class TestCollectPurchase(UnitTestCase):
 				_purchase(withholdings=[{"concepto": "9999", "base": 1.0, "rate": 1.0, "value": 1.0}])
 			)
 
-	def test_exterior_scope_concepto_fails_loud(self) -> None:
-		with self.assertRaises(SriVoucherError):
-			collect_purchase(
-				_purchase(withholdings=[{"concepto": "501", "base": 1.0, "rate": 1.0, "value": 1.0}])
+	def test_exterior_scope_concepto_rides_103_not_ats(self) -> None:
+		# Exterior withholdings (501/501A, impuesto 9) live in Form 103
+		# (497/498) plus the 07 voucher itself: the ATS compra row carries
+		# the purchase only, with no dangling retencion reference.
+		# DIMM-validated shape (T5b probe: plain exterior 01 == valid).
+		row = collect_purchase(
+			_purchase(
+				sri_number="990001000000001",
+				supplier_id_type="06",
+				supplier_id="ESP123456",
+				withholdings=[{"concepto": "501A", "base": 1000.0, "rate": 10.0, "value": 100.0}],
 			)
+		)
+		self.assertEqual(row["establecimiento"], "990")
+		self.assertEqual(row["secuencial"], "000000001")
+		self.assertEqual(row["air"], [])
+		self.assertNotIn("estabRetencion1", row)
+		self.assertNotIn("secRetencion1", row)
 
 	def test_rate_mismatch_fails_loud(self) -> None:
 		with self.assertRaises(SriVoucherError):
@@ -280,6 +294,23 @@ class TestHelpers(UnitTestCase):
 		self.assertEqual(split_sri_number("001-002-000000123"), ("001", "002", "000000123"))
 		with self.assertRaises(SriVoucherError):
 			split_sri_number("001-002")
+
+	def test_split_exterior_fifteen_digit_number(self) -> None:
+		# Exterior invoice numbers travel as a 15-digit run; the 3-3-9
+		# split preserves every digit (DIMM-validated shape, T5b).
+		self.assertEqual(split_sri_number("990001000000001"), ("990", "001", "000000001"))
+
+	def test_split_garbage_still_fails_loud(self) -> None:
+		with self.assertRaises(SriVoucherError):
+			split_sri_number("F001-123")
+		with self.assertRaises(SriVoucherError):
+			split_sri_number("DEMO-BILL-001")
+
+	def test_is_exterior_number(self) -> None:
+		self.assertTrue(is_exterior_number("990001000000001"))
+		self.assertFalse(is_exterior_number("001-001-000000001"))
+		self.assertFalse(is_exterior_number("DEMO-BILL-001"))
+		self.assertFalse(is_exterior_number(None))
 
 	def test_split_iva_bases_by_rate_code(self) -> None:
 		bases = split_iva_bases(

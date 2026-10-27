@@ -2,7 +2,12 @@
 
 import unittest
 
-from l10n_ec.ecuador_localization.ats_reader import is_sri_number, purchase_row, sale_row
+from l10n_ec.ecuador_localization.ats_reader import (
+	is_reportable_purchase_number,
+	is_sri_number,
+	purchase_row,
+	sale_row,
+)
 
 try:
 	from frappe.tests import UnitTestCase
@@ -319,3 +324,18 @@ class TestImportPurchaseRowPin(UnitTestCase):
 		self.assertEqual(row["sustento_code"], "06")
 		self.assertEqual(row["supplier_id"], "990001000000001")
 		self.assertEqual(row["supplier_id_type"], "03")
+
+
+class TestReportablePurchaseNumber(UnitTestCase):
+	"""T5b: exterior 15-digit numbers report; local garbage still drops."""
+
+	def test_sri_number_reports(self) -> None:
+		self.assertTrue(is_reportable_purchase_number("001-001-000000001"))
+
+	def test_exterior_run_reports(self) -> None:
+		self.assertTrue(is_reportable_purchase_number("990001000000001"))
+
+	def test_local_placeholder_still_drops(self) -> None:
+		self.assertFalse(is_reportable_purchase_number("DEMO-BILL-001"))
+		self.assertFalse(is_reportable_purchase_number(""))
+		self.assertFalse(is_reportable_purchase_number(None))

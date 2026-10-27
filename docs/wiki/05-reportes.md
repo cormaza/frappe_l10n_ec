@@ -13,8 +13,10 @@ insignia de frescura («generado justo ahora») y tarjetas de totales.
 - Botones **Validar en DIMM** (validador `ats.plugin.1.19.0` como
   sidecar) y **Descargar ATS ZIP**.
 - Las NC (`04`) y ND (`05`) del proveedor exigen número SRI válido: el
-  lector falla en voz alta si no lo es; las `01` con número no-SRI se
-  excluyen en silencio.
+  lector falla en voz alta si no lo es. Las `01` locales con número no-SRI
+  se excluyen en silencio; las del exterior con corrida de 15 dígitos
+  (`990001000000001` → `990-001-000000001`) sí entran, con su tipo de
+  identificación exterior.
 - Compras con reembolso: el ATS trae el bloque `<reembolsos>` con el
   total `totbasesImpReemb` y lo reembolsado no suma a las bases propias
   ni al 104. Demo: factura mandante (`001-001-000000020`, sustento 01

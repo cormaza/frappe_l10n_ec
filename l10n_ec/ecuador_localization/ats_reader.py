@@ -14,6 +14,7 @@ fiscally existed, unlike never-authorized cancels which stay excluded.
 
 import re
 
+from l10n_ec.sri.ats_collector import is_exterior_number
 from l10n_ec.sri.codes import sri_code
 
 try:
@@ -35,6 +36,16 @@ SRI_NUMBER_PATTERN = re.compile(r"^\d{3}-\d{3}-\d{9}$")
 def is_sri_number(value: str | None) -> bool:
 	"""Whether a document number is an SRI-formatted `001-001-000000001`."""
 	return bool(value and SRI_NUMBER_PATTERN.match(value.strip()))
+
+
+def is_reportable_purchase_number(value: str | None) -> bool:
+	"""Whether a purchase bill number belongs in ATS compras.
+
+	SRI `001-001-000000001` numbers always report; exterior 15-digit runs
+	report as the supplier's own numbering (DIMM-validated, T5b). Local
+	placeholders (`DEMO-BILL-001`, empty) still drop: they are neither.
+	"""
+	return is_sri_number(value) or is_exterior_number(value)
 
 
 def classify_purchase(
@@ -319,7 +330,7 @@ def read_month(company: str, year: int, month: int) -> dict:
 			bool(pi.get("sri_is_supplier_debit_note")),
 			bool(pi.get("sri_is_reimbursement")),
 		)
-		if doc_code == "01" and not is_sri_number(pi.get("bill_no")):
+		if doc_code == "01" and not is_reportable_purchase_number(pi.get("bill_no")):
 			continue
 		supplier = frappe.get_doc("Supplier", pi.get("supplier"))
 		mapped = [map_line_taxes(line) for line in base_lines(pi)]
