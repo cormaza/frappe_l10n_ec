@@ -41,7 +41,7 @@ settlement + recosteo together.
 - T4 (S7, settlement→LCV): prefill + submit native LCV from settlement.
   Route: integration. Commit: 80d5e02
 - T5 (S3, reports): dedicated 104 import boxes + ATS import marking.
-  Route: reports. Commit: -
+  Route: reports. Commit: c670ad1
 - T6 (S8, demo/CI): seed import case + keep DIMM gate green. Route: demo.
   Commit: -
 
