@@ -106,3 +106,16 @@ class TestSRIImportSettlementCompute(UnitTestCase):
 		doc = _make_doc()
 		with self.assertRaises(EXPECTED_ERROR):
 			doc.apply_declaration_csv("fobola\n1")
+
+
+class TestSRIImportSettlementLandedCost(UnitTestCase):
+	def test_duplicate_landed_cost_fails(self) -> None:
+		doc = _make_doc(landed_cost_voucher="MAT-LCV-2026-00001")
+		with self.assertRaises(EXPECTED_ERROR) as ctx:
+			doc.make_landed_cost_voucher()
+		self.assertIn("already costed", str(ctx.exception))
+
+	def test_without_receipt_fails(self) -> None:
+		doc = _make_doc(purchase_invoice=None, purchase_receipt=None, purchase_order="PO-2026-00001")
+		with self.assertRaises(EXPECTED_ERROR):
+			doc.make_landed_cost_voucher()

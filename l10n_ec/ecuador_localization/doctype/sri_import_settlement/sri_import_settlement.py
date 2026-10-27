@@ -17,16 +17,16 @@ except ImportError:  # pragma: no cover
 	frappe = None  # type: ignore[assignment]
 
 from l10n_ec.sri.import_declaration import crosscheck_settlement, parse_declaration_csv
+from l10n_ec.sri.import_landed_cost import build_lcv_taxes, select_receipt_document
 from l10n_ec.sri.import_links import LINK_DOCTYPES, validate_settlement_links
 from l10n_ec.sri.import_settlement import compute_import_taxes
 
 
 class SRIImportSettlement(Document):
-	"""Accumulated import costs toward tax settlement (T2: link set only).
+	"""Accumulated import costs toward tax settlement and recosteo.
 
-	Computation (DAI rates, Art. 59 totals) lands in T3; the Landed Cost
-	Voucher prefill lands in T4. This controller only owns the link set:
-	which source documents the settlement accumulates.
+	T2 owns the link set, T3 the DAI computation, T4 the native Landed
+	Cost Voucher prefill. Each layer validates fail loud.
 	"""
 
 	if TYPE_CHECKING:
@@ -56,6 +56,7 @@ class SRIImportSettlement(Document):
 		fodinfa_amount: DF.Currency | None
 		iva_base: DF.Currency | None
 		iva_amount: DF.Currency | None
+		landed_cost_voucher: DF.Link | None
 
 	def validate(self) -> None:
 		links = {
@@ -149,6 +150,81 @@ class SRIImportSettlement(Document):
 		self.dai_iva = parsed["declared"]["dai_iva"]
 		self.dai_total = parsed["declared"]["dai_total"]
 		return parsed
+
+	@frappe.whitelist() if frappe else (lambda fn: fn)
+	def make_landed_cost_voucher(self) -> str:
+		"""Create and submit the native LCV for this settlement (bench only).
+
+		Prefills the receipt (Purchase Receipt preferred, else the exterior
+		invoice when it carries Update Stock) and the freight/insurance legs
+		as tax rows, lets native code pull items and repost valuation, then
+		links the LCV back. Explicit user action; a second call fails loud
+		instead of double-costing.
+		"""
+		existing = getattr(self, "landed_cost_voucher", None)
+		if existing:
+			msg = f"Settlement already costed by {existing}."
+			if frappe is not None:
+				frappe.throw(msg)
+			raise ValueError(msg)
+		if frappe is None:  # pragma: no cover
+			raise ValueError("Landed Cost Voucher creation needs a Frappe Bench.")
+		if not getattr(self, "name", None):
+			frappe.throw("Save the settlement before creating its Landed Cost Voucher.")
+		has_update_stock = bool(
+			getattr(self, "purchase_invoice", None)
+			and frappe.db.get_value("Purchase Invoice", self.purchase_invoice, "update_stock")
+		)
+		receipt = select_receipt_document(
+			getattr(self, "purchase_receipt", None),
+			getattr(self, "purchase_invoice", None),
+			has_update_stock,
+		)
+		if receipt is None:
+			frappe.throw(
+				"Recosting needs a Purchase Receipt or an exterior invoice with Update Stock checked."
+			)
+		try:
+			taxes = build_lcv_taxes(self._lcv_leg("freight_invoice"), self._lcv_leg("insurance_invoice"))
+		except ValueError as exc:
+			frappe.throw(str(exc))
+		raise
+		lcv = frappe.get_doc(
+			{
+				"doctype": "Landed Cost Voucher",
+				"company": self.company,
+				"posting_date": frappe.utils.today(),
+				"distribute_charges_based_on": "Amount",
+				"purchase_receipts": [{"receipt_document_type": receipt[0], "receipt_document": receipt[1]}],
+				"taxes": taxes,
+			}
+		)
+		lcv.get_items_from_purchase_receipts()
+		lcv.insert(ignore_permissions=True)
+		lcv.submit()
+		frappe.db.set_value(self.doctype, self.name, "landed_cost_voucher", lcv.name)
+		self.landed_cost_voucher = lcv.name
+		return lcv.name
+
+	def _lcv_leg(self, field: str) -> dict | None:
+		"""Shape one linked cost invoice into an LCV tax leg (bench only)."""
+		name = getattr(self, field, None)
+		if not name:
+			return None
+		values = frappe.db.get_value("Purchase Invoice", name, ["net_total", "currency", "conversion_rate"])
+		if values is None:  # pragma: no cover - existence proven upstream
+			frappe.throw(f"Purchase Invoice '{name}' linked as {field} does not exist.")
+		net_total, currency, conversion_rate = values
+		expense_account = frappe.db.get_value(
+			"Purchase Invoice Item", {"parent": name}, "expense_account", order_by="idx"
+		)
+		return {
+			"source": name,
+			"amount": float(net_total or 0.0),
+			"expense_account": expense_account,
+			"account_currency": currency or "USD",
+			"exchange_rate": float(conversion_rate or 1.0),
+		}
 
 	def _gather_costs(self) -> dict:
 		"""Accumulate FOB/freight/insurance from linked documents (bench only).

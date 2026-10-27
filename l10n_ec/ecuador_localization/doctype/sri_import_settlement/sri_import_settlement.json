@@ -33,7 +33,8 @@
   "ad_valorem_amount",
   "fodinfa_amount",
   "iva_base",
-  "iva_amount"
+  "iva_amount",
+  "landed_cost_voucher"
  ],
  "fields": [
   {
@@ -225,6 +226,14 @@
    "fieldtype": "Currency",
    "label": "IVA Amount",
    "read_only": 1
+  },
+  {
+   "fieldname": "landed_cost_voucher",
+   "fieldtype": "Link",
+   "label": "Landed Cost Voucher",
+   "options": "Landed Cost Voucher",
+   "read_only": 1,
+   "description": "Native LCV created from this settlement (T4); submitting it reposts valuation."
   }
  ],
  "istable": 0,
