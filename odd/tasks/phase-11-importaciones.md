@@ -46,7 +46,7 @@ settlement + recosteo together.
   sustento; 15-digit split; 103-only withholdings). DIMM-proven.
   Route: collector+reader. Commit: 598f9ca
 - T6 (S8, demo/CI): seed import case + keep DIMM gate green. Route: demo.
-  Commit: -
+  Commit: 282c41b
 
 ## Log
 
