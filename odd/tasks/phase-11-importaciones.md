@@ -49,6 +49,9 @@ settlement + recosteo together.
   Commit: 282c41b
 - T6b (S3 review catch): forbid local VAT on exterior purchases (guard +
   hook + seed fix + wiki). Route: validation. Commit: 0964d48
+- T7 (company catalog): SRI Import Assumption (company+item+partida+last
+  AD VALOREM) prefills empty settlement rates as estimate; DAI always
+  arbitrates. Route: doctype+controller. Commit: cd52ce1
 
 ## Log
 
@@ -92,3 +95,8 @@ settlement + recosteo together.
 - L7 (arancel catalog evaluation, 2026-10-27): NO national catalog
   vendored. DAI stays the authority; rates always travel in with the
   declaration. Reopen only with versioned demand (see closing message).
+- L8 (T7 company catalog, user decision): catalog per empresa reutilizable
+  — the company loads its own cases (item + partida + last AD VALOREM)
+  to project; prefill is estimate-only until the DAI crosscheck passes.
+  Self-healing by design: a tariff move fails the crosscheck naming the
+  rate, and the row gets updated instead of forcing the settlement.
