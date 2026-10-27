@@ -142,6 +142,9 @@ def process_authorization_response(
 
 		is_auth = True
 		msj_list = []
+		body = doc.get("comprobante")
+		if isinstance(body, str) and body.strip():
+			auth_values["l10n_ec_xml_comprobante"] = body.strip()
 		auth_date = doc.get("fechaAutorizacion")
 		if not isinstance(auth_date, datetime):
 			auth_date = datetime.now(pytz.UTC)

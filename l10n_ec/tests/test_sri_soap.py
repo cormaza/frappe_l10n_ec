@@ -107,3 +107,61 @@ class TestSRISoapClient(UnitTestCase):
 		prod_client = SriSoapClient(environment="production", use_local_wsdl=False)
 		self.assertEqual(test_client.get_wsdl_url("reception"), TEST_URL["reception"])
 		self.assertEqual(prod_client.get_wsdl_url("authorization"), PRODUCTION_URL["authorization"])
+
+	def test_sri_soap_authorization_extracts_comprobante_xml(self) -> None:
+		from datetime import datetime
+
+		import pytz
+
+		soap = SriSoapClient(environment="test", use_local_wsdl=True)
+		auth_client = soap.create_client("authorization")
+		factory = auth_client.type_factory("ns0")
+
+		access_key = "2410202601179001691900110010010000000011234567815"
+		auth_response = factory.respuestaComprobante(
+			claveAccesoConsultada=access_key,
+			numeroComprobantes=1,
+			autorizaciones={
+				"autorizacion": [
+					factory.autorizacion(
+						estado="AUTORIZADO",
+						numeroAutorizacion=access_key,
+						fechaAutorizacion=datetime(2026, 10, 24, 10, 30, 0, tzinfo=pytz.UTC),
+						ambiente="PRUEBAS",
+						comprobante="<factura/>",
+						mensajes={"mensaje": []},
+					)
+				]
+			},
+		)
+		_, _, auth_values = process_authorization_response(auth_response, access_key)
+		self.assertEqual(auth_values.get("l10n_ec_xml_comprobante"), "<factura/>")
+
+	def test_sri_soap_authorization_without_comprobante_yields_no_xml(self) -> None:
+		from datetime import datetime
+
+		import pytz
+
+		soap = SriSoapClient(environment="test", use_local_wsdl=True)
+		auth_client = soap.create_client("authorization")
+		factory = auth_client.type_factory("ns0")
+
+		access_key = "2410202601179001691900110010010000000011234567815"
+		auth_response = factory.respuestaComprobante(
+			claveAccesoConsultada=access_key,
+			numeroComprobantes=1,
+			autorizaciones={
+				"autorizacion": [
+					factory.autorizacion(
+						estado="AUTORIZADO",
+						numeroAutorizacion=access_key,
+						fechaAutorizacion=datetime(2026, 10, 24, 10, 30, 0, tzinfo=pytz.UTC),
+						ambiente="PRUEBAS",
+						mensajes={"mensaje": []},
+					)
+				]
+			},
+		)
+		is_auth, _, auth_values = process_authorization_response(auth_response, access_key)
+		self.assertTrue(is_auth)
+		self.assertNotIn("l10n_ec_xml_comprobante", auth_values)

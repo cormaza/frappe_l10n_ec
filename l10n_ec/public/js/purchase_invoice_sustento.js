@@ -66,8 +66,48 @@ function add_supplier_xml_button(frm) {
    },
   });
   dialog.show();
+ });
 }
 
 frappe.ui.form.on("Purchase Invoice", {
  refresh(frm) { add_supplier_xml_button(frm); },
 });
+frappe.ui.form.on("Purchase Invoice", {
+ refresh(frm) { add_supplier_xml_fetch_button(frm); },
+});
+
+// B: fetch the authorized XML from SRI by access key (~10-day practical
+// window, no SLA). When SRI stays silent, fall back to the file upload above.
+function add_supplier_xml_fetch_button(frm) {
+ if (!frm.is_new()) return;
+ frm.add_custom_button(__("Fetch Supplier XML by Key"), () => {
+  const dialog = new frappe.ui.Dialog({
+   title: __("Fetch Supplier XML by Key"),
+   fields: [
+    {fieldname: "clave", fieldtype: "Data", label: __("Access Key"), reqd: 1, description: __("49-digit clave de acceso from the supplier document.")},
+    {fieldname: "company", fieldtype: "Link", options: "Company", reqd: 1, default: frappe.defaults.get_user_default("Company")},
+    {fieldname: "item_code", fieldtype: "Link", options: "Item", reqd: 1, description: __("Applied to every XML line; the XML description is kept per row.")},
+    {fieldname: "sustento", fieldtype: "Select", options: ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"].join("\n"), reqd: 1, default: "02"},
+   ],
+   primary_action_label: __("Fetch and Create Draft"),
+   primary_action(values) {
+    if (!/^\d{49}$/.test((values.clave || "").trim())) { frappe.msgprint(__("A SRI access key is 49 digits.")); return; }
+    dialog.disable_primary_action();
+    frappe.call({
+     method: "l10n_ec.ecuador_localization.received_xml.fetch_supplier_xml",
+     args: {clave_acceso: values.clave.trim(), company: values.company, item_code: values.item_code, sustento: values.sustento},
+     freeze: true,
+     freeze_message: __("Asking SRI for the authorized XML..."),
+     callback(r) {
+      dialog.hide();
+      if (r.message) frappe.set_route("Form", "Purchase Invoice", r.message);
+     },
+     error() { dialog.enable_primary_action(); },
+    });
+   },
+  });
+  dialog.show();
+ });
+}
+
+
