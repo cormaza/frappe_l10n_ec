@@ -160,3 +160,31 @@ jobs:
           assert not status["stale"], "ATS sidecar stale: {}".format(status["reason"])
           print("ATS sidecar live:", status["reported"])
           EOF
+
+      - name: Seed demo data for ATS end-to-end gate
+        run: |
+          cd ~/frappe-bench
+          bench --site test_site clear-cache
+          bench --site test_site execute "frappe.get_attr('l10n_ec.ecuador_localization.demo_seed.seed_demo')()" > /tmp/ats_seed.json
+          tail -c 400 /tmp/ats_seed.json; echo
+
+      - name: Validate seeded ATS month through sidecar (live DIMM gate)
+        run: |
+          cd ~/frappe-bench
+          YEAR=$(date +%Y); MONTH=$(date +%-m)
+          bench --site test_site execute "frappe.get_attr('l10n_ec.sri.ats_validator.validate_month')('Demo Ecuador', ${YEAR}, ${MONTH})" | tee /tmp/ats_gate.json
+          python - <<'EOF'
+          import json
+          gate = json.load(open("/tmp/ats_gate.json"))
+          assert not gate["stale"], "ATS sidecar stale: {}".format(gate["reason"])
+          assert gate["verdict"] == "valid", "ATS DIMM verdict '{}': {}".format(
+              gate["verdict"], gate["messages"]
+          )
+          # Deterministic seed: all demo purchases post today, so the current
+          # month always carries the same 11 compras (reembolsos + exterior
+          # included). If the seed changes, update this floor consciously.
+          assert gate["counts"]["compras"] == 11, "unexpected compras: {}".format(
+              gate["counts"]
+          )
+          print("ATS DIMM gate valid:", gate["counts"])
+          EOF
