@@ -127,6 +127,14 @@ class TestMapReceivedFactura(UnitTestCase):
 			)
 		self.assertIn("0", str(ctx.exception))
 
+	def test_unmapped_rate_lists_available_templates(self) -> None:
+		with self.assertRaises(ValueError) as ctx:
+			map_received_factura(
+				self._parsed_two_rates(), **self._doc_kwargs(templates=[{"title": "T15", "rate": 15.0}])
+			)
+		self.assertIn("T15", str(ctx.exception))
+		self.assertIn("15", str(ctx.exception))
+
 	def test_ambiguous_templates_fail(self) -> None:
 		dupes = [*TEMPLATES, {"title": "Other VAT 15%", "rate": 15.0}]
 		with self.assertRaises(ValueError):

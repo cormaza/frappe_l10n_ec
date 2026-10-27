@@ -42,8 +42,13 @@ def _resolve_template(rate: float, templates: list) -> str:
 	"""Match one template by exact tarifa; fail loud on zero/ambiguity."""
 	matches = [entry["title"] for entry in templates or [] if float(entry.get("rate", -1)) == float(rate)]
 	if not matches:
+		available = ", ".join(f"{entry.get('title')} ({entry.get('rate')}%)" for entry in templates or [])
 		raise ValueError(
-			_("No company tax template matches VAT rate '{}' from the supplier XML.").format(rate)
+			_(
+				"No company tax template matches VAT rate '{}' from the supplier XML. "
+				"Available purchase templates: {}. Create the missing one (same rate, "
+				"debit-side VAT account) or fix the XML."
+			).format(rate, available or _("none configured"))
 		)
 	if len(matches) > 1:
 		raise ValueError(_("Ambiguous tax templates for VAT rate '{}': {}.").format(rate, ", ".join(matches)))

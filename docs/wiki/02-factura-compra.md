@@ -40,8 +40,12 @@ asiento de retención fiscal.
 - **Importar XML del proveedor** — en una factura nueva, el botón
   *Import Supplier XML* lee el XML firmado, prellena proveedor, número,
   fechas, autorización e ítems con su plantilla de IVA (matcheada por
-  tarifa exacta), y crea el borrador para tu revisión. Duplicados
-  (mismo proveedor + número) se rechazan nombrando el documento existente.
+  tarifa exacta entre las plantillas de compra), y crea el borrador para
+  tu revisión. Si el proveedor no existe, se crea solo bajo el grupo
+  `Imported Suppliers` (revisá sus datos después). Si ninguna plantilla
+  calza con la tarifa del XML, el error te lista las disponibles.
+  Duplicados (mismo proveedor + número) se rechazan nombrando el
+  documento existente.
 
 ## Grilla de impuestos y cargos
 

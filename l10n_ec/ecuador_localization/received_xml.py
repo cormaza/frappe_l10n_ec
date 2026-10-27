@@ -46,16 +46,62 @@ def _collect_company_templates(company: str) -> list:
 	return templates
 
 
-def _resolve_supplier(tax_id: str, supplier_name: str) -> str:
-	"""Supplier name for an emisor RUC; fail loud asking to create it first."""
+_IMPORTED_SUPPLIERS_GROUP = "Imported Suppliers"
+
+
+def _ensure_imported_suppliers_group() -> str:
+	"""Leaf group for auto-created suppliers; created once, clearly named."""
+	if frappe.db.exists("Supplier Group", _IMPORTED_SUPPLIERS_GROUP):
+		return _IMPORTED_SUPPLIERS_GROUP
+	if not frappe.db.exists("Supplier Group", "All Supplier Groups"):
+		raise ValueError(_("Cannot auto-create the supplier: no 'All Supplier Groups' root exists."))
+	group = frappe.get_doc(
+		{
+			"doctype": "Supplier Group",
+			"supplier_group_name": _IMPORTED_SUPPLIERS_GROUP,
+			"is_group": 0,
+			"parent_supplier_group": "All Supplier Groups",
+		}
+	)
+	group.insert()
+	return group.name
+
+
+def _get_or_create_supplier(tax_id: str, supplier_name: str) -> str:
+	"""Resolve the emisor by RUC, creating it on first sight.
+
+	The invoice is going to be booked anyway, so refusing an unknown
+	supplier only adds a manual round-trip. Creation is conservative:
+	fail loud when the *name* already belongs to another RUC (never
+	merge two taxpayers), and flag the new record for review.
+	"""
 	name = frappe.db.get_value("Supplier", {"tax_id": tax_id}, "name")
 	if name:
 		return name
-	raise ValueError(
-		_("Supplier with RUC '{}' ({}) does not exist: create it first, then import the XML again.").format(
-			tax_id, supplier_name or "?"
+	clash = frappe.db.get_value("Supplier", {"supplier_name": supplier_name}, "tax_id")
+	if clash not in (None, "", tax_id):
+		raise ValueError(
+			_("Supplier name '{}' already exists with a different RUC ({}): resolve it manually.").format(
+				supplier_name, clash
+			)
+		)
+	kind = "Company" if len(tax_id) == 13 and tax_id.isdigit() else "Individual"
+	doc = frappe.get_doc(
+		{
+			"doctype": "Supplier",
+			"supplier_name": supplier_name,
+			"supplier_group": _ensure_imported_suppliers_group(),
+			"supplier_type": kind,
+			"tax_id": tax_id,
+		}
+	)
+	doc.insert()
+	frappe.msgprint(
+		_("Supplier '{}' ({}) was created under '{}': please review its master data.").format(
+			supplier_name, tax_id, _IMPORTED_SUPPLIERS_GROUP
 		)
 	)
+	return doc.name
 
 
 def _create_draft_from_xml(xml_text: str, company: str, item_code: str, sustento: str) -> str:
@@ -77,7 +123,7 @@ def _create_draft_from_xml(xml_text: str, company: str, item_code: str, sustento
 		frappe.throw(str(exc))
 		raise
 	try:
-		supplier = _resolve_supplier(mapped.pop("supplier_tax_id", ""), mapped.pop("supplier_name", ""))
+		supplier = _get_or_create_supplier(mapped.pop("supplier_tax_id", ""), mapped.pop("supplier_name", ""))
 	except ValueError as exc:
 		frappe.throw(str(exc))
 		raise

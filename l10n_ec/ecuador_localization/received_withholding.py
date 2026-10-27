@@ -43,7 +43,11 @@ def _match_sales_invoice(customer: str, doc_number: str) -> str | None:
 	"""
 	names = frappe.db.get_all(
 		"SRI Electronic Voucher",
-		filters={"sri_number": doc_number, "voucher_state": "Authorized", "reference_doctype": "Sales Invoice"},
+		filters={
+			"sri_number": doc_number,
+			"voucher_state": "Authorized",
+			"reference_doctype": "Sales Invoice",
+		},
 		pluck="reference_name",
 	)
 	candidates = []
@@ -62,7 +66,11 @@ def _create_draft_batch(xml_text: str, company: str) -> str:
 	"""Shared core: authorized-XML-or-uploaded file to a draft batch."""
 	parsed = parse_emitted_xml(xml_text)
 	if (parsed or {}).get("kind") != "retencion":
-		frappe.throw(_("Only customer withholding slips (07) can be imported here (got '{}').").format(parsed.get("kind")))
+		frappe.throw(
+			_("Only customer withholding slips (07) can be imported here (got '{}').").format(
+				parsed.get("kind")
+			)
+		)
 		raise ValueError("unreachable")
 	try:
 		mapped = map_received_retencion(parsed)
@@ -81,7 +89,9 @@ def _create_draft_batch(xml_text: str, company: str) -> str:
 	)
 	if duplicate:
 		frappe.throw(
-			_("Customer withholding '{}' was already imported as {}.").format(mapped["retencion_number"], duplicate)
+			_("Customer withholding '{}' was already imported as {}.").format(
+				mapped["retencion_number"], duplicate
+			)
 		)
 		raise ValueError("unreachable")
 	allocations = []
