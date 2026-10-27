@@ -88,6 +88,9 @@ def _fetch_month_ledger(company: str, year: int, month: int) -> dict:
 		for name in names:
 			doc = frappe.get_doc(doctype, name)
 			is_return = bool(doc.get("is_return"))
+			settlement_linked = doctype == "Purchase Invoice" and bool(
+				frappe.db.exists("SRI Import Settlement", {"purchase_invoice": name})
+			)
 			for item in doc.items:
 				template = item.get("item_tax_template")
 				if not template:
@@ -103,9 +106,20 @@ def _fetch_month_ledger(company: str, year: int, month: int) -> dict:
 						"base": base,
 						"value": round(base * tarifa / 100, 2),
 						"is_return": is_return,
+						"import_kind": _import_kind(item) if settlement_linked else None,
 					}
 				)
 		return rows
+
+	def _import_kind(item) -> str:
+		"""Classify a settlement-linked item into its DIMM import triple."""
+		flags = frappe.db.get_value("Item", item.get("item_code"), ["is_stock_item", "is_fixed_asset"])
+		is_stock, is_fixed = flags or (None, None)
+		if is_fixed:
+			return "fixed_asset"
+		if not is_stock:
+			return "services"
+		return "goods"
 
 	deduction_account = frappe.db.get_value(
 		"Account", {"company": company, "account_number": IVA_WH_ACCOUNT_NUMBER}, "name"

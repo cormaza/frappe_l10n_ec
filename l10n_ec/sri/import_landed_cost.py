@@ -38,7 +38,9 @@ def _tax_row(leg: dict, label: str) -> dict:
 		raise ValueError(_("LCV leg '{}' needs an amount.").format(leg.get("source")))
 	amount = float(amount)
 	if amount < 0:
-		raise ValueError(_("LCV leg '{}' amount cannot be negative (got '{}').").format(leg.get("source"), amount))
+		raise ValueError(
+			_("LCV leg '{}' amount cannot be negative (got '{}').").format(leg.get("source"), amount)
+		)
 	if amount == 0:
 		return {}
 	expense_account = (leg.get("expense_account") or "").strip()

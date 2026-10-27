@@ -368,3 +368,83 @@ class TestVariableRateBoxes(UnitTestCase):
 		# (411 + 435) / 419 = (1000 + 200) / 1200
 		self.assertEqual(result["563"], 1.0)
 		self.assertEqual(result["419"], 1200.0)
+
+
+class TestImportBoxes(UnitTestCase):
+	"""T5 (S3): settlement-linked purchases feed dedicated import boxes."""
+
+	def _import_ledger(self, kind, rate_code="4", base=1000.0, value=150.0, tarifa=None):
+		row = {"code": "2", "rate_code": rate_code, "base": base, "value": value, "import_kind": kind}
+		if tarifa is not None:
+			row["tarifa"] = tarifa
+		return _ledger(
+			sales_taxes=[], purchase_taxes=[row], iva_deduction_rows=[], settlements=[], received_refs=[]
+		)
+
+	def test_import_goods_feed_504_514_524(self) -> None:
+		result = collect_104(self._import_ledger("goods"), 2026, 3)
+		self.assertEqual(result["504"], 1000.0)
+		self.assertEqual(result["514"], 1000.0)
+		self.assertEqual(result["524"], 150.0)
+		self.assertEqual(result["500"], 0.0)
+		self.assertEqual(result["510"], 0.0)
+		self.assertEqual(result["520"], 0.0)
+
+	def test_import_services_feed_503_513_523(self) -> None:
+		result = collect_104(self._import_ledger("services"), 2026, 3)
+		self.assertEqual(result["503"], 1000.0)
+		self.assertEqual(result["513"], 1000.0)
+		self.assertEqual(result["523"], 150.0)
+
+	def test_import_fixed_asset_feeds_505_515_525(self) -> None:
+		result = collect_104(self._import_ledger("fixed_asset"), 2026, 3)
+		self.assertEqual(result["505"], 1000.0)
+		self.assertEqual(result["515"], 1000.0)
+		self.assertEqual(result["525"], 150.0)
+
+	def test_import_zero_rate_feeds_506_516(self) -> None:
+		result = collect_104(self._import_ledger("goods", rate_code="0", base=500.0, value=0.0), 2026, 3)
+		self.assertEqual(result["506"], 500.0)
+		self.assertEqual(result["516"], 500.0)
+		self.assertEqual(result["507"], 0.0)
+
+	def test_local_purchases_still_feed_500s(self) -> None:
+		result = collect_104(
+			_ledger(
+				sales_taxes=[],
+				purchase_taxes=[{"code": "2", "rate_code": "4", "base": 2000.0, "value": 300.0}],
+				iva_deduction_rows=[],
+				settlements=[],
+				received_refs=[],
+			),
+			2026,
+			3,
+		)
+		self.assertEqual(result["500"], 2000.0)
+		self.assertEqual(result["504"], 0.0)
+
+	def test_unknown_import_kind_fails_loud(self) -> None:
+		with self.assertRaises(SriVoucherError):
+			collect_104(self._import_ledger("starships"), 2026, 3)
+
+	def test_differentiated_import_has_no_boxes_and_fails(self) -> None:
+		with self.assertRaises(SriVoucherError):
+			collect_104(
+				self._import_ledger("goods", rate_code="8", tarifa=5.0, base=200.0, value=10.0), 2026, 3
+			)
+
+	def test_sales_row_with_import_kind_fails(self) -> None:
+		with self.assertRaises(SriVoucherError):
+			collect_104(
+				_ledger(
+					sales_taxes=[
+						{"code": "2", "rate_code": "4", "base": 100.0, "value": 15.0, "import_kind": "goods"}
+					],
+					purchase_taxes=[],
+					iva_deduction_rows=[],
+					settlements=[],
+					received_refs=[],
+				),
+				2026,
+				3,
+			)

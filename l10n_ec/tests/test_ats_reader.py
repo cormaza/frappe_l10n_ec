@@ -288,3 +288,34 @@ class TestIceAmount(unittest.TestCase):
 			"taxes": [{"code": "2", "rate_code": "4", "base": 100.0, "value": 15.0}],
 		}
 		self.assertEqual(purchase_row(pi, {}, None)["ice_amount"], 0.0)
+
+
+class TestImportPurchaseRowPin(UnitTestCase):
+	"""T5 (S3): settlement-linked imports classify exactly like plain 01s.
+
+	The vendored ATS XSD carries no import marker (only codSustento /
+	tpIdProv / tipoProv), so the reader intentionally applies no
+	special-casing: an import-shaped PI keeps its sustento and supplier
+	identity through the generic path.
+	"""
+
+	def test_import_shaped_pi_keeps_sustento_and_identity(self) -> None:
+		pi = {
+			"bill_no": "IMP-2026-000001",
+			"bill_date": "20/10/2026",
+			"posting_date": "21/10/2026",
+			"grand_total": 1250.0,
+			"sri_sustento_code": "06 - Inventario gravado",
+			"sri_supplier_auth_number": "DAI-123",
+			"taxes": [{"code": "2", "rate_code": "4", "base": 1000.0, "value": 150.0}],
+		}
+		supplier = {
+			"sri_identification_type": "03",
+			"tax_id": "990001000000001",
+			"supplier_name": "Demo Spain Co",
+		}
+		row = purchase_row(pi, supplier, None, "01")
+		self.assertEqual(row["doc_code"], "01")
+		self.assertEqual(row["sustento_code"], "06")
+		self.assertEqual(row["supplier_id"], "990001000000001")
+		self.assertEqual(row["supplier_id_type"], "03")

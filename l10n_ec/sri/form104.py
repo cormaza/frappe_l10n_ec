@@ -40,9 +40,12 @@ Aggregation rules:
   ``500``/``510``/``520``; differentiated ``8`` feeds ``425``/``435``/``445``
   and ``540``/``550``/``560``; zero-rate ``0`` feeds ``403``/``413`` and
   ``507``/``517``; no-object ``6`` and exempt ``7`` feed ``431``/``441`` and
-  ``531``/``541``/``532``/``542``. Fixed-asset, import, export,
-  variable-rate, and carryover boxes stay zero: the ledger carries no input
-  that distinguishes them. Known non-VAT impuesto codes (``3`` ICE,
+  ``531``/``541``/``532``/``542``. Settlement-linked imports reroute to
+  the dedicated triples (goods ``504``/``514``/``524``, services
+  ``503``/``513``/``523``, fixed assets ``505``/``515``/``525``, zero-rate
+  ``506``/``516``) via the row ``import_kind`` set by the bench reader;
+  fixed-asset (local), export, variable-rate, and carryover boxes stay
+  zero: the ledger carries no input that distinguishes them. Known non-VAT impuesto codes (``3`` ICE,
   ``5`` IRBPNR) are ignored; anything else fails loud.
 * IVA deduction rows (the ``Deduct`` rows from ``validation``,
   account ``2010708``) are withholdings we effected as agent: each row feeds
@@ -283,7 +286,7 @@ def _aggregate_vat(rows: list, splitter) -> dict:
 			raise SriVoucherError(_("Form 104 tax code '{}' is not a SRI impuesto.").format(code))
 		base = round(float(row.get("base", 0.0)), 2)
 		value = round(float(row.get("value", 0.0)), 2)
-		gross_box, net_box, tax_box = splitter(rate_code, row.get("tarifa"))
+		gross_box, net_box, tax_box = splitter(rate_code, row.get("tarifa"), row.get("import_kind"))
 		if row.get("is_return"):
 			# DIMM: VALOR NETO = VALOR BRUTO - N/C. Returns (native
 			# negative amounts) reduce neto and impuesto; bruto is history.
@@ -296,13 +299,18 @@ def _aggregate_vat(rows: list, splitter) -> dict:
 	return boxes
 
 
-def _sales_boxes(rate_code: str, tarifa=None) -> tuple:
+def _sales_boxes(rate_code: str, tarifa=None, import_kind=None) -> tuple:
 	"""Map a VAT rate code to its ventas ``(gross, net, tax)`` boxes.
 
 	Rate code ``8`` (diferenciado) splits by tarifa: standing 5% feeds the
 	fixed 425 row, decreed rates (holiday 8%, ...) feed the variable 410
 	row (template + guía). Without tarifa the row is unplaceable: fail loud.
+	An import kind on a sale is caller corruption: fail loud.
 	"""
+	if import_kind is not None:
+		raise SriVoucherError(
+			_("Form 104 sales rows never carry import_kind (got '{}').").format(import_kind)
+		)
 	if rate_code in NONZERO_RATE_CODES:
 		return ("401", "411", "421")
 	if rate_code == "8":
@@ -320,8 +328,37 @@ def _sales_boxes(rate_code: str, tarifa=None) -> tuple:
 	raise SriVoucherError(_("Form 104 VAT rate code '{}' is not a SRI rate.").format(rate_code))
 
 
-def _purchase_boxes(rate_code: str, tarifa=None) -> tuple:
-	"""Map a VAT rate code to its compras ``(gross, net, tax)`` boxes."""
+def _purchase_boxes(rate_code: str, tarifa=None, import_kind=None) -> tuple:
+	"""Map a VAT rate code to its compras ``(gross, net, tax)`` boxes.
+
+	Settlement-linked imports (``import_kind`` set by the bench reader from
+	the SRI Import Settlement) feed the dedicated DIMM triples: goods
+	``504``/``514``/``524``, services ``503``/``513``/``523``, fixed assets
+	``505``/``515``/``525``, zero-rate ``506``/``516`` (tax cell stays on
+	the generic ``520`` pattern: the value is zero either way). Kinds and
+	rates the template has no boxes for fail loud instead of misfiling.
+	"""
+	if import_kind is None:
+		return _local_purchase_boxes(rate_code, tarifa)
+	if import_kind not in ("goods", "services", "fixed_asset"):
+		raise SriVoucherError(
+			_("Form 104 import kind '{}' is unknown (goods/services/fixed_asset).").format(import_kind)
+		)
+	if rate_code in NONZERO_RATE_CODES:
+		if import_kind == "services":
+			return ("503", "513", "523")
+		if import_kind == "fixed_asset":
+			return ("505", "515", "525")
+		return ("504", "514", "524")
+	if rate_code == "8":
+		raise SriVoucherError(_("Form 104 differentiated imports have no DIMM boxes; place them explicitly."))
+	if rate_code == "0":
+		return ("506", "516", "520")
+	raise SriVoucherError(_("Form 104 VAT rate code '{}' is not a SRI rate.").format(rate_code))
+
+
+def _local_purchase_boxes(rate_code: str, tarifa=None) -> tuple:
+	"""Local (non-import) compras boxes; unchanged legacy routing."""
 	if rate_code in NONZERO_RATE_CODES:
 		return ("500", "510", "520")
 	if rate_code == "8":
