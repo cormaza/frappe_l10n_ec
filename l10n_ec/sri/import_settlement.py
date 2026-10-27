@@ -15,6 +15,8 @@ except ImportError:  # pragma: no cover
 		return message
 
 
+import re
+
 from l10n_ec.sri.tax_codes import tax_codes_for_template
 
 
@@ -155,3 +157,15 @@ def validate_no_local_vat(country_name: str | None, templates: list | tuple | No
 				"the import VAT credit comes from the DAI settlement, not the supplier invoice."
 			).format("', '".join(offenders))
 		)
+
+
+def validate_partida(code: str | None) -> str:
+	"""Validate a national subpartida: exactly 10 digits (NANDINA 8+2).
+
+	No rate lookup here: percentages always travel in with the DAI, the
+	catalog only keys the company's reusable knowledge.
+	"""
+	cleaned = (code or "").strip()
+	if not re.fullmatch(r"\d{10}", cleaned):
+		raise ValueError(_("Import partida '{}' must be a 10-digit national subpartida.").format(code))
+	return cleaned

@@ -1,0 +1,97 @@
+{
+ "autoname": "naming_series:",
+ "creation": "2026-10-27 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "company",
+  "item_code",
+  "partida",
+  "ad_valorem_rate",
+  "source_dai"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "SRI-IMP-A-.YYYY.-",
+   "default": "SRI-IMP-A-.YYYY.-",
+   "reqd": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1,
+   "description": "Imported goods this assumption applies to (company's own case)."
+  },
+  {
+   "fieldname": "partida",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Partida",
+   "reqd": 1,
+   "description": "10-digit national subpartida (NANDINA 8+2); key only, rates always come from the DAI."
+  },
+  {
+   "fieldname": "ad_valorem_rate",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Ad Valorem Rate",
+   "reqd": 1,
+   "description": "Last AD VALOREM seen for this partida: an estimate until the DAI crosscheck passes."
+  },
+  {
+   "fieldname": "source_dai",
+   "fieldtype": "Data",
+   "label": "Source DAI",
+   "description": "DAI number the rate was last seen on; update the row when a crosscheck fails on a new tariff."
+  }
+ ],
+ "istable": 0,
+ "links": [],
+ "modified": "2026-10-27 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Ecuador Localization",
+ "name": "SRI Import Assumption",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  }
+ ]
+}

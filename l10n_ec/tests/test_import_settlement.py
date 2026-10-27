@@ -15,6 +15,7 @@ from l10n_ec.sri.import_settlement import (
 	compute_iva,
 	compute_iva_base,
 	validate_no_local_vat,
+	validate_partida,
 )
 
 
@@ -131,3 +132,22 @@ class TestExteriorVatGuard(UnitTestCase):
 	def test_foreign_zero_rate_iva_template_also_fails(self) -> None:
 		with self.assertRaises(ValueError):
 			validate_no_local_vat("Panama", ["Ecuador VAT 0% - Purchases - DE"])
+
+
+class TestPartidaFormat(UnitTestCase):
+	"""T7: company catalog keys on the 10-digit national subpartida."""
+
+	def test_ten_digit_run_passes(self) -> None:
+		self.assertEqual(validate_partida("8504409090"), "8504409090")
+
+	def test_dashed_or_short_fails(self) -> None:
+		with self.assertRaises(ValueError):
+			validate_partida("8504.40.90")
+		with self.assertRaises(ValueError):
+			validate_partida("85044090")
+
+	def test_missing_partida_fails(self) -> None:
+		with self.assertRaises(ValueError):
+			validate_partida(None)
+		with self.assertRaises(ValueError):
+			validate_partida("  ")

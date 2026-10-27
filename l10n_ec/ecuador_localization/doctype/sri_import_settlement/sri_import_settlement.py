@@ -72,6 +72,7 @@ class SRIImportSettlement(Document):
 		if frappe is None:  # pragma: no cover
 			return
 		self._validate_linked_documents(links)
+		self._apply_company_assumption(links)
 		try:
 			self.settle_from(
 				self._gather_costs(),
@@ -270,3 +271,45 @@ class SRIImportSettlement(Document):
 				frappe.throw(f"{doctype} '{name}' belongs to '{company}', not '{self.company}'.")
 			if docstatus == 2:
 				frappe.throw(f"{doctype} '{name}' linked as {role} is cancelled.")
+
+	def _apply_company_assumption(self, links: dict) -> None:
+		"""Prefill an empty AD VALOREM rate from the company's reusable case.
+
+		Looks up SRI Import Assumption rows for the FOB document's items;
+		a single distinct rate fills the empty field as an *estimate* (the DAI
+		crosscheck later arbitrates it). Ambiguous or absent catalog data
+		leaves the form untouched for manual entry.
+		"""
+		if getattr(self, "ad_valorem_rate", None) is not None:
+			return
+		child_by_doctype = {
+			"Purchase Invoice": "Purchase Invoice Item",
+			"Purchase Receipt": "Purchase Receipt Item",
+			"Purchase Order": "Purchase Order Item",
+		}
+		for role in ("purchase_invoice", "purchase_receipt", "purchase_order"):
+			ref = links.get(role)
+			if not ref:
+				continue
+			doctype, name = ref
+			items = frappe.db.get_all(child_by_doctype[doctype], filters={"parent": name}, pluck="item_code")
+			rates = set()
+			for item_code in dict.fromkeys(items or []):
+				rate = frappe.db.get_value(
+					"SRI Import Assumption",
+					{"company": self.company, "item_code": item_code},
+					"ad_valorem_rate",
+				)
+				if rate is not None:
+					rates.add(float(rate))
+			break
+		if len(rates) > 1:
+			frappe.msgprint(
+				"Several company assumptions match these goods with different rates; type the AD VALOREM rate manually."
+			)
+			return
+		if len(rates) == 1:
+			self.ad_valorem_rate = rates.pop()
+			frappe.msgprint(
+				f"AD VALOREM rate prefilled from the company catalog (estimate): {self.ad_valorem_rate}%. Confirm it against the DAI."
+			)
