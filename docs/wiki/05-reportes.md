@@ -15,6 +15,11 @@ insignia de frescura («generado justo ahora») y tarjetas de totales.
 - Las NC (`04`) y ND (`05`) del proveedor exigen número SRI válido: el
   lector falla en voz alta si no lo es; las `01` con número no-SRI se
   excluyen en silencio.
+- Compras con reembolso: el ATS trae el bloque `<reembolsos>` con el
+  total `totbasesImpReemb` y lo reembolsado no suma a las bases propias
+  ni al 104. Demo: factura mandante (`001-001-000000020`, sustento 01
+  + detalles de reembolso, totbases 250.00) e intermediario
+  (`001-001-000000021`, sustento 08). ATS demo DIMM-válido.
 
 ## Formulario SRI 103 (retenciones en la fuente)
 

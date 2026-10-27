@@ -21,6 +21,15 @@ prueba autofirmado el SRI real respondería `FIRMA INVALIDA`, así que en
 demo queda en `Generado`. Con un certificado real el flujo sigue a
 firmar → enviar → autorizado, con RIDE y email automáticos.
 
+## Factura 01 con reembolsos (mandante)
+
+Cuando la factura de venta es un reembolso como mandante, el XML
+emitido incluye el bloque `<reembolsos>` (un `<reembolso>` por
+comprobante reembolsado: tipo, proveedor, número SRI, fechas,
+autorización y bases). La liquidación de compras (03) también lo
+soporta. Las bases reembolsadas no dan crédito fiscal propio: viajan
+informadas para el ATS del mandante, separadas de las bases propias.
+
 ## Retención 07 autorizada (exterior)
 
 ![Comprobante 07 autorizado con régimen exterior](img/07-voucher-07.png)

@@ -1,11 +1,12 @@
 # `l10n_ec` Status: Inventory, Known Issues, Deliberate Non-Goals
 
-Branch `version-16`, Frappe/ERPNext v16, Python 3.14. As of `3b3b863`:
-**420 tests collected** (Ring-1 `pytest -W error` + bench `run-tests`),
-**509 msgids** (`es.po`, `msgfmt` clean), 125 work-unit commits.
+Branch `version-16`, Frappe/ERPNext v16, Python 3.14. As of `e8064e3`:
+**517 tests passed, 1 skipped** (+919 subtests, Ring-1 `pytest -W error` + bench `run-tests`),
+**551 msgids** (`es.po`, `msgfmt` clean), 146 work-unit commits.
 Companion docs: `ROADMAP.md` (phased plan), `ROADMAP_POS_ECOMMERCE.md`,
 `FIND_ATS_103_104.md` (operator guide + live triangulation),
-`KNOWN_ISSUES_EINVOICING.md` (e-invoicing gap detail), `LOCAL_DEMO.md`.
+`KNOWN_ISSUES_EINVOICING.md` (e-invoicing gap detail), `LOCAL_DEMO.md`,
+`wiki/` (functional wiki with demo screenshots).
 
 ## 1. Feature inventory (all verified live unless noted)
 
@@ -57,6 +58,34 @@ bruto/neto/impuesto + sign markers). Ecuador workspace with shortcuts.
 `docker_ats_validator` (`cormaza/ats-validator:1.3.0` public). Frappe calls
 it for deep validation; staleness is version-compared, never implied.
 
+**Country evidence doctrine.** Tri-state `classify_country` (proven EC /
+unknown / proven foreign): restrictions trigger only on proven EC,
+unknown never restricts, emission refuses proven foreign. Supersedes
+all P0 settings flags (see section 3).
+
+**Withholdings received.** Multi-invoice customer withholding batch at
+payment, assumed withholdings keep supplier payable intact,
+locale-independent idempotency marker.
+
+**Desk readability pass.** SRI tax grid with one-line flags and seeded
+defaults, SRI code selectors show code with legend, dedicated SRI
+section with two-column layout on invoices, collapsible tax details,
+roomier ledger-name column, collapsible section tree and rebalanced
+columns in SRI reports.
+
+**Form 103/104 template parity.** Portal subtotals 349/399/497/498/499
+computed from collected boxes (template formula `499 = 399 + 498`);
+104 template-verbatim fixes (563/505 labels, variable routing,
+622/802).
+
+**Reimbursements (`reembolso`, phase-10).** Independent
+`SRI Reimbursement Detail` model + validation; factura (01) and
+liquidación (03) emission with `reembolsos` block; ATS compras with
+`reembolsos` support (`totbasesImpReemb`, own bases untouched, 04/05
+abs applied; 103/104 untouched by design, regression-pinned). Demo
+seed gains mandante sustento 41 (totbases 250.00) and intermediario
+08; bench Oct-2026 ATS DIMM-valid (11 compras).
+
 **POS + shop.** Emission point per POS Profile, session stamp, CF rules
 both modes, merge-identity guard, shop point inheritance QT→SO→SI,
 shop-only channel, shopper-ID API. Webshop integration is guarded
@@ -65,7 +94,8 @@ dead `payments` dep.
 
 **Demo (`dev/demo.sh`).** Idempotent seed: 2 companies (EC/CO), 4+ parties,
 9 PIs, 4+ SIs, DN, payments/JEs, 3 staged resident 07s + 3 exterior 07s
-(ES/US/PA), 1 Generated 01, emission points (desk/POS/shop), POS profile,
+(ES/US/PA), 1 Generated 01, mandante 41 + intermediario 08 reembolso pair,
+emission points (desk/POS/shop), POS profile,
 webshop wiring when present. USD everywhere.
 
 ## 2. Known issues (all with evidence, none silent)
