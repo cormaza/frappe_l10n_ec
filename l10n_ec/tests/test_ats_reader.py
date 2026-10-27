@@ -213,6 +213,58 @@ class TestSustentoCode(unittest.TestCase):
 		self.assertEqual(row["sustento_code"], "02")
 
 
+class TestReimbursementRow(unittest.TestCase):
+	"""T3 (S3,S5): 41 classification plus reimbursement shaping."""
+
+	def test_reimbursement_flag_returns_41(self) -> None:
+		from l10n_ec.ecuador_localization.ats_reader import classify_purchase
+
+		self.assertEqual(classify_purchase(False, False, False, True), "41")
+
+	def test_reimbursement_conflicts_fail_loud(self) -> None:
+		from l10n_ec.ecuador_localization.ats_reader import classify_purchase
+
+		for flags in ((True, False, False, True), (False, True, False, True), (False, False, True, True)):
+			with self.subTest(flags=flags):
+				with self.assertRaises(ValueError):
+					classify_purchase(*flags)
+
+	def test_purchase_row_maps_reimbursement_details(self) -> None:
+		from l10n_ec.ecuador_localization.ats_reader import purchase_row
+
+		pi = {
+			"bill_no": "001-001-000000041",
+			"bill_date": "20/10/2026",
+			"posting_date": "21/10/2026",
+			"grand_total": 115.0,
+			"sri_supplier_auth_number": "1234567890",
+			"taxes": [],
+			"sri_reimbursement_details": [
+				{
+					"doc_code": "01",
+					"supplier_id_type": "04",
+					"supplier_id": "1790016919001",
+					"sri_number": "001-001-000000010",
+					"issue_date": "2026-03-15",
+					"auth_number": "1234567890",
+					"base_amount": 100.0,
+					"taxed_base": 50.0,
+					"no_tax_base": 10.0,
+					"exempt_base": 5.0,
+					"ice_amount": 1.0,
+					"iva_amount": 7.5,
+				}
+			],
+			"sri_reimbursement_override_value": 10.0,
+			"sri_allow_reimbursement_override": 1,
+		}
+		row = purchase_row(pi, {}, None, "41")
+		self.assertEqual(len(row["reembolsos"]), 1)
+		self.assertEqual(row["reembolsos"][0]["doc_code"], "01")
+		self.assertEqual(row["reembolso_override"], 10.0)
+		self.assertTrue(row["reembolso_allow_override"])
+
+
 class TestIceAmount(unittest.TestCase):
 	def test_ice_values_sum_into_monto(self) -> None:
 		from l10n_ec.ecuador_localization.ats_reader import purchase_row, sale_row

@@ -250,10 +250,10 @@ def _iva_withholding_account(company: str) -> str | None:
 
 
 def validate_sustento_code(doc, method=None) -> None:
-	"""Guard SRI sustento vs tipoComprobante/tpIdProv (Tabla 5)."""
+	"""Guard SRI sustento vs tipoComprobante (Tabla 5 cross-table)."""
 	if doc.get("doctype") != "Purchase Invoice":
 		return
-	from l10n_ec.sri.sustentos import validate_sustento
+	from l10n_ec.sri.reimbursement import validate_sustento_for_doc
 
 	try:
 		import frappe as _frappe
@@ -271,20 +271,23 @@ def validate_sustento_code(doc, method=None) -> None:
 		if _frappe
 		else "04"
 	)
-	# Derive doc_code from flags (same logic as ats_reader.classify_purchase)
+	# Derive doc_code from flags (same logic as ats_reader.classify_purchase + 41).
 	if doc.get("is_return") and doc.get("sri_is_liquidacion"):
 		raise ValueError(_("A purchase cannot be a return and a liquidacion at once."))
-	doc_code = (
-		"04"
-		if doc.get("is_return")
-		else "05"
-		if doc.get("sri_is_supplier_debit_note")
-		else "03"
-		if doc.get("sri_is_liquidacion")
-		else "01"
-	)
+	if doc.get("sri_is_reimbursement"):
+		doc_code = "41"
+	else:
+		doc_code = (
+			"04"
+			if doc.get("is_return")
+			else "05"
+			if doc.get("sri_is_supplier_debit_note")
+			else "03"
+			if doc.get("sri_is_liquidacion")
+			else "01"
+		)
 	try:
-		validate_sustento(code, doc_code, tp)
+		validate_sustento_for_doc(code, doc_code, tp or "04")
 	except ValueError as exc:
 		if _frappe:
 			_frappe.throw(str(exc))
@@ -316,6 +319,44 @@ def _category_withholding_rate(category: str | None, resolve_category_rate=None)
 	if len(rates) != 1:
 		return None
 	return float(rates[0])
+
+
+def validate_reimbursement_details(doc, method=None) -> None:
+	"""Guard reimbursement lines and totbasesImpReemb (calculated, opt-in override)."""
+	if doc.get("doctype") not in ("Purchase Invoice", "Sales Invoice"):
+		return
+	from l10n_ec.sri.reimbursement import resolve_reimbursement_total
+
+	try:
+		import frappe as _frappe
+	except ImportError:
+		_frappe = None  # type: ignore[assignment]
+
+	lines = doc.get("sri_reimbursement_details") or []
+	if not doc.get("sri_is_reimbursement") and not lines:
+		return
+	if doc.get("sri_is_reimbursement") and not lines:
+		msg = _("Reimbursement invoice needs at least one reimbursement detail.")
+		if _frappe:
+			_frappe.throw(msg)
+		raise ValueError(msg)
+	override = doc.get("sri_reimbursement_override_value")
+	allow = bool(doc.get("sri_allow_reimbursement_override"))
+	try:
+		total = resolve_reimbursement_total(
+			[{"base_amount": line.get("base_amount", 0.0)} for line in lines],
+			override,
+			allow,
+		)
+	except ValueError as exc:
+		if _frappe:
+			_frappe.throw(str(exc))
+		raise
+	if _frappe is None:
+		try:
+			doc["sri_reimbursement_total"] = total
+		except Exception:
+			pass
 
 
 def sync_tax_row_descriptions(doc, method=None, resolve_category_rate=None, company_code=None) -> None:

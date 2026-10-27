@@ -1,0 +1,126 @@
+{
+ "creation": "2026-10-26 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "doc_code",
+  "supplier_id_type",
+  "supplier_id",
+  "sri_number",
+  "issue_date",
+  "auth_number",
+  "base_amount",
+  "taxed_base",
+  "no_tax_base",
+  "exempt_base",
+  "ice_amount",
+  "iva_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "doc_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Doc Code",
+   "reqd": 1,
+   "description": "SRI tipoComprobante of the reimbursed voucher (e.g. 01, 03)."
+  },
+  {
+   "fieldname": "supplier_id_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Supplier ID Type",
+   "reqd": 1,
+   "description": "SRI Tabla 10 identification type of the original supplier (e.g. 04 RUC)."
+  },
+  {
+   "fieldname": "supplier_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Supplier ID",
+   "reqd": 1,
+   "description": "Tax ID of the original supplier on the reimbursed voucher."
+  },
+  {
+   "fieldname": "sri_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "SRI Number",
+   "reqd": 1,
+   "description": "SRI number of the reimbursed voucher (001-001-000000001)."
+  },
+  {
+   "fieldname": "issue_date",
+   "fieldtype": "Date",
+   "label": "Issue Date",
+   "reqd": 1,
+   "description": "Issue date of the reimbursed voucher."
+  },
+  {
+   "fieldname": "auth_number",
+   "fieldtype": "Data",
+   "label": "Auth Number",
+   "reqd": 1,
+   "description": "SRI authorization number of the reimbursed voucher."
+  },
+  {
+   "fieldname": "base_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Base Amount",
+   "reqd": 1,
+   "description": "Taxable base of the reimbursed voucher; sums into totbasesImpReemb."
+  },
+  {
+   "fieldname": "taxed_base",
+   "fieldtype": "Currency",
+   "label": "Taxed Base",
+   "description": "Gravada base of the reimbursed voucher (baseImpGravReemb)."
+  },
+  {
+   "fieldname": "no_tax_base",
+   "fieldtype": "Currency",
+   "label": "No Tax Base",
+   "description": "No-object base of the reimbursed voucher (baseNoGraIvaReemb)."
+  },
+  {
+   "fieldname": "exempt_base",
+   "fieldtype": "Currency",
+   "label": "Exempt Base",
+   "description": "Exempt base of the reimbursed voucher (baseImpExeReemb)."
+  },
+  {
+   "fieldname": "ice_amount",
+   "fieldtype": "Currency",
+   "label": "ICE Amount",
+   "description": "ICE of the reimbursed voucher (montoIceRemb)."
+  },
+  {
+   "fieldname": "iva_amount",
+   "fieldtype": "Currency",
+   "label": "IVA Amount",
+   "description": "IVA of the reimbursed voucher (montoIvaRemb)."
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-26 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Ecuador Localization",
+ "name": "SRI Reimbursement Detail",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "print": 1,
+   "email": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  }
+ ]
+}

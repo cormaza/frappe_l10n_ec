@@ -16,6 +16,18 @@ asiento de retención fiscal.
   no es un comprobante nuestro.
 - **Supplier Auth Number** — autorización impresa en la factura del
   proveedor; alimenta el ATS de compras.
+- **SRI Is Reimbursement** — se marca cuando el documento es un reembolso:
+  como mandante, la `41` del intermediario (sustento según la naturaleza del
+  gasto, p. ej. `01`); como intermediario que compra por cuenta del mandante,
+  sustento `08`. Habilita la tabla **SRI Reimbursement Details** (un renglón
+  por comprobante reembolsado: tipo, proveedor, número SRI, fechas, autorización
+  y bases). El total `totbasesImpReemb` se calcula solo; el override manual
+  exige el opt-in **Allow Reimbursement Override**.
+  Contabilidad: los detalles son informativos (ATS/emisión) y nunca postean
+  al mayor — el payable sale de los ítems. Los montos reembolsados no dan
+  crédito fiscal: cargalos con plantilla sin IVA acreditable (0% / no objeto /
+  exento); el IVA propio (tu comisión o bienes) viaja con su plantilla normal.
+  En el ATS, lo reembolsado va en `<reembolsos>` y no suma a tus bases ni al 104.
 - **Considerar para la retención de impuestos** (`sri_assumed_withholding`) —
   retenciones **asumidas**: el proveedor no retiene y nosotros asumimos el
   gasto sin tocar su cuenta por pagar (el pasivo con el proveedor queda

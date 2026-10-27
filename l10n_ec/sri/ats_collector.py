@@ -113,6 +113,7 @@ except ImportError:  # pragma: no cover
 
 
 from l10n_ec.sri.payment_methods import resolve_payment_method
+from l10n_ec.sri.reimbursement import resolve_reimbursement_total, validate_sustento_for_doc
 from l10n_ec.sri.tax_codes import tax_codes_for_template
 from l10n_ec.sri.voucher_states import SriVoucherError
 from l10n_ec.sri.withholding_concepts import NON_EMITTABLE_IMPUESTOS, resolve_concepto
@@ -290,6 +291,68 @@ def split_withholdings(withholdings: list) -> tuple:
 	return (air, iva_buckets)
 
 
+#: Reimbursement money elements absorbed by the 04/05 absolute rule.
+REEMBOLSO_MONEY_FIELDS = (
+	"baseImponibleReemb",
+	"baseImpGravReemb",
+	"baseNoGraIvaReemb",
+	"baseImpExeReemb",
+	"montoIceRemb",
+	"montoIvaRemb",
+)
+
+
+def _normalize_reembolso_date(value) -> str:
+	"""Return a ``DD/MM/YYYY`` date from ISO or SRI text (fail loud otherwise)."""
+	if value is None:
+		raise SriVoucherError(_("ATS reimbursement entry needs 'issue_date'."))
+	if hasattr(value, "strftime"):
+		try:
+			return value.strftime("%d/%m/%Y")
+		except Exception:
+			raise SriVoucherError(_("ATS reimbursement date '{}' is not a date.").format(value))
+	text = str(value).strip()
+	if len(text) == 10 and text[4] == "-" and text[7] == "-":
+		parts = text.split("-")
+		if len(parts) == 3 and all(part.isdigit() for part in parts):
+			return f"{parts[2]}/{parts[1]}/{parts[0]}"
+	parts = text.split("/")
+	if len(parts) == 3 and all(part.isdigit() for part in parts):
+		return text
+	raise SriVoucherError(_("ATS reimbursement date '{}' is not DD/MM/YYYY.").format(value))
+
+
+def normalize_reembolso(entry: dict) -> dict:
+	"""Normalize one reimbursement leg to ATS ``reembolsoType`` fields."""
+	if not isinstance(entry, dict):
+		raise SriVoucherError(_("ATS reimbursement entry must be a dict of voucher fields."))
+	for field in ("doc_code", "supplier_id_type", "supplier_id", "sri_number", "auth_number"):
+		if entry.get(field) in (None, ""):
+			raise SriVoucherError(_("ATS reimbursement entry needs '{}'.").format(field))
+	if entry.get("issue_date") in (None, ""):
+		raise SriVoucherError(_("ATS reimbursement entry needs 'issue_date'."))
+	for field in ("base_amount", "taxed_base", "no_tax_base", "exempt_base", "ice_amount", "iva_amount"):
+		if entry.get(field) in (None, ""):
+			raise SriVoucherError(_("ATS reimbursement entry needs '{}'.").format(field))
+	establishment, point, sequential = split_sri_number(str(entry.get("sri_number", "")))
+	return {
+		"tipoComprobanteReemb": str(entry["doc_code"]),
+		"tpIdProvReemb": str(entry["supplier_id_type"]),
+		"idProvReemb": str(entry["supplier_id"]),
+		"establecimientoReemb": establishment,
+		"puntoEmisionReemb": point,
+		"secuencialReemb": sequential,
+		"fechaEmisionReemb": _normalize_reembolso_date(entry["issue_date"]),
+		"autorizacionReemb": str(entry["auth_number"]),
+		"baseImponibleReemb": round(float(entry["base_amount"]), 2),
+		"baseImpGravReemb": round(float(entry["taxed_base"]), 2),
+		"baseNoGraIvaReemb": round(float(entry["no_tax_base"]), 2),
+		"baseImpExeReemb": round(float(entry["exempt_base"]), 2),
+		"montoIceRemb": round(float(entry["ice_amount"]), 2),
+		"montoIvaRemb": round(float(entry["iva_amount"]), 2),
+	}
+
+
 def collect_purchase(doc: dict) -> dict:
 	"""Aggregate one submitted Purchase Invoice into a ``compras`` row."""
 	sri_number = doc.get("sri_number", "")
@@ -329,6 +392,15 @@ def collect_purchase(doc: dict) -> dict:
 				"fechaEmiRet1": retencion.get("date", ""),
 			}
 		)
+	raw_reembolsos = doc.get("reembolsos") or []
+	if raw_reembolsos:
+		validate_sustento_for_doc(row.get("codSustento", ""), row.get("tipoComprobante", ""))
+		normalized = [normalize_reembolso(entry) for entry in raw_reembolsos]
+		total = resolve_reimbursement_total(
+			raw_reembolsos, doc.get("reembolso_override"), bool(doc.get("reembolso_allow_override"))
+		)
+		row["totbasesImpReemb"] = total
+		row["reembolsos"] = normalized
 	if row.get("tipoComprobante") in ("04", "05"):
 		row = _abs_credit_note_amounts(row)
 	return row
@@ -349,6 +421,11 @@ def _abs_credit_note_amounts(row: dict) -> dict:
 			row[bucket] = abs(row[bucket])
 	for entry in row.get("air") or []:
 		for key in ("baseImpAir", "valRetAir"):
+			entry[key] = abs(entry.get(key, 0.0))
+	if "totbasesImpReemb" in row:
+		row["totbasesImpReemb"] = abs(row["totbasesImpReemb"])
+	for entry in row.get("reembolsos") or []:
+		for key in REEMBOLSO_MONEY_FIELDS:
 			entry[key] = abs(entry.get(key, 0.0))
 	return row
 

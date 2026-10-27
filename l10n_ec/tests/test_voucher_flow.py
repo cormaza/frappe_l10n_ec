@@ -670,3 +670,124 @@ class TestTicketHelpers(UnitTestCase):
 
 		with self.assertRaises(SriVoucherError):
 			check_merge_identity_uniform([True, False], True, "M-1")
+
+
+class TestReimbursementPayload(UnitTestCase):
+	"""Voucher payload carries `reembolsos` only when reimbursement lines exist."""
+
+	def _detail(self):
+		return {
+			"doc_code": "01",
+			"supplier_id_type": "04",
+			"supplier_id": "1790016919001",
+			"sri_number": "001-001-000000001",
+			"issue_date": "20/10/2026",
+			"auth_number": "1234567890",
+			"base_amount": 100.00,
+			"taxed_base": 100.00,
+			"no_tax_base": 0.0,
+			"exempt_base": 0.0,
+			"ice_amount": 0.0,
+			"iva_amount": 15.00,
+		}
+
+	def _invoice(self, cod_doc, extra=None):
+		base = dict(INVOICE, cod_doc=cod_doc)
+		if cod_doc == "03":
+			base.update(
+				{
+					"supplier_id_type": "05",
+					"supplier_name": "JUAN PEREZ",
+					"supplier_id": "1710034065",
+					"supplier_address": "",
+				}
+			)
+			for key in ("buyer_id_type", "buyer_name", "buyer_id", "buyer_address", "tip"):
+				base.pop(key, None)
+		if extra:
+			base.update(extra)
+		return base
+
+	def test_factura_without_details_carries_no_reembolsos(self) -> None:
+		payload = build_voucher_payload(self._invoice("01"), EMITTER, SEQUENCE)
+		self.assertNotIn("reembolsos", payload["data"])
+
+	def test_factura_with_details_carries_reembolsos(self) -> None:
+		invoice = self._invoice("01", {"sri_reimbursement_details": [self._detail()]})
+		payload = build_voucher_payload(invoice, EMITTER, SEQUENCE)
+		reembolsos = payload["data"]["reembolsos"]
+		self.assertEqual(len(reembolsos), 1)
+		self.assertEqual(reembolsos[0]["doc_code"], "01")
+		self.assertEqual(reembolsos[0]["sri_number"], "001-001-000000001")
+		self.assertEqual(reembolsos[0]["taxes"][0]["codigoPorcentaje"], "4")
+		self.assertAlmostEqual(reembolsos[0]["taxes"][0]["baseImponible"], 100.00)
+
+	def test_factura_details_derive_tarifa_from_iva_amount(self) -> None:
+		detail = dict(self._detail(), taxed_base=200.00, iva_amount=30.00, base_amount=200.00)
+		invoice = self._invoice("01", {"sri_reimbursement_details": [detail]})
+		payload = build_voucher_payload(invoice, EMITTER, SEQUENCE)
+		tax = payload["data"]["reembolsos"][0]["taxes"][0]
+		self.assertEqual(tax["codigo"], "2")
+		self.assertEqual(tax["codigoPorcentaje"], "4")
+		self.assertAlmostEqual(tax["tarifa"], 15.0)
+
+	def test_factura_explicit_taxes_win_over_aggregates(self) -> None:
+		taxes = [
+			{"codigo": "2", "codigoPorcentaje": "4", "tarifa": 15.0, "baseImponible": 100.00, "valor": 15.00}
+		]
+		detail = dict(self._detail(), taxes=taxes)
+		invoice = self._invoice("01", {"sri_reimbursement_details": [detail]})
+		payload = build_voucher_payload(invoice, EMITTER, SEQUENCE)
+		self.assertEqual(payload["data"]["reembolsos"][0]["taxes"], taxes)
+
+	def test_liquidacion_with_details_carries_reembolsos(self) -> None:
+		invoice = self._invoice("03", {"sri_reimbursement_details": [self._detail()]})
+		payload = build_voucher_payload(invoice, EMITTER, SEQUENCE)
+		self.assertEqual(len(payload["data"]["reembolsos"]), 1)
+		self.assertEqual(payload["data"]["reembolsos"][0]["supplier_id"], "1790016919001")
+
+	def test_liquidacion_without_details_carries_no_reembolsos(self) -> None:
+		payload = build_voucher_payload(self._invoice("03"), EMITTER, SEQUENCE)
+		self.assertNotIn("reembolsos", payload["data"])
+
+	def test_partial_row_without_amounts_fails_loud(self) -> None:
+		detail = dict(self._detail(), taxed_base=0.0, iva_amount=0.0, base_amount=0.0)
+		invoice = self._invoice("01", {"sri_reimbursement_details": [detail]})
+		with self.assertRaises((ValueError, SriVoucherError)):
+			build_voucher_payload(invoice, EMITTER, SEQUENCE)
+
+	def test_partial_row_without_number_fails_loud(self) -> None:
+		detail = self._detail()
+		del detail["sri_number"]
+		invoice = self._invoice("01", {"sri_reimbursement_details": [detail]})
+		with self.assertRaises((ValueError, SriVoucherError)):
+			build_voucher_payload(invoice, EMITTER, SEQUENCE)
+
+	def test_override_without_optin_fails_loud(self) -> None:
+		invoice = self._invoice(
+			"01",
+			{
+				"sri_reimbursement_details": [self._detail()],
+				"sri_reimbursement_override_value": 10.00,
+			},
+		)
+		with self.assertRaises((ValueError, SriVoucherError)):
+			build_voucher_payload(invoice, EMITTER, SEQUENCE)
+
+	def test_override_with_optin_passes(self) -> None:
+		invoice = self._invoice(
+			"01",
+			{
+				"sri_reimbursement_details": [self._detail()],
+				"sri_reimbursement_override_value": 10.00,
+				"sri_allow_reimbursement_override": True,
+			},
+		)
+		payload = build_voucher_payload(invoice, EMITTER, SEQUENCE)
+		self.assertEqual(len(payload["data"]["reembolsos"]), 1)
+
+	def test_ice_without_explicit_taxes_fails_loud(self) -> None:
+		detail = dict(self._detail(), ice_amount=5.00, taxed_base=0.0, iva_amount=0.0, base_amount=5.00)
+		invoice = self._invoice("01", {"sri_reimbursement_details": [detail]})
+		with self.assertRaises((ValueError, SriVoucherError)):
+			build_voucher_payload(invoice, EMITTER, SEQUENCE)

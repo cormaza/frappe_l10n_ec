@@ -116,6 +116,24 @@ ANULADOS_FIELDS = (
 #: ``air`` detail row, in schema order.
 AIR_FIELDS = ("codRetAir", "baseImpAir", "porcentajeAir", "valRetAir")
 
+#: ``reembolso`` detail row, in ats.xsd schema order.
+REEMBOLSO_FIELDS = (
+	"tipoComprobanteReemb",
+	"tpIdProvReemb",
+	"idProvReemb",
+	"establecimientoReemb",
+	"puntoEmisionReemb",
+	"secuencialReemb",
+	"fechaEmisionReemb",
+	"autorizacionReemb",
+	"baseImponibleReemb",
+	"baseImpGravReemb",
+	"baseNoGraIvaReemb",
+	"baseImpExeReemb",
+	"montoIceRemb",
+	"montoIvaRemb",
+)
+
 #: Retencion reference group: all five travel together or not at all.
 RETENCION_FIELDS = (
 	"estabRetencion1",
@@ -225,6 +243,42 @@ def _formas_de_pago_block(methods: list) -> str:
 	return f"<formasDePago>{codes}</formasDePago>" if codes else ""
 
 
+def _reembolsos_block(row: dict) -> str:
+	"""Render the ``reembolsos`` wrapper; reembolsos require ``totbasesImpReemb``."""
+	entries = row.get("reembolsos")
+	if not entries:
+		return ""
+	if row.get("totbasesImpReemb") in (None, ""):
+		raise SriXmlError(_("ATS compras row carries reembolsos without 'totbasesImpReemb'."))
+	if not isinstance(entries, (list, tuple)):
+		raise SriXmlError(_("ATS compras 'reembolsos' must be a list of rows."))
+	details = ""
+	for entry in entries:
+		if not isinstance(entry, dict):
+			raise SriXmlError(_("ATS reembolso row must be a dict of voucher fields."))
+		_check_keys(entry, frozenset(REEMBOLSO_FIELDS), "reembolso")
+		_require(entry, REEMBOLSO_FIELDS, "reembolso")
+		details += (
+			"<reembolso>"
+			f"<tipoComprobanteReemb>{escape_xml(str(entry['tipoComprobanteReemb']))}</tipoComprobanteReemb>"
+			f"<tpIdProvReemb>{escape_xml(str(entry['tpIdProvReemb']))}</tpIdProvReemb>"
+			f"<idProvReemb>{escape_xml(str(entry['idProvReemb']))}</idProvReemb>"
+			f"<establecimientoReemb>{escape_xml(str(entry['establecimientoReemb']))}</establecimientoReemb>"
+			f"<puntoEmisionReemb>{escape_xml(str(entry['puntoEmisionReemb']))}</puntoEmisionReemb>"
+			f"<secuencialReemb>{escape_xml(str(entry['secuencialReemb']))}</secuencialReemb>"
+			f"<fechaEmisionReemb>{escape_xml(str(entry['fechaEmisionReemb']))}</fechaEmisionReemb>"
+			f"<autorizacionReemb>{escape_xml(str(entry['autorizacionReemb']))}</autorizacionReemb>"
+			f"<baseImponibleReemb>{_money(entry['baseImponibleReemb'])}</baseImponibleReemb>"
+			f"<baseImpGravReemb>{_money(entry['baseImpGravReemb'])}</baseImpGravReemb>"
+			f"<baseNoGraIvaReemb>{_money(entry['baseNoGraIvaReemb'])}</baseNoGraIvaReemb>"
+			f"<baseImpExeReemb>{_money(entry['baseImpExeReemb'])}</baseImpExeReemb>"
+			f"<montoIceRemb>{_money(entry['montoIceRemb'])}</montoIceRemb>"
+			f"<montoIvaRemb>{_money(entry['montoIvaRemb'])}</montoIvaRemb>"
+			"</reembolso>"
+		)
+	return f"<reembolsos>{details}</reembolsos>"
+
+
 def _retencion_block(row: dict) -> str:
 	"""Render the withholding reference group, all five fields or none."""
 	present = [field for field in RETENCION_FIELDS if row.get(field) not in (None, "")]
@@ -254,7 +308,12 @@ def _optional_scalar(row: dict, field: str, money: bool = False) -> str:
 
 def _render_compra(row: dict) -> str:
 	"""Render one ``detalleCompras`` in ats.xsd element order."""
-	known = frozenset(COMPRAS_REQUIRED + COMPRAS_OPTIONAL + ("formasDePago", "air") + RETENCION_FIELDS)
+	known = frozenset(
+		COMPRAS_REQUIRED
+		+ COMPRAS_OPTIONAL
+		+ ("totbasesImpReemb", "formasDePago", "air", "reembolsos")
+		+ RETENCION_FIELDS
+	)
 	_check_keys(row, known, "compras")
 	_require(row, COMPRAS_REQUIRED, "compras")
 	optional_head = "".join(_optional_scalar(row, field) for field in ("denoProv", "parteRel"))
@@ -285,9 +344,11 @@ def _render_compra(row: dict) -> str:
 		f"{_optional_scalar(row, 'valRetServ50', money=True)}"
 		f"<valorRetServicios>{_money(row['valorRetServicios'])}</valorRetServicios>"
 		f"<valRetServ100>{_money(row['valRetServ100'])}</valRetServ100>"
+		f"{_optional_scalar(row, 'totbasesImpReemb', money=True)}"
 		f"{_formas_de_pago_block(row.get('formasDePago'))}"
 		f"{_air_block(row.get('air'))}"
 		f"{_retencion_block(row)}"
+		f"{_reembolsos_block(row)}"
 		"</detalleCompras>"
 	)
 

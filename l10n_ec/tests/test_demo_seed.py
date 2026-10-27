@@ -209,7 +209,16 @@ class TestDemoSeedExtension(UnitTestCase):
 		names = [entry["name"] for entry in WAREHOUSE_TYPES]
 		self.assertIn("Transit", names)
 
-	def test_extra_purchases_cover_debit_and_sustento(self) -> None:
+	def test_extra_purchases_cover_reimbursement(self) -> None:
+		by_bill = {spec.get("bill_no"): spec for spec in DEMO_EXTRA_PURCHASES}
+		mandante = by_bill["001-001-000000020"]
+		self.assertTrue(mandante["sri_is_reimbursement"])
+		self.assertEqual(mandante["sri_sustento_code"], "01 - Con crédito tributario")
+		self.assertEqual(len(mandante["sri_reimbursement_details"]), 2)
+		self.assertEqual(mandante["sri_reimbursement_details"][0]["sri_number"], "001-002-000000031")
+		intermediary = by_bill["001-001-000000021"]
+		self.assertEqual(intermediary["sri_sustento_code"], "08 - Reembolso (intermediario)")
+		self.assertNotIn("sri_is_reimbursement", intermediary)
 		by_bill = {spec.get("bill_no"): spec for spec in DEMO_EXTRA_PURCHASES}
 		self.assertTrue(by_bill["001-001-000000017"]["sri_is_supplier_debit_note"])
 		self.assertEqual(by_bill["001-001-000000011"]["sri_sustento_code"], "06 - Inventario con crédito")

@@ -270,6 +270,71 @@ class TestBuildAtsXml(UnitTestCase):
 			build_ats_xml(_collected(compras=[_compra(autorizacion="AB")]), "032026")
 
 
+class TestCompraReembolso(UnitTestCase):
+	"""T3 (S2): totbasesImpReemb plus reembolsos render in XSD order."""
+
+	def _reembolso_row(self, **overrides):
+		row = {
+			"tipoComprobanteReemb": "01",
+			"tpIdProvReemb": "04",
+			"idProvReemb": "1790016919001",
+			"establecimientoReemb": "001",
+			"puntoEmisionReemb": "001",
+			"secuencialReemb": "000000010",
+			"fechaEmisionReemb": "15/03/2026",
+			"autorizacionReemb": "1234567890",
+			"baseImponibleReemb": 100.0,
+			"baseImpGravReemb": 50.0,
+			"baseNoGraIvaReemb": 10.0,
+			"baseImpExeReemb": 5.0,
+			"montoIceRemb": 1.0,
+			"montoIvaRemb": 7.5,
+		}
+		row.update(overrides)
+		return row
+
+	def test_reembolso_block_renders_in_schema_order(self) -> None:
+		xml = build_ats_xml(
+			_collected(compras=[_compra(totbasesImpReemb=150.0, reembolsos=[self._reembolso_row()])]),
+			"032026",
+		)
+		self.assertTrue(validate_against_xsd(xml, "ats"))
+		self.assertIn("<totbasesImpReemb>150.00</totbasesImpReemb>", xml)
+		self.assertIn("<reembolsos><reembolso>", xml)
+		self.assertIn("<tipoComprobanteReemb>01</tipoComprobanteReemb>", xml)
+		positions = [xml.index(f"<{tag}>") for tag in ("totbasesImpReemb", "formasDePago", "reembolsos")]
+		self.assertEqual(positions, sorted(positions))
+		inner = xml[xml.index("<reembolso>") : xml.index("</reembolso>")]
+		order = [
+			"tipoComprobanteReemb",
+			"tpIdProvReemb",
+			"idProvReemb",
+			"establecimientoReemb",
+			"puntoEmisionReemb",
+			"secuencialReemb",
+			"fechaEmisionReemb",
+			"autorizacionReemb",
+			"baseImponibleReemb",
+			"baseImpGravReemb",
+			"baseNoGraIvaReemb",
+			"baseImpExeReemb",
+			"montoIceRemb",
+			"montoIvaRemb",
+		]
+		inner_positions = [inner.index(f"<{tag}>") for tag in order]
+		self.assertEqual(inner_positions, sorted(inner_positions))
+
+	def test_partial_reembolso_fails_loud(self) -> None:
+		bad = self._reembolso_row()
+		del bad["autorizacionReemb"]
+		with self.assertRaises(SriXmlError):
+			build_ats_xml(_collected(compras=[_compra(reembolsos=[bad])]), "032026")
+
+	def test_reembolsos_without_total_fails_loud(self) -> None:
+		with self.assertRaises(SriXmlError):
+			build_ats_xml(_collected(compras=[_compra(reembolsos=[self._reembolso_row()])]), "032026")
+
+
 class TestBuildAtsZip(UnitTestCase):
 	def test_zip_holds_single_month_file(self) -> None:
 		xml = build_ats_xml(_collected(), "032026")

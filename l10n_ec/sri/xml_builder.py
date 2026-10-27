@@ -39,6 +39,9 @@ def build_factura_xml(ctx: dict, data: dict) -> str:
 	totals = "".join(_total_tax(t) for t in data["tax_totals"])
 	payments = "".join(_payment(p) for p in data["payments"])
 	lines = "".join(_factura_line(item) for item in data["lines"])
+	reembolsos = data.get("reembolsos") or []
+	reembolso_block = _reembolsos_block(reembolsos)
+	reembolso_totals = _reembolso_info_totals(reembolsos) if reembolsos else ""
 	buyer_address = (
 		f"<direccionComprador>{escape_xml(data['buyer_address'])}</direccionComprador>"
 		if data.get("buyer_address")
@@ -59,6 +62,7 @@ def build_factura_xml(ctx: dict, data: dict) -> str:
 		f"{buyer_address}"
 		f"<totalSinImpuestos>{format_2(data['subtotal'])}</totalSinImpuestos>"
 		f"<totalDescuento>{format_2(data['discount'])}</totalDescuento>"
+		f"{reembolso_totals}"
 		f"<totalConImpuestos>{totals}</totalConImpuestos>"
 		f"<propina>{format_2(data['tip'])}</propina>"
 		f"<importeTotal>{format_2(data['total'])}</importeTotal>"
@@ -66,6 +70,7 @@ def build_factura_xml(ctx: dict, data: dict) -> str:
 		f"<pagos>{payments}</pagos>"
 		"</infoFactura>"
 		f"<detalles>{lines}</detalles>"
+		f"{reembolso_block}"
 		f"{_info_adicional(data)}"
 		"</factura>"
 	)
@@ -203,6 +208,9 @@ def build_liquidacion_compra_xml(ctx: dict, data: dict) -> str:
 	totals = "".join(_total_tax(t) for t in data["tax_totals"])
 	payments = "".join(_payment(p) for p in data["payments"])
 	lines = "".join(_factura_line(item) for item in data["lines"])
+	reembolsos = data.get("reembolsos") or []
+	reembolso_block = _reembolsos_block(reembolsos)
+	reembolso_totals = _reembolso_info_totals(reembolsos) if reembolsos else ""
 	supplier_address = (
 		f"<direccionProveedor>{escape_xml(data['supplier_address'])}</direccionProveedor>"
 		if data.get("supplier_address")
@@ -223,13 +231,151 @@ def build_liquidacion_compra_xml(ctx: dict, data: dict) -> str:
 		f"{supplier_address}"
 		f"<totalSinImpuestos>{format_2(data['subtotal'])}</totalSinImpuestos>"
 		f"<totalDescuento>{format_2(data['discount'])}</totalDescuento>"
+		f"{reembolso_totals}"
 		f"<totalConImpuestos>{totals}</totalConImpuestos>"
 		f"<importeTotal>{format_2(data['total'])}</importeTotal>"
 		"<moneda>DOLAR</moneda>"
 		f"<pagos>{payments}</pagos>"
 		"</infoLiquidacionCompra>"
 		f"<detalles>{lines}</detalles>"
+		f"{reembolso_block}"
 		"</liquidacionCompra>"
+	)
+
+
+def _normalize_reembolso_date(value) -> str:
+	"""Return a `DD/MM/YYYY` date from ISO text, SRI text, or a date object."""
+	if value is None or (isinstance(value, str) and not value.strip()):
+		raise SriXmlError(_("Reimbursement entry needs an issue date."))
+	if hasattr(value, "strftime"):
+		return value.strftime("%d/%m/%Y")
+	text = str(value).strip()
+	if len(text) == 10 and text[4] == "-" and text[7] == "-":
+		year, month, day = text.split("-")
+		if year.isdigit() and month.isdigit() and day.isdigit():
+			return f"{day}/{month}/{year}"
+	parts = text.split("/")
+	if len(parts) == 3 and all(part.isdigit() for part in parts):
+		return text
+	raise SriXmlError(_("Reimbursement date '{}' is not DD/MM/YYYY.").format(value))
+
+
+def _split_reembolso_number(value, index: int) -> tuple:
+	"""Split an `001-001-000000001` voucher number into `(estab, point, sequential)`."""
+	parts = str(value or "").strip().split("-")
+	if len(parts) != 3 or [len(part) for part in parts] != [3, 3, 9]:
+		raise SriXmlError(
+			_("Reimbursement entry {} has no SRI number '001-001-000000001' (got '{}').").format(index, value)
+		)
+	if not all(part.isdigit() for part in parts):
+		raise SriXmlError(
+			_("Reimbursement entry {} has no SRI number '001-001-000000001' (got '{}').").format(index, value)
+		)
+	return (parts[0], parts[1], parts[2])
+
+
+def _reembolso_tax(tax: dict, index: int) -> str:
+	"""Build one `detalleImpuesto` of a reimbursed voucher (XSD field order)."""
+	if not isinstance(tax, dict):
+		raise SriXmlError(_("Reimbursement entry {} tax must be a dict of tax fields.").format(index))
+	for field in ("codigo", "codigoPorcentaje", "tarifa", "baseImponible", "valor"):
+		if tax.get(field) in (None, ""):
+			raise SriXmlError(_("Reimbursement entry {} tax needs '{}'.").format(index, field))
+	return (
+		"<detalleImpuesto>"
+		f"<codigo>{tax['codigo']}</codigo>"
+		f"<codigoPorcentaje>{tax['codigoPorcentaje']}</codigoPorcentaje>"
+		f"<tarifa>{format_2(tax['tarifa'])}</tarifa>"
+		f"<baseImponibleReembolso>{format_2(tax['baseImponible'])}</baseImponibleReembolso>"
+		f"<impuestoReembolso>{format_2(tax['valor'])}</impuestoReembolso>"
+		"</detalleImpuesto>"
+	)
+
+
+def _reembolso_detail(entry: dict, index: int) -> str:
+	"""Build one `reembolsoDetalle` block in `factura_V1.1.0` field order."""
+	if not isinstance(entry, dict):
+		raise SriXmlError(_("Reimbursement entry {} must be a dict of voucher fields.").format(index))
+	for field in (
+		"doc_code",
+		"supplier_id_type",
+		"supplier_id",
+		"sri_number",
+		"issue_date",
+		"auth_number",
+	):
+		if entry.get(field) in (None, ""):
+			raise SriXmlError(_("Reimbursement entry {} needs '{}'.").format(index, field))
+	taxes = entry.get("taxes")
+	if not isinstance(taxes, (list, tuple)) or not taxes:
+		raise SriXmlError(_("Reimbursement entry {} needs at least one tax breakdown row.").format(index))
+	tax_details = "".join(_reembolso_tax(tax, index) for tax in taxes)
+	establishment, point, sequential = _split_reembolso_number(entry["sri_number"], index)
+	supplier_type = str(entry.get("supplier_type") or "01")
+	if supplier_type not in ("01", "02"):
+		raise SriXmlError(_("Reimbursement entry supplier type '{}' must be 01 or 02.").format(supplier_type))
+	country = (
+		f"<codPaisPagoProveedorReembolso>{escape_xml(str(entry['supplier_country']))}"
+		"</codPaisPagoProveedorReembolso>"
+		if entry.get("supplier_country") not in (None, "")
+		else ""
+	)
+	return (
+		"<reembolsoDetalle>"
+		f"<tipoIdentificacionProveedorReembolso>{entry['supplier_id_type']}"
+		"</tipoIdentificacionProveedorReembolso>"
+		f"<identificacionProveedorReembolso>{escape_xml(str(entry['supplier_id']))}"
+		"</identificacionProveedorReembolso>"
+		f"{country}"
+		f"<tipoProveedorReembolso>{supplier_type}</tipoProveedorReembolso>"
+		f"<codDocReembolso>{entry['doc_code']}</codDocReembolso>"
+		f"<estabDocReembolso>{establishment}</estabDocReembolso>"
+		f"<ptoEmiDocReembolso>{point}</ptoEmiDocReembolso>"
+		f"<secuencialDocReembolso>{sequential}</secuencialDocReembolso>"
+		f"<fechaEmisionDocReembolso>{_normalize_reembolso_date(entry['issue_date'])}"
+		"</fechaEmisionDocReembolso>"
+		f"<numeroautorizacionDocReemb>{escape_xml(str(entry['auth_number']))}"
+		"</numeroautorizacionDocReemb>"
+		f"<detalleImpuestos>{tax_details}</detalleImpuestos>"
+		"</reembolsoDetalle>"
+	)
+
+
+def _reembolsos_block(entries: list | tuple | None) -> str:
+	"""Build the optional trailing `reembolsos` block (empty input renders nothing)."""
+	if not entries:
+		return ""
+	return (
+		"<reembolsos>"
+		+ "".join(_reembolso_detail(entry, index) for index, entry in enumerate(entries, start=1))
+		+ "</reembolsos>"
+	)
+
+
+def _reembolso_info_totals(entries: list | tuple) -> str:
+	"""Build the info-level reimbursement totals from the emitted tax breakdown."""
+	for index, entry in enumerate(entries, start=1):
+		if not isinstance(entry, dict):
+			raise SriXmlError(_("Reimbursement entry {} must be a dict of voucher fields.").format(index))
+	codes = {str(entry.get("doc_code")) for entry in entries}
+	if len(codes) != 1:
+		raise SriXmlError(
+			_("Reimbursement entries mix document codes {}; one emission carries a single code.").format(
+				sorted(codes)
+			)
+		)
+	base = round(
+		sum(float(tax.get("baseImponible", 0.0) or 0.0) for entry in entries for tax in entry["taxes"]),
+		2,
+	)
+	tax_value = round(
+		sum(float(tax.get("valor", 0.0) or 0.0) for entry in entries for tax in entry["taxes"]), 2
+	)
+	return (
+		f"<codDocReembolso>{codes.pop()}</codDocReembolso>"
+		f"<totalComprobantesReembolso>{format_2(len(entries))}</totalComprobantesReembolso>"
+		f"<totalBaseImponibleReembolso>{format_2(base)}</totalBaseImponibleReembolso>"
+		f"<totalImpuestoReembolso>{format_2(tax_value)}</totalImpuestoReembolso>"
 	)
 
 

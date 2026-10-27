@@ -17,6 +17,8 @@ def parse_emitted_xml(xml_string: str | bytes) -> dict:
 		return _parse_retencion(root)
 	if root.tag == "factura":
 		return _parse_factura(root)
+	if root.tag == "liquidacionCompra":
+		return _parse_liquidacion(root)
 	if root.tag == "notaCredito":
 		return _parse_nota_credito(root)
 	if root.tag == "notaDebito":
@@ -85,7 +87,7 @@ def _parse_factura(root: etree._Element) -> dict:
 		}
 		for row in info.findall("totalConImpuestos/totalImpuesto")
 	]
-	return {
+	result = {
 		"kind": "factura",
 		"number": number,
 		"issue_date": _text(info.find("fechaEmision")),
@@ -111,6 +113,103 @@ def _parse_factura(root: etree._Element) -> dict:
 			for field in root.findall("infoAdicional/campoAdicional")
 		],
 	}
+	reembolsos = _parse_reembolsos(root)
+	if reembolsos is not None:
+		result["reembolsos"] = reembolsos
+		result["reembolso_totals"] = _parse_reembolso_totals(info)
+	return result
+
+
+def _parse_reembolso_tax(item: etree._Element) -> dict:
+	"""Parse one emitted `detalleImpuesto` back to the emission dict shape."""
+	return {
+		"codigo": _text(item.find("codigo")),
+		"codigoPorcentaje": _text(item.find("codigoPorcentaje")),
+		"tarifa": float(_text(item.find("tarifa")) or 0),
+		"baseImponible": float(_text(item.find("baseImponibleReembolso")) or 0),
+		"valor": float(_text(item.find("impuestoReembolso")) or 0),
+	}
+
+
+def _parse_reembolso(item: etree._Element) -> dict:
+	"""Parse one emitted `reembolsoDetalle` back to the emission dict shape."""
+	number = "-".join(
+		[
+			_text(item.find("estabDocReembolso")),
+			_text(item.find("ptoEmiDocReembolso")),
+			_text(item.find("secuencialDocReembolso")),
+		]
+	)
+	return {
+		"doc_code": _text(item.find("codDocReembolso")),
+		"supplier_id_type": _text(item.find("tipoIdentificacionProveedorReembolso")),
+		"supplier_id": _text(item.find("identificacionProveedorReembolso")),
+		"supplier_country": _text(item.find("codPaisPagoProveedorReembolso")),
+		"supplier_type": _text(item.find("tipoProveedorReembolso")),
+		"sri_number": number,
+		"issue_date": _text(item.find("fechaEmisionDocReembolso")),
+		"auth_number": _text(item.find("numeroautorizacionDocReemb")),
+		"taxes": [_parse_reembolso_tax(tax) for tax in item.findall("detalleImpuestos/detalleImpuesto")],
+	}
+
+
+def _parse_reembolsos(root: etree._Element) -> list | None:
+	"""Parse the emitted `reembolsos` block, or None when the voucher carries none."""
+	items = root.findall("reembolsos/reembolsoDetalle")
+	if not items:
+		return None
+	return [_parse_reembolso(item) for item in items]
+
+
+def _parse_reembolso_totals(info: etree._Element) -> dict:
+	"""Parse the info-level reimbursement totals of an emitted voucher."""
+	return {
+		"doc_code": _text(info.find("codDocReembolso")),
+		"total_comprobantes": float(_text(info.find("totalComprobantesReembolso")) or 0),
+		"total_base": float(_text(info.find("totalBaseImponibleReembolso")) or 0),
+		"total_impuesto": float(_text(info.find("totalImpuestoReembolso")) or 0),
+	}
+
+
+def _parse_liquidacion(root: etree._Element) -> dict:
+	"""Parse an emitted `liquidacionCompra` back to RIDE display data."""
+	info = root.find("infoLiquidacionCompra")
+	result: dict = {
+		"kind": "liquidacion_compra",
+		"number": _trib_number(root.find("infoTributaria")),
+		"issue_date": _text(info.find("fechaEmision")),
+		"supplier_id_type": _text(info.find("tipoIdentificacionProveedor")),
+		"supplier_name": _text(info.find("razonSocialProveedor")),
+		"supplier_id": _text(info.find("identificacionProveedor")),
+		"subtotal": float(_text(info.find("totalSinImpuestos")) or 0),
+		"discount": float(_text(info.find("totalDescuento")) or 0),
+		"total": float(_text(info.find("importeTotal")) or 0),
+		"taxes": [
+			{
+				"code": _text(row.find("codigo")),
+				"rate_code": _text(row.find("codigoPorcentaje")),
+				"base": float(_text(row.find("baseImponible")) or 0),
+				"value": float(_text(row.find("valor")) or 0),
+			}
+			for row in info.findall("totalConImpuestos/totalImpuesto")
+		],
+		"lines": [
+			{
+				"code": _text(line.find("codigoPrincipal")),
+				"description": _text(line.find("descripcion")),
+				"qty": float(_text(line.find("cantidad")) or 0),
+				"unit_price": float(_text(line.find("precioUnitario")) or 0),
+				"discount": float(_text(line.find("descuento")) or 0),
+				"total": float(_text(line.find("precioTotalSinImpuesto")) or 0),
+			}
+			for line in root.findall("detalles/detalle")
+		],
+	}
+	reembolsos = _parse_reembolsos(root)
+	if reembolsos is not None:
+		result["reembolsos"] = reembolsos
+		result["reembolso_totals"] = _parse_reembolso_totals(info)
+	return result
 
 
 def _trib_number(trib) -> str:
