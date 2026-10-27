@@ -8,22 +8,55 @@ re-deriving values from business documents.
 from lxml import etree
 
 
+def _unwrap_autorizacion(root):
+	"""Unwrap an SRI <autorizacion> envelope into (document, auth data).
+
+	Real-world files arrive as the authorized envelope: <comprobante>
+	carries the signed document (usually CDATA), plus estado,
+	numeroAutorizacion and fechaAutorizacion we keep for traceability.
+	Fail loud when the envelope has no parseable document inside.
+	"""
+	auth = {
+		"estado": _text(root.find("estado")),
+		"numero_autorizacion": _text(root.find("numeroAutorizacion")),
+		"fecha_autorizacion": _text(root.find("fechaAutorizacion")),
+		"ambiente": _text(root.find("ambiente")),
+	}
+	comp = root.find("comprobante")
+	if comp is None:
+		raise ValueError("SRI autorizacion envelope carries no <comprobante>.")
+	inner_xml = (comp.text or "").strip()
+	if inner_xml.startswith("<"):
+		return etree.fromstring(inner_xml.encode("utf-8")), auth
+	children = [child for child in comp if isinstance(child.tag, str)]
+	if len(children) != 1:
+		raise ValueError("SRI autorizacion <comprobante> carries no single document.")
+	return children[0], auth
+
+
 def parse_emitted_xml(xml_string: str | bytes) -> dict:
 	"""Parse an unsigned `guiaRemision`/`comprobanteRetencion` into display data."""
 	root = etree.fromstring(xml_string.encode("utf-8") if isinstance(xml_string, str) else xml_string)
+	auth = None
+	if root.tag == "autorizacion":
+		root, auth = _unwrap_autorizacion(root)
 	if root.tag == "guiaRemision":
-		return _parse_guia(root)
-	if root.tag == "comprobanteRetencion":
-		return _parse_retencion(root)
-	if root.tag == "factura":
-		return _parse_factura(root)
-	if root.tag == "liquidacionCompra":
-		return _parse_liquidacion(root)
-	if root.tag == "notaCredito":
-		return _parse_nota_credito(root)
-	if root.tag == "notaDebito":
-		return _parse_nota_debito(root)
-	raise ValueError(f"Unsupported emitted voucher root '{root.tag}'.")
+		parsed = _parse_guia(root)
+	elif root.tag == "comprobanteRetencion":
+		parsed = _parse_retencion(root)
+	elif root.tag == "factura":
+		parsed = _parse_factura(root)
+	elif root.tag == "liquidacionCompra":
+		parsed = _parse_liquidacion(root)
+	elif root.tag == "notaCredito":
+		parsed = _parse_nota_credito(root)
+	elif root.tag == "notaDebito":
+		parsed = _parse_nota_debito(root)
+	else:
+		raise ValueError(f"Unsupported emitted voucher root '{root.tag}'.")
+	if auth:
+		parsed["autorizacion"] = auth
+	return parsed
 
 
 def _text(element: etree._Element | None) -> str:

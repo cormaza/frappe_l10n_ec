@@ -92,6 +92,32 @@ class TestParseEmisorAndLines(UnitTestCase):
 		self.assertEqual(parsed["lines"][0]["taxes"][0]["rate_code"], "4")
 
 
+class TestAutorizacionEnvelope(UnitTestCase):
+	WRAPPED = (
+		"<autorizacion><estado>AUTORIZADO</estado>"
+		"<numeroAutorizacion>2110202601179001691900110010010000000011234567815</numeroAutorizacion>"
+		"<fechaAutorizacion>2026-10-20T10:00:00-05:00</fechaAutorizacion>"
+		"<ambiente>PRODUCCION</ambiente><comprobante><![CDATA["
+		+ _factura_xml(
+			_line("Widget A", "10", "100.00", "1000.00", _tax("2", "4", "15", "1000.00", "150.00"))
+		)
+		+ "]]></comprobante></autorizacion>"
+	)
+
+	def test_unwrap_yields_factura_plus_auth(self) -> None:
+		parsed = parse_emitted_xml(self.WRAPPED)
+		self.assertEqual(parsed["kind"], "factura")
+		self.assertEqual(parsed["emisor_ruc"], "1790016919001")
+		self.assertEqual(
+			parsed["autorizacion"]["numero_autorizacion"], "2110202601179001691900110010010000000011234567815"
+		)
+		self.assertEqual(parsed["autorizacion"]["estado"], "AUTORIZADO")
+
+	def test_empty_envelope_fails(self) -> None:
+		with self.assertRaises(ValueError):
+			parse_emitted_xml("<autorizacion><estado>NO AUTORIZADO</estado></autorizacion>")
+
+
 class TestMapReceivedFactura(UnitTestCase):
 	def _doc_kwargs(self, **overrides):
 		base = {"item_code": "DEMO-WIDGET", "sustento": "01 - Con crédito tributario", "templates": TEMPLATES}

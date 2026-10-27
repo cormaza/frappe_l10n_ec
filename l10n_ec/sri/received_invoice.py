@@ -32,8 +32,13 @@ def _iso_date(sri_date: str | None, field: str) -> str:
 
 
 def _currency_code(moneda: str | None) -> str:
-	"""Map the SRI `moneda` literal to an ERPNext currency code."""
-	if (moneda or "").strip().upper() == "DOLAR":
+	"""Map the SRI `moneda` literal to an ERPNext currency code.
+
+	Real-world files carry variants (`DOLAR US`); anything starting with
+	the `DOLAR` word is US dollars, anything else fails loud.
+	"""
+	cleaned = (moneda or "").strip().upper()
+	if cleaned == "DOLAR" or cleaned.startswith("DOLAR "):
 		return "USD"
 	raise ValueError(_("Received XML currency '{}' has no ERPNext mapping.").format(moneda))
 
@@ -81,6 +86,7 @@ def map_received_factura(
 	clave = (parsed.get("clave_acceso") or "").strip()
 	if not clave:
 		raise ValueError(_("Received XML carries no clave de acceso (offline doubles as auth number)."))
+	auth_number = ((parsed.get("autorizacion") or {}).get("numero_autorizacion") or "").strip() or clave
 	bill_no = (parsed.get("number") or "").strip()
 	if not bill_no:
 		raise ValueError(_("Received XML carries no document number."))
@@ -124,7 +130,7 @@ def map_received_factura(
 		"posting_date": _iso_date(parsed.get("issue_date"), "posting_date"),
 		"currency": _currency_code(parsed.get("currency")),
 		"sri_sustento_code": sustento,
-		"sri_supplier_auth_number": clave,
+		"sri_supplier_auth_number": auth_number,
 		"update_stock": 0,
 		"items": rows,
 	}
