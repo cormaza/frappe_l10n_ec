@@ -35,7 +35,7 @@ settlement + recosteo together.
 - T1 (S1, pure `l10n_ec/sri/`, Ring-1): CIF + tribute arithmetic
   (CIF→AD VALOREM→FODINFA→IVA Art. 59), fail-loud. Route: unit. Commit: fdeb4b9
 - T2 (S2/S4, DocType layer): `SRI Import Settlement` DocType + links to
-  PO/PR/PI sources. Route: doctype+controller. Commit: -
+  PO/PR/PI sources. Route: doctype+controller. Commit: cf90182
 - T3 (S6, settlement): DAI file import primary + manual fallback with
   arithmetic cross-check. Route: controller. Commit: -
 - T4 (S7, settlement→LCV): prefill + submit native LCV from settlement.
