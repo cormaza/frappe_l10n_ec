@@ -32,7 +32,7 @@ NAC-DGERCGC17-00000324 (`l10n_ec/sri/form104_layout.py`), Tabla 20/23 SRI
 **Validación DIMM sin salir del desk:** el reporte muestra un indicador de estado
 del validador (`Validador ats.plugin.1.19.0` en verde = al día; rojo = desactualizado
 con el motivo; gris = no disponible). El botón **Validar en DIMM** corre el XML del
-mes por el motor oficial del SRI (sidecar `docker_ats_validator`) y devuelve el
+mes por el motor oficial del SRI (sidecar público `cormaza/ats-validator:1.3.0`) y devuelve el
 veredicto (`valid`/`observed`/`unavailable`), la lista de errores/advertencias y el
 talón resumen como archivo. Requiere el sidecar corriendo y, opcionalmente en
 `site_config.json`: `ats_validator_url` (default `http://127.0.0.1:8080`) y

@@ -114,27 +114,12 @@ cmd_status() {	need_bench
 }
 
 cmd_validator() {
-	# Opt-in SRI ATS validator sidecar (built from the sibling repo).
+	# Opt-in SRI ATS validator sidecar (public image cormaza/ats-validator:1.3.0).
 	# Bench reaches it at http://127.0.0.1:8080 (the app default); the SRI ATS
 	# report shows its staleness indicator and Validar en DIMM button.
-	VALIDATOR_CTX="${ATS_VALIDATOR_CONTEXT:-$REPO_ROOT/../docker_ats_validator}"
-	if [ ! -f "$VALIDATOR_CTX/Dockerfile" ]; then
-		echo "error: ats validator repo not found at $VALIDATOR_CTX" >&2
-		echo "hint: clone cormaza/docker_ats_validator next to this repo, or set ATS_VALIDATOR_CONTEXT" >&2
-		exit 1
-	fi
-	if ! ls "$VALIDATOR_CTX/target/"*.jar >/dev/null 2>&1; then
-		SERVICE_DIR="${ATS_VALIDATOR_SERVICE:-$REPO_ROOT/../ats_validator_rest}"
-		if [ ! -x "$SERVICE_DIR/gradlew" ]; then
-			echo "error: no service jar in $VALIDATOR_CTX/target and no gradle project at $SERVICE_DIR" >&2
-			exit 1
-		fi
-		echo "building validator jar (one-time, needs network)..."
-		(cd "$SERVICE_DIR" && ./gradlew bootJar -q)
-		cp "$SERVICE_DIR"/build/libs/*.jar "$VALIDATOR_CTX/target/"
-	fi
 	cd "$REPO_ROOT"
-	ATS_VALIDATOR_CONTEXT="$VALIDATOR_CTX" docker compose -f dev/docker-compose.yml up -d --wait ats-validator
+	docker compose -f dev/docker-compose.yml pull ats-validator
+	docker compose -f dev/docker-compose.yml up -d --wait ats-validator
 	curl -s --max-time 5 http://127.0.0.1:8080/version | head -c 200; echo
 }
 

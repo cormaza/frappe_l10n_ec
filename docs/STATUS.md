@@ -53,9 +53,9 @@ download + DIMM validation + staleness badge), SRI Form 103 (per-concepto
 residentes + exterior section + 497/498), SRI Form 104 (DIMM blocks,
 bruto/neto/impuesto + sign markers). Ecuador workspace with shortcuts.
 
-**ATS + DIMM sidecar (separate repos).** `ats_validator_rest`
-(SRI plugin 1.19.0, `/version`, fail-loud 500s, token gate) +
-`docker_ats_validator` (`cormaza/ats-validator:1.3.0` public). Frappe calls
+**ATS + DIMM sidecar (public image).** `cormaza/ats-validator:1.3.0`
+(SRI plugin 1.19.0, `/version`, fail-loud 500s, token gate), pulled by
+`dev/demo.sh validator` onto `127.0.0.1:8080`. Frappe calls
 it for deep validation; staleness is version-compared, never implied.
 
 **Country evidence doctrine.** Tri-state `classify_country` (proven EC /

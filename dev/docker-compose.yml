@@ -37,11 +37,10 @@ services:
 
   # SRI ATS DIMM validator sidecar (opt-in: `dev/demo.sh validator`).
   # Consumed by the SRI ATS report over HTTP; versioned apart from the app.
+  # Public image on Docker Hub, pulled on demand: no local build needed.
   # Localhost-bound port: bench on the host reaches it, nothing external does.
   ats-validator:
-    build:
-      context: ${ATS_VALIDATOR_CONTEXT:-../../docker_ats_validator}
-    image: ats-validator:1.3.0
+    image: cormaza/ats-validator:1.3.0
     container_name: l10n-ec-ats-validator
     restart: unless-stopped
     ports:

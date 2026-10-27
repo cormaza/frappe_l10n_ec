@@ -1,6 +1,7 @@
 """ATS DIMM-validator integration: staleness contract plus bench calls.
 
-The validator is an independent sidecar (see docker_ats_validator): this
+The validator is an independent sidecar (public image
+``cormaza/ats-validator:1.3.0`` on Docker Hub): this
 module never reimplements SRI rules. It owns the version contract that lets
 the service advertise "estoy desactualizado":
 
