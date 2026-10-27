@@ -89,7 +89,6 @@ class SRIImportSettlement(Document):
 			)
 		except ValueError as exc:
 			frappe.throw(str(exc))
-		raise
 
 	def settle_from(self, costs: dict | None, rates: dict | None, declared: dict | None) -> dict:
 		"""Compute totals from costs + rates; crosscheck when DAI values exist.
@@ -188,7 +187,6 @@ class SRIImportSettlement(Document):
 			taxes = build_lcv_taxes(self._lcv_leg("freight_invoice"), self._lcv_leg("insurance_invoice"))
 		except ValueError as exc:
 			frappe.throw(str(exc))
-		raise
 		lcv = frappe.get_doc(
 			{
 				"doctype": "Landed Cost Voucher",
