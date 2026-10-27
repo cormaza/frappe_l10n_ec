@@ -81,3 +81,9 @@ settlement + recosteo together.
   it). Sidecar probe 4/4 valid incl. plain exterior 01. Seeded month
   validates `valid` with 14 compras (11+3 exterior). Fresh seed without a
   worker piles ~650 jobs → QueueOverloaded; CI now drains first.
+- L6 (user review catch): exterior invoices must not carry local VAT -
+  the import credit is born by the DAI settlement, never by the foreign
+  supplier invoice. Blindaje: `validate_no_local_vat` (pure) + Purchase
+  Invoice validate hook (bench), fail-loud naming the template; seed
+  import case fixed accordingly (no template on the exterior goods PI).
+  104 import boxes read 0 until the DAI tax document exists (T7).

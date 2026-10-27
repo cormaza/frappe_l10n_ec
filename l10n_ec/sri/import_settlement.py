@@ -15,6 +15,9 @@ except ImportError:  # pragma: no cover
 		return message
 
 
+from l10n_ec.sri.tax_codes import tax_codes_for_template
+
+
 def _amount(value: float | None, name: str) -> float:
 	"""Coerce a non-negative amount, fail loud otherwise."""
 	if value is None:
@@ -110,3 +113,45 @@ def compute_import_taxes(
 		"iva_base": iva_base,
 		"iva": compute_iva(iva_base, iva_rate_pct),
 	}
+
+
+def is_foreign_country(country_name: str | None) -> bool:
+	"""Whether a country name proves a non-Ecuadorian party.
+
+	Tri-state by name, mirroring the country-evidence doctrine: an empty
+	or missing country is unknown and never restricts; only an explicit
+	non-Ecuadorian name counts as foreign.
+	"""
+	if country_name is None:
+		return False
+	name = country_name.strip()
+	if not name:
+		return False
+	return name.lower() != "ecuador"
+
+
+def validate_no_local_vat(country_name: str | None, templates: list | tuple | None) -> None:
+	"""Fail loud when an exterior purchase carries Ecuadorian VAT templates.
+
+	A foreign supplier never charges local VAT: the import VAT credit is
+	born by the DAI liquidation (settlement-computed Art. 59 base), never
+	by the supplier invoice. Any VAT-impuesto template (any rate, even
+	zero) on a proven-foreign purchase is a data error; unknown country
+	never restricts.
+	"""
+	if not is_foreign_country(country_name):
+		return
+	offenders = []
+	for template in dict.fromkeys(templates or []):
+		if not template:
+			continue
+		code, _rate_code = tax_codes_for_template(template)
+		if code == "2":
+			offenders.append(template)
+	if offenders:
+		raise ValueError(
+			_(
+				"Exterior purchases carry no local VAT (template '{}' is Ecuadorian VAT); "
+				"the import VAT credit comes from the DAI settlement, not the supplier invoice."
+			).format("', '".join(offenders))
+		)

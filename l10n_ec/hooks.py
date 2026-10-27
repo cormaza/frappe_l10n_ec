@@ -90,6 +90,7 @@ doc_events = {
 		"validate": [
 			"l10n_ec.ecuador_localization.validation.enforce_iva_deduction_row",
 			"l10n_ec.ecuador_localization.validation.validate_sustento_code",
+			"l10n_ec.ecuador_localization.validation.validate_no_local_vat_on_exterior_purchase",
 			"l10n_ec.ecuador_localization.validation.validate_reimbursement_details",
 			"l10n_ec.ecuador_localization.validation.sync_tax_row_descriptions",
 		],

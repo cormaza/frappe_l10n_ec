@@ -294,6 +294,48 @@ def validate_sustento_code(doc, method=None) -> None:
 		raise
 
 
+def _supplier_country(_frappe, supplier: str | None) -> str | None:
+	"""Supplier country: master record first, default billing address next."""
+	if not supplier:
+		return None
+	country = _frappe.db.get_value("Supplier", supplier, "country")
+	if country:
+		return country
+	from frappe.contacts.doctype.address.address import get_default_address
+
+	address = get_default_address("Supplier", supplier)
+	if not address:
+		return None
+	return _frappe.db.get_value("Address", address, "country")
+
+
+def validate_no_local_vat_on_exterior_purchase(doc, method=None) -> None:
+	"""Forbid Ecuadorian VAT templates on exterior purchase invoices.
+
+	A foreign supplier never charges local VAT: the import VAT credit is
+	born by the DAI liquidation (SRI Import Settlement, LRTI Art. 59),
+	never by the supplier invoice. Unknown country never restricts.
+	"""
+	if doc.get("doctype") != "Purchase Invoice":
+		return
+	templates = sorted(
+		{row.get("item_tax_template") for row in (doc.get("items") or []) if row.get("item_tax_template")}
+	)
+	if not templates:
+		return
+	try:
+		import frappe as _frappe
+	except ImportError:
+		return
+	from l10n_ec.sri.import_settlement import validate_no_local_vat
+
+	try:
+		validate_no_local_vat(_supplier_country(_frappe, doc.get("supplier")), templates)
+	except ValueError as exc:
+		_frappe.throw(str(exc))
+		raise
+
+
 #: Withholding labels whose native rate column arrives 0 with the amount set.
 WITHHOLDING_LABELS = frozenset({"Ret. IR", "Ret. IVA", "TDS IVA", "TDS IR"})
 

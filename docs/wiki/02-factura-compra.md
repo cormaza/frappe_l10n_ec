@@ -32,6 +32,11 @@ asiento de retención fiscal.
   retenciones **asumidas**: el proveedor no retiene y nosotros asumimos el
   gasto sin tocar su cuenta por pagar (el pasivo con el proveedor queda
   intacto).
+- **Facturas del exterior sin IVA local** — un proveedor extranjero nunca
+  cobra IVA ecuatoriano: sus líneas van sin plantilla de impuestos y la
+  app lo exige (falla si traen IVA). El crédito nace de la liquidación de
+  aduana (DAI), que se acumula en el documento **SRI Import Settlement**,
+  no de la factura del proveedor.
 
 ## Grilla de impuestos y cargos
 

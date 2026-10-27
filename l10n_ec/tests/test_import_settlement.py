@@ -14,6 +14,7 @@ from l10n_ec.sri.import_settlement import (
 	compute_import_taxes,
 	compute_iva,
 	compute_iva_base,
+	validate_no_local_vat,
 )
 
 
@@ -100,3 +101,33 @@ class TestSettleImport(UnitTestCase):
 		)
 		self.assertEqual(result["iva_base"], 1481.25)
 		self.assertEqual(result["iva"], 222.19)
+
+
+class TestExteriorVatGuard(UnitTestCase):
+	"""T6b: exterior purchases carry no local VAT template.
+
+	The VAT credit on an import is born by the DAI liquidation, never by
+	the foreign supplier invoice.
+	"""
+
+	def test_foreign_supplier_with_iva_template_fails(self) -> None:
+		with self.assertRaises(ValueError) as ctx:
+			validate_no_local_vat("Spain", ["Ecuador VAT 15% - Purchases - DE"])
+		self.assertIn("Ecuador VAT 15% - Purchases - DE", str(ctx.exception))
+
+	def test_foreign_supplier_without_templates_passes(self) -> None:
+		validate_no_local_vat("Spain", [])
+		validate_no_local_vat("Spain", None)
+
+	def test_local_supplier_with_iva_template_passes(self) -> None:
+		validate_no_local_vat("Ecuador", ["Ecuador VAT 15% - Purchases - DE"])
+		validate_no_local_vat("ECUADOR", ["Ecuador VAT 15% - Purchases - DE"])
+
+	def test_unknown_country_never_restricts(self) -> None:
+		validate_no_local_vat(None, ["Ecuador VAT 15% - Purchases - DE"])
+		validate_no_local_vat("", ["Ecuador VAT 15% - Purchases - DE"])
+		validate_no_local_vat("  ", ["Ecuador VAT 15% - Purchases - DE"])
+
+	def test_foreign_zero_rate_iva_template_also_fails(self) -> None:
+		with self.assertRaises(ValueError):
+			validate_no_local_vat("Panama", ["Ecuador VAT 0% - Purchases - DE"])

@@ -1050,7 +1050,6 @@ def _seed_demo_import_case(company: str, company_address: str) -> dict:
 						"qty": 10,
 						"rate": 100.0,
 						"warehouse": "Demo Stores - DE",
-						"item_tax_template": "Ecuador VAT 15% - Purchases - DE",
 					}
 				],
 			}
