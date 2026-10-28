@@ -7,10 +7,11 @@ pide el SRI y cómo se ve en la demo.
 ## Índice
 
 1. [Espacio de trabajo Ecuador](01-workspace.md) — sidebar, catálogos y reportes.
-2. [Factura de compra](02-factura-compra.md) — sustento Tabla 5, liquidación / nota de débito del proveedor, grilla de impuestos, retenciones asumidas.
-3. [Factura de venta](03-factura-venta.md) — sección Facturación SRI, conceptos IR/IVA, retención recibida del cliente.
+2. [Factura de compra](02-factura-compra.md) — sustento Tabla 5, liquidación / nota de débito del proveedor, grilla de impuestos, retenciones asumidas, importación XML / por clave.
+3. [Factura de venta](03-factura-venta.md) — sección Facturación SRI, conceptos IR/IVA, retención recibida del cliente (manual + importación XML).
 4. [Comprobantes electrónicos](04-comprobantes.md) — lista, factura 01 generada, retención 07 autorizada (régimen exterior).
-5. [Reportes SRI: ATS, 103 y 104](05-reportes.md) — Anexo Transaccional, retenciones en la fuente e IVA mensual.
+5. [Reportes SRI: ATS, 103 y 104](05-reportes.md) — Anexo Transaccional, retenciones en la fuente e IVA mensual (incl. importaciones).
+6. [Importaciones: liquidación y recosteo](06-importaciones.md) — settlement DAI + LCV nativo.
 
 ## Cómo reproducir estas capturas
 

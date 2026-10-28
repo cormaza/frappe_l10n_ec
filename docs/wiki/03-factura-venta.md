@@ -23,6 +23,29 @@ recibido del cliente y punto de emisión.
 En la captura, el cliente retuvo IR concepto `303` e IVA concepto `3`
 (honorarios 100%) con comprobante `001-001-000000101`.
 
+## Walkthrough: importar la retención del cliente (pasos 1–3)
+
+**Paso 1 — Abrí *Retención recibida SRI* nuevo.** El botón *Import
+Customer XML* está arriba junto a *Guardar*; abajo, la tabla
+*Asignaciones* espera las facturas de venta imputadas.
+
+![Retención recibida nueva con botón de importación](img/15-rw-new.png)
+
+**Paso 2 — *Import Customer XML*.** Elegí empresa y adjuntá el XML 07
+donde somos sujeto retenido. El lector crea el lote borrador: número SRI,
+autorización (= clave en esquema offline), fecha, cliente por RUC e
+imputaciones IR/IVA por documento sustento.
+
+![Diálogo Import Customer Withholding XML](img/16-rw-import-dialog.png)
+
+**Paso 3 — Revisá el lote.** El cliente debe existir (falla en voz alta
+pidiendo crearlo primero). Cada sustento se auto-vincula a su factura de
+venta enviada y autorizada por coincidencia exacta (cliente + número); si
+no hay match único, la importación se detiene y lo imputás manual
+después. Duplicados (mismo cliente + número) se rechazan nombrando el
+lote existente. Aguas abajo sigue el flujo existente (timbre, liquidación,
+103/104).
+
 ## Dónde sigue
 
 - El XML que generamos nosotros por esta venta: [página 4](04-comprobantes.md).

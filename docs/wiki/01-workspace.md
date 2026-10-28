@@ -5,6 +5,15 @@ catálogos a la izquierda, reportes arriba.
 
 ![Espacio de trabajo Localización Ecuador](img/01-workspace.png)
 
+Los flujos nuevos viven acá: *Factura de Compra* (botones *Import
+Supplier XML* / *Fetch Supplier XML by Key*, ver [página
+2](02-factura-compra.md)), *Retención recibida SRI* (botón *Import
+Customer XML*, ver [página 3](03-factura-venta.md)) y *SRI Import
+Settlement* + *SRI Import Assumption* (ver [página
+6](06-importaciones.md)).
+
+![Sidebar con Retención recibida y liquidación de importación](img/11-workspace-reception.png)
+
 ## Qué hay
 
 **Catálogos** (tablas del SRI, editables desde el Desk):
@@ -19,7 +28,9 @@ catálogos a la izquierda, reportes arriba.
 | Tipo de identificación SRI | 04 RUC, 05 cédula, 06 pasaporte, 07 consumidor final… |
 | Comprobante electrónico SRI | Cada XML generado/firmado/autorizado, con su clave de acceso |
 | Información Adicional SRI | Campo `infoAdicional` del XML |
-| Retención recibida SRI | Comprobantes de retención que emiten los clientes |
+| Retención recibida SRI | Comprobantes de retención que emiten los clientes (manual + botón *Import Customer XML*) |
+| Liquidación de importación SRI | Costos FOB/flete/seguro + DAI + botón LCV ([página 6](06-importaciones.md)) |
+| Supuesto de importación SRI | Catálogo por empresa (ítem + partida + último AD VALOREM, solo estimado) |
 
 **Reportes** (arriba, tarjetas grandes + sección Reportes):
 

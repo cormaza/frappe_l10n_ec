@@ -37,15 +37,7 @@ asiento de retención fiscal.
   app lo exige (falla si traen IVA). El crédito nace de la liquidación de
   aduana (DAI), que se acumula en el documento **SRI Import Settlement**,
   no de la factura del proveedor.
-- **Importar XML del proveedor** — en una factura nueva, el botón
-  *Import Supplier XML* lee el XML firmado, prellena proveedor, número,
-  fechas, autorización e ítems con su plantilla de IVA (matcheada por
-  tarifa exacta entre las plantillas de compra), y crea el borrador para
-  tu revisión. Si el proveedor no existe, se crea solo bajo el grupo
-  `Imported Suppliers` (revisá sus datos después). Si ninguna plantilla
-  calza con la tarifa del XML, el error te lista las disponibles.
-  Duplicados (mismo proveedor + número) se rechazan nombrando el
-  documento existente.
+- **Importar XML del proveedor** — walkthrough abajo (pasos 1–4).
 
 ## Grilla de impuestos y cargos
 
@@ -55,6 +47,46 @@ Cada fila usa una cuenta del plan NIIF (`1010504 - IVA PAGADO`, `2010709 -
 RETENCIÓN DE IR POR PAGAR`) con su descripción en patrón SRI
 (`IVA Pagado 15%`, `Ret. IR 0%`). Debajo, el formulario separa impuestos
 adicionales, deducibles y el total neto — lo que alimenta ATS y 104.
+
+## Walkthrough: importar una factura del proveedor (pasos 1–4)
+
+**Paso 1 — Abrí una factura de compra nueva.** Arriba aparecen los dos
+botones de recepción junto a *Guardar*.
+
+![Factura nueva con botones de importación](img/12-pi-import-buttons.png)
+
+**Paso 2 — *Import Supplier XML* (archivo).** Elegí empresa, ítem (se
+aplica a todas las líneas; la descripción del XML se conserva por
+renglón), sustento (el XML no lo trae, lo elegís vos) y adjuntá el XML
+firmado del proveedor. Sirve de cualquier antigüedad: no depende del SRI.
+
+![Diálogo Import Supplier XML](img/13-pi-import-dialog.png)
+
+*Import as Draft* prellena proveedor, número `estab-pto-secuencial`,
+fechas, autorización e ítems con su plantilla de IVA (matcheada por tarifa
+exacta entre las plantillas de compra de lado débito) y crea el borrador
+para tu revisión.
+
+**Paso 3 — Alternativa: *Fetch Supplier XML by Key*.** Mismo borrador,
+pero trayendo el XML autorizado desde el SRI con la clave de 49 dígitos.
+El SRI responde solo autorizaciones recientes (~10 días en la práctica,
+sin SLA): si no responde, subí el archivo (paso 2).
+
+![Diálogo Fetch Supplier XML by Key](img/14-pi-fetch-dialog.png)
+
+**Paso 4 — Revisá el borrador.** Si el proveedor no existe, se crea solo
+bajo el grupo `Imported Suppliers` (revisá sus datos después); si el
+nombre ya existe con otro RUC, falla en voz alta sin mezclar
+contribuyentes. Si ninguna plantilla calza con la tarifa del XML, el error
+te lista las disponibles. Duplicados (mismo proveedor + número) se
+rechazan nombrando el documento existente.
+
+Notas de archivo real: los XML llegan dentro del sobre `<autorizacion>`
+(CDATA, incl. docs v2.1.0) — el lector lo desenvuelve y prefiere
+`numeroAutorizacion`; variantes como `DOLAR US` normalizan a USD;
+facturas multi-tasa mapean por línea; solo facturas (las NC se rechazan);
+secuenciales de 6 dígitos tipo Banco (`027-002-000131800`) se parten
+natural.
 
 ## Dónde sigue
 
