@@ -448,3 +448,66 @@ class TestImportBoxes(UnitTestCase):
 				2026,
 				3,
 			)
+
+
+class TestMultiRateSingleInvoice(UnitTestCase):
+	"""Edge pack A (S1/S2): one 01 mixing five lines keeps every base in its box.
+
+	15% + 0% + no-objeto + exento + ICE on the same purchase: 104 routes
+	each line to its own triple, ICE (code 3) contributes nothing, ATS
+	split agrees, and an unknown impuesto code fails naming it."""
+
+	def _rows(self):
+		return [
+			{"code": "2", "rate_code": "4", "base": 1000.0, "value": 150.0},
+			{"code": "2", "rate_code": "0", "base": 200.0, "value": 0.0},
+			{"code": "2", "rate_code": "6", "base": 100.0, "value": 0.0},
+			{"code": "2", "rate_code": "7", "base": 50.0, "value": 0.0},
+			{"code": "3", "rate_code": "", "base": 30.0, "value": 3.0},
+		]
+
+	def _collect(self, rows):
+		return collect_104(
+			_ledger(
+				sales_taxes=[],
+				purchase_taxes=rows,
+				iva_deduction_rows=[],
+				settlements=[],
+				received_refs=[],
+			),
+			2026,
+			3,
+		)
+
+	def test_each_line_feeds_its_own_triple(self) -> None:
+		result = self._collect(self._rows())
+		self.assertEqual(result["500"], 1000.0)
+		self.assertEqual(result["510"], 1000.0)
+		self.assertEqual(result["520"], 150.0)
+		self.assertEqual(result["507"], 200.0)
+		self.assertEqual(result["517"], 200.0)
+		self.assertEqual(result["531"], 100.0)
+		self.assertEqual(result["541"], 100.0)
+		self.assertEqual(result["532"], 50.0)
+		self.assertEqual(result["542"], 50.0)
+
+	def test_ice_line_contributes_no_104_box(self) -> None:
+		with_ice = self._collect(self._rows())
+		without_ice = self._collect([r for r in self._rows() if r["code"] == "2"])
+		self.assertEqual(with_ice, without_ice)
+
+	def test_ats_split_agrees_with_104(self) -> None:
+		from l10n_ec.sri.ats_collector import split_iva_bases
+
+		bases = split_iva_bases([r for r in self._rows() if r["code"] == "2"])
+		self.assertEqual(bases["baseImpGrav"], 1000.0)
+		self.assertEqual(bases["baseImponible"], 200.0)
+		self.assertEqual(bases["baseNoGraIva"], 100.0)
+		self.assertEqual(bases["baseImpExe"], 50.0)
+		self.assertEqual(bases["montoIva"], 150.0)
+
+	def test_unknown_impuesto_code_fails_naming_it(self) -> None:
+		rows = self._rows() + [{"code": "9", "rate_code": "", "base": 10.0, "value": 0.0}]
+		with self.assertRaises(SriVoucherError) as ctx:
+			self._collect(rows)
+		self.assertIn("9", str(ctx.exception))
