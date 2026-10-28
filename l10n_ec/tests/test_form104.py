@@ -507,7 +507,7 @@ class TestMultiRateSingleInvoice(UnitTestCase):
 		self.assertEqual(bases["montoIva"], 150.0)
 
 	def test_unknown_impuesto_code_fails_naming_it(self) -> None:
-		rows = self._rows() + [{"code": "9", "rate_code": "", "base": 10.0, "value": 0.0}]
+		rows = [*self._rows(), {"code": "9", "rate_code": "", "base": 10.0, "value": 0.0}]
 		with self.assertRaises(SriVoucherError) as ctx:
 			self._collect(rows)
 		self.assertIn("9", str(ctx.exception))
