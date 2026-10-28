@@ -17,7 +17,7 @@ readers; no bench needed.
 ## Tasks
 
 - T1 (S1/S2, pack A): single 01 mixing 15% + 0% + exempt + no-object +
-  ICE across lines; each base lands in its own 104/ATS bucket. Route: unit. Commit: 3df1747
+  ICE across lines; each base lands in its own 104/ATS bucket. Route: unit. Commit: 3df174c
 - T2 (S1/S2, pack B): supplier 04/05 XML explicitly rejected by reception
   mapper (fail loud, never a purchase). Route: unit. Commit: 44e53d7
 - T3 (S1/S2, pack C): annulled 03/06/07 feed ATS anulados with
