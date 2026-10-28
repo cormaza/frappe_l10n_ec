@@ -24,7 +24,7 @@ moneda; mezclar monedas falla en voz alta. Los vinculados deben existir,
 ser de la misma empresa y no estar anulados. El FOB sale del neto de la
 factura exterior (sin impuestos), si no de la recepción u orden.
 
-![Settlement: compañía, proveedor y fuentes de mercadería y costos](img/17-settlement-goods.png)
+![Settlement: compañía, proveedor, mercadería, costos y DAI (dos columnas)](img/17-settlement-goods.png)
 
 ## Paso 2 — Declaración de aduana (DAI)
 
