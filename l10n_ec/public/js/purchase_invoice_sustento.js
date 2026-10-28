@@ -38,10 +38,10 @@ function add_supplier_xml_button(frm) {
   const dialog = new frappe.ui.Dialog({
    title: __("Import Supplier XML"),
    fields: [
-    {fieldname: "company", fieldtype: "Link", options: "Company", reqd: 1, default: frappe.defaults.get_user_default("Company")},
-    {fieldname: "item_code", fieldtype: "Link", options: "Item", reqd: 1, description: __("Applied to every XML line; the row keeps the XML description.")},
-    {fieldname: "sustento", fieldtype: "Select", options: ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"].join("\n"), reqd: 1, default: "02"},
-    {fieldname: "xml_file", fieldtype: "Attach", reqd: 1, description: __("Signed supplier factura XML (.xml).")},
+    {fieldname: "company", fieldtype: "Link", options: "Company", label: __("Company"), reqd: 1, default: frappe.defaults.get_user_default("Company")},
+    {fieldname: "item_code", fieldtype: "Link", options: "Item", label: __("Item"), reqd: 1, description: __("Applied to every XML line; the row keeps the XML description.")},
+    {fieldname: "sustento", fieldtype: "Select", label: __("Sustento"), options: ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"].join("\n"), reqd: 1, default: "02"},
+    {fieldname: "xml_file", fieldtype: "Attach", label: __("XML File"), reqd: 1, description: __("Signed supplier factura XML (.xml).")},
    ],
    primary_action_label: __("Import as Draft"),
    primary_action(values) {
@@ -85,9 +85,9 @@ function add_supplier_xml_fetch_button(frm) {
    title: __("Fetch Supplier XML by Key"),
    fields: [
     {fieldname: "clave", fieldtype: "Data", label: __("Access Key"), reqd: 1, description: __("49-digit clave de acceso from the supplier document.")},
-    {fieldname: "company", fieldtype: "Link", options: "Company", reqd: 1, default: frappe.defaults.get_user_default("Company")},
-    {fieldname: "item_code", fieldtype: "Link", options: "Item", reqd: 1, description: __("Applied to every XML line; the XML description is kept per row.")},
-    {fieldname: "sustento", fieldtype: "Select", options: ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"].join("\n"), reqd: 1, default: "02"},
+    {fieldname: "company", fieldtype: "Link", options: "Company", label: __("Company"), reqd: 1, default: frappe.defaults.get_user_default("Company")},
+    {fieldname: "item_code", fieldtype: "Link", options: "Item", label: __("Item"), reqd: 1, description: __("Applied to every XML line; the XML description is kept per row.")},
+    {fieldname: "sustento", fieldtype: "Select", label: __("Sustento"), options: ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"].join("\n"), reqd: 1, default: "02"},
    ],
    primary_action_label: __("Fetch and Create Draft"),
    primary_action(values) {

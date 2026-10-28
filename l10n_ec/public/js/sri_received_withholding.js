@@ -9,8 +9,8 @@ frappe.ui.form.on("SRI Received Withholding", {
 			const dialog = new frappe.ui.Dialog({
 				title: __("Import Customer Withholding XML"),
 				fields: [
-					{fieldname: "company", fieldtype: "Link", options: "Company", reqd: 1, default: frappe.defaults.get_user_default("Company")},
-					{fieldname: "xml_file", fieldtype: "Attach", reqd: 1, description: __("Signed withholding XML (.xml) where you are the sujeto retenido.")},
+					{fieldname: "company", fieldtype: "Link", options: "Company", label: __("Company"), reqd: 1, default: frappe.defaults.get_user_default("Company")},
+					{fieldname: "xml_file", fieldtype: "Attach", label: __("XML File"), reqd: 1, description: __("Signed withholding XML (.xml) where you are the sujeto retenido.")},
 				],
 				primary_action_label: __("Import as Draft"),
 				primary_action(values) {
