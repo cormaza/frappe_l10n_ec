@@ -1155,6 +1155,11 @@ def seed_demo() -> dict:
 
 	if frappe.db.get_single_value("Global Defaults", "default_currency") != "USD":
 		frappe.db.set_single_value("Global Defaults", "default_currency", "USD")
+	# Boot-time currency display (desk symbols, fields without options) reads the
+	# global default, not the Global Defaults single: the setup wizard normally
+	# writes it, but the seed skips the wizard, so an ERPNext-install INR lingers.
+	if frappe.defaults.get_global_default("currency") != "USD":
+		frappe.defaults.set_global_default("currency", "USD")
 	if frappe.db.get_single_value("Global Defaults", "default_company") != DEMO_COMPANY["company_name"]:
 		frappe.db.set_single_value("Global Defaults", "default_company", DEMO_COMPANY["company_name"])
 	if frappe.db.get_value("User", "Administrator", "time_zone") != DEMO_TIMEZONE:
