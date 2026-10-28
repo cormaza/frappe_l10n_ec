@@ -139,30 +139,45 @@ CUSTOM_FIELDS = {
 			"description": "Reimbursement voucher (41 received as mandante, 41 emitted as intermediary); drives sustento cross-check and ATS reembolsos.",
 		},
 		{
+			"fieldname": "sri_col_break_reimb_checks",
+			"fieldtype": "Column Break",
+			"insert_after": "sri_is_reimbursement",
+		},
+		{
+			"fieldname": "sri_section_reimb_table",
+			"fieldtype": "Section Break",
+			"insert_after": "sri_allow_reimbursement_override",
+		},
+		{
 			"fieldname": "sri_reimbursement_details",
 			"fieldtype": "Table",
-			"insert_after": "sri_is_reimbursement",
+			"insert_after": "sri_section_reimb_table",
 			"label": "SRI Reimbursement Details",
 			"options": "SRI Reimbursement Detail",
 			"description": "Reimbursed vouchers behind this invoice; sums into totbasesImpReemb.",
 		},
 		{
+			"fieldname": "sri_section_reimb_amounts",
+			"fieldtype": "Section Break",
+			"insert_after": "sri_reimbursement_details",
+		},
+		{
 			"fieldname": "sri_reimbursement_total",
 			"fieldtype": "Currency",
-			"insert_after": "sri_reimbursement_details",
+			"insert_after": "sri_section_reimb_amounts",
 			"label": "SRI Reimbursement Total",
 			"read_only": 1,
 			"description": "Calculated totbasesImpReemb from reimbursement details.",
 		},
 		{
-			"fieldname": "sri_col_break_reimb_total",
+			"fieldname": "sri_col_break_reimb_amounts",
 			"fieldtype": "Column Break",
 			"insert_after": "sri_reimbursement_total",
 		},
 		{
 			"fieldname": "sri_allow_reimbursement_override",
 			"fieldtype": "Check",
-			"insert_after": "sri_col_break_reimb_total",
+			"insert_after": "sri_col_break_reimb_checks",
 			"label": "Allow Reimbursement Override",
 			"default": "0",
 			"description": "Opt-in to force a manual reimbursement total instead of the calculated one.",
@@ -173,6 +188,11 @@ CUSTOM_FIELDS = {
 			"insert_after": "sri_allow_reimbursement_override",
 			"label": "SRI Reimbursement Override",
 			"description": "Manual totbasesImpReemb; needs the override opt-in.",
+		},
+		{
+			"fieldname": "sri_section_reimb_end",
+			"fieldtype": "Section Break",
+			"insert_after": "sri_reimbursement_override_value",
 		},
 		{
 			"fieldname": "sri_received_retencion_number",
@@ -323,30 +343,45 @@ CUSTOM_FIELDS = {
 			"description": "Reimbursement purchase (41 received as mandante); drives sustento cross-check and ATS reembolsos.",
 		},
 		{
+			"fieldname": "sri_col_break_reimb_checks",
+			"fieldtype": "Column Break",
+			"insert_after": "sri_is_reimbursement",
+		},
+		{
+			"fieldname": "sri_section_reimb_table",
+			"fieldtype": "Section Break",
+			"insert_after": "sri_allow_reimbursement_override",
+		},
+		{
 			"fieldname": "sri_reimbursement_details",
 			"fieldtype": "Table",
-			"insert_after": "sri_is_reimbursement",
+			"insert_after": "sri_section_reimb_table",
 			"label": "SRI Reimbursement Details",
 			"options": "SRI Reimbursement Detail",
 			"description": "Reimbursed vouchers behind this purchase; sums into totbasesImpReemb.",
 		},
 		{
+			"fieldname": "sri_section_reimb_amounts",
+			"fieldtype": "Section Break",
+			"insert_after": "sri_reimbursement_details",
+		},
+		{
 			"fieldname": "sri_reimbursement_total",
 			"fieldtype": "Currency",
-			"insert_after": "sri_reimbursement_details",
+			"insert_after": "sri_section_reimb_amounts",
 			"label": "SRI Reimbursement Total",
 			"read_only": 1,
 			"description": "Calculated totbasesImpReemb from reimbursement details.",
 		},
 		{
-			"fieldname": "sri_col_break_reimb_total",
+			"fieldname": "sri_col_break_reimb_amounts",
 			"fieldtype": "Column Break",
 			"insert_after": "sri_reimbursement_total",
 		},
 		{
 			"fieldname": "sri_allow_reimbursement_override",
 			"fieldtype": "Check",
-			"insert_after": "sri_col_break_reimb_total",
+			"insert_after": "sri_col_break_reimb_checks",
 			"label": "Allow Reimbursement Override",
 			"default": "0",
 			"description": "Opt-in to force a manual reimbursement total instead of the calculated one.",
@@ -357,6 +392,11 @@ CUSTOM_FIELDS = {
 			"insert_after": "sri_allow_reimbursement_override",
 			"label": "SRI Reimbursement Override",
 			"description": "Manual totbasesImpReemb; needs the override opt-in.",
+		},
+		{
+			"fieldname": "sri_section_reimb_end",
+			"fieldtype": "Section Break",
+			"insert_after": "sri_reimbursement_override_value",
 		},
 	],
 	"Payment Entry": [
@@ -462,7 +502,11 @@ def create_sri_custom_fields() -> None:
 # `create_custom_fields(update=True)` never deletes, so a removed layout
 # break would linger as an orphan column on existing sites. Pruned on
 # migrate; keep entries here (never silently drop the cleanup).
-RETIRED_SRI_CUSTOM_FIELDS = (("Purchase Invoice", "sri_col_break_supplier_flags"),)
+RETIRED_SRI_CUSTOM_FIELDS = (
+	("Purchase Invoice", "sri_col_break_supplier_flags"),
+	("Purchase Invoice", "sri_col_break_reimb_total"),
+	("Sales Invoice", "sri_col_break_reimb_total"),
+)
 
 
 def prune_retired_sri_custom_fields() -> None:
