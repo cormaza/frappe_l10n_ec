@@ -138,19 +138,37 @@ Therefore, `l10n_ec` for Frappe v16 combines **both** the base accounting/catalo
 - SRI Payment Method table (Tabla 24, corrected from the initial "Tabla 20" label; 16=debito/19=credito) bridged from Mode of Payment + explicit voucher parameter.
 - Related completions feeding 9A/9B: purchase-side IVA deduction rows (native GL), sales-side received settlement JEs + SI concepto/received-ref fields, Supplier/Customer assignment guards.
 
-#### Phase 9A: `ATS` (Anexo Transaccional Simplificado)
+#### Phase 9A: `ATS` (Anexo Transaccional Simplificado) — DELIVERED
 - Monthly `AT{mmaaaa}.xml` + `.zip` covering purchases (`compras`), sales (`ventas`), exports (`exportaciones`), and annulled vouchers (`anulados`), validated offline against the vendored `l10n_ec/sri/xsd/ats.xsd` (SRI-published, via OCA PR #105 reference).
 - Reads: posted ledger (incl. IVA deduction rows + settlement JEs), voucher XML + RIDE data, SI received refs, Tabla 24 payment codes, concepto/casillero table. No new computation model: ATS aggregates what 9.0 + the invoice flows already book.
 
-#### Phase 9B: SRI Forms 104 & 103
+#### Phase 9B: SRI Forms 104 & 103 — DELIVERED
 - **Form 104 (VAT Declaration)** & **Form 103 (Income Tax Withholding Declaration)**: Frappe Script Reports aggregating tax bases and withholdings by the concepto→casillero pairs in the table; TDS credits from `1010501`/`1010502` (+ settlement JEs), received refs from SI fields, IVA credit from deduction rows.
 - **Out of scope**: automatic ICE computation per product, card processing (SRI payment code only, no gateway), and automatic SRI submission (ATS delivers as file+zip for the portal).
+
+### Phase 10: Reembolsos (41) — DELIVERED
+- Mandante/intermediario flows; factura (01) + liquidación (03)
+  emission with `reembolsos`; ATS `totbasesImpReemb`; 103/104 untouched
+  by design. Detail: `../odd/tasks/phase-10-reembolso.md`.
+
+### Phase 11: Importaciones + Landed Cost — DELIVERED
+- `SRI Import Settlement` (CIF arithmetic + DAI cross-check), company
+  assumption catalog, native LCV prefill, 104 import boxes, ATS exterior
+  marking. Detail: `../odd/tasks/phase-11-importaciones.md`.
+
+### Phase 12: Electronic Reception — DELIVERED
+- Supplier XML upload + fetch by clave into draft PIs; customer 07
+  XML into the received batch. Detail:
+  `../odd/tasks/phase-12-electronic-reception.md`.
 
 ---
 
 ## E-Invoicing Hardening Roadmap (see `docs/KNOWN_ISSUES_EINVOICING.md`)
 
-- **H1 (correctness)**: anulacion lifecycle + ATS coverage; `agenteRetencion`/`contribuyenteRimpe`/`rise` tags from Company master; `infoAdicional` DONE (central entity + Quote/SO/SI chain + factura emission).
+- **H1 (correctness)**: anulacion lifecycle + ATS coverage DONE
+  (`Annulled` state, void flow, `anulados` for every kind);
+  `agenteRetencion`/`contribuyenteRimpe` tags from Company master DONE;
+  `infoAdicional` DONE (central entity + Quote/SO/SI chain + factura emission).
 - **H2 (out of scope)**: `compensaciones` on debit notes; RIDE annexes (sector demand only, parked).
 - **H3 (dropped)**: factura comercial negociable; contingency emission.
 

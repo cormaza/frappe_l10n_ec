@@ -1,8 +1,8 @@
 # `l10n_ec` Status: Inventory, Known Issues, Deliberate Non-Goals
 
-Branch `version-16`, Frappe/ERPNext v16, Python 3.14. As of `e8064e3`:
-**517 tests passed, 1 skipped** (+919 subtests, Ring-1 `pytest -W error` + bench `run-tests`),
-**792 msgids** (`es.po`, `msgfmt` clean), 146 work-unit commits.
+Branch `version-16`, Frappe/ERPNext v16, Python 3.14. As of `61f96b4`:
+**638 tests passed, 1 skipped** (+922 subtests, Ring-1 `pytest -W error` + bench `run-tests`),
+**792 msgids** (`es.po`, `msgfmt` clean), 202 commits.
 Companion docs: `ROADMAP.md` (phased plan), `ROADMAP_POS_ECOMMERCE.md`,
 `FIND_ATS_103_104.md` (operator guide + live triangulation),
 `KNOWN_ISSUES_EINVOICING.md` (e-invoicing gap detail), `LOCAL_DEMO.md`,
@@ -71,7 +71,11 @@ locale-independent idempotency marker.
 defaults, SRI code selectors show code with legend, dedicated SRI
 section with two-column layout on invoices, collapsible tax details,
 roomier ledger-name column, collapsible section tree and rebalanced
-columns in SRI reports.
+columns in SRI reports. Supplier-invoice SRI block and invoice
+reimbursement block pair fields side by side (single Column Break:
+the core section already owns one); the reimbursement detail grid
+lives full-width in its own sub-section with checks above and
+totals/override below.
 
 **Form 103/104 template parity.** Portal subtotals 349/399/497/498/499
 computed from collected boxes (template formula `499 = 399 + 498`);
@@ -86,6 +90,25 @@ abs applied; 103/104 untouched by design, regression-pinned). Demo
 seed gains mandante sustento 41 (totbases 250.00) and intermediario
 08; bench Oct-2026 ATS DIMM-valid (11 compras).
 
+**Imports + Landed Cost (phase-11).** `SRI Import Settlement` (FOB +
+freight + insurance CIF, AD VALOREM/FODINFA/IVA per LRTI Art. 59 with
+DAI cross-check), company `SRI Import Assumption` catalog (partida +
+last AD VALOREM prefill, DAI arbitrates), native ERPNext Landed Cost
+Voucher prefill + submit, dedicated 104 import boxes, ATS exterior
+marking; exterior PIs refuse local VAT by hook.
+
+**Electronic reception (phase-12).** Supplier XML upload + fetch by
+clave through the SRI endpoint into draft Purchase Invoices (supplier
+resolve-or-create, duplicate guard, template match by rate, sustento
+fail-loud), customer 07 XML into the `SRI Received Withholding` batch
+with auto-allocation; 6 production-XML findings + ~10-day fetch window
+as UX note.
+
+**Resilience edge packs (A–F).** Multi-rate single invoice to its
+104/ATS boxes, explicit NC/ND reception rejection, annulled 03/06/07
+into ATS `anulados`, two-partida DAI self-heal, batch IR/IVA totals
+cap (`check_batch_totals`), mixed 8%/15% month in 104.
+
 **POS + shop.** Emission point per POS Profile, session stamp, CF rules
 both modes, merge-identity guard, shop point inheritance QT→SO→SI,
 shop-only channel, shopper-ID API. Webshop integration is guarded
@@ -96,7 +119,8 @@ dead `payments` dep.
 9 PIs, 4+ SIs, DN, payments/JEs, 3 staged resident 07s + 3 exterior 07s
 (ES/US/PA), 1 Generated 01, mandante 41 + intermediario 08 reembolso pair,
 import case (exterior goods PI 990001000000004 + freight/insurance PIs +
-`SRI Import Settlement` + native LCV), emission points (desk/POS/shop),
+`SRI Import Settlement` + native LCV), reception flow (upload/fetch
+buttons, customer withholding batch), emission points (desk/POS/shop),
 POS profile, webshop wiring when present. USD everywhere.
 
 ## 2. Known issues (all with evidence, none silent)

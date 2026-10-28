@@ -23,16 +23,15 @@ evidence and severity.
 
 ## H1 — Correctness gaps (high)
 
-1. **Anulacion lifecycle**: SRI Res. NAC-DGERCGC25-00000014 (+00000017
-   reform) regulates voiding authorized electronic vouchers. Our states
-   end at Authorized/Rejected; no Annulled state, no void flow, and ATS
-   `anulados` only covers never-authorized cancels. Needed: void request
-   path + state + ATS coverage of authorized-then-voided docs.
-2. **Taxpayer-status tags**: builders emit `contribuyenteEspecial` /
-   `obligadoContabilidad` but never `agenteRetencion`,
-   `contribuyenteRimpe`, or `rise`, so RIMPE/agent taxpayers emit
-   incomplete tributaria blocks. Needed: source flags from Company
-   master + conditional tags.
+1. **Anulacion lifecycle**: DONE — `Annulled` voucher state + void flow
+   (`voucher_states.py`, `test_void_lifecycle.py`) and ATS `anulados`
+   coverage for every kind (01/03/04/05/06/07, edge pack C). SRI Res.
+   NAC-DGERCGC25-00000014 (+00000017 reform) regulated the requirement;
+   authorized-then-voided docs now file their number range + auth.
+2. **Taxpayer-status tags**: DONE — builders emit `agenteRetencion` /
+   `contribuyenteRimpe` / `rise` from Company master flags with live
+   proof (`test_agent_and_rimpe_tags_emit_in_tributaria`, tags absent
+   without flags).
 3. **infoAdicional**: DONE — central `SRI Additional Information` entity
    (company-scoped) + transactional `sri_info_adicional` tables on
    Quotation/Sales Order/Sales Invoice + lazy resolution (SI, order,

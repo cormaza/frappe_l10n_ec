@@ -44,7 +44,9 @@ uv run pytest -v --cov=l10n_ec/sri --cov-report=term-missing -W error
 
 ## Documentation & Roadmap
 
-- **[`docs/ROADMAP.md`](docs/ROADMAP.md)**: Complete 5-phase implementation roadmap porting `odoo/addons/l10n_ec` and `OCA/l10n-ecuador` (PRs #101–#109) into Frappe / ERPNext v16.
-- **[`docs/wiki/HOME.md`](docs/wiki/HOME.md)**: Functional wiki (in Spanish) with demo screenshots: Ecuador workspace, purchase/sale invoices, electronic vouchers, ATS / Form 103 / Form 104 reports.
+- **[`docs/ROADMAP.md`](docs/ROADMAP.md)**: Phased implementation roadmap (Phases 0–12: catalogs → chart → i18n → e-invoicing → withholdings → delivery notes → ATS/103/104 → reembolsos → imports → electronic reception) plus the H1/H2/H3 hardening list.
+- **[`docs/wiki/HOME.md`](docs/wiki/HOME.md)**: Functional wiki (in Spanish) with demo screenshots: Ecuador workspace, purchase/sale invoices, electronic vouchers, reception, imports, reembolsos, ATS / Form 103 / Form 104 reports.
+- **[`docs/STATUS.md`](docs/STATUS.md)**: Feature inventory, known issues, and deliberate non-goals (start here for project status).
+- **[`docs/KNOWN_ISSUES_EINVOICING.md`](docs/KNOWN_ISSUES_EINVOICING.md)**: E-invoicing gap analysis against the SRI spec, with H1/H2/H3 disposition.
 - **[`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)**: Step-by-step instructions for local TDD (`uv` + `pytest`), **Frappe-Manager (`fm`)** / `frappe_docker` containers, and running manual CI via `gh workflow run ci.yml` or `act`.
 - **[`AGENTS.md`](AGENTS.md)**: Architecture, Frappe v16 `UnitTestCase` discovery rules, Gettext `locale/es.po` translation conventions, and installed `.agents/skills/`.
