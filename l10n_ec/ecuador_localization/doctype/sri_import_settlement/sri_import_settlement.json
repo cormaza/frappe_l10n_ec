@@ -152,12 +152,14 @@
   {
    "fieldname": "ice_amount",
    "fieldtype": "Currency",
+   "options": "Company:company:default_currency",
    "label": "ICE Amount",
    "description": "ICE from the DAI, when the goods carry it."
   },
   {
    "fieldname": "other_duties",
    "fieldtype": "Currency",
+   "options": "Company:company:default_currency",
    "label": "Other Duties",
    "description": "Remaining duties from the DAI (tasas, recargos)."
   },
@@ -169,24 +171,28 @@
   {
    "fieldname": "dai_ad_valorem",
    "fieldtype": "Currency",
+   "options": "Company:company:default_currency",
    "label": "DAI Ad Valorem",
    "description": "Ad Valorem amount declared on the DAI; crosschecked."
   },
   {
    "fieldname": "dai_fodinfa",
    "fieldtype": "Currency",
+   "options": "Company:company:default_currency",
    "label": "DAI FODINFA",
    "description": "FODINFA amount declared on the DAI; crosschecked."
   },
   {
    "fieldname": "dai_iva",
    "fieldtype": "Currency",
+   "options": "Company:company:default_currency",
    "label": "DAI IVA",
    "description": "IVA amount declared on the DAI; crosschecked."
   },
   {
    "fieldname": "dai_total",
    "fieldtype": "Currency",
+   "options": "Company:company:default_currency",
    "label": "DAI Total",
    "description": "Total duties declared on the DAI; crosschecked."
   },
@@ -198,6 +204,7 @@
   {
    "fieldname": "cif_total",
    "fieldtype": "Currency",
+   "options": "Company:company:default_currency",
    "label": "CIF Total",
    "read_only": 1,
    "description": "Recomputed customs value (FOB + freight + insurance)."
@@ -205,18 +212,21 @@
   {
    "fieldname": "ad_valorem_amount",
    "fieldtype": "Currency",
+   "options": "Company:company:default_currency",
    "label": "Ad Valorem Amount",
    "read_only": 1
   },
   {
    "fieldname": "fodinfa_amount",
    "fieldtype": "Currency",
+   "options": "Company:company:default_currency",
    "label": "FODINFA Amount",
    "read_only": 1
   },
   {
    "fieldname": "iva_base",
    "fieldtype": "Currency",
+   "options": "Company:company:default_currency",
    "label": "IVA Base",
    "read_only": 1,
    "description": "LRTI Art. 59 base: customs value plus duties."
@@ -224,6 +234,7 @@
   {
    "fieldname": "iva_amount",
    "fieldtype": "Currency",
+   "options": "Company:company:default_currency",
    "label": "IVA Amount",
    "read_only": 1
   },
