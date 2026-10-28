@@ -6,32 +6,39 @@
  "field_order": [
   "naming_series",
   "company",
+  "column_break_party",
   "supplier",
   "section_break_goods",
   "purchase_order",
   "purchase_receipt",
+  "column_break_goods",
   "purchase_invoice",
   "section_break_costs",
   "freight_invoice",
+  "column_break_costs",
   "insurance_invoice",
   "section_break_customs",
   "dai_number",
+  "column_break_customs",
   "dai_date",
   "section_break_settlement",
   "ad_valorem_rate",
   "fodinfa_rate",
   "iva_rate",
+  "column_break_rates",
   "ice_amount",
   "other_duties",
   "section_break_declaration",
   "dai_ad_valorem",
   "dai_fodinfa",
+  "column_break_declared",
   "dai_iva",
   "dai_total",
   "section_break_totals",
   "cif_total",
   "ad_valorem_amount",
   "fodinfa_amount",
+  "column_break_totals",
   "iva_base",
   "iva_amount",
   "landed_cost_voucher"
@@ -53,6 +60,10 @@
    "label": "Company",
    "options": "Company",
    "reqd": 1
+  },
+  {
+   "fieldname": "column_break_party",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "supplier",
@@ -83,6 +94,10 @@
    "description": "Goods receipt of the import; the Landed Cost Voucher attaches here (T4)."
   },
   {
+   "fieldname": "column_break_goods",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "purchase_invoice",
    "fieldtype": "Link",
    "label": "Purchase Invoice",
@@ -102,6 +117,10 @@
    "description": "Forwarder invoice carrying the freight leg of the CIF."
   },
   {
+   "fieldname": "column_break_costs",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "insurance_invoice",
    "fieldtype": "Link",
    "label": "Insurance Invoice",
@@ -119,6 +138,10 @@
    "in_list_view": 1,
    "label": "DAI Number",
    "description": "Customs declaration number from ECUAPASS (T3 fills or verifies it)."
+  },
+  {
+   "fieldname": "column_break_customs",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "dai_date",
@@ -148,6 +171,10 @@
    "fieldtype": "Percent",
    "label": "IVA Rate",
    "description": "IVA percentage from the DAI (e.g. 15)."
+  },
+  {
+   "fieldname": "column_break_rates",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "ice_amount",
@@ -181,6 +208,10 @@
    "options": "Company:company:default_currency",
    "label": "DAI FODINFA",
    "description": "FODINFA amount declared on the DAI; crosschecked."
+  },
+  {
+   "fieldname": "column_break_declared",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "dai_iva",
@@ -222,6 +253,10 @@
    "options": "Company:company:default_currency",
    "label": "FODINFA Amount",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "iva_base",

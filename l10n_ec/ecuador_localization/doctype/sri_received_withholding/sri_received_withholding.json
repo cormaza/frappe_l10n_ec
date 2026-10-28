@@ -5,11 +5,17 @@
  "engine": "InnoDB",
  "field_order": [
   "customer",
+  "withholding_col_party",
   "company",
+  "withholding_sb_slip",
   "retencion_number",
+  "withholding_col_number",
   "authorization",
+  "withholding_sb_dates",
   "retencion_date",
+  "withholding_col_dates",
   "access_key",
+  "withholding_sb_payment",
   "payment_entry",
   "allocations"
  ],
@@ -23,12 +29,21 @@
    "reqd": 1
   },
   {
+   "fieldname": "withholding_col_party",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "company",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Company",
    "options": "Company",
    "reqd": 1
+  },
+  {
+   "fieldname": "withholding_sb_slip",
+   "fieldtype": "Section Break",
+   "label": "Withholding Slip"
   },
   {
    "fieldname": "retencion_number",
@@ -39,9 +54,18 @@
    "description": "Customer-issued withholding slip number (e.g. 001-002-000000009); one slip covers many invoices."
   },
   {
+   "fieldname": "withholding_col_number",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "authorization",
    "fieldtype": "Data",
    "label": "Retencion Authorization"
+  },
+  {
+   "fieldname": "withholding_sb_dates",
+   "fieldtype": "Section Break",
+   "label": "Dates"
   },
   {
    "fieldname": "retencion_date",
@@ -49,10 +73,19 @@
    "label": "Retencion Date"
   },
   {
+   "fieldname": "withholding_col_dates",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "access_key",
    "fieldtype": "Data",
    "label": "Retencion Access Key",
    "description": "49-digit access key of the customer-issued slip, when shared."
+  },
+  {
+   "fieldname": "withholding_sb_payment",
+   "fieldtype": "Section Break",
+   "label": "Payment"
   },
   {
    "fieldname": "payment_entry",
