@@ -17,17 +17,17 @@ readers; no bench needed.
 ## Tasks
 
 - T1 (S1/S2, pack A): single 01 mixing 15% + 0% + exempt + no-object +
-  ICE across lines; each base lands in its own 104/ATS bucket. Route: unit. Commit: -
+  ICE across lines; each base lands in its own 104/ATS bucket. Route: unit. Commit: 3df1747
 - T2 (S1/S2, pack B): supplier 04/05 XML explicitly rejected by reception
-  mapper (fail loud, never a purchase). Route: unit. Commit: -
+  mapper (fail loud, never a purchase). Route: unit. Commit: 44e53d7
 - T3 (S1/S2, pack C): annulled 03/06/07 feed ATS anulados with
-  number+auth (01 already pinned). Route: unit. Commit: -
+  number+auth (01 already pinned). Route: unit. Commit: 5ad51cc
 - T4 (S1/S2, pack D): settlement with 2 partidas/rates; DAI crosscheck
-  fails on the second naming the rate (T7 blind). Route: unit. Commit: -
+  fails on the second naming the rate (T7 blind). Route: unit. Commit: b99d5b5
 - T5 (S1/S2, pack E): received batch over 3 SIs (mixed IR/IVA), one
-  unmatched left manual, partial payment never over-allocates. Route: unit. Commit: -
+  unmatched left manual, partial payment never over-allocates. Route: unit. Commit: 2ddeda3
 - T6 (S1/S2, pack F): mixed month with 8% holiday + 15% in 104
-  (factor 563) side by side. Route: unit. Commit: -
+  (factor 563) side by side. Route: unit. Commit: 7812a08
 
 ## Log
 
