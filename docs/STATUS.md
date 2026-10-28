@@ -2,7 +2,7 @@
 
 Branch `version-16`, Frappe/ERPNext v16, Python 3.14. As of `e8064e3`:
 **517 tests passed, 1 skipped** (+919 subtests, Ring-1 `pytest -W error` + bench `run-tests`),
-**551 msgids** (`es.po`, `msgfmt` clean), 146 work-unit commits.
+**792 msgids** (`es.po`, `msgfmt` clean), 146 work-unit commits.
 Companion docs: `ROADMAP.md` (phased plan), `ROADMAP_POS_ECOMMERCE.md`,
 `FIND_ATS_103_104.md` (operator guide + live triangulation),
 `KNOWN_ISSUES_EINVOICING.md` (e-invoicing gap detail), `LOCAL_DEMO.md`,

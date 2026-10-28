@@ -491,3 +491,63 @@ FORM104_STRINGS = [
 	_("Form 104 IVA deduction rate '{}' has no retention box."),
 	_("Form 104 received reference needs a document number."),
 ]
+
+CUSTOM_FIELD_LABELS_2026_10 = [
+	# Custom field labels/descriptions and select option parts from
+	# l10n_ec/ecuador_localization/custom_fields.py missed by earlier
+	# extractions. Extraction markers only; never imported at runtime.
+	_("Supplier Auth Number"),
+	_("SRI authorization number printed on the supplier invoice; feeds ATS compras."),
+	_("Calculated totbasesImpReemb from reimbursement details."),
+	_("Manual totbasesImpReemb; needs the override opt-in."),
+	_("Opt-in to force a manual reimbursement total instead of the calculated one."),
+	_("Per-document infoAdicional rows for the voucher (transactional rows win over central ones)."),
+	_(
+		"Per-document infoAdicional rows; flow into order and invoice, then the voucher (transactional rows win over central ones)."
+	),
+	_(
+		"Per-document infoAdicional rows; flow into the invoice, then the voucher (transactional rows win over central ones)."
+	),
+	_("Reimbursed vouchers behind this invoice; sums into totbasesImpReemb."),
+	_("Reimbursed vouchers behind this purchase; sums into totbasesImpReemb."),
+	_("Reimbursement purchase (41 received as mandante); drives sustento cross-check and ATS reembolsos."),
+	_(
+		"Reimbursement voucher (41 received as mandante, 41 emitted as intermediary); drives sustento cross-check and ATS reembolsos."
+	),
+	_(
+		"SRI Tabla 23 IVA withholding concepto withheld by the customer; feeds the received-withholding settlement entry (1 bienes 30%, 2 servicios 70%, 3 honorarios 100%); leave empty when no IVA withholding applies."
+	),
+	_(
+		"SRI Tabla 24 payment code. Forward-placed mapping point POS and ATS readers will use in Phase 9A; vouchers still emit the default until wired."
+	),
+	_("01 - Con crédito tributario"),
+	_("02 - Sin crédito tributario"),
+	_("03 - Activos fijos con crédito"),
+	_("04 - Activos fijos sin crédito"),
+	_("05 - Gastos de viaje"),
+	_("06 - Inventario con crédito"),
+	_("07 - Inventario sin crédito"),
+	_("08 - Reembolso (intermediario)"),
+	_("09 - Gastos médicos"),
+	_("10 - Dividendos"),
+	_("10 - Especial 20%"),
+	_("11 - Débito bancario"),
+	_("11 - Especial 50%"),
+	_("12 - Editores/combustibles"),
+	_("13 - Sector público"),
+	_("14 - Transporte (socios)"),
+	_("15 - Compensación de deudas"),
+	_("15 - Servicios digitales"),
+	_("16 - Tarjeta de débito"),
+	_("17 - Dinero electrónico"),
+	_("18 - Tarjeta prepago"),
+	_("19 - Tarjeta de crédito"),
+	_("1 - Bienes 30%"),
+	_("2 - Servicios 70%"),
+	_("20 - Otros con utilización del sistema financiero"),
+	_("21 - Endoso de títulos"),
+	_("3 - Honorarios 100%"),
+	_("7 - Retención cero"),
+	_("8 - No procede"),
+	_("9 - Especial 10%"),
+]
