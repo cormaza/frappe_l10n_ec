@@ -243,3 +243,33 @@ class TestAssemblePurchaseInvoice(UnitTestCase):
 			assemble_purchase_invoice(self._mapped(), supplier="", company="Demo Ecuador")
 		with self.assertRaises(ValueError):
 			assemble_purchase_invoice(self._mapped(), supplier="Demo Supplier", company=None)
+
+
+class TestNonFacturaKindsAreRejected(unittest.TestCase):
+	"""Edge pack B (S1/S2): reception only ever builds drafts from 01.
+
+	A supplier NC/ND (or any other kind) must fail loud naming the
+	kind instead of becoming a purchase and doubling credit."""
+
+	def _call(self, kind):
+		return map_received_factura(
+			{"kind": kind},
+			item_code="DEMO-WIDGET",
+			sustento="01 - Con crédito tributario",
+			templates=[],
+		)
+
+	def test_nota_credito_is_rejected_naming_kind(self) -> None:
+		with self.assertRaises(ValueError) as ctx:
+			self._call("nota_credito")
+		self.assertIn("nota_credito", str(ctx.exception))
+
+	def test_nota_debito_is_rejected_naming_kind(self) -> None:
+		with self.assertRaises(ValueError) as ctx:
+			self._call("nota_debito")
+		self.assertIn("nota_debito", str(ctx.exception))
+
+	def test_other_kinds_and_empty_are_rejected(self) -> None:
+		for kind in ("guia", "liquidacion", "retencion", None, ""):
+			with self.assertRaises(ValueError, msg=repr(kind)):
+				self._call(kind)
