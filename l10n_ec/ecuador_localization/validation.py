@@ -394,11 +394,17 @@ def validate_reimbursement_details(doc, method=None) -> None:
 		if _frappe:
 			_frappe.throw(str(exc))
 		raise
-	if _frappe is None:
-		try:
-			doc["sri_reimbursement_total"] = total
-		except Exception:
-			pass
+	# The ATS reads the stored total, so stamp the resolved value on every
+	# ring: item assignment covers Ring-1 dict docs, attribute assignment
+	# covers bench Documents (previously the bench path silently kept 0.0).
+	try:
+		doc["sri_reimbursement_total"] = total
+	except Exception:
+		pass
+	try:
+		doc.sri_reimbursement_total = total
+	except Exception:
+		pass
 
 
 def sync_tax_row_descriptions(doc, method=None, resolve_category_rate=None, company_code=None) -> None:

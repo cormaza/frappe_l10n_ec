@@ -63,7 +63,51 @@ class TestReimbursementTotal(UnitTestCase):
 		self.assertEqual(resolve_reimbursement_total(self._lines(), 10.0, True), 10.0)
 
 
+class _ObjDoc:
+	"""Minimal bench-Document stand-in: .get() plus attribute assignment."""
+
+	def __init__(self, values: dict) -> None:
+		self.__dict__["_values"] = dict(values)
+
+	def get(self, key, default=None):
+		return self._values.get(key, default)
+
+	def __setattr__(self, key, value) -> None:
+		self._values[key] = value
+
+
 class TestReimbursementValidation(UnitTestCase):
+	def test_total_stamped_on_dict_doc(self) -> None:
+		doc = {
+			"doctype": "Purchase Invoice",
+			"sri_is_reimbursement": 1,
+			"sri_reimbursement_details": [{"base_amount": 100.0}, {"base_amount": 50.5}],
+		}
+		validate_reimbursement_details(doc)
+		self.assertEqual(doc["sri_reimbursement_total"], 150.5)
+
+	def test_total_stamped_on_document_object(self) -> None:
+		doc = _ObjDoc(
+			{
+				"doctype": "Purchase Invoice",
+				"sri_is_reimbursement": 1,
+				"sri_reimbursement_details": [{"base_amount": 100.0}],
+			}
+		)
+		validate_reimbursement_details(doc)
+		self.assertEqual(doc.get("sri_reimbursement_total"), 100.0)
+
+	def test_override_total_stamped_when_allowed(self) -> None:
+		doc = {
+			"doctype": "Purchase Invoice",
+			"sri_is_reimbursement": 1,
+			"sri_reimbursement_details": [{"base_amount": 100.0}],
+			"sri_reimbursement_override_value": 10.0,
+			"sri_allow_reimbursement_override": 1,
+		}
+		validate_reimbursement_details(doc)
+		self.assertEqual(doc["sri_reimbursement_total"], 10.0)
+
 	def test_reimbursement_flag_without_lines_fails(self) -> None:
 		with self.assertRaises(ValueError):
 			validate_reimbursement_details({"doctype": "Purchase Invoice", "sri_is_reimbursement": 1})

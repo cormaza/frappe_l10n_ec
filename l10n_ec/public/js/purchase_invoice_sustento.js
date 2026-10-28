@@ -13,22 +13,27 @@ function filter_sustento(frm) {
  const is_return = !!frm.doc.is_return;
  const is_liq = !!frm.doc.sri_is_liquidacion;
  const is_debit = !!frm.doc.sri_is_supplier_debit_note;
- let allowed, defval;
- if (is_return) { allowed = ["01","02","06","07"]; defval = "01"; }
- else if (is_debit) { allowed = ["01","02"]; defval = "01"; }
- else if (is_liq) { allowed = ["02","06","07"]; defval = "02"; }
- else { allowed = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"]; defval = "02"; }
- // Set options filtered
+ let allowed, defcode;
+ if (is_return) { allowed = ["01","02","06","07"]; defcode = "01"; }
+ else if (is_debit) { allowed = ["01","02"]; defcode = "01"; }
+ else if (is_liq) { allowed = ["02","06","07"]; defcode = "02"; }
+ else { allowed = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15"]; defcode = "02"; }
+ // Stored values carry the legend ("02 - Sin crédito tributario"); match
+ // by code so the filter never rewrites a valid stored value to default.
+ const code_of = (opt) => (opt || "").split(" ")[0];
  const df = frappe.meta.get_docfield("Purchase Invoice", "sri_sustento_code", frm.doc.name);
+ let full_opts = [];
  if (df) {
-   const all_opts = "01\n02\n03\n04\n05\n06\n07\n08\n09\n10\n11\n12\n13\n14\n15".split("\n");
-   const filtered = all_opts.filter(c => allowed.includes(c));
+   full_opts = (df.options || "").split("\n");
+   const filtered = full_opts.filter((o) => allowed.includes(code_of(o)));
    df.options = filtered.join("\n");
    frm.refresh_field("sri_sustento_code");
  }
  // Cambia default si el valor actual quedó fuera del allowed o vacío
- if (!frm.doc.sri_sustento_code || !allowed.includes(frm.doc.sri_sustento_code)) {
-   frm.set_value("sri_sustento_code", defval);
+ const cur_code = code_of(frm.doc.sri_sustento_code);
+ if (!frm.doc.sri_sustento_code || !allowed.includes(cur_code)) {
+   const defopt = full_opts.find((o) => code_of(o) === defcode) || defcode;
+   frm.set_value("sri_sustento_code", defopt);
  }
 }
 
