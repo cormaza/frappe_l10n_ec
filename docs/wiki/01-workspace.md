@@ -12,7 +12,9 @@ Customer XML*, ver [página 3](03-factura-venta.md)) y *SRI Import
 Settlement* + *SRI Import Assumption* (ver [página
 6](06-importaciones.md)).
 
-![Sidebar con Retención recibida y liquidación de importación](img/11-workspace-reception.png)
+![Lista de Liquidación de importación SRI con la DAI vinculada](img/11-workspace-reception.png)
+
+La lista de *Retención recibida SRI* nace vacía en demo: se puebla importando el XML del cliente (ver [página 3](03-factura-venta.md)).
 
 ## Qué hay
 

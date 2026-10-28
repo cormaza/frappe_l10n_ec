@@ -14,7 +14,7 @@ asiento de retención fiscal.
   emitimos nosotros la Liquidación de Compras (03).
 - **Nota de débito de proveedor SRI** — solo clasifica como 05 en el ATS;
   no es un comprobante nuestro.
-- **Supplier Auth Number** — autorización impresa en la factura del
+- **Número de autorización del proveedor** — autorización impresa en la factura del
   proveedor; alimenta el ATS de compras.
 - **SRI Is Reimbursement** — se marca cuando el documento es un reembolso:
   como mandante, la `41` del intermediario (sustento según la naturaleza del

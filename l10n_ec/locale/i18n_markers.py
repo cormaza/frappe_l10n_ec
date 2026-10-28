@@ -552,3 +552,10 @@ CUSTOM_FIELD_LABELS_2026_10 = [
 	_("8 - No procede"),
 	_("9 - Especial 10%"),
 ]
+
+SECTION_LABELS_2026_10 = [
+	# Section Break labels missed by earlier extractions (DocType JSON and
+	# custom_fields.py). Extraction markers only; never imported at runtime.
+	_("Tariff Rate"),
+	_("Withholding Slip"),
+]

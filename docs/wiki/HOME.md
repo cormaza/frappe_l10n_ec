@@ -19,6 +19,7 @@ pide el SRI y cómo se ve en la demo.
 ```bash
 dev/demo.sh up      # infra (MariaDB + Redis en Docker)
 dev/demo.sh reset   # sitio `demo` idempotente con datos de ejemplo
+dev/demo.sh validator  # sidecar DIMM (insignia del validador en ATS)
 dev/demo.sh serve   # http://demo:8000 (usuario Administrator)
 ```
 

@@ -64,6 +64,13 @@ cmd_reset() {
 	bench --site "$SITE" execute "frappe.db.set_single_value('System Settings', 'language', 'es')"
 	bench --site "$SITE" execute "[frappe.db.set_value('Installed Application', {'app_name': a}, 'is_setup_complete', 1) for a in ('frappe', 'erpnext', 'l10n_ec')]"
 	cmd_seed
+	# Spanish desk end to end: the site default alone is not enough, the
+	# session user must carry language=es too. The repo es.po is canonical
+	# (sync excludes locale files), so copy it over, compile, and clear.
+	bench --site "$SITE" execute "frappe.db.set_value('User', 'Administrator', 'language', 'es')"
+	cp "$REPO_ROOT/l10n_ec/locale/es.po" "$BENCH_DIR/apps/l10n_ec/l10n_ec/locale/es.po"
+	bench compile-po-to-mo --app l10n_ec --locale es
+	bench --site "$SITE" clear-cache
 }
 
 cmd_seed() {

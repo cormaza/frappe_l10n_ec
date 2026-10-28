@@ -31,12 +31,12 @@ from l10n_ec.sri.form104_layout import build_104_rows
 def execute(filters=None):
 	"""Run the SRI Form 104 Script Report; DIMM-style blocks and labels."""
 	columns = [
-		{"fieldname": "descripcion", "label": _("Description"), "fieldtype": "Data", "width": 440},
-		{"fieldname": "casilleros", "label": _("Boxes"), "fieldtype": "Data", "width": 85},
+		{"fieldname": "descripcion", "label": _("Description"), "fieldtype": "Data", "width": 570},
+		{"fieldname": "casilleros", "label": _("Boxes"), "fieldtype": "Data", "width": 125},
 		{"fieldname": "signo", "label": _("Sign"), "fieldtype": "Data", "width": 45},
-		{"fieldname": "bruto", "label": _("Gross value"), "fieldtype": "Float", "width": 110},
-		{"fieldname": "neto", "label": _("Net value"), "fieldtype": "Float", "width": 110},
-		{"fieldname": "impuesto", "label": _("Tax"), "fieldtype": "Float", "width": 110},
+		{"fieldname": "bruto", "label": _("Gross value"), "fieldtype": "Float", "width": 100},
+		{"fieldname": "neto", "label": _("Net value"), "fieldtype": "Float", "width": 100},
+		{"fieldname": "impuesto", "label": _("Tax"), "fieldtype": "Float", "width": 90},
 	]
 	if frappe is None:  # Ring 1: importable, no database.
 		return columns, []

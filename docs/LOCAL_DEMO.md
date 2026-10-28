@@ -70,6 +70,9 @@ Template titles for the company.
 `127.0.0.1 demo` to `/etc/hosts` (needs sudo, one-time) and open
 `http://demo:8000` (user `Administrator`, password `admin`). Without the
 hosts entry, only CLI (`run-tests`, `execute`, `migrate`) works.
+With several sites in one bench (`demo`, `test_site`, `ec_test`), pin the
+site explicitly — a bare `bench serve` may resolve the wrong site:
+`bench --site demo serve --port 8000` (what `dev/demo.sh serve` runs).
 
 `bench start` (full Procfile) is intentionally not used here: it launches
 its own `redis-server` processes, which requires a real server binary.

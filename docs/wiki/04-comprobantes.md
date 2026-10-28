@@ -34,7 +34,7 @@ informadas para el ATS del mandante, separadas de las bases propias.
 
 ![Comprobante 07 autorizado con régimen exterior](img/07-voucher-07.png)
 
-Referencia la compra `ACC-PINV-2026-00014`, código `07`, **régimen
+Referencia la compra `ACC-PINV-2026-00016`, código `07`, **régimen
 exterior `paraiso`** (paraíso fiscal: sin convenio / con convenio /
 paraíso). Número de autorización y fecha del SRI registrados. Estos
 estados `Autorizado` son representados en demo (ver [HOME](HOME.md)) y

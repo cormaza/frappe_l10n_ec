@@ -21,11 +21,11 @@ from l10n_ec.sri.ats_layout import build_ats_rows
 def execute(filters=None):
 	"""Return columns, data for the SRI ATS month grids."""
 	columns = [
-		{"fieldname": "tercero", "label": _("Counterparty / Section"), "fieldtype": "Data", "width": 330},
-		{"fieldname": "comprobante", "label": _("Voucher"), "fieldtype": "Data", "width": 160},
-		{"fieldname": "base", "label": _("Taxable base"), "fieldtype": "Float", "width": 110},
-		{"fieldname": "iva", "label": _("VAT"), "fieldtype": "Float", "width": 110},
-		{"fieldname": "detalle", "label": _("Detail"), "fieldtype": "Data", "width": 220},
+		{"fieldname": "tercero", "label": _("Counterparty / Section"), "fieldtype": "Data", "width": 340},
+		{"fieldname": "comprobante", "label": _("Voucher"), "fieldtype": "Data", "width": 210},
+		{"fieldname": "base", "label": _("Taxable base"), "fieldtype": "Float", "width": 130},
+		{"fieldname": "iva", "label": _("VAT"), "fieldtype": "Float", "width": 105},
+		{"fieldname": "detalle", "label": _("Detail"), "fieldtype": "Data", "width": 255},
 	]
 	if frappe is None:
 		return columns, []
