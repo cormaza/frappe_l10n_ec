@@ -21,7 +21,8 @@ insignia de frescura («generado justo ahora») y tarjetas de totales.
   total `totbasesImpReemb` y lo reembolsado no suma a las bases propias
   ni al 104. Demo: factura mandante (`001-001-000000020`, sustento 01
   + detalles de reembolso, totbases 250.00) e intermediario
-  (`001-001-000000021`, sustento 08). ATS demo DIMM-válido.
+  (`001-001-000000021`, sustento 08). ATS demo DIMM-válido. Detalle:
+  [página 7](07-reembolsos.md).
 - Importaciones: el 104 trae casilleros dedicados (quedan en 0 hasta que
   exista la DAI liquidada) y el ATS marca las exterior como arriba
   (ver [página 6](06-importaciones.md)).

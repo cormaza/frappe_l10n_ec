@@ -28,6 +28,7 @@ asiento de retención fiscal.
   crédito fiscal: cargalos con plantilla sin IVA acreditable (0% / no objeto /
   exento); el IVA propio (tu comisión o bienes) viaja con su plantilla normal.
   En el ATS, lo reembolsado va en `<reembolsos>` y no suma a tus bases ni al 104.
+  Walkthrough completo: [página 7](07-reembolsos.md).
 - **Considerar para la retención de impuestos** (`sri_assumed_withholding`) —
   retenciones **asumidas**: el proveedor no retiene y nosotros asumimos el
   gasto sin tocar su cuenta por pagar (el pasivo con el proveedor queda

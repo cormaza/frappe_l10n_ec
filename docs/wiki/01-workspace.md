@@ -39,3 +39,4 @@ Settlement* + *SRI Import Assumption* (ver [página
 ## Dónde sigue
 
 - Compras: [página 2](02-factura-compra.md) · Ventas: [página 3](03-factura-venta.md).
+- Importaciones: [página 6](06-importaciones.md) · Reembolsos: [página 7](07-reembolsos.md).

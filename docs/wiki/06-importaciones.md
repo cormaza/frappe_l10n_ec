@@ -1,8 +1,20 @@
-# 6. Importaciones — liquidación y recosteo (pasos 1–4)
+# 6. Importaciones — del exterior al recosteo (pasos 0–5)
 
 Compra al exterior → acumulación de costos (FOB/flete/seguro) → liquidación
 de impuestos (AD VALOREM, FODINFA, IVA art. 59 LRTI) → reportes + recosteo
-con Landed Cost Voucher nativo. Documento: **SRI Import Settlement**.
+con Landed Cost Voucher nativo. Documentos: facturas `990…`, **SRI Import
+Settlement**, LCV nativo. La demo trae el caso completo: mercadería
+`ACC-PINV-2026-00017` (`990001000000004`), flete `…-00018`, seguro
+`…-00019`, liquidación `SRI-IMP-2026-00001` y LCV `MAT-LCV-2026-00001`.
+
+## Paso 0 — La factura exterior (sin IVA local)
+
+Un proveedor extranjero nunca cobra IVA ecuatoriano: sus líneas van sin
+plantilla de impuestos y la app lo exige (falla si traen IVA). El número
+es la corrida exterior de 15 dígitos y la autorización, la de aduana. El
+crédito nace de la liquidación (DAI), nunca de esta factura.
+
+![Factura exterior sin IVA local, número 990](img/22-import-exterior-pi.png)
 
 ## Paso 1 — Vinculá los documentos fuente
 
@@ -37,7 +49,17 @@ monto.
 
 ![Settlement: totales computados y LCV vinculado](img/19-settlement-totals.png)
 
-## Paso 4 — Reglas fiscales
+## Paso 4 — Recosteo: el LCV creado desde la liquidación
+
+El botón de la liquidación genera el LCV nativo contra la recepción (o
+la factura exterior con Update Stock), con flete y seguro como tramos de
+costo. Al enviarlo, ERPNext repostea la valoración (SLE/GLE) con
+prorrateo por monto: en la demo, `DEMO-WIDGET` ×10 a $1,000.00 absorbe
+$250.00 de flete + seguro.
+
+![LCV con tramos de flete y seguro](img/23-import-lcv.png)
+
+## Paso 5 — Reglas fiscales
 
 - La factura del proveedor extranjero nunca lleva IVA local: sus líneas
   van sin plantilla y la app lo exige. El crédito nace de la liquidación
