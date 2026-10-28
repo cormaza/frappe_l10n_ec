@@ -511,3 +511,53 @@ class TestMultiRateSingleInvoice(UnitTestCase):
 		with self.assertRaises(SriVoucherError) as ctx:
 			self._collect(rows)
 		self.assertIn("9", str(ctx.exception))
+
+
+class TestMixedHolidayAndStandardMonth(UnitTestCase):
+	"""Edge pack F (S1/S2): one month with 15%, 8% holiday and 0% sales.
+
+	Standard 15% feeds 401/411/421, holiday 8% feeds variable 410/420/430,
+	0% dilutes factor 563 to 0.75; each rate stays in its own row."""
+
+	def test_mixed_rates_share_the_month(self) -> None:
+		result = collect_104(
+			_ledger(
+				sales_taxes=[
+					{"code": "2", "rate_code": "4", "base": 1000.0, "value": 150.0},
+					{"code": "2", "rate_code": "8", "tarifa": 8.0, "base": 500.0, "value": 40.0},
+					{"code": "2", "rate_code": "0", "base": 500.0, "value": 0.0},
+				],
+				purchase_taxes=[],
+				iva_deduction_rows=[],
+				settlements=[],
+				received_refs=[],
+			),
+			2026,
+			3,
+		)
+		self.assertEqual(result["401"], 1000.0)
+		self.assertEqual(result["411"], 1000.0)
+		self.assertEqual(result["421"], 150.0)
+		self.assertEqual(result["410"], 500.0)
+		self.assertEqual(result["420"], 500.0)
+		self.assertEqual(result["430"], 40.0)
+		self.assertEqual(result["403"], 500.0)
+		self.assertEqual(result["419"], 2000.0)
+		self.assertEqual(result["563"], 0.75)
+
+	def test_holiday_without_tarifa_still_fails_in_a_mix(self) -> None:
+		with self.assertRaises(SriVoucherError):
+			collect_104(
+				_ledger(
+					sales_taxes=[
+						{"code": "2", "rate_code": "4", "base": 100.0, "value": 15.0},
+						{"code": "2", "rate_code": "8", "base": 50.0, "value": 4.0},
+					],
+					purchase_taxes=[],
+					iva_deduction_rows=[],
+					settlements=[],
+					received_refs=[],
+				),
+				2026,
+				3,
+			)

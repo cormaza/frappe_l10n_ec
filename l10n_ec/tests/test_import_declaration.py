@@ -92,8 +92,12 @@ class TestTwoPartidaDaiSelfHeals(unittest.TestCase):
 		return crosscheck_settlement(
 			_costs(),
 			{"ad_valorem": rate, "fodinfa": 0.5, "iva": 15.0},
-			{"dai_ad_valorem": declared_ad_valorem, "dai_fodinfa": 6.25,
-			 "dai_iva": 207.19, "dai_total": 338.44},
+			{
+				"dai_ad_valorem": declared_ad_valorem,
+				"dai_fodinfa": 6.25,
+				"dai_iva": 207.19,
+				"dai_total": 338.44,
+			},
 		)
 
 	def test_first_partida_matches_at_10pct(self) -> None:
