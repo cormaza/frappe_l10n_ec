@@ -178,3 +178,38 @@ class TestAtsAnnulledSourcing(UnitTestCase):
 
 if __name__ == "__main__":
 	unittest.main()
+
+
+class TestAnnulledKindsFeedAnulados(UnitTestCase):
+	"""Edge pack C (S1/S2): annulled 03/06/07 feed ATS anulados like 01.
+
+	Each voided kind keeps its tipoComprobante plus the SRI number split
+	and the authorization that proves it fiscally existed; a garbage
+	number still fails loud instead of filing a broken range."""
+
+	def _row(self, code, number):
+		from l10n_ec.ecuador_localization.ats_reader import annulled_row
+
+		voucher = {
+			"sri_doc_code": code,
+			"sri_number": number,
+			"authorization_number": "AUTH-" + code,
+			"voucher_state": "Annulled",
+		}
+		return collect_cancelled(annulled_row(voucher))
+
+	def test_liquidacion_guia_and_retencion_keep_kind_and_auth(self) -> None:
+		cases = (("03", "007"), ("06", "042"), ("07", "103"))
+		for code, sequential in cases:
+			with self.subTest(code=code):
+				row = self._row(code, "001-002-00000" + sequential)
+				self.assertEqual(row["tipoComprobante"], code)
+				self.assertEqual(row["establecimiento"], "001")
+				self.assertEqual(row["puntoEmision"], "002")
+				self.assertEqual(row["secuencialInicio"], "00000" + sequential)
+				self.assertEqual(row["secuencialFin"], "00000" + sequential)
+				self.assertEqual(row["autorizacion"], "AUTH-" + code)
+
+	def test_garbage_number_fails_instead_of_filing_range(self) -> None:
+		with self.assertRaises(SriVoucherError):
+			self._row("06", "not-a-number")
