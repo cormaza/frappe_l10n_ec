@@ -77,6 +77,51 @@ def check_allocation(allocation: dict, invoices: dict) -> None:
 			raise ValueError(_("IVA {} on '{}' exceeds its paid IVA {}.").format(iva_value, si_name, top))
 
 
+def check_batch_totals(allocations: list, invoices: dict) -> None:
+	"""Cap summed IR/IVA per invoice across every row of one slip (pure).
+
+	`check_allocation` validates each row alone, so two rows on the same
+	invoice each under the cap would pass while their sum exceeds it.
+	This guard totals each leg per invoice and fails naming the invoice.
+	"""
+	from l10n_ec.sri.withholding_concepts import resolve_concepto
+
+	totals: dict[str, dict[str, float]] = {}
+	for allocation in allocations or []:
+		si_name = (allocation or {}).get("sales_invoice") or ""
+		entry = totals.setdefault(si_name, {"ir": 0.0, "iva": 0.0})
+		entry["ir"] = round(entry["ir"] + float((allocation or {}).get("ir_value") or 0.0), 2)
+		entry["iva"] = round(entry["iva"] + float((allocation or {}).get("iva_value") or 0.0), 2)
+	for si_name, legs in totals.items():
+		invoice = (invoices or {}).get(si_name)
+		if invoice is None:
+			raise ValueError(_("Allocation references unknown invoice '{}'.").format(si_name))
+		if legs["ir"]:
+			concepto = (invoice.get("ir_concepto") or "").strip()
+			if not concepto:
+				raise ValueError(
+					_("Invoice '{}' needs an IR concepto before withholding IR.").format(si_name)
+				)
+			_impuesto, rate, _description = resolve_concepto(concepto)
+			top = round(float(invoice.get("net_total") or 0.0) * rate / 100, 2)
+			if legs["ir"] - top > 0.005:
+				raise ValueError(
+					_("Batch IR {} on '{}' exceeds its base {} x {}%.").format(
+						legs["ir"], si_name, invoice.get("net_total"), rate
+					)
+				)
+		if legs["iva"]:
+			if not (invoice.get("iva_concepto") or "").strip():
+				raise ValueError(
+					_("Invoice '{}' needs an IVA concepto before withholding IVA.").format(si_name)
+				)
+			top = round(float(invoice.get("iva_paid") or 0.0), 2)
+			if legs["iva"] - top > 0.005:
+				raise ValueError(
+					_("Batch IVA {} on '{}' exceeds its paid IVA {}.").format(legs["iva"], si_name, top)
+				)
+
+
 def check_siblings(allocations: list, invoices: dict) -> None:
 	"""Every allocated invoice shares one customer and company (pure, V4)."""
 	customers = set()
@@ -155,6 +200,17 @@ def validate_allocations(doc) -> None:
 				},
 				invoices,
 			)
+		check_batch_totals(
+			[
+				{
+					"sales_invoice": row.get("sales_invoice"),
+					"ir_value": row.get("ir_value"),
+					"iva_value": row.get("iva_value"),
+				}
+				for row in rows
+			],
+			invoices,
+		)
 		if doc.get("customer") and any(
 			(entry or {}).get("customer") != doc.get("customer") for entry in invoices.values()
 		):
