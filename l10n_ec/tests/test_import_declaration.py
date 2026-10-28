@@ -78,3 +78,46 @@ class TestCrosscheck(UnitTestCase):
 
 	def test_tolerance_is_documented_one_dollar(self) -> None:
 		self.assertEqual(CROSSCHECK_TOLERANCE, 1.00)
+
+
+class TestTwoPartidaDaiSelfHeals(unittest.TestCase):
+	"""Edge pack D (S1/S2/S6): one DAI, two partidas, stale assumption fails loud.
+
+	Partida X settles clean at 10%; partida Y moved to 15% but the company
+	assumption still estimates 10%: the crosscheck fails naming
+	dai_ad_valorem, and re-running with the DAI rate passes (self-heal).
+	Covers the T7 tariff-move story at the arithmetic level."""
+
+	def _check(self, rate, declared_ad_valorem):
+		return crosscheck_settlement(
+			_costs(),
+			{"ad_valorem": rate, "fodinfa": 0.5, "iva": 15.0},
+			{"dai_ad_valorem": declared_ad_valorem, "dai_fodinfa": 6.25,
+			 "dai_iva": 207.19, "dai_total": 338.44},
+		)
+
+	def test_first_partida_matches_at_10pct(self) -> None:
+		result = self._check(10.0, 125.0)
+		self.assertTrue(result["matched"])
+		self.assertEqual(result["differences"], {})
+
+	def test_stale_assumption_fails_naming_ad_valorem(self) -> None:
+		# DAI says 15% (187.50) but the estimate still runs 10%.
+		with self.assertRaises(ValueError) as ctx:
+			self._check(10.0, 187.50)
+		self.assertIn("dai_ad_valorem", str(ctx.exception))
+
+	def test_corrected_rate_self_heals(self) -> None:
+		# Same DAI row, estimate updated to the arbitrating 15% rate.
+		declared = {
+			"dai_ad_valorem": 187.50,
+			"dai_fodinfa": 6.25,
+			"dai_iva": 216.56,
+			"dai_total": 410.31,
+		}
+		result = crosscheck_settlement(
+			_costs(),
+			{"ad_valorem": 15.0, "fodinfa": 0.5, "iva": 15.0},
+			declared,
+		)
+		self.assertTrue(result["matched"])
