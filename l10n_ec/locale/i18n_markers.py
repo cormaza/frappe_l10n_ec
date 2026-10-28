@@ -65,6 +65,7 @@ CUSTOM_FIELD_STRINGS = [
 	),
 	_("SRI IVA Concepto"),
 	_("SRI Sustento Code"),
+	_("SRI Reimbursement"),
 	_("SRI Is Reimbursement"),
 	_("SRI Reimbursement Details"),
 	_("SRI Reimbursement Total"),

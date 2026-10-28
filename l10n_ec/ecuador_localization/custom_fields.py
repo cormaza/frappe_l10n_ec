@@ -125,9 +125,15 @@ CUSTOM_FIELDS = {
 			"description": "SRI Tabla 23 IVA withholding concepto withheld by the customer; feeds the received-withholding settlement entry (1 bienes 30%, 2 servicios 70%, 3 honorarios 100%); leave empty when no IVA withholding applies.",
 		},
 		{
+			"fieldname": "sri_section_reimbursement",
+			"fieldtype": "Section Break",
+			"insert_after": "sri_iva_concepto",
+			"label": "SRI Reimbursement",
+		},
+		{
 			"fieldname": "sri_is_reimbursement",
 			"fieldtype": "Check",
-			"insert_after": "sri_iva_concepto",
+			"insert_after": "sri_section_reimbursement",
 			"label": "SRI Is Reimbursement",
 			"default": "0",
 			"description": "Reimbursement voucher (41 received as mandante, 41 emitted as intermediary); drives sustento cross-check and ATS reembolsos.",
@@ -149,9 +155,14 @@ CUSTOM_FIELDS = {
 			"description": "Calculated totbasesImpReemb from reimbursement details.",
 		},
 		{
+			"fieldname": "sri_col_break_reimb_total",
+			"fieldtype": "Column Break",
+			"insert_after": "sri_reimbursement_total",
+		},
+		{
 			"fieldname": "sri_allow_reimbursement_override",
 			"fieldtype": "Check",
-			"insert_after": "sri_reimbursement_total",
+			"insert_after": "sri_col_break_reimb_total",
 			"label": "Allow Reimbursement Override",
 			"default": "0",
 			"description": "Opt-in to force a manual reimbursement total instead of the calculated one.",
@@ -252,23 +263,28 @@ CUSTOM_FIELDS = {
 		{
 			"fieldname": "sri_is_liquidacion",
 			"fieldtype": "Check",
-			"insert_after": "bill_no",
+			"insert_after": "sri_sustento_code",
 			"label": "SRI Liquidacion",
 			"description": "No supplier invoice: we emit the Liquidacion de Compra (03).",
 		},
 		{
-			"fieldname": "sri_is_supplier_debit_note",
-			"fieldtype": "Check",
+			"fieldname": "sri_col_break_supplier",
+			"fieldtype": "Column Break",
 			"insert_after": "sri_is_liquidacion",
-			"label": "SRI Supplier Debit Note",
-			"description": "Supplier Nota de Debito: ATS classification only, no voucher from us.",
 		},
 		{
 			"fieldname": "sri_supplier_auth_number",
 			"fieldtype": "Data",
-			"insert_after": "bill_no",
+			"insert_after": "sri_col_break_supplier",
 			"label": "Supplier Auth Number",
 			"description": "SRI authorization number printed on the supplier invoice; feeds ATS compras.",
+		},
+		{
+			"fieldname": "sri_is_supplier_debit_note",
+			"fieldtype": "Check",
+			"insert_after": "sri_supplier_auth_number",
+			"label": "SRI Supplier Debit Note",
+			"description": "Supplier Nota de Debito: ATS classification only, no voucher from us.",
 		},
 		{
 			"fieldname": "sri_assumed_withholding",
@@ -279,18 +295,29 @@ CUSTOM_FIELDS = {
 			"description": "The agent absorbs the withholding: payable intact, withheld total to non-deductible expense (520230).",
 		},
 		{
+			"fieldname": "sri_col_break_taxes",
+			"fieldtype": "Column Break",
+			"insert_after": "sri_assumed_withholding",
+		},
+		{
 			"fieldname": "sri_iva_concepto",
 			"fieldtype": "Select",
-			"insert_after": "taxes_and_charges",
+			"insert_after": "sri_col_break_taxes",
 			"label": "SRI IVA Concepto",
 			"default": "",
 			"options": "\n1 - Bienes 30%\n2 - Servicios 70%\n3 - Honorarios 100%\n7 - Retención cero\n8 - No procede\n9 - Especial 10%\n10 - Especial 20%\n11 - Especial 50%",
 			"description": "SRI Tabla 23 IVA withholding concepto driving the automatic deduction row and the voucher (1 bienes 30%, 2 servicios 70%, 3 honorarios 100%); leave empty when no IVA withholding applies.",
 		},
 		{
+			"fieldname": "sri_section_reimbursement",
+			"fieldtype": "Section Break",
+			"insert_after": "sri_iva_concepto",
+			"label": "SRI Reimbursement",
+		},
+		{
 			"fieldname": "sri_is_reimbursement",
 			"fieldtype": "Check",
-			"insert_after": "sri_iva_concepto",
+			"insert_after": "sri_section_reimbursement",
 			"label": "SRI Is Reimbursement",
 			"default": "0",
 			"description": "Reimbursement purchase (41 received as mandante); drives sustento cross-check and ATS reembolsos.",
@@ -312,9 +339,14 @@ CUSTOM_FIELDS = {
 			"description": "Calculated totbasesImpReemb from reimbursement details.",
 		},
 		{
+			"fieldname": "sri_col_break_reimb_total",
+			"fieldtype": "Column Break",
+			"insert_after": "sri_reimbursement_total",
+		},
+		{
 			"fieldname": "sri_allow_reimbursement_override",
 			"fieldtype": "Check",
-			"insert_after": "sri_reimbursement_total",
+			"insert_after": "sri_col_break_reimb_total",
 			"label": "Allow Reimbursement Override",
 			"default": "0",
 			"description": "Opt-in to force a manual reimbursement total instead of the calculated one.",
@@ -424,6 +456,21 @@ def create_sri_custom_fields() -> None:
 	}
 	if present:
 		create_custom_fields(present, ignore_validate=True, update=True)
+
+
+# Custom fields this app used to own but no longer defines. Frappe's
+# `create_custom_fields(update=True)` never deletes, so a removed layout
+# break would linger as an orphan column on existing sites. Pruned on
+# migrate; keep entries here (never silently drop the cleanup).
+RETIRED_SRI_CUSTOM_FIELDS = (("Purchase Invoice", "sri_col_break_supplier_flags"),)
+
+
+def prune_retired_sri_custom_fields() -> None:
+	"""Delete exactly the retired custom fields listed above (migrate path)."""
+	if frappe is None:  # pragma: no cover
+		raise RuntimeError("frappe is required to prune custom fields.")
+	for doctype, fieldname in RETIRED_SRI_CUSTOM_FIELDS:
+		frappe.db.delete("Custom Field", {"dt": doctype, "fieldname": fieldname})
 
 
 def pending_custom_fields() -> list:

@@ -3,6 +3,7 @@
 from l10n_ec.ecuador_localization.custom_fields import (
 	create_sri_custom_fields,
 	delete_sri_custom_fields,
+	prune_retired_sri_custom_fields,
 )
 
 # (doctype, section-break fieldname) pairs whose taxes section collapses.
@@ -133,6 +134,7 @@ def after_install() -> None:
 
 def after_migrate() -> None:
 	create_sri_custom_fields()
+	prune_retired_sri_custom_fields()
 	setup_collapsible_tax_sections()
 	setup_tax_grid_widths()
 	setup_tax_grid_list_view()
