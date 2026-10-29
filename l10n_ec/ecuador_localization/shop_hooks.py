@@ -94,7 +94,13 @@ def check_shop_contact(doc, method=None) -> None:
 		return
 	identification_type, tax_id = _shop_customer(doc)
 	try:
-		validate_final_consumer_amount(identification_type, tax_id, doc.get("grand_total"))
+		validate_final_consumer_amount(
+			identification_type,
+			tax_id,
+			doc.get("base_grand_total")
+			if doc.get("base_grand_total") is not None
+			else doc.get("grand_total"),
+		)
 	except ValueError as exc:
 		frappe.throw(str(exc))
 

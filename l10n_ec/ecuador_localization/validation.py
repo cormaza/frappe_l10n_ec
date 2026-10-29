@@ -147,8 +147,9 @@ def validate_final_consumer_amount(
 	"""Reject over-threshold invoices to the generic final consumer.
 
 	Only the generic consumer identity (type `07` or the fixed ID) is
-	checked; identified buyers are unaffected. Multi-currency conversion
-	is out of scope: totals compare directly against the USD threshold.
+	checked; identified buyers are unaffected. Callers pass the total in
+	company currency (`base_grand_total`); the USD threshold comparison is
+	multi-currency safe because ERPNext converts at the invoice rate.
 	"""
 	if not is_generic_final_consumer(identification_type_code, tax_id):
 		return

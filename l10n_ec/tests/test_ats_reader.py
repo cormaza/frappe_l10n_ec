@@ -77,6 +77,10 @@ class TestPurchaseRow(unittest.TestCase):
 		self.assertNotIn("withholdings", row)
 		self.assertNotIn("retencion", row)
 
+	def test_prefers_base_grand_total_for_payments(self) -> None:
+		row = purchase_row(self._pi(grand_total=1000.0, base_grand_total=1080.0), self._supplier(), None)
+		self.assertEqual(row["payments"][0]["amount"], 1080.0)
+
 
 class TestSaleRow(unittest.TestCase):
 	def test_row_without_settlement_has_no_received(self) -> None:

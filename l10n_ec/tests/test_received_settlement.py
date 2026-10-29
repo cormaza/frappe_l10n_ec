@@ -122,6 +122,17 @@ class TestBuildSettlement(UnitTestCase):
 		self.assertEqual(credit, [250.0])
 		self.assertIn("ACC-SINV-0001", settlement["user_remark"])
 
+	@patch("l10n_ec.ecuador_localization.voucher_flow._template_rate", return_value=15.0)
+	def test_ir_uses_base_net_total(self, _rate) -> None:
+		doc = self._si(base_net_total=1080.0, net_total=1000.0)
+		settlement = build_settlement_for_si(doc, **self._resolvers())
+		debits = sorted(
+			line.get("debit_in_account_currency", 0)
+			for line in settlement["accounts"]
+			if "debit_in_account_currency" in line
+		)
+		self.assertIn(round(1080.0 * 10 / 100, 2), debits)
+
 	def test_no_withholdings_returns_none(self) -> None:
 		doc = self._si(sri_iva_concepto="", sri_ir_concepto="")
 		self.assertIsNone(build_settlement_for_si(doc, **self._resolvers()))

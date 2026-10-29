@@ -37,7 +37,9 @@ def validate_sri_invoice(doc, method=None) -> None:
 		validate_final_consumer_amount(
 			identification_type,
 			tax_id,
-			doc.get("grand_total"),
+			doc.get("base_grand_total")
+			if doc.get("base_grand_total") is not None
+			else doc.get("grand_total"),
 		)
 	except ValueError as exc:
 		frappe.throw(str(exc))
@@ -54,8 +56,14 @@ def _validate_consolidated_tickets(doc, identification_type, tax_id) -> None:
 		tickets = frappe.get_all(
 			"POS Invoice",
 			filters={"consolidated_invoice": doc.get("name"), "docstatus": 1},
-			pluck="grand_total",
+			pluck="base_grand_total",
 		)
+		if not tickets or any(v is None for v in tickets):
+			tickets = frappe.get_all(
+				"POS Invoice",
+				filters={"consolidated_invoice": doc.get("name"), "docstatus": 1},
+				pluck="grand_total",
+			)
 		validate_pos_tickets(identification_type, tax_id, tickets or [])
 	except ValueError as exc:
 		frappe.throw(str(exc))
@@ -81,7 +89,11 @@ def validate_pos_ticket(doc, method=None) -> None:
 		validate_pos_tickets(
 			frappe.db.get_value("Customer", customer, "sri_identification_type"),
 			frappe.db.get_value("Customer", customer, "tax_id"),
-			[doc.get("grand_total") or 0.0],
+			[
+				doc.get("base_grand_total")
+				if doc.get("base_grand_total") is not None
+				else doc.get("grand_total") or 0.0
+			],
 		)
 	except ValueError as exc:
 		frappe.throw(str(exc))

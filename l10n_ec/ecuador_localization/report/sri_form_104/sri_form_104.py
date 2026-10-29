@@ -96,7 +96,13 @@ def _fetch_month_ledger(company: str, year: int, month: int) -> dict:
 				if not template:
 					continue
 				code, rate_code = tax_codes_for_template(template)
-				base = item.get("net_amount") or item.get("amount") or 0.0
+				base = (
+					item.get("base_net_amount")
+					if item.get("base_net_amount") is not None
+					else item.get("base_amount")
+					if item.get("base_amount") is not None
+					else item.get("net_amount") or item.get("amount") or 0.0
+				)
 				tarifa = _template_rate(template)
 				rows.append(
 					{
@@ -136,7 +142,14 @@ def _fetch_month_ledger(company: str, year: int, month: int) -> dict:
 				if row.get("add_deduct_tax") != "Deduct" or row.get("account_head") != deduction_account:
 					continue
 				deduction_rows.append(
-					{"rate": row.get("rate") or 0.0, "amount": abs(row.get("tax_amount") or 0.0)}
+					{
+						"rate": row.get("rate") or 0.0,
+						"amount": abs(
+							row.get("base_tax_amount")
+							if row.get("base_tax_amount") is not None
+							else row.get("tax_amount") or 0.0
+						),
+					}
 				)
 
 	asset_numbers = {}
@@ -154,10 +167,13 @@ def _fetch_month_ledger(company: str, year: int, month: int) -> dict:
 			doc = frappe.get_doc("Journal Entry", name)
 			for row in doc.accounts:
 				if row.get("account") in asset_numbers:
+					debit = row.get("debit")
+					if debit is None:
+						debit = row.get("debit_in_account_currency") or 0.0
 					settlements.append(
 						{
 							"account_number": asset_numbers[row.get("account")],
-							"debit": row.get("debit_in_account_currency") or 0.0,
+							"debit": debit,
 						}
 					)
 

@@ -228,27 +228,39 @@ class SRIImportSettlement(Document):
 	def _gather_costs(self) -> dict:
 		"""Accumulate FOB/freight/insurance from linked documents (bench only).
 
-		FOB prefers the exterior invoice ``net_total`` (taxes excluded),
-		then the receipt, then the order. All legs must share one currency;
-		a mixed-currency settlement fails loud instead of converting silently.
+		FOB prefers the exterior invoice ``base_net_total`` (taxes excluded,
+		company currency), then the receipt, then the order. Each leg converts
+		by its own rate: multi-currency legs sum in company currency.
 		"""
 		legs: dict[str, float] = {}
-		currencies = set()
 		for field in ("purchase_invoice", "purchase_receipt", "purchase_order"):
 			name = getattr(self, field, None)
 			if name and "fob" not in legs:
-				fob, currency = self._leg_net_total(field, name)
-				legs["fob"] = fob
-				currencies.add(currency)
+				legs["fob"] = self._leg_company_total(field, name)
 		for field, leg in (("freight_invoice", "freight"), ("insurance_invoice", "insurance")):
 			name = getattr(self, field, None)
 			if name:
-				amount, currency = self._leg_net_total(field, name)
-				legs[leg] = amount
-				currencies.add(currency)
-		if len(currencies) > 1:
-			frappe.throw(f"Settlement legs mix currencies: {sorted(currencies)}. Use one currency.")
+				legs[leg] = self._leg_company_total(field, name)
 		return legs
+
+	def _leg_company_total(self, field: str, name: str) -> float:
+		"""Leg total in company currency (``base_`` first, converted fallback)."""
+		values = frappe.db.get_value(
+			LINK_DOCTYPES[field],
+			name,
+			["base_net_total", "net_total", "base_total", "total", "conversion_rate"],
+		)
+		if values is None:  # pragma: no cover - existence proven upstream
+			frappe.throw(f"{LINK_DOCTYPES[field]} '{name}' linked as {field} does not exist.")
+		base_net, net, base_total, total, conversion = values
+		if base_net is not None:
+			return float(base_net or 0.0)
+		if base_total is not None:
+			return float(base_total or 0.0)
+		amount = float(net if net is not None else total or 0.0)
+		if conversion:
+			return round(amount * float(conversion), 2)
+		return amount
 
 	def _leg_net_total(self, field: str, name: str) -> tuple:
 		values = frappe.db.get_value(LINK_DOCTYPES[field], name, ["net_total", "currency"])

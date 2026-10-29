@@ -670,9 +670,11 @@ def create_and_process(
 			"Customer", ref.customer, ["sri_identification_type", "tax_id"], as_dict=True
 		)
 		if source_doctype and source_name:
-			total = frappe.db.get_value(source_doctype, source_name, "grand_total")
+			total = frappe.db.get_value(source_doctype, source_name, "base_grand_total")
+			if total is None:
+				total = frappe.db.get_value(source_doctype, source_name, "grand_total")
 		else:
-			total = ref.grand_total
+			total = _doc_company_total(ref, "grand_total", "base_grand_total")
 		try:
 			validate_factura_cf_total(
 				(buyer or {}).get("sri_identification_type"), (buyer or {}).get("tax_id"), total
@@ -793,9 +795,17 @@ def create_and_process_consolidated(
 			_("Consolidated invoice '{}' links no submitted POS tickets.").format(sales_invoice)
 		)
 	bases = [
-		round(float(frappe.db.get_value("POS Invoice", name, "grand_total") or 0.0), 2) for name in tickets
+		round(
+			float(
+				frappe.db.get_value("POS Invoice", name, "base_grand_total")
+				or frappe.db.get_value("POS Invoice", name, "grand_total")
+				or 0.0
+			),
+			2,
+		)
+		for name in tickets
 	]
-	if round(sum(bases), 2) != round(float(si.get("grand_total") or 0.0), 2):
+	if round(sum(bases), 2) != round(float(si.get("base_grand_total") or si.get("grand_total") or 0.0), 2):
 		raise SriVoucherError(
 			_("Ticket totals {} do not match consolidated '{}' ({}); emission refused.").format(
 				bases, sales_invoice, si.get("grand_total")
@@ -1073,7 +1083,34 @@ def _default_company_address(company: str):
 	return get_default_address("Company", company)
 
 
+def _row_val(row, *names):
+	"""First non-None value across attribute/dict access (company currency first)."""
+	for name in names:
+		value = getattr(row, name, None)
+		if value is None and hasattr(row, "get"):
+			try:
+				value = row.get(name)
+			except Exception:
+				value = None
+		if value is not None:
+			return value
+	return None
+
+
+def _row_base_amount(row) -> float:
+	"""Line subtotal in company currency (`base_` first, legacy `amount` fallback)."""
+	value = _row_val(row, "base_amount", "base_net_amount", "amount")
+	return float(value or 0.0)
+
+
+def _row_unit_price(row) -> float:
+	"""Line unit price in company currency (`base_rate` first, legacy `rate` fallback)."""
+	value = _row_val(row, "base_rate", "base_net_rate", "rate")
+	return float(value or 0.0)
+
+
 def _invoice_line(row) -> dict:
+	base = _row_base_amount(row)
 	taxes = []
 	if getattr(row, "item_tax_template", None):
 		template = frappe.get_doc("Item Tax Template", row.item_tax_template)
@@ -1082,8 +1119,8 @@ def _invoice_line(row) -> dict:
 			{
 				"template": row.item_tax_template,
 				"rate": rate,
-				"base": row.amount,
-				"value": round(row.amount * rate / 100, 2),
+				"base": base,
+				"value": round(base * rate / 100, 2),
 			}
 		]
 	return {
@@ -1091,25 +1128,70 @@ def _invoice_line(row) -> dict:
 		"aux_code": "",
 		"description": row.description,
 		"qty": row.qty,
-		"unit_price": row.rate,
-		"discount": row.discount_amount or 0.0,
-		"subtotal": row.amount,
+		"unit_price": _row_unit_price(row),
+		"discount": _row_val(row, "distributed_discount_amount", "discount_amount") or 0.0,
+		"subtotal": base,
 		"taxes": taxes,
 	}
+
+
+def _doc_company_total(doc, transaction_field: str, base_field: str) -> float:
+	"""Document total in company currency (`base_` first, legacy fallback)."""
+	value = doc.get(base_field) if hasattr(doc, "get") else getattr(doc, base_field, None)
+	if value is None:
+		value = doc.get(transaction_field) if hasattr(doc, "get") else getattr(doc, transaction_field, 0.0)
+	return float(value or 0.0)
+
+
+def _doc_company_discount(source) -> float:
+	"""Discount in company currency (scales by conversion when no base field)."""
+	get = source.get if hasattr(source, "get") else lambda k, d=None: getattr(source, k, d)
+	base_discount = get("base_discount_amount")
+	if base_discount is not None:
+		return float(base_discount or 0.0)
+	discount = float(get("discount_amount") or 0.0)
+	grand = get("grand_total")
+	base_grand = get("base_grand_total")
+	if grand and base_grand is not None and float(grand or 0.0):
+		return round(discount * float(base_grand) / float(grand), 2)
+	conversion = get("conversion_rate")
+	if get("currency") and conversion:
+		return round(discount * float(conversion), 2)
+	return discount
+
+
+def _withholding_doc_totals(purchase: dict) -> tuple:
+	"""Sustento totals in company currency (`base_` first, legacy fallback)."""
+	get = purchase.get if hasattr(purchase, "get") else lambda k, d=None: getattr(purchase, k, d)
+	subtotal = get("base_total")
+	if subtotal is None:
+		subtotal = get("subtotal")
+	total = get("base_grand_total")
+	if total is None:
+		total = get("total")
+	return (float(subtotal or 0.0), float(total or 0.0))
 
 
 def _abs_row(row):
 	"""Positive-amount view of a return line: SRI 04 carries no minus sign."""
 	from types import SimpleNamespace
 
+	base_amount = _row_base_amount(row)
+	base_price = _row_unit_price(row)
 	return SimpleNamespace(
 		item_tax_template=getattr(row, "item_tax_template", None),
 		amount=abs(row.amount),
+		base_amount=abs(base_amount),
+		base_net_amount=abs(base_amount),
 		item_code=row.item_code,
 		description=row.description,
 		qty=abs(row.qty),
 		rate=row.rate,
+		base_rate=base_price,
 		discount_amount=abs(row.discount_amount or 0.0),
+		distributed_discount_amount=abs(
+			_row_val(row, "distributed_discount_amount", "discount_amount") or 0.0
+		),
 	)
 
 
@@ -1154,14 +1236,17 @@ def _invoice_dict(
 	credit = doc.sri_doc_code == "04"
 	rows = [_abs_row(row) if credit else row for row in source.items]
 	pos = abs if credit else (lambda v: v)
+	company_subtotal = _doc_company_total(source, "total", "base_total")
+	company_discount = _doc_company_discount(source)
+	company_total = _doc_company_total(source, "grand_total", "base_grand_total")
 	base: dict = {
 		"doctype": doc.reference_doctype,
 		"cod_doc": doc.sri_doc_code,
 		"issue_date": source.posting_date.strftime("%d/%m/%Y"),
-		"subtotal": pos(source.total),
-		"discount": pos(source.discount_amount or 0.0),
-		"total": pos(source.grand_total),
-		"payments": [{"method": payment_method, "amount": pos(source.grand_total)}],
+		"subtotal": pos(company_subtotal),
+		"discount": pos(float(company_discount or 0.0)),
+		"total": pos(company_total),
+		"payments": [{"method": payment_method, "amount": pos(company_total)}],
 		"lines": [_invoice_line(row) for row in rows],
 	}
 	if doc.sri_doc_code == "06":
@@ -1219,12 +1304,21 @@ def _invoice_dict(
 		)
 	if doc.sri_doc_code == "04":
 		base.update(
-			{"adjustment_value": abs(ref.grand_total), "reason": reason or "Devolucion de mercaderia"}
+			{
+				"adjustment_value": abs(_doc_company_total(ref, "grand_total", "base_grand_total")),
+				"reason": reason or "Devolucion de mercaderia",
+			}
 		)
 	if doc.sri_doc_code == "05":
 		if not reasons:
 			raise SriVoucherError(_("Debit notes need explicit reasons [{reason, value}]."))
-		base.update({"taxes": base.pop("tax_totals"), "total_value": ref.grand_total, "reasons": reasons})
+		base.update(
+			{
+				"taxes": base.pop("tax_totals"),
+				"total_value": _doc_company_total(ref, "grand_total", "base_grand_total"),
+				"reasons": reasons,
+			}
+		)
 	if doc.sri_doc_code == "07":
 		if withholding_codes is None:
 			raise SriVoucherError(
@@ -1355,10 +1449,12 @@ def _withholding_subject_and_docs(
 		"number": ref.bill_no,
 		"issue_date": ref.posting_date.strftime("%d/%m/%Y"),
 		"auth_number": "0000000000",
-		"subtotal": ref.total,
-		"total": ref.grand_total,
+		"subtotal": _doc_company_total(ref, "total", "base_total"),
+		"total": _doc_company_total(ref, "grand_total", "base_grand_total"),
 		"doc_taxes": doc_taxes,
-		"payments": [{"method": payment_method, "amount": ref.grand_total}],
+		"payments": [
+			{"method": payment_method, "amount": _doc_company_total(ref, "grand_total", "base_grand_total")}
+		],
 	}
 	native = [
 		{
@@ -1452,9 +1548,10 @@ def _guia_recipient_and_carrier(doc, ref, guia_data: dict) -> dict:
 
 
 def base_lines(ref) -> list:
-	"""Normalized template-style lines for sustento doc taxes."""
+	"""Normalized template-style lines for sustento doc taxes (company currency)."""
 	lines = []
 	for row in ref.items:
+		base = _row_base_amount(row)
 		taxes = []
 		if getattr(row, "item_tax_template", None):
 			rate = _template_rate(row.item_tax_template)
@@ -1462,8 +1559,8 @@ def base_lines(ref) -> list:
 				{
 					"template": row.item_tax_template,
 					"rate": rate,
-					"base": row.amount,
-					"value": round(row.amount * rate / 100, 2),
+					"base": base,
+					"value": round(base * rate / 100, 2),
 				}
 			)
 		lines.append(
@@ -1472,9 +1569,9 @@ def base_lines(ref) -> list:
 				"aux_code": "",
 				"description": row.description,
 				"qty": row.qty,
-				"unit_price": row.rate,
-				"discount": row.discount_amount or 0.0,
-				"subtotal": row.amount,
+				"unit_price": _row_unit_price(row),
+				"discount": _row_val(row, "distributed_discount_amount", "discount_amount") or 0.0,
+				"subtotal": base,
 				"taxes": taxes,
 			}
 		)

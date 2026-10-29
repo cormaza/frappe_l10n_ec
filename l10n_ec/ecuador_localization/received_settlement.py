@@ -70,6 +70,7 @@ def settlement_lines(ir_amount: float, iva_amount: float, accounts: dict, party:
 		lines.append(
 			{
 				"account": accounts["ir_asset"],
+				"debit": round(float(ir_amount), 2),
 				"debit_in_account_currency": round(float(ir_amount), 2),
 				"cost_center": accounts["cost_center"],
 				"party_type": party["party_type"],
@@ -80,6 +81,7 @@ def settlement_lines(ir_amount: float, iva_amount: float, accounts: dict, party:
 		lines.append(
 			{
 				"account": accounts["iva_asset"],
+				"debit": round(float(iva_amount), 2),
 				"debit_in_account_currency": round(float(iva_amount), 2),
 				"cost_center": accounts["cost_center"],
 				"party_type": party["party_type"],
@@ -91,6 +93,7 @@ def settlement_lines(ir_amount: float, iva_amount: float, accounts: dict, party:
 	total = round(sum(line["debit_in_account_currency"] for line in lines), 2)
 	credit: dict = {
 		"account": accounts["receivable"],
+		"credit": total,
 		"credit_in_account_currency": total,
 		"cost_center": accounts["cost_center"],
 		"party_type": party["party_type"],
@@ -132,7 +135,12 @@ def build_settlement_for_si(si_doc, resolve_asset=None, cost_center_resolver=Non
 		impuesto, rate, _description = resolve_concepto(ir_concepto)
 		if impuesto != "1":
 			raise ValueError(_("IR withholding needs an IR concepto, got '{}'.").format(ir_concepto))
-		ir_amount = round(float(si_doc.get("net_total") or 0) * rate / 100, 2)
+		company_net = si_doc.get("base_net_total")
+		if company_net is None:
+			company_net = si_doc.get("base_total")
+		if company_net is None:
+			company_net = si_doc.get("net_total") or 0
+		ir_amount = round(float(company_net) * rate / 100, 2)
 	iva_amount = 0.0
 	iva_concepto = sri_code(si_doc.get("sri_iva_concepto"))
 	if iva_concepto:

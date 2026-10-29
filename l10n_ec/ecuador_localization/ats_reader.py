@@ -92,6 +92,14 @@ def _shape_reembolso(detail) -> dict:
 	}
 
 
+def _company_total(doc: dict, transaction_field: str, base_field: str, default: float = 0.0) -> float:
+	"""Document total in company currency (`base_` first, legacy fallback)."""
+	value = (doc or {}).get(base_field)
+	if value is None:
+		value = (doc or {}).get(transaction_field, default)
+	return float(value or 0.0)
+
+
 def purchase_row(pi: dict, supplier: dict, voucher: dict | None, doc_code: str = "01") -> dict:
 	"""Shape one submitted Purchase Invoice for the ATS collector."""
 	number = pi.get("bill_no", "")
@@ -111,7 +119,7 @@ def purchase_row(pi: dict, supplier: dict, voucher: dict | None, doc_code: str =
 		"auth_number": auth,
 		"taxes": pi.get("taxes", []),
 		"ice_amount": round(sum(t.get("value", 0.0) for t in pi.get("taxes", []) if t.get("code") == "3"), 2),
-		"payments": [{"method": "01", "amount": pi.get("grand_total", 0.0)}],
+		"payments": [{"method": "01", "amount": _company_total(pi, "grand_total", "base_grand_total")}],
 	}
 	if voucher is not None and voucher.get("voucher_state") == "Authorized" and voucher.get("body"):
 		body = voucher["body"]
@@ -153,7 +161,7 @@ def sale_row(si: dict, customer: dict, voucher: dict | None, settlement: dict | 
 		"auth_number": voucher.get("authorization_number", "") if voucher else "",
 		"taxes": si.get("taxes", []),
 		"ice_amount": round(sum(t.get("value", 0.0) for t in si.get("taxes", []) if t.get("code") == "3"), 2),
-		"payments": [{"method": "01", "amount": si.get("grand_total", 0.0)}],
+		"payments": [{"method": "01", "amount": _company_total(si, "grand_total", "base_grand_total")}],
 	}
 	if settlement is not None:
 		row["received"] = {
@@ -344,6 +352,7 @@ def read_month(company: str, year: int, month: int) -> dict:
 					"bill_date": _iso_to_sri(pi.get("bill_date")),
 					"posting_date": _iso_to_sri(pi.get("posting_date")),
 					"grand_total": pi.get("grand_total"),
+					"base_grand_total": pi.get("base_grand_total"),
 					"sri_supplier_auth_number": pi.get("sri_supplier_auth_number") or "",
 					"sri_sustento_code": sri_code(pi.get("sri_sustento_code")) or "02",
 					"sri_reimbursement_details": [
@@ -403,6 +412,7 @@ def read_month(company: str, year: int, month: int) -> dict:
 					{
 						"posting_date": _iso_to_sri(si.get("posting_date")),
 						"grand_total": si.get("grand_total"),
+						"base_grand_total": si.get("base_grand_total"),
 						"taxes": _voucher_taxes(voucher, mapped),
 						"sri_received_retencion_number": si.get("sri_received_retencion_number") or "",
 						"sri_received_retencion_auth": si.get("sri_received_retencion_auth") or "",
